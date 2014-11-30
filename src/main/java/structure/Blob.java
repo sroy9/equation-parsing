@@ -25,6 +25,7 @@ import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
+import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
 public class Blob implements IInstance {
 
@@ -60,8 +61,9 @@ public class Blob implements IInstance {
 
 	private static void testModel(String modelPath, SLProblem sp) throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
-		for(String f:model.lm.allCurrentFeatures())
-			System.out.println(f);
+//		for(String f:model.lm.allCurrentFeatures())
+//			System.out.println(f);
+		printStatsWV(model.wv);
 		double acc = 0.0;
 		double total = sp.instanceList.size();
 		for (int i = 0; i < sp.instanceList.size(); i++) {
@@ -89,16 +91,21 @@ public class Blob implements IInstance {
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg,
 				para);
 		model.wv = learner.train(train);
+		printStatsWV(model.wv);
+		lm.setAllowNewFeatures(false);
+		model.saveModel(modelPath);
+	}
+
+	private static void printStatsWV(WeightVector wv) {
+		// TODO Auto-generated method stub
 		int nzeroes=0;
-		System.out.println("SIZE: "+model.wv.getLength());
-		for(float f:model.wv.getInternalArray())
+		System.out.println("SIZE: "+wv.getLength());
+		for(float f:wv.getInternalArray())
 		{
 			if(f!=0.0)
 				nzeroes++;
 		}
 		System.out.println("NZ values: "+nzeroes);
-		lm.setAllowNewFeatures(false);
-		model.saveModel(modelPath);
 	}
 
 	public static Map<String, List<Expression>> extractTermMap(
