@@ -33,11 +33,12 @@ public class Blob implements IInstance {
 	List<String> features;
 	public SimulProb simulProb; // which problem
 	public Lattice goldLattice;
+
 	public Blob(Map<String, List<Expression>> termmap, SimulProb simulProb) {
 		termMap = termmap;
 		this.simulProb = simulProb;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		DocReader dr = new DocReader();
 		List<SimulProb> simulProbList = dr
@@ -49,21 +50,33 @@ public class Blob implements IInstance {
 			Blob blob = new Blob(termMap, simulProb);
 			List<String> paths = getGold(simulProb, blob);
 			Lattice goldStr = new Lattice(paths);
+			// Sanity check
+			boolean allow = false;
+			for (Lattice l : BruteForceInfSolver.getPossibleLegalStructures(blob)) {
+				if (l.equals(goldStr)) {
+					allow = true;
+					break;
+				}
+			}
+			if (!allow)
+				continue;
 			blob.goldLattice = goldStr;
 			problem.addExample(blob, goldStr);
 		}
 		double trainFrac = 0.8;
-		Pair<SLProblem, SLProblem> trainTest = problem.splitTrainTest((int) (trainFrac*problem.size()));
+		Pair<SLProblem, SLProblem> trainTest = problem
+				.splitTrainTest((int) (trainFrac * problem.size()));
 		SLProblem train = trainTest.getFirst();
-		SLProblem test= trainTest.getFirst();
-		trainModel("model.save",train);
-		testModel("model.save",test);
+		SLProblem test = trainTest.getFirst();
+		trainModel("model.save", train);
+		testModel("model.save", test);
 	}
 
-	private static void testModel(String modelPath, SLProblem sp) throws Exception {
+	private static void testModel(String modelPath, SLProblem sp)
+			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
-//		for(String f:model.lm.allCurrentFeatures())
-//			System.out.println(f);
+		// for(String f:model.lm.allCurrentFeatures())
+		// System.out.println(f);
 		printStatsWV(model.wv);
 		double acc = 0.0;
 		double total = sp.instanceList.size();
@@ -71,26 +84,28 @@ public class Blob implements IInstance {
 			Lattice gold = (Lattice) sp.goldStructureList.get(i);
 			Lattice prediction = (Lattice) model.infSolver.getBestStructure(
 					model.wv, sp.instanceList.get(i));
-			if(gold.equals(prediction)) {
+			if (gold.equals(prediction)) {
 				acc += 1.0;
 			}
 		}
-		System.out.println("Accuracy : "+ acc + " / "+total+" = "+(acc/total));
+		System.out.println("Accuracy : " + acc + " / " + total + " = "
+				+ (acc / total));
 	}
 
-	private static void trainModel(String modelPath,SLProblem train) throws Exception {
+	private static void trainModel(String modelPath, SLProblem train)
+			throws Exception {
 		// TODO Auto-generated method stub
 		SLModel model = new SLModel();
 		Lexiconer lm = new Lexiconer();
 		lm.setAllowNewFeatures(true);
-		model.lm=lm;
-		AbstractFeatureGenerator fg = (AbstractFeatureGenerator) new LatticeFeatureExtractor(lm);
-		model.featureGenerator=fg;
-		model.infSolver=new BruteForceInfSolver(fg);
+		model.lm = lm;
+		AbstractFeatureGenerator fg = (AbstractFeatureGenerator) new LatticeFeatureExtractor(
+				lm);
+		model.featureGenerator = fg;
+		model.infSolver = new BruteForceInfSolver(fg);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
-		Learner learner = LearnerFactory.getLearner(model.infSolver, fg,
-				para);
+		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
 		model.wv = learner.train(train);
 		printStatsWV(model.wv);
 		lm.setAllowNewFeatures(false);
@@ -98,14 +113,13 @@ public class Blob implements IInstance {
 	}
 
 	private static void printStatsWV(WeightVector wv) {
-		int nzeroes=0;
-		System.out.println("SIZE: "+wv.getLength());
-		for(float f:wv.getInternalArray())
-		{
-			if(f!=0.0)
+		int nzeroes = 0;
+		System.out.println("SIZE: " + wv.getLength());
+		for (float f : wv.getInternalArray()) {
+			if (f != 0.0)
 				nzeroes++;
 		}
-		System.out.println("NZ values: "+nzeroes);
+		System.out.println("NZ values: " + nzeroes);
 	}
 
 	public static Map<String, List<Expression>> extractTermMap(
@@ -134,48 +148,56 @@ public class Blob implements IInstance {
 
 	public static List<String> getGold(SimulProb simulProb, Blob blob) {
 		List<String> eqs = new ArrayList<>();
-		for(Expression ex : simulProb.equations) {
+		for (Expression ex : simulProb.equations) {
 			Integer index1 = null, index2 = null, index3 = null;
-			if(blob.termMap.containsKey("E1")) {
-				for(Expression subEx : ex.getAllSubExpressions()) {
-					for(int i = 0; i <  blob.termMap.get("E1").size(); i++) {
-						if(subEx.equalsBasedOnLeaves(blob.termMap.get("E1").get(i))) {
+			if (blob.termMap.containsKey("E1")) {
+				for (Expression subEx : ex.getAllSubExpressions()) {
+					for (int i = 0; i < blob.termMap.get("E1").size(); i++) {
+						if (subEx.equalsBasedOnLeaves(blob.termMap.get("E1")
+								.get(i))) {
 							index1 = i;
 							break;
 						}
 					}
-					if(index1 != null) break;
+					if (index1 != null)
+						break;
 				}
 			}
-			if(blob.termMap.containsKey("E2")) {
-				for(Expression subEx : ex.getAllSubExpressions()) {
-					for(int i = 0; i <  blob.termMap.get("E2").size(); i++) {
-						if(subEx.equalsBasedOnLeaves(blob.termMap.get("E2").get(i))) {
+			if (blob.termMap.containsKey("E2")) {
+				for (Expression subEx : ex.getAllSubExpressions()) {
+					for (int i = 0; i < blob.termMap.get("E2").size(); i++) {
+						if (subEx.equalsBasedOnLeaves(blob.termMap.get("E2")
+								.get(i))) {
 							index2 = i;
 							break;
 						}
 					}
-					if(index2 != null) break;
+					if (index2 != null)
+						break;
 				}
 			}
-			if(blob.termMap.containsKey("E3")) {
-				for(Expression subEx : ex.getAllSubExpressions()) {
-					for(int i = 0; i <  blob.termMap.get("E3").size(); i++) {
-						if(subEx.equalsBasedOnLeaves(blob.termMap.get("E3").get(i))) {
+			if (blob.termMap.containsKey("E3")) {
+				for (Expression subEx : ex.getAllSubExpressions()) {
+					for (int i = 0; i < blob.termMap.get("E3").size(); i++) {
+						if (subEx.equalsBasedOnLeaves(blob.termMap.get("E3")
+								.get(i))) {
 							index3 = i;
 							break;
 						}
 					}
-					if(index3 != null) break;
+					if (index3 != null)
+						break;
 				}
 			}
-			if(index1 != null && index2 != null && index3 != null) {
-				Operation op = simulProb.getShyamOperation(blob.termMap.get("E1").get(index1), 
-						blob.termMap.get("E2").get(index2), blob.termMap.get("E3").get(index3));
-				eqs.add(index1+"_"+op+"_"+index2+"_"+index3);
+			if (index1 != null && index2 != null && index3 != null) {
+				Operation op = simulProb.getShyamOperation(
+						blob.termMap.get("E1").get(index1),
+						blob.termMap.get("E2").get(index2),
+						blob.termMap.get("E3").get(index3));
+				eqs.add(index1 + "_" + op + "_" + index2 + "_" + index3);
 			}
-			if(index1 != null && index2 != null && index3 == null) {
-				eqs.add(index1+"_EQ_"+index2);
+			if (index1 != null && index2 != null && index3 == null) {
+				eqs.add(index1 + "_EQ_" + index2);
 			}
 		}
 		return eqs;
