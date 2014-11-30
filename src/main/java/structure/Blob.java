@@ -32,7 +32,7 @@ public class Blob implements IInstance {
 	public Map<String, List<Expression>> termMap;
 	List<String> features;
 	public SimulProb simulProb; // which problem
-
+	public Lattice goldLattice;
 	public Blob(Map<String, List<Expression>> termmap, SimulProb simulProb) {
 		termMap = termmap;
 		this.simulProb = simulProb;
@@ -49,6 +49,7 @@ public class Blob implements IInstance {
 			Blob blob = new Blob(termMap, simulProb);
 			List<String> paths = getGold(simulProb, blob);
 			Lattice goldStr = new Lattice(paths);
+			blob.goldLattice = goldStr;
 			problem.addExample(blob, goldStr);
 		}
 		double trainFrac = 0.8;
