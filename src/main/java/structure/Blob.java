@@ -98,7 +98,6 @@ public class Blob implements IInstance {
 	}
 
 	private static void printStatsWV(WeightVector wv) {
-		// TODO Auto-generated method stub
 		int nzeroes=0;
 		System.out.println("SIZE: "+wv.getLength());
 		for(float f:wv.getInternalArray())
@@ -135,8 +134,8 @@ public class Blob implements IInstance {
 
 	public static List<String> getGold(SimulProb simulProb, Blob blob) {
 		List<String> eqs = new ArrayList<>();
-		Integer index1 = null, index2 = null, index3 = null;
 		for(Expression ex : simulProb.equations) {
+			Integer index1 = null, index2 = null, index3 = null;
 			if(blob.termMap.containsKey("E1")) {
 				for(Expression subEx : ex.getAllSubExpressions()) {
 					for(int i = 0; i <  blob.termMap.get("E1").size(); i++) {

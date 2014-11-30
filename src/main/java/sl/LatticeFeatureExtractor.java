@@ -50,8 +50,8 @@ public class LatticeFeatureExtractor extends AbstractFeatureGenerator implements
 		Lattice l = (Lattice) arg1;
 		FeatureVectorBuffer fb = new FeatureVectorBuffer();
 		List<String> features = new ArrayList<>();
-		if(blob.goldLattice.equals(l))
-			features.add("GOLD");
+//		if(blob.goldLattice.equals(l))
+//			features.add("GOLD");
 		try {
 			features.addAll(extractFeatures(blob, l));
 			features.addAll(FeatureExtraction.getConjunctions(extractFeatures(blob, l)));
