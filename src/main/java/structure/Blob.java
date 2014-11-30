@@ -55,7 +55,7 @@ public class Blob implements IInstance {
 		Pair<SLProblem, SLProblem> trainTest = problem.splitTrainTest((int) (trainFrac*problem.size()));
 		SLProblem train = trainTest.getFirst();
 		SLProblem test= trainTest.getFirst();
-//		trainModel("model.save",train);
+		trainModel("model.save",train);
 		testModel("model.save",test);
 	}
 

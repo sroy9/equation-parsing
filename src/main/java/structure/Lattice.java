@@ -7,6 +7,7 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
 /**
  * maintains the two "paths", each path denotes a equation
+ * 
  * @author upadhya3
  *
  */
@@ -26,11 +27,38 @@ public class Lattice implements IStructure {
 				+ ((termList == null) ? 0 : termList.hashCode());
 		return result;
 	}
+
 	@Override
 	public String toString() {
 		return edgesWithOps.toString();
 	}
+
 	@Override
+	// public boolean equals(Object obj) {
+	// if (this == obj)
+	// return true;
+	// if (obj == null)
+	// return false;
+	// if (getClass() != obj.getClass())
+	// return false;
+	// Lattice other = (Lattice) obj;
+	// if (edgesWithOps == null) {
+	// if (other.edgesWithOps != null)
+	// return false;
+	// } else if (!edgesWithOps.equals(other.edgesWithOps))
+	// return false;
+	// if (opList == null) {
+	// if (other.opList != null)
+	// return false;
+	// } else if (!opList.equals(other.opList))
+	// return false;
+	// if (termList == null) {
+	// if (other.termList != null)
+	// return false;
+	// } else if (!termList.equals(other.termList))
+	// return false;
+	// return true;
+	// }
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -42,19 +70,29 @@ public class Lattice implements IStructure {
 		if (edgesWithOps == null) {
 			if (other.edgesWithOps != null)
 				return false;
-		} else if (!edgesWithOps.equals(other.edgesWithOps))
-			return false;
-		if (opList == null) {
-			if (other.opList != null)
+		} else {
+			if (edgesWithOps.size() != other.edgesWithOps.size()) {
 				return false;
-		} else if (!opList.equals(other.opList))
-			return false;
-		if (termList == null) {
-			if (other.termList != null)
-				return false;
-		} else if (!termList.equals(other.termList))
-			return false;
-		return true;
+			}
+			if (edgesWithOps.size() == 1) {
+				if (edgesWithOps.get(0).equals(other.edgesWithOps.get(0))) {
+					return true;
+				}
+			}
+			if (edgesWithOps.size() == 2) {
+				if (edgesWithOps.get(0).equals(other.edgesWithOps.get(0))
+						&& edgesWithOps.get(1)
+								.equals(other.edgesWithOps.get(1))) {
+					return true;
+				}
+				if (edgesWithOps.get(0).equals(other.edgesWithOps.get(1))
+						&& edgesWithOps.get(1)
+								.equals(other.edgesWithOps.get(0))) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public Lattice(List<String> edgesWithOps) {
