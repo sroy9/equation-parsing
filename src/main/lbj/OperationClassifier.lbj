@@ -1,0 +1,34 @@
+package lbjgen;
+
+import java.util.List;
+import structure.*;
+import parser.*;
+import lbj.*;
+
+discrete% OperationFeatures(Expression expr) <- {
+    for (int i = 0; i < expr.features.size(); i++) {
+	sense expr.features.get(i);
+    }
+}
+
+discrete OperationLabel(Expression expr) <- { return expr.operation; }
+
+discrete OperationClassifier(Expression expr) <-
+learn OperationLabel
+  using OperationFeatures
+  from new OperationParser(0.0, 0.8)
+  50 rounds
+
+  with SparseNetworkLearner {
+     SparseAveragedPerceptron.Parameters p =
+     new SparseAveragedPerceptron.Parameters();
+     p.learningRate = .1;
+     p.thickness = 2;
+     baseLTU = new SparseAveragedPerceptron(p);
+  }
+
+  testFrom new OperationParser(0.8, 1.0)
+		
+  progressOutput 2000
+
+end

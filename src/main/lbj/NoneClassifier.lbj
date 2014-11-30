@@ -1,0 +1,37 @@
+package lbjgen;
+
+import java.util.List;
+import structure.*;
+import parser.*;
+import lbj.*;
+
+discrete% NoneFeatures(Expression expr) <- {
+    for (int i = 0; i < expr.features.size(); i++) {
+	sense expr.features.get(i);
+    }
+}
+
+discrete NoneLabel(Expression expr) <- { 
+    if(expr.operation.equals(Operation.NONE)) return "NONE";
+    return "NOT-NONE";
+}
+
+discrete NoneClassifier(Expression expr) <-
+learn NoneLabel
+  using NoneFeatures
+  from new NoneParser(0.0, 0.8)
+  50 rounds
+
+  with SparseNetworkLearner {
+     SparseAveragedPerceptron.Parameters p =
+     new SparseAveragedPerceptron.Parameters();
+     p.learningRate = .1;
+     p.thickness = 2;
+     baseLTU = new SparseAveragedPerceptron(p);
+  }
+
+  testFrom new NoneParser(0.8, 1.0)
+		
+  progressOutput 2000
+
+end

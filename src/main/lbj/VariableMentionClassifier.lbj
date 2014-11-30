@@ -1,0 +1,34 @@
+package lbjgen;
+
+import java.util.List;
+import structure.*;
+import parser.*;
+import lbj.*;
+
+discrete% VariableMentionFeatures (Mention mention) <- {
+    for (int i = 0; i < mention.features.size(); i++) {
+	sense mention.features.get(i);
+    }
+}
+
+discrete VariableMentionLabel(Mention mention) <- { return mention.label; }
+
+discrete VariableMentionClassifier(Mention mention) <-
+learn VariableMentionLabel
+  using VariableMentionFeatures
+  from new MentionParser(0.0, 0.8)
+  50 rounds
+
+  with SparseNetworkLearner {
+     SparseAveragedPerceptron.Parameters p =
+     new SparseAveragedPerceptron.Parameters();
+     p.learningRate = .1;
+     p.thickness = 2;
+     baseLTU = new SparseAveragedPerceptron(p);
+  }
+
+  testFrom new MentionParser(0.8, 1.0)
+		
+  progressOutput 2000
+
+end
