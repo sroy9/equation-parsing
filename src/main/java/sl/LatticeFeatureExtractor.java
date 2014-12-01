@@ -26,7 +26,8 @@ import edu.illinois.cs.cogcomp.sl.util.FeatureVectorBuffer;
 import edu.illinois.cs.cogcomp.sl.util.IFeatureVector;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
-public class LatticeFeatureExtractor extends AbstractFeatureGenerator implements Serializable {
+public class LatticeFeatureExtractor extends AbstractFeatureGenerator implements
+		Serializable {
 	/**
 	 * 
 	 */
@@ -48,17 +49,24 @@ public class LatticeFeatureExtractor extends AbstractFeatureGenerator implements
 	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
 		Blob blob = (Blob) arg0;
 		Lattice l = (Lattice) arg1;
+		List<String> features = FeatureVectorCacher.getFeature(blob, l);
 		FeatureVectorBuffer fb = new FeatureVectorBuffer();
-		List<String> features = new ArrayList<>();
-//		if(blob.goldLattice.equals(l))
-//			features.add("GOLD");
-		try {
-			features.addAll(extractFeatures(blob, l));
-			features.addAll(FeatureExtraction.getConjunctions(extractFeatures(blob, l)));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+		if (features == null) {
+			System.out.println("not in cache");
+			features = new ArrayList<>();
+			try {
+				features.addAll(extractFeatures(blob, l));
+				features.addAll(FeatureExtraction
+						.getConjunctions(extractFeatures(blob, l)));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(!features.isEmpty())
+				FeatureVectorCacher.cache(blob,l,features);
 		}
+		
 		for (String feature : features) {
 			if (!lm.containFeature(feature) && lm.isAllowNewFeatures()) {
 				lm.addFeature(feature);
@@ -67,37 +75,37 @@ public class LatticeFeatureExtractor extends AbstractFeatureGenerator implements
 				fb.addFeature(lm.getFeatureId(feature), 1.0);
 			}
 		}
-//		System.out.println(lm.getNumOfFeature());
-//		System.out.println(fb.toFeatureVector().getNumActiveFeatures());
+		// System.out.println(lm.getNumOfFeature());
+		// System.out.println(fb.toFeatureVector().getNumActiveFeatures());
 		return fb.toFeatureVector();
 	}
 
 	private List<String> extractFeatures(Blob blob, Lattice l) throws Exception {
-//		System.out.println("*********************");
-//		System.out.println(blob.simulProb.index+" : "+blob.simulProb.question);
-//		System.out.println("Equations :");
-//		for(Expression eq : blob.simulProb.equations) {
-//			System.out.println(eq.toString());
-//		}
-//		System.out.println("Spans :");
-//		for(Span span : blob.simulProb.spans) {
-//			System.out.println(span.label+" : "+blob.simulProb.question.substring(
-//					span.ip.getFirst(), span.ip.getSecond())+ " : "+span.ip);
-//		}
-//		System.out.println("Cluster Map :");
-//		for(String entity : blob.simulProb.clusterMap.keySet()) {
-//			System.out.println(entity + " : " + Arrays.asList(
-//					blob.simulProb.clusterMap.get(entity).mentionLocMap.keySet()));
-//		}
-//		System.out.println("TermMap");
-//		for(String str : blob.termMap.keySet()) {
-//			System.out.println(str + " : " +blob.termMap.get(str));
-//		}
-//		System.out.println("Paths :");
-		for(String path : l.edgesWithOps) {
-//			System.out.println(path);
+		// System.out.println("*********************");
+		// System.out.println(blob.simulProb.index+" : "+blob.simulProb.question);
+		// System.out.println("Equations :");
+		// for(Expression eq : blob.simulProb.equations) {
+		// System.out.println(eq.toString());
+		// }
+		// System.out.println("Spans :");
+		// for(Span span : blob.simulProb.spans) {
+		// System.out.println(span.label+" : "+blob.simulProb.question.substring(
+		// span.ip.getFirst(), span.ip.getSecond())+ " : "+span.ip);
+		// }
+		// System.out.println("Cluster Map :");
+		// for(String entity : blob.simulProb.clusterMap.keySet()) {
+		// System.out.println(entity + " : " + Arrays.asList(
+		// blob.simulProb.clusterMap.get(entity).mentionLocMap.keySet()));
+		// }
+		// System.out.println("TermMap");
+		// for(String str : blob.termMap.keySet()) {
+		// System.out.println(str + " : " +blob.termMap.get(str));
+		// }
+		// System.out.println("Paths :");
+		for (String path : l.edgesWithOps) {
+			// System.out.println(path);
 			l.termList.add(getExpression(blob, path));
-			l.opList.add(getOperation(blob, path));	
+			l.opList.add(getOperation(blob, path));
 		}
 		List<String> feats = new ArrayList<>();
 		feats.addAll(getStructureFeatures(blob, l));
@@ -105,30 +113,36 @@ public class LatticeFeatureExtractor extends AbstractFeatureGenerator implements
 		return feats;
 	}
 
-	public List<String> getStructureFeatures(Blob blob, Lattice l) throws Exception {
+	public List<String> getStructureFeatures(Blob blob, Lattice l)
+			throws Exception {
 		List<String> features = new ArrayList<>();
-		if(l.termList.size() == 1) {
-			features.add("Op:"+l.opList.get(0));
-			features.add("TermSize:"+l.termList.get(0).get(0).getYield().size()+"_"+
-					l.termList.get(0).get(1).getYield().size());
-		} else if(l.termList.size() == 2) {
-			features.add("Op:"+l.opList.get(0)+"_"+l.opList.get(1));
-			features.add("TermSize:"+l.termList.get(0).get(0).getYield().size()+"_"+
-					l.termList.get(0).get(1).getYield().size());
-			features.add("TermSize:"+l.termList.get(1).get(0).getYield().size()+"_"+
-					l.termList.get(1).get(1).getYield().size());
+		if (l.termList.size() == 1) {
+			features.add("Op:" + l.opList.get(0));
+			features.add("TermSize:"
+					+ l.termList.get(0).get(0).getYield().size() + "_"
+					+ l.termList.get(0).get(1).getYield().size());
+		} else if (l.termList.size() == 2) {
+			features.add("Op:" + l.opList.get(0) + "_" + l.opList.get(1));
+			features.add("TermSize:"
+					+ l.termList.get(0).get(0).getYield().size() + "_"
+					+ l.termList.get(0).get(1).getYield().size());
+			features.add("TermSize:"
+					+ l.termList.get(1).get(0).getYield().size() + "_"
+					+ l.termList.get(1).get(1).getYield().size());
 		}
 		return features;
 	}
-	
 
-	public List<String> getGlobalFeatures(Blob blob, Lattice l) throws Exception {
+	public List<String> getGlobalFeatures(Blob blob, Lattice l)
+			throws Exception {
 		List<String> features = new ArrayList<>();
-		for(String feature : FeatureExtraction.getUnigrams(blob.simulProb.question)) {
-			features.add("Unigram_"+feature);
+		for (String feature : FeatureExtraction
+				.getUnigrams(blob.simulProb.question)) {
+			features.add("Unigram_" + feature);
 		}
-		for(String feature : FeatureExtraction.getBigrams(blob.simulProb.question)) {
-			features.add("Bigram_"+feature);
+		for (String feature : FeatureExtraction
+				.getBigrams(blob.simulProb.question)) {
+			features.add("Bigram_" + feature);
 		}
 		return features;
 	}
@@ -139,7 +153,7 @@ public class LatticeFeatureExtractor extends AbstractFeatureGenerator implements
 		int expr1ind = Integer.parseInt(parts[0]);
 		int expr2ind = Integer.parseInt(parts[2]);
 		int expr3ind = -100;
-		if(parts.length >= 4) {
+		if (parts.length >= 4) {
 			expr3ind = Integer.parseInt(parts[3]);
 		}
 		if (expr1ind == 0)
@@ -150,7 +164,7 @@ public class LatticeFeatureExtractor extends AbstractFeatureGenerator implements
 			ans.add(blob.termMap.get("E2").get(0));
 		else
 			ans.add(blob.termMap.get("E2").get(1));
-		if(parts.length >= 4) {
+		if (parts.length >= 4) {
 			if (expr3ind == 0)
 				ans.add(blob.termMap.get("E3").get(0));
 			else

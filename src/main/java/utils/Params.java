@@ -17,5 +17,6 @@ public class Params {
 	public static String spModelFile = "data/model.sp";
 	public static String spConfigFile = "config/StructuredPerceptron.config";
 	public static String mentionFile = "data/mentionCONLL.txt";
+	public static final String featcachepath = "/shared/bronte/sroy9/featCache";
 
 }

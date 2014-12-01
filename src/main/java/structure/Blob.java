@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import lbj.EquationParser;
 import parser.DocReader;
@@ -15,6 +16,7 @@ import sl.BruteForceInfSolver;
 import sl.LatticeFeatureExtractor;
 import utils.Params;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.core.utilities.commands.InteractiveShell;
 import edu.illinois.cs.cogcomp.sl.applications.tutorial.POSTag;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
@@ -40,9 +42,46 @@ public class Blob implements IInstance {
 	}
 
 	public static void main(String[] args) throws Exception {
+		
+
+		InteractiveShell<Blob> tester = new InteractiveShell<Blob>(Blob.class);
+		if (args.length == 0)
+			tester.showDocumentation();
+		else {
+			tester.runCommand(args);
+		}
+		
+	}
+	public static void crossVal() throws Exception
+	{
+		SLProblem problem = getSP();
+		List<Pair<SLProblem, SLProblem>> folds = problem.splitDataToNFolds(5, new Random());
+		for(int i=0;i<folds.size();i++)
+		{
+			Pair<SLProblem, SLProblem> fold = folds.get(i);
+			SLProblem train = fold.getFirst();
+			SLProblem test = fold.getSecond();
+			trainModel("cvFold"+i+".model",train);
+			testModel("cvFold"+i+".model", test);
+		}
+		
+	}
+	public static void doTrainTest() throws Exception
+	{
+		SLProblem problem=getSP();
+		double trainFrac = 0.8;
+		Pair<SLProblem, SLProblem> trainTest = problem
+				.splitTrainTest((int) (trainFrac * problem.size()));
+		SLProblem train = trainTest.getFirst();
+		SLProblem test = trainTest.getSecond();
+		trainModel("model.save", train);
+		testModel("model.save", test);
+	}
+
+	private static SLProblem getSP() throws Exception {
+		// TODO Auto-generated method stub
 		DocReader dr = new DocReader();
-		List<SimulProb> simulProbList = dr
-				.readSimulProbFromBratDir(Params.annotationDir);
+		List<SimulProb> simulProbList = dr.readSimulProbFromBratDir(Params.annotationDir);
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
 			Map<String, List<Expression>> termMap = Blob
@@ -63,13 +102,7 @@ public class Blob implements IInstance {
 			blob.goldLattice = goldStr;
 			problem.addExample(blob, goldStr);
 		}
-		double trainFrac = 0.8;
-		Pair<SLProblem, SLProblem> trainTest = problem
-				.splitTrainTest((int) (trainFrac * problem.size()));
-		SLProblem train = trainTest.getFirst();
-		SLProblem test = trainTest.getFirst();
-		trainModel("model.save", train);
-		testModel("model.save", test);
+		return problem;
 	}
 
 	private static void testModel(String modelPath, SLProblem sp)
