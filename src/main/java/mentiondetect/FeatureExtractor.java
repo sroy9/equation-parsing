@@ -12,6 +12,7 @@ import structure.Mention;
 import structure.SimulProb;
 import structure.VarSet;
 import utils.FeatureExtraction;
+import weka.core.SystemInfo;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.sl.applications.tutorial.POSTag;
@@ -44,13 +45,19 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 
 	@Override
 	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
+		
 		VarSet varSet = (VarSet) arg0;
 		LabelSet labelSet = (LabelSet) arg1;
 		assert varSet.ta.size() == labelSet.labels.size();
 		FeatureVectorBuffer fvb = new FeatureVectorBuffer();
-		for(int i = 0; i < labelSet.labels.size(); i++) {
+		System.out.println(labelSet.labels.size());
+		for (int i = 0; i < labelSet.labels.size(); i++) {
 			try {
+				long start_time = System.currentTimeMillis();
 				fvb.addFeature(getFeatureVector(varSet, labelSet, i));
+				long end_time = System.currentTimeMillis();
+				long difference = (end_time - start_time);
+				System.out.println("time: "+difference);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -61,18 +68,24 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 	
 	public IFeatureVector getFeatureVector(
 			VarSet varSet, LabelSet labelSet, int index) throws Exception {
-		FeatureVectorBuffer fvb = new FeatureVectorBuffer();
+		
+		FeatureVectorBuffer fvb;
+//		long start_time = System.currentTimeMillis();
+		fvb = new FeatureVectorBuffer();
 		List<String> features = new ArrayList<>();
 		features.addAll(addSurroundingTokens(varSet, labelSet, index));
 		features.addAll(getNgramFeatures(varSet, labelSet, index));
-		for(String feature : features) {
-			if(!lm.containFeature(feature) && lm.isAllowNewFeatures()) {
+		for (String feature : features) {
+			if (!lm.containFeature(feature) && lm.isAllowNewFeatures()) {
 				lm.addFeature(feature);
 			}
-			if(lm.containFeature(feature)) {
+			if (lm.containFeature(feature)) {
 				fvb.addFeature(lm.getFeatureId(feature), 1.0);
 			}
 		}
+//		long end_time = System.currentTimeMillis();
+//		long difference = (end_time - start_time);
+//		System.out.println("time2: "+difference);
 		return fvb.toFeatureVector();
 	}
 	
