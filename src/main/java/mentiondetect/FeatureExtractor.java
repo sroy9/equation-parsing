@@ -49,15 +49,20 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 		VarSet varSet = (VarSet) arg0;
 		LabelSet labelSet = (LabelSet) arg1;
 		assert varSet.sent.size() == labelSet.labels.size();
-		List<String> features = new ArrayList<String>();
+		List<String> features = FeatureVectorCacher.getMentionDetectionFeatures(
+				varSet, labelSet);
+		if(features != null) {
+			return FeatureExtraction.getFeatureVectorFromList(features, lm);
+		}
+		features = new ArrayList<String>();
 		for(int i = 0; i < labelSet.labels.size(); i++) {
 			try {
 				features.addAll(getFeatures(varSet, labelSet, i));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		FeatureVectorCacher.cache(varSet, labelSet, features);
 		return FeatureExtraction.getFeatureVectorFromList(features, lm);
 	}
 	
@@ -67,13 +72,16 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 				getFeatures(varSet, labelSet, index), lm);
 	}
 		
-	
 	public List<String> getFeatures(
 			VarSet varSet, LabelSet labelSet, int index) throws Exception {
-		List<String> features =  new ArrayList<String>();
+		List<String> features = FeatureVectorCacher.getMentionDetectionFeatures(
+				varSet, labelSet, index);
+		if(features != null) return features;
+		features =  new ArrayList<String>();
 		features.addAll(addPrevLabels(varSet, labelSet, index));
 		features.addAll(addSurroundingTokens(varSet, labelSet, index));
 		features.addAll(getNgramFeatures(varSet, labelSet, index));
+		FeatureVectorCacher.cache(varSet, labelSet, index, features);
 		return features;
 	}
 	

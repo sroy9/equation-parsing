@@ -5,6 +5,6 @@ CP="./target/classes/:./target/dependency/*:./config/" # use this
 OPTIONS="-cp $CP"
 #PACKAGE_PREFIX="edu.illinois.cs.cogcomp"
 
-MAIN="structure.Blob"
-#MAIN="$PACKAGE_PREFIX.quant.lbj.CTakesTokenReader"
+#MAIN="structure.Blob"
+#MAIN="mentiondetect.MentionDetector"
 time nice java $OPTIONS $MAIN $*
