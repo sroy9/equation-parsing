@@ -3,6 +3,7 @@ package mentiondetect;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import structure.Mention;
 import structure.SimulProb;
 import structure.VarSet;
 import utils.FeatureExtraction;
+import utils.FeatureVectorCacher;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.sl.applications.tutorial.POSTag;
@@ -46,56 +48,69 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
 		VarSet varSet = (VarSet) arg0;
 		LabelSet labelSet = (LabelSet) arg1;
-		assert varSet.ta.size() == labelSet.labels.size();
-		FeatureVectorBuffer fvb = new FeatureVectorBuffer();
+		assert varSet.sent.size() == labelSet.labels.size();
+		List<String> features = new ArrayList<String>();
 		for(int i = 0; i < labelSet.labels.size(); i++) {
 			try {
-				fvb.addFeature(getFeatureVector(varSet, labelSet, i));
+				features.addAll(getFeatures(varSet, labelSet, i));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		return fvb.toFeatureVector();
+		return FeatureExtraction.getFeatureVectorFromList(features, lm);
 	}
 	
 	public IFeatureVector getFeatureVector(
 			VarSet varSet, LabelSet labelSet, int index) throws Exception {
-		FeatureVectorBuffer fvb = new FeatureVectorBuffer();
-		List<String> features = new ArrayList<>();
+		return FeatureExtraction.getFeatureVectorFromList(
+				getFeatures(varSet, labelSet, index), lm);
+	}
+		
+	
+	public List<String> getFeatures(
+			VarSet varSet, LabelSet labelSet, int index) throws Exception {
+		List<String> features =  new ArrayList<String>();
+		features.addAll(addPrevLabels(varSet, labelSet, index));
 		features.addAll(addSurroundingTokens(varSet, labelSet, index));
 		features.addAll(getNgramFeatures(varSet, labelSet, index));
-		for(String feature : features) {
-			if(!lm.containFeature(feature) && lm.isAllowNewFeatures()) {
-				lm.addFeature(feature);
-			}
-			if(lm.containFeature(feature)) {
-				fvb.addFeature(lm.getFeatureId(feature), 1.0);
-			}
-		}
-		return fvb.toFeatureVector();
+		return features;
+	}
+	
+	public List<String> addPrevLabels(
+			VarSet varSet, LabelSet labelSet, int index) throws Exception {
+		List<String> features = new ArrayList<String>();
+		if(index > 0) features.add("PrevLabel_"+labelSet.labels.get(index-1));
+		if(index > 1) features.add("PrevLabel_"+labelSet.labels.get(index-2)+"_"
+				+labelSet.labels.get(index-1));
+		return features;
 	}
 	
 	public List<String> addSurroundingTokens(
 			VarSet varSet, LabelSet labelSet, int index) throws Exception {
 		List<String> features = new ArrayList<String>();
+		String prefix = "";
+		if(index > 0) prefix = labelSet.labels.get(index-1);
 		for(String feature : FeatureExtraction.getFormPP(
 				varSet.simulProb.question, 
-				varSet.ta.getTokenCharacterOffset(index).getFirst(), 
+				varSet.ta.getTokenCharacterOffset(
+						varSet.sent.getStartSpan()+index).getFirst(), 
 				2)) {
-			features.add("Window_"+feature);
+			features.add(prefix+"_Window_"+feature);
 		}
 		for(String feature : FeatureExtraction.getMixed(
 				varSet.simulProb.question, 
-				varSet.ta.getTokenCharacterOffset(index).getFirst(), 
+				varSet.ta.getTokenCharacterOffset(
+						varSet.sent.getStartSpan()+index).getFirst(), 
 				2)) {
-			features.add("Window_"+feature);
+			features.add(prefix+"_Window_"+feature);
 		}
 		for(String feature : FeatureExtraction.getPOSWindowPP(
 				varSet.simulProb.question, 
-				varSet.ta.getTokenCharacterOffset(index).getFirst(), 
+				varSet.ta.getTokenCharacterOffset(
+						varSet.sent.getStartSpan()+index).getFirst(), 
 				2)) {
-			features.add("Window_"+feature);
+			features.add(prefix+"_Window_"+feature);
 		}
 		return features;
 	}
@@ -103,11 +118,13 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 	public List<String> getNgramFeatures(
 			VarSet varSet, LabelSet labelSet, int index) throws Exception {
 		List<String> features = new ArrayList<String>();
-		for(String feature : FeatureExtraction.getUnigrams(varSet.ta.getText())) {
-			features.add("Unigram_"+feature);
+		String prefix = "";
+		if(index > 0) prefix = labelSet.labels.get(index-1);
+		for(String feature : FeatureExtraction.getUnigrams(varSet.sent.getText())) {
+			features.add(prefix+"_Unigram_"+feature);
 		}
-		for(String feature : FeatureExtraction.getBigrams(varSet.ta.getText())) {
-			features.add("Unigram_"+feature);
+		for(String feature : FeatureExtraction.getBigrams(varSet.sent.getText())) {
+			features.add(prefix+"_Bigram_"+feature);
 		}
 		return features;
 	}

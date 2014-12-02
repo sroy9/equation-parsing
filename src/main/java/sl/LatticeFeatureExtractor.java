@@ -15,6 +15,7 @@ import structure.Operation;
 import structure.SimulProb;
 import structure.Span;
 import utils.FeatureExtraction;
+import utils.FeatureVectorCacher;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.sl.applications.tutorial.POSTag;

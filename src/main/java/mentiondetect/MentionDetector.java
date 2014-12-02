@@ -20,6 +20,7 @@ import structure.SimulProb;
 import structure.VarSet;
 import utils.Params;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.sl.applications.tutorial.POSManager;
 import edu.illinois.cs.cogcomp.sl.applications.tutorial.POSTag;
 import edu.illinois.cs.cogcomp.sl.applications.tutorial.ViterbiInferenceSolver;
@@ -49,25 +50,25 @@ public class MentionDetector {
 		Learner learner = LearnerFactory.getLearner(
 				model.infSolver, fe, para);
 		model.wv = learner.train(sp);
-		for(float f:model.wv.getWeightArray())
-		System.out.println(f);
-		// save the model
-		for(float f:model.wv.getInternalArray())
-			System.out.println(f);
 		model.saveModel(modelFile);
 	}
 	
 	public SLProblem readStructuredData(List<SimulProb> simulProbList) 
 			throws Exception {
 		SLProblem slProblem = new SLProblem();
-		for(SimulProb simulProb :  simulProbList) {
-			VarSet varSet = new VarSet(simulProb);
-			LabelSet labelSet = varSet.getGold();
-			slProblem.addExample(varSet, labelSet);
-//			for(int i=0; i<varSet.ta.size(); i++) {
-//				System.out.println(varSet.ta.getToken(i)+" - "+
-//						labelSet.labels.get(i));
-//			}
+		for(SimulProb simulProb : simulProbList) {
+			TextAnnotation ta = new TextAnnotation("", "", simulProb.question);
+			for(int i = 0 ; i < ta.getNumberOfSentences(); ++i) {
+				VarSet varSet = new VarSet(simulProb, i);
+				LabelSet labelSet = varSet.getGold();
+				slProblem.addExample(varSet, labelSet);
+				System.out.println("**********************");
+				for(int j=0; j<varSet.sent.size(); j++) {
+					System.out.print("["+varSet.sent.getToken(j)
+							+" - "+labelSet.labels.get(j)+"]");
+				}
+				System.out.println();
+			}
 		}
 		return slProblem;
 	}

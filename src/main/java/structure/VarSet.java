@@ -17,11 +17,15 @@ import edu.illinois.cs.cogcomp.sl.core.IInstance;
 public class VarSet implements IInstance {
 	
 	public TextAnnotation ta;
+	public int sentId;
+	public Sentence sent;
 	public SimulProb simulProb;
 	
-	public VarSet(SimulProb simulProb) throws Exception {
+	public VarSet(SimulProb simulProb, int sentId) throws Exception {
 		this.simulProb = simulProb; 
+		this.sentId = sentId;
 		ta = new TextAnnotation("", "", simulProb.question);
+		sent = ta.getSentence(sentId);
 	}
 	
 	public LabelSet getGold () {
@@ -76,8 +80,11 @@ public class VarSet implements IInstance {
 		}
 		// Create gold label
 		for(Mention mention : mentionsInOrder) {
-			gold.addLabel(mention.label);
+			if(sentId == ta.getSentenceFromToken(mention.index).getSentenceId()) {
+				gold.addLabel(mention.label);
+			}
 		}
+		assert gold.labels.size() == sent.size();
 		return gold;
 	}
 	

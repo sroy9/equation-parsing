@@ -22,4 +22,11 @@ public class LabelSet implements IStructure{
 			labels.remove(labels.size()-1);
 		}
 	}
+	
+	public LabelSet(LabelSet other) {
+		this.labels = new ArrayList<String>();
+		for(String label : other.labels) {
+			this.labels.add(label);
+		}
+	}
 }

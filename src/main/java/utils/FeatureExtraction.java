@@ -9,8 +9,25 @@ import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.edison.sentences.TokenLabelView;
 import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
+import edu.illinois.cs.cogcomp.sl.util.FeatureVectorBuffer;
+import edu.illinois.cs.cogcomp.sl.util.IFeatureVector;
+import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
 public class FeatureExtraction {
+	
+	public static IFeatureVector getFeatureVectorFromList(
+			List<String> features, Lexiconer lm) {
+		FeatureVectorBuffer fvb = new FeatureVectorBuffer();
+		for(String feature : features) {
+			if(!lm.containFeature(feature) && lm.isAllowNewFeatures()) {
+				lm.addFeature(feature);
+			}
+			if(lm.containFeature(feature)) {
+				fvb.addFeature(lm.getFeatureId(feature), 1.0);
+			}
+		}
+		return fvb.toFeatureVector();
+	}
 	
 	public static List<String> getLemmatizedUnigrams(
 			TextAnnotation ta, int start, int end) throws Exception {
