@@ -7,3 +7,5 @@ bin/
 .project
 .svn
 .settings
+log/
+data/
