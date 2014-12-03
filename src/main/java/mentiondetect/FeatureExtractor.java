@@ -98,13 +98,6 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 		features.add(prefix+"_Word_"+varSet.ta.getToken(index));
 		if(index > 0) features.add(prefix+"_Word_"+varSet.ta.getToken(index-1) 
 				+ "_" + varSet.ta.getToken(index));	
-		// POS
-		features.add("POS_"+varSet.posTags.get(index).getLabel());
-		if(index > 0) features.add("POS_"+varSet.posTags.get(index-1).getLabel()
-				+ "_" + varSet.posTags.get(index).getLabel());
-		features.add(prefix+"_POS_"+varSet.posTags.get(index).getLabel());
-		if(index > 0) features.add(prefix+"_POS_"+varSet.posTags.get(index-1).getLabel()
-				+ "_" + varSet.posTags.get(index).getLabel());	
 		return features;
 	}
 	
@@ -113,12 +106,12 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 		List<String> features = new ArrayList<String>();
 		for(int i = 0; i < index; i++) {
 			if(varSet.ta.getToken(i).equals(varSet.ta.getToken(index))) {
-				features.add("Prev_Label_For_Same_Token_"+labelSet.labels.get(i));
+				features.add("Prev_Label_For_Same_Token_"+labelSet.labels.get(i).substring(2));
 			}
 		}
 		for(int i = 0; i < index; i++) {
 			if(!labelSet.labels.get(i).equals("O")) {
-				features.add("Prev_Present_"+labelSet.labels.get(i));
+				features.add("Prev_Present_"+labelSet.labels.get(i).substring(2));
 			}
 		}
 		return features;
