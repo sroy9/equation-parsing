@@ -123,7 +123,7 @@ public class MentionDetector {
 		List<SimulProb> test = dr.readSimulProbFromBratDir(
 				Params.annotationDir, 0.8, 1.0);
 		MentionDetector mentionDetector = new MentionDetector();
-		//		mentionDetector.train(train, Params.spConfigFile, Params.spModelFile);
+		mentionDetector.train(train, Params.spConfigFile, Params.spModelFile);
 		mentionDetector.test(test, Params.spModelFile);
 		
 	}
