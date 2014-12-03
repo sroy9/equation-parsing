@@ -105,8 +105,10 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 			VarSet varSet, LabelSet labelSet, int index) throws Exception {
 		List<String> features = new ArrayList<String>();
 		for(int i = 0; i < index; i++) {
-			if(varSet.ta.getToken(i).equals(varSet.ta.getToken(index))) {
-				features.add("Prev_Label_For_Same_Token_"+labelSet.labels.get(i).substring(2));
+			if(varSet.ta.getToken(i).equals(varSet.ta.getToken(index)) && 
+					!labelSet.labels.get(i).equals("O")) {
+				features.add("Prev_Label_For_Same_Token_"
+					+labelSet.labels.get(i).substring(2));
 			}
 		}
 		for(int i = 0; i < index; i++) {
