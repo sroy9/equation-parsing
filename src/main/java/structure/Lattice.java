@@ -32,33 +32,7 @@ public class Lattice implements IStructure {
 	public String toString() {
 		return edgesWithOps.toString();
 	}
-
-	@Override
-	// public boolean equals(Object obj) {
-	// if (this == obj)
-	// return true;
-	// if (obj == null)
-	// return false;
-	// if (getClass() != obj.getClass())
-	// return false;
-	// Lattice other = (Lattice) obj;
-	// if (edgesWithOps == null) {
-	// if (other.edgesWithOps != null)
-	// return false;
-	// } else if (!edgesWithOps.equals(other.edgesWithOps))
-	// return false;
-	// if (opList == null) {
-	// if (other.opList != null)
-	// return false;
-	// } else if (!opList.equals(other.opList))
-	// return false;
-	// if (termList == null) {
-	// if (other.termList != null)
-	// return false;
-	// } else if (!termList.equals(other.termList))
-	// return false;
-	// return true;
-	// }
+	
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.math.NumberUtils;
+
 import structure.Clustering;
 import structure.LabelSet;
 import structure.Mention;
@@ -53,7 +55,7 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 		features = new ArrayList<String>();
 		for(int i = 0; i < labelSet.labels.size(); i++) {
 			try {
-				features.addAll(getFeatures(varSet, labelSet, i));
+				features.addAll(FeatureExtraction.getConjunctions(getFeatures(varSet, labelSet, i)));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -89,15 +91,21 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 	public List<String> addSurroundingTokens(
 			VarSet varSet, LabelSet labelSet, int index) throws Exception {
 		List<String> features = new ArrayList<String>();
-		String prefix = "";
-		if(index > 0) prefix = labelSet.labels.get(index-1);
 		// Words
 		features.add("Word_"+varSet.ta.getToken(index));
 		if(index > 0) features.add("Word_"+varSet.ta.getToken(index-1) 
 				+ "_" + varSet.ta.getToken(index));
-		features.add(prefix+"_Word_"+varSet.ta.getToken(index));
-		if(index > 0) features.add(prefix+"_Word_"+varSet.ta.getToken(index-1) 
-				+ "_" + varSet.ta.getToken(index));	
+		// IsNumeric
+		if(NumberUtils.isNumber(varSet.ta.getToken(index))) {
+			features.add("Number");
+		}
+		if(index > 0 && NumberUtils.isNumber(varSet.ta.getToken(index-1))) {
+			features.add("Prev_Number");
+		}
+		// POS
+		features.add("POS_"+varSet.posTags.get(index).getLabel());
+		if(index > 0) features.add("POS_"+varSet.posTags.get(index-1).getLabel() 
+				+ "_" + varSet.posTags.get(index).getLabel());
 		return features;
 	}
 	

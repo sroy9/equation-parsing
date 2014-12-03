@@ -50,35 +50,16 @@ public class LatticeFeatureExtractor extends AbstractFeatureGenerator implements
 	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
 		Blob blob = (Blob) arg0;
 		Lattice l = (Lattice) arg1;
-		List<String> features = FeatureVectorCacher.getFeature(blob, l);
-		FeatureVectorBuffer fb = new FeatureVectorBuffer();
-
-		if (features == null) {
-			System.out.println("not in cache");
-			features = new ArrayList<>();
-			try {
-				features.addAll(extractFeatures(blob, l));
-				features.addAll(FeatureExtraction
-						.getConjunctions(extractFeatures(blob, l)));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			if(!features.isEmpty())
-				FeatureVectorCacher.cache(blob,l,features);
+		List<String> features = new ArrayList<>();
+		try {
+			features.addAll(extractFeatures(blob, l));
+			features.addAll(FeatureExtraction
+					.getConjunctions(extractFeatures(blob, l)));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		for (String feature : features) {
-			if (!lm.containFeature(feature) && lm.isAllowNewFeatures()) {
-				lm.addFeature(feature);
-			}
-			if (lm.containFeature(feature)) {
-				fb.addFeature(lm.getFeatureId(feature), 1.0);
-			}
-		}
-		// System.out.println(lm.getNumOfFeature());
-		// System.out.println(fb.toFeatureVector().getNumActiveFeatures());
-		return fb.toFeatureVector();
+		return FeatureExtraction.getFeatureVectorFromList(features, lm);
 	}
 
 	private List<String> extractFeatures(Blob blob, Lattice l) throws Exception {
