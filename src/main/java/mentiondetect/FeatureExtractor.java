@@ -72,8 +72,8 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 		List<String> features; 
 		features =  new ArrayList<String>();
 		features.addAll(addPrevLabels(varSet, labelSet, index));
-//      	features.addAll(addSurroundingTokens(varSet, labelSet, index));
-		features.addAll(FeatureExtraction.getMixed(varSet.ta, varSet.posTags, index, 2));
+      	features.addAll(addSurroundingTokens(varSet, labelSet, index));
+		features.addAll(addHistoryFeatures(varSet, labelSet, index));
 		return features;
 	}
 	
@@ -91,13 +91,38 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 		List<String> features = new ArrayList<String>();
 		String prefix = "";
 		if(index > 0) prefix = labelSet.labels.get(index-1);
+		// Words
 		features.add("Word_"+varSet.ta.getToken(index));
 		if(index > 0) features.add("Word_"+varSet.ta.getToken(index-1) 
 				+ "_" + varSet.ta.getToken(index));
 		features.add(prefix+"_Word_"+varSet.ta.getToken(index));
 		if(index > 0) features.add(prefix+"_Word_"+varSet.ta.getToken(index-1) 
 				+ "_" + varSet.ta.getToken(index));	
+		// POS
+		features.add("POS_"+varSet.posTags.get(index).getLabel());
+		if(index > 0) features.add("POS_"+varSet.posTags.get(index-1).getLabel()
+				+ "_" + varSet.posTags.get(index).getLabel());
+		features.add(prefix+"_POS_"+varSet.posTags.get(index).getLabel());
+		if(index > 0) features.add(prefix+"_POS_"+varSet.posTags.get(index-1).getLabel()
+				+ "_" + varSet.posTags.get(index).getLabel());	
 		return features;
-	}	
+	}
+	
+	public List<String> addHistoryFeatures(
+			VarSet varSet, LabelSet labelSet, int index) throws Exception {
+		List<String> features = new ArrayList<String>();
+		for(int i = 0; i < index; i++) {
+			if(varSet.ta.getToken(i).equals(varSet.ta.getToken(index))) {
+				features.add("Prev_Label_For_Same_Token_"+labelSet.labels.get(i));
+			}
+		}
+		for(int i = 0; i < index; i++) {
+			if(!labelSet.labels.get(i).equals("O")) {
+				features.add("Prev_Present_"+labelSet.labels.get(i));
+			}
+		}
+		return features;
+	}
+	
 	
 }

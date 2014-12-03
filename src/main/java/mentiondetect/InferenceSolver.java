@@ -22,7 +22,6 @@ public class InferenceSolver extends AbstractInferenceSolver implements Serializ
 	@Override
 	public IStructure getBestStructure(WeightVector weight, IInstance ins)
 			throws Exception {
-		// TODO Auto-generated method stub
 		return getLossAugmentedBestStructure(weight, ins, null);
 	}
 
