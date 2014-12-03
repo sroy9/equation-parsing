@@ -46,7 +46,7 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 		features = new ArrayList<String>();
 		for(int i = 0; i < labelSet.labels.size(); i++) {
 			try {
-				features.addAll(FeatureExtraction.getConjunctions(getFeatures(varSet, labelSet, i)));
+				features.addAll(getFeatures(varSet, labelSet, i));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

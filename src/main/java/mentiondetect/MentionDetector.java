@@ -59,12 +59,12 @@ public class MentionDetector {
 			VarSet varSet = new VarSet(simulProb);
 			LabelSet labelSet = varSet.getGold();
 			slProblem.addExample(varSet, labelSet);
-			System.out.println("**********************");
-			for(int j=0; j<varSet.ta.size(); j++) {
-				System.out.print("["+varSet.ta.getToken(j)
-						+" - "+labelSet.labels.get(j)+"]");
-			}
-			System.out.println();
+//			System.out.println("**********************");
+//			for(int j=0; j<varSet.ta.size(); j++) {
+//				System.out.print("["+varSet.ta.getToken(j)
+//						+" - "+labelSet.labels.get(j)+"]");
+//			}
+//			System.out.println();
 		}
 		return slProblem;
 	}
