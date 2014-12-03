@@ -94,18 +94,18 @@ public class MentionDetector {
 					baseLineErrors += 1;
 				}
 			}
-			System.out.println("Gold");
-			for(int j=0; j<varSet.ta.size(); j++) {
-				System.out.print("["+gold.labels.get(j)+" : "
-						+varSet.ta.getToken(j)+"] ");
-			}
-			System.out.println();
-			System.out.println("Predict");
-			for(int j=0; j<varSet.ta.size(); j++) {
-				System.out.print("["+prediction.labels.get(j)+" : "
-						+varSet.ta.getToken(j)+"] ");
-			}
-			System.out.println();
+//			System.out.println("Gold");
+//			for(int j=0; j<varSet.ta.size(); j++) {
+//				System.out.print("["+gold.labels.get(j)+" : "
+//						+varSet.ta.getToken(j)+"] ");
+//			}
+//			System.out.println();
+//			System.out.println("Predict");
+//			for(int j=0; j<varSet.ta.size(); j++) {
+//				System.out.print("["+prediction.labels.get(j)+" : "
+//						+varSet.ta.getToken(j)+"] ");
+//			}
+//			System.out.println();
 			
 		}
 		System.out.println("Baseline = "+(1.0 - (baseLineErrors/total)));
@@ -121,6 +121,7 @@ public class MentionDetector {
 				Params.annotationDir, 0.8, 1.0);
 		MentionDetector mentionDetector = new MentionDetector();
 		mentionDetector.train(train, Params.spConfigFile, Params.spModelFile);
+		mentionDetector.test(train, Params.spModelFile);
 		mentionDetector.test(test, Params.spModelFile);
 		
 	}
