@@ -82,29 +82,31 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 	public List<String> addPrevLabels(
 			VarSet varSet, LabelSet labelSet, int index) throws Exception {
 		List<String> features = new ArrayList<String>();
-		if(index > 0) features.add("PrevLabel_"+labelSet.labels.get(index-1));
-		if(index > 1) features.add("PrevLabel_"+labelSet.labels.get(index-2)+"_"
-				+labelSet.labels.get(index-1));
+		String prefix = labelSet.labels.get(index);
+		if(index > 0) features.add(prefix + "_PrevLabel_"+labelSet.labels.get(index-1));
+		if(index > 1) features.add(prefix + "_PrevLabel_"+labelSet.labels.get(index-2)
+				+"_"+labelSet.labels.get(index-1));
 		return features;
 	}
 	
 	public List<String> addSurroundingTokens(
 			VarSet varSet, LabelSet labelSet, int index) throws Exception {
 		List<String> features = new ArrayList<String>();
+		String prefix = labelSet.labels.get(index);
 		// Words
-		features.add("Word_"+varSet.ta.getToken(index));
-		if(index > 0) features.add("Word_"+varSet.ta.getToken(index-1) 
+		features.add(prefix+"_Word_"+varSet.ta.getToken(index));
+		if(index > 0) features.add(prefix+"_Word_"+varSet.ta.getToken(index-1) 
 				+ "_" + varSet.ta.getToken(index));
 		// IsNumeric
 		if(NumberUtils.isNumber(varSet.ta.getToken(index))) {
-			features.add("Number");
+			features.add(prefix+"_Number");
 		}
 		if(index > 0 && NumberUtils.isNumber(varSet.ta.getToken(index-1))) {
-			features.add("Prev_Number");
+			features.add(prefix+"_Prev_Number");
 		}
 		// POS
-		features.add("POS_"+varSet.posTags.get(index).getLabel());
-		if(index > 0) features.add("POS_"+varSet.posTags.get(index-1).getLabel() 
+		features.add(prefix+"_POS_"+varSet.posTags.get(index).getLabel());
+		if(index > 0) features.add(prefix+"_POS_"+varSet.posTags.get(index-1).getLabel() 
 				+ "_" + varSet.posTags.get(index).getLabel());
 		return features;
 	}
@@ -112,16 +114,17 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 	public List<String> addHistoryFeatures(
 			VarSet varSet, LabelSet labelSet, int index) throws Exception {
 		List<String> features = new ArrayList<String>();
+		String prefix = labelSet.labels.get(index);
 		for(int i = 0; i < index; i++) {
 			if(varSet.ta.getToken(i).equals(varSet.ta.getToken(index)) && 
 					!labelSet.labels.get(i).equals("O")) {
-				features.add("Prev_Label_For_Same_Token_"
+				features.add(prefix+"_Prev_Label_For_Same_Token_"
 					+labelSet.labels.get(i).substring(2));
 			}
 		}
 		for(int i = 0; i < index; i++) {
 			if(!labelSet.labels.get(i).equals("O")) {
-				features.add("Prev_Present_"+labelSet.labels.get(i).substring(2));
+				features.add(prefix+"_Prev_Present_"+labelSet.labels.get(i).substring(2));
 			}
 		}
 		return features;
