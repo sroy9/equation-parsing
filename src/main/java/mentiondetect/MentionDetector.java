@@ -93,7 +93,7 @@ public class MentionDetector {
 				if(gold.labels.get(j).equals(prediction.labels.get(j))) {
 					correct += 1;
 				}
-				if(!"O".equals(prediction.labels.get(j))) {
+				if(!"O".equals(gold.labels.get(j))) {
 					baseLineErrors += 1;
 				}
 			}
@@ -123,7 +123,7 @@ public class MentionDetector {
 		List<SimulProb> test = dr.readSimulProbFromBratDir(
 				Params.annotationDir, 0.8, 1.0);
 		MentionDetector mentionDetector = new MentionDetector();
-		mentionDetector.train(train, Params.spConfigFile, Params.spModelFile);
+		//		mentionDetector.train(train, Params.spConfigFile, Params.spModelFile);
 		mentionDetector.test(test, Params.spModelFile);
 		
 	}
