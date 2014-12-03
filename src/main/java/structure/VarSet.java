@@ -21,7 +21,7 @@ public class VarSet implements IInstance {
 	public List<Constituent> lemmas;
 	public SimulProb simulProb;
 	
-	public VarSet(SimulProb simulProb, int sentId) throws Exception {
+	public VarSet(SimulProb simulProb) throws Exception {
 		this.simulProb = simulProb; 
 		ta = new TextAnnotation("", "", simulProb.question);
 		posTags = Tools.curator.getTextAnnotationWithSingleView(

@@ -9,21 +9,12 @@ import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
 
-import structure.Clustering;
 import structure.LabelSet;
-import structure.Mention;
-import structure.SimulProb;
 import structure.VarSet;
 import utils.FeatureExtraction;
-import utils.FeatureVectorCacher;
-import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
-import edu.illinois.cs.cogcomp.sl.applications.tutorial.POSTag;
-import edu.illinois.cs.cogcomp.sl.applications.tutorial.Sentence;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
-import edu.illinois.cs.cogcomp.sl.util.FeatureVectorBuffer;
 import edu.illinois.cs.cogcomp.sl.util.IFeatureVector;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
@@ -122,10 +113,24 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 					+labelSet.labels.get(i).substring(2));
 			}
 		}
+		int count = 0;
+		String closestLabel = null;
 		for(int i = 0; i < index; i++) {
 			if(!labelSet.labels.get(i).equals("O")) {
-				features.add(prefix+"_Prev_Present_"+labelSet.labels.get(i).substring(2));
+				features.add(prefix+"_Prev_Present_"
+						+labelSet.labels.get(i).substring(2));
+				closestLabel = labelSet.labels.get(i).substring(2);
 			}
+			if(labelSet.labels.get(i).contains("E1") 
+					|| labelSet.labels.get(i).contains("E2")) {
+				count++;
+			}
+		}
+		if(count == 0) {
+			features.add(prefix + "_First_E1E2");
+		}
+		if(closestLabel != null) {
+			features.add(prefix + "_ClosestLeftLabel_" + closestLabel);
 		}
 		return features;
 	}

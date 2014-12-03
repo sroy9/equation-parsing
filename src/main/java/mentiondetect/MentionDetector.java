@@ -56,18 +56,15 @@ public class MentionDetector {
 			throws Exception {
 		SLProblem slProblem = new SLProblem();
 		for(SimulProb simulProb : simulProbList) {
-			TextAnnotation ta = new TextAnnotation("", "", simulProb.question);
-			for(int i = 0 ; i < ta.getNumberOfSentences(); ++i) {
-				VarSet varSet = new VarSet(simulProb, i);
-				LabelSet labelSet = varSet.getGold();
-				slProblem.addExample(varSet, labelSet);
-				System.out.println("**********************");
-				for(int j=0; j<varSet.ta.size(); j++) {
-					System.out.print("["+varSet.ta.getToken(j)
-							+" - "+labelSet.labels.get(j)+"]");
-				}
-				System.out.println();
+			VarSet varSet = new VarSet(simulProb);
+			LabelSet labelSet = varSet.getGold();
+			slProblem.addExample(varSet, labelSet);
+			System.out.println("**********************");
+			for(int j=0; j<varSet.ta.size(); j++) {
+				System.out.print("["+varSet.ta.getToken(j)
+						+" - "+labelSet.labels.get(j)+"]");
 			}
+			System.out.println();
 		}
 		return slProblem;
 	}
