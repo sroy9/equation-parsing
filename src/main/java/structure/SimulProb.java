@@ -28,7 +28,7 @@ public class SimulProb {
 	
 	public int index;
 	public String question;
-	public List<Expression> equations;
+	public List<Equation> equations;
 	public List<Double> solutions;
 	public List<QuantSpan> quantities; 
 	public List<Span> spans;
@@ -36,7 +36,7 @@ public class SimulProb {
 	
 	public SimulProb(int index) {
 		this.index = index;
-		equations = new ArrayList<Expression>();
+		equations = new ArrayList<Equation>();
 		solutions = new ArrayList<Double>();
 		quantities = new ArrayList<QuantSpan>();
 		spans = new ArrayList<Span>();
@@ -46,11 +46,8 @@ public class SimulProb {
 	public void extractQuantities(Quantifier quantifier) throws IOException {
 		List<QuantSpan> spanArray = quantifier.getSpans(question, true);
 		quantities = new ArrayList<QuantSpan>();
-//		System.out.println("Quantities detected :");
 		for(QuantSpan span:spanArray){
 			quantities.add(span);
-//			System.out.println(question.substring(span.start, span.end) + "["
-//					+ span.object + "]");
 		}
 	}
 	
@@ -83,16 +80,15 @@ public class SimulProb {
 				variableNamesSorted.set(1, tmp); 
 			}
 		}
-		equations = new ArrayList<Expression>();
+		equations = new ArrayList<Equation>();
 		for(int i = 2; i < lines.size()-1; ++i) {
 			if(i % 2 == 0) {
-//				System.out.println(lines.get(i));
 				for(String varName : variableNamesSorted) {
 					lines.set(i, lines.get(i).replaceAll(
 							varName, 
 							variableNames.get(varName)));
 				}
-				equations.add(new Expression(lines.get(i), null));
+				equations.add(new Equation(lines.get(i)));
 			}
 		}
 		solutions = new ArrayList<Double>();
@@ -184,8 +180,6 @@ public class SimulProb {
 		clusterMap = new HashMap<String, QuantState>();
 		for(Span vs : spans) {
 			if(vs.label.startsWith("E")) {
-//				System.out.println(index+" : "+question);
-//				System.out.println("Span: "+vs.label + " : "+question.substring(vs.ip.getFirst(), vs.ip.getSecond()));
 				if(!clusterMap.keySet().contains(vs.label)) {
 					clusterMap.put(vs.label, new QuantState(vs.label));
 				}
@@ -268,103 +262,5 @@ public class SimulProb {
 			}
 		}
 		return spanList;
-	}
-	
-	public Clustering extractClustering() {
-		List<IntPair> mentionList = new ArrayList<IntPair>();
-		Set<Set<Integer>> clusters = new HashSet<Set<Integer>>();
-		for(String entityName : clusterMap.keySet()) {
-			Set<Integer> cluster = new HashSet<Integer>();
-			for(String varName : clusterMap.get(entityName).
-					mentionLocMap.keySet()) {
-				for(IntPair ip : clusterMap.get(entityName).
-					mentionLocMap.get(varName)) {
-					cluster.add(mentionList.size());
-					mentionList.add(ip);
-				}
-			}
-			clusters.add(cluster);
-		}
-		return new Clustering(mentionList, clusters);
-	}
-	
-	
-	// Map the values to QuantSpans
-	// Output the non-detected ones
-	public void nodeLinkingForEquations() {
-		for(Expression eq : equations) {
-			for(String leaf : eq.getYieldInString()) {
-				if(leaf.equals("V1") || leaf.equals("V2")) {
-					continue;
-				}
-				boolean found = false;
-				for(String entityName : clusterMap.keySet()) {
-					for(String varName : clusterMap.get(entityName).
-							mentionLocMap.keySet()) {
-						if(varName.equals(leaf)) {
-							found = true;
-							break;
-						}
-					}
-				}
-				if(!found) {
-					System.out.println("Missed: "+leaf);
-				}
-			}
-		}
-	}
-	
-	public Operation getComplete(Expression ex) {
-		Operation finalOp = null, op = null;
-		for(Expression goldExpr : equations) {
-			op = goldExpr.getComplete(ex);
-			if(op != Operation.NONE) {
-				finalOp = op;
-				break;
-			}
-		}
-		if(finalOp == null) {
-			finalOp = Operation.NONE;
-		}
-		return finalOp;
-	}
-	
-	public Operation getOperation(Expression ex) {
-		Operation finalOp = null, op = null;
-		for(Expression goldExpr : equations) {
-			op = goldExpr.getOperation(ex);
-			if(op != Operation.NONE) {
-				finalOp = op;
-				break;
-			}
-		}
-		if(finalOp == null) {
-			finalOp = Operation.NONE;
-		}
-		return finalOp;
-	}
-	
-	public Operation getShyamOperation(
-			Expression ex1, Expression ex2, Expression ex3) {
-		Set<Expression> exSet = new HashSet<Expression>();
-		exSet.add(ex1);
-		exSet.add(ex2);
-		Expression expr1 = new Expression(null, "ACROSS", null, exSet);
-		if(ex3 == null) {
-			for(Expression goldEx : equations) {
-				if(goldEx.getOperation(expr1) == Operation.EQ) {
-					return Operation.EQ;
-				}
-			}
-			return Operation.NONE;
-		}
-		Expression expr2 = new Expression(null, "ACROSS", null, 
-				new HashSet<Expression>(Arrays.asList(expr1, ex3)));
-		for(Expression goldEx : equations) {
-			if(goldEx.equalsBasedOnLeaves(expr2)) {
-				return goldEx.getOperation(expr1);
-			}
-		}
-		return Operation.NONE;
 	}
 }

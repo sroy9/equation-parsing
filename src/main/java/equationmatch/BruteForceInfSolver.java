@@ -1,4 +1,4 @@
-package sl;
+package equationmatch;
 
 import java.io.Serializable;
 import java.util.ArrayList;

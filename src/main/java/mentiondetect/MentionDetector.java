@@ -7,13 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import lbj.EquationFeatureManager;
-import lbj.ExpressionFeatureManager;
 import parser.DocReader;
 import curator.NewCachingCurator;
-import structure.Clustering;
 import structure.Equation;
-import structure.Expression;
 import structure.LabelSet;
 import structure.Mention;
 import structure.SimulProb;

@@ -5,19 +5,17 @@ import java.util.Map;
 
 public class Equation {
 	
-	public List<Expression> terms;
+	public List<Double> terms;
 	public List<Operation> operations;
-	public List<String> features;
-	public Map<String, List<Expression>> termMap;
-	public String label;
-	public double equationScore;
 	
-	public Equation(List<Expression> equation, List<Operation> operations, 
-			Map<String, List<Expression>> termMap) {
-		this.terms = equation;
+	public Equation(List<Double> terms, List<Operation> operations) {
+		this.terms = terms;
 		this.operations = operations;
-		this.termMap = termMap;
-		assert equation.size() == (operations.size() + 1);
+		assert terms.size() == (operations.size() + 1);
+	}
+	
+	public Equation(String eqString) {
+		
 	}
 	
 	public String toString() {

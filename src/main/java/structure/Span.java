@@ -1,7 +1,5 @@
 package structure;
 
-import java.util.List;
-
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 
 /**

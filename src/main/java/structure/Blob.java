@@ -10,10 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import lbj.EquationParser;
 import parser.DocReader;
-import sl.BruteForceInfSolver;
-import sl.LatticeFeatureExtractor;
 import utils.Params;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.core.utilities.commands.InteractiveShell;
@@ -28,6 +25,8 @@ import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 import edu.illinois.cs.cogcomp.sl.util.WeightVector;
+import equationmatch.BruteForceInfSolver;
+import equationmatch.LatticeFeatureExtractor;
 
 public class Blob implements IInstance {
 
