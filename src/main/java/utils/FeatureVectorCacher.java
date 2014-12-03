@@ -22,7 +22,7 @@ public class FeatureVectorCacher {
 		String file = null;
 		try {
 			file = cachepath+"/"+NewCachingCurator.getMD5Checksum(
-					varSet.simulProb.index+"_"+varSet.sentId+"_"+
+					varSet.simulProb.index+"_"+
 							Arrays.asList(labelSet.labels));
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
@@ -47,7 +47,7 @@ public class FeatureVectorCacher {
 		String file = null;
 		try {
 			file = cachepath+"/"+NewCachingCurator.getMD5Checksum(
-					varSet.simulProb.index+"_"+varSet.sentId+"_"+
+					varSet.simulProb.index+"_"+
 							Arrays.asList(labelSet.labels)+"_"+index);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
@@ -71,7 +71,7 @@ public class FeatureVectorCacher {
 		String file = null;
 		try {
 			file = cachepath+"/"+NewCachingCurator.getMD5Checksum(
-					varSet.simulProb.index+"_"+varSet.sentId+"_"+
+					varSet.simulProb.index+"_"+
 							Arrays.asList(labelSet.labels));
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
@@ -91,8 +91,7 @@ public class FeatureVectorCacher {
 		String file = null;
 		try {
 			file = cachepath+"/"+NewCachingCurator.getMD5Checksum(
-					varSet.simulProb.index+"_"+varSet.sentId+"_"+
-							Arrays.asList(labelSet.labels)+"_"+index);
+					varSet.simulProb.index+"_"+Arrays.asList(labelSet.labels)+"_"+index);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

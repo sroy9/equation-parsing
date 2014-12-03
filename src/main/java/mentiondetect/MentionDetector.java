@@ -45,7 +45,6 @@ public class MentionDetector {
 		FeatureExtractor fe = new FeatureExtractor (model.lm);
 		model.infSolver = new InferenceSolver(fe);
 		SLParameters para = new SLParameters();
-//		para.CHECK_INFERENCE_OPT = false;
 		para.loadConfigFile(configFilePath);
 		Learner learner = LearnerFactory.getLearner(
 				model.infSolver, fe, para);
@@ -63,8 +62,8 @@ public class MentionDetector {
 				LabelSet labelSet = varSet.getGold();
 				slProblem.addExample(varSet, labelSet);
 				System.out.println("**********************");
-				for(int j=0; j<varSet.sent.size(); j++) {
-					System.out.print("["+varSet.sent.getToken(j)
+				for(int j=0; j<varSet.ta.size(); j++) {
+					System.out.print("["+varSet.ta.getToken(j)
 							+" - "+labelSet.labels.get(j)+"]");
 				}
 				System.out.println();
@@ -79,6 +78,7 @@ public class MentionDetector {
 		SLProblem sp = readStructuredData(simulProbList);
 		model.lm.setAllowNewFeatures(false);
 
+		double baseLineErrors = 0;
 		double correct = 0.0;
 		double total = 0.0;
 
@@ -87,25 +87,33 @@ public class MentionDetector {
 			LabelSet gold = (LabelSet) sp.goldStructureList.get(i);
 			LabelSet prediction = (LabelSet) model.infSolver.getBestStructure(
 					model.wv, sp.instanceList.get(i));
-			
 			assert gold.labels.size() == prediction.labels.size();
 			total += gold.labels.size();
 			for(int j = 0; j < gold.labels.size(); j++) {
 				if(gold.labels.get(j).equals(prediction.labels.get(j))) {
 					correct += 1;
 				}
+				if(!"O".equals(prediction.labels.get(j))) {
+					baseLineErrors += 1;
+				}
 			}
 			System.out.println("Gold");
 			for(int j=0; j<varSet.ta.size(); j++) {
-				System.out.print("["+gold.labels.get(j)+" : "+varSet.ta.getToken(j)+"] ");
+				System.out.print("["+gold.labels.get(j)+" : "
+						+varSet.ta.getToken(j)+"] ");
 			}
+			System.out.println();
 			System.out.println("Predict");
 			for(int j=0; j<varSet.ta.size(); j++) {
-				System.out.print("["+prediction.labels.get(j)+" : "+varSet.ta.getToken(j)+"] ");
+				System.out.print("["+prediction.labels.get(j)+" : "
+						+varSet.ta.getToken(j)+"] ");
 			}
+			System.out.println();
 			
 		}
-		System.out.println("Acc = " + correct + " / " + total + " = " + (correct*1.0/total));
+		System.out.println("Baseline = "+(1.0 - (baseLineErrors/total)));
+		System.out.println("Acc = " + correct + " / " + total + " = " 
+					+ (correct*1.0/total));
 	}
 	
 	public static void main(String args[]) throws Exception {

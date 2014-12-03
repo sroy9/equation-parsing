@@ -241,44 +241,95 @@ public class FeatureExtraction {
 		return features;
 	}
 	
+	// From Chunker
+	public static List<String> getFormPP(TextAnnotation ta, int pos, int window) 
+			throws Exception {
+		List<String> features = new ArrayList<String>();
+		int before = 2;
+		int after = 2;
+		int k = 2;
+		String[] forms = new String[before+after+1];
+		for (int i = Math.max(0, pos-before); 
+				i <= Math.min(ta.size()-1, pos+after); 
+				++i) {
+			forms[i-Math.max(0, pos-before)] = ta.getToken(i);
+		}  
+		for (int j = 0; j < k; j++) {
+			for (int i = 0; i < forms.length; i++) {
+				StringBuffer f = new StringBuffer();
+				for(int context=0; context <= j && i + context < forms.length; context++) {
+					if (context != 0) f.append("_");
+					f.append(forms[i+context]);
+				}
+				features.add(i + "_" + j + "_" + f.toString());
+			}
+		}
+		return features;
+	}
+		
+	// From Chunker
+	public static List<String> getPOSWindowPP(List<Constituent> posTags, int pos, int window) 
+			throws Exception {
+		List<String> features = new ArrayList<String>();
+		int before = 3;
+		int after = 3;
+		int k = 3;
+		String[] tags = new String[before+after+1];
+		for (int i = Math.max(0, pos-before); 
+				i <= Math.min(posTags.size()-1, pos+after); 
+				++i) {
+			tags[i-Math.max(0, pos-before)] = posTags.get(i).getLabel();
+		}  
+		for (int j = 0; j < k; j++) {
+			for (int i = 0; i < tags.length; i++) {
+				StringBuffer f = new StringBuffer();
+				for(int context=0; 
+						context <= j && i + context < tags.length; 
+						context++) {
+					if (context != 0) f.append("_");
+					f.append(tags[i+context]);
+				}
+				features.add(i + "_" + j + "_" + f.toString());
+			}
+		}
+		return features;
+	}
+	
+	// From Chunker
 	public static List<String> getMixed(
-			String text, int startOffset, int endOffset, int window) 
+			TextAnnotation ta, List<Constituent> posTags, int pos, int window) 
 			throws Exception {
 		List<String> features = new ArrayList<String>();
-		TextAnnotation ta = new TextAnnotation("", "", text);
-		int startPos = ta.getTokenIdFromCharacterOffset(startOffset);
-		int endPos = ta.getTokenIdFromCharacterOffset(endOffset);
-		for(int i = startPos; i <= endPos; i++) {
-			features.addAll(getMixed(
-					text, ta.getTokenCharacterOffset(i).getFirst(), window));
+		int before = 2;
+		int after = 2;
+		int k = 2;
+		String[] tags = new String[before+after+1];
+		String[] forms = new String[before+after+1];
+		for (int i = Math.max(0, pos-before); 
+				i <= Math.min(ta.size()-1, pos+after); 
+				++i) {
+			tags[i-Math.max(0, pos-before)] = posTags.get(i).getLabel();
+			forms[i-Math.max(0, pos-before)] = ta.getToken(i);
 		}
-		return features;
-	}
-	
-	public static List<String> getPOSWindowPP(
-			String text, int startOffset, int endOffset, int window) 
-			throws Exception {
-		List<String> features = new ArrayList<String>();
-		TextAnnotation ta = new TextAnnotation("", "", text);
-		int startPos = ta.getTokenIdFromCharacterOffset(startOffset);
-		int endPos = ta.getTokenIdFromCharacterOffset(endOffset);
-		for(int i = startPos; i <= endPos; i++) {
-			features.addAll(getPOSWindowPP(
-					text, ta.getTokenCharacterOffset(i).getFirst(), window));
-		}
-		return features;
-	}
-	
-	public static List<String> getFormPP(
-			String text, int startOffset, int endOffset, int window) 
-			throws Exception {
-		List<String> features = new ArrayList<String>();
-		TextAnnotation ta = new TextAnnotation("", "", text);
-		int startPos = ta.getTokenIdFromCharacterOffset(startOffset);
-		int endPos = ta.getTokenIdFromCharacterOffset(endOffset);
-		for(int i = startPos; i <= endPos; i++) {
-			features.addAll(getFormPP(
-					text, ta.getTokenCharacterOffset(i).getFirst(), window));
+		for (int j = 1; j < k; j++) {
+			for (int x = 0; x < 2; x++) {
+				boolean t = true;
+				for (int i = 0; i < tags.length; i++) {
+					StringBuffer f = new StringBuffer();
+					for(int context=0; 
+							context <= j && i + context < tags.length; 
+							context++) {
+						if (context != 0) f.append("_");
+						if (t && x ==0) {
+							f.append(tags[i+context]);
+						} else {
+							f.append(forms[i+context]);
+						}
+						t = !t;
+					}
+					features.add(i + "_" + j + "_" + f.toString());
+				}
+			}
 		}
 		return features;
 	}

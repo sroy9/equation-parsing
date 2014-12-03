@@ -31,12 +31,14 @@ public class InferenceSolver extends AbstractInferenceSolver implements Serializ
 			IInstance ins, IStructure goldStructure) throws Exception {
 		LabelSet gold = (LabelSet) goldStructure;
 		VarSet varSet = (VarSet) ins;
-		assert varSet.sent.size() == gold.labels.size();
+		if(goldStructure != null) {
+			assert varSet.ta.size() == gold.labels.size();
+		}
 		List<String> labels = Arrays.asList(
 				"B-E1", "I-E1", "B-E2", "I-E2", "B-E3", "I-E3", "O");
 		
 		int numOflabels = labels.size();
-		int numOfTokens = varSet.sent.size();
+		int numOfTokens = varSet.ta.size();
 				
 		LabelSet[][] dpTable = new LabelSet[numOfTokens][numOflabels];	
 		double[][] dpScores = new double[numOfTokens][numOflabels];	
