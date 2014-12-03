@@ -126,12 +126,12 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 				count++;
 			}
 		}
-		if(count == 0) {
-			features.add(prefix + "_First_E1E2");
-		}
-		if(closestLabel != null) {
-			features.add(prefix + "_ClosestLeftLabel_" + closestLabel);
-		}
+//		if(count == 0) {
+//			features.add(prefix + "_First_E1E2");
+//		}
+//		if(closestLabel != null) {
+//			features.add(prefix + "_ClosestLeftLabel_" + closestLabel);
+//		}
 		return features;
 	}
 	
