@@ -1,7 +1,6 @@
 package structure;
 
 import java.util.List;
-import java.util.Map;
 
 import utils.Tools;
 
@@ -19,7 +18,7 @@ public class Equation {
 	}
 	
 	public Equation(String eqString) {
-		String strArr[] = eqString.split("(+|-|*|/|=)");
+		String strArr[] = eqString.split("(\\+|\\-|\\*|\\/|=)");
 		assert strArr.length <= 3;
 		int lastLoc = 0;
 		for(int i = 0; i < eqString.length(); i++) {
