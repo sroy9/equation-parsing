@@ -1,7 +1,18 @@
 package utils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import structure.Operation;
+import structure.Span;
 import curator.NewCachingCurator;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
+import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
+import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
+import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
 
 public class Tools {
@@ -36,5 +47,74 @@ public class Tools {
 		}
 		return false;
 	}
-
+	
+	// Returns maximal NPs with at most one quantity per NP
+	public static List<Span> getCandidateNPs(String text, List<QuantSpan> quantSpans) 
+			throws Exception {
+		List<Span> npSpans = new ArrayList<>();
+		TextAnnotation ta = Tools.curator.getTextAnnotationWithSingleView(
+				text, ViewNames.PARSE_BERKELEY, false);
+		List<Constituent> treeNodes = ta.getView(ViewNames.PARSE_BERKELEY)
+				.getConstituents();
+		for(Constituent cons : treeNodes) {
+			if(cons.getLabel().equals("NP")) {
+				int count = 0;
+				for(QuantSpan qs : quantSpans) {
+					if(cons.getStartCharOffset() <= qs.start && 
+							qs.end <= cons.getEndCharOffset()) {
+						count++;
+					}
+				}
+				boolean allow = false;
+				if(count <= 1) {
+					allow = true;
+					// Check if a parent can replace the child
+					for(Constituent cons1 : treeNodes) {
+						if(cons1 == cons) continue;
+						if(!cons1.getLabel().equals("NP")) continue;
+						if(cons1.getStartSpan() <= cons.getStartSpan() && 
+								cons1.getEndSpan() >= cons.getEndSpan()) {
+							int count1 = 0;
+							for(QuantSpan qs : quantSpans) {
+								if(cons1.getStartCharOffset() <= qs.start && 
+										qs.end <= cons1.getEndCharOffset()) {
+									count1++;
+								}
+							}
+							if(count1 <= 1) {
+								allow = false;
+							}
+						}
+					}
+				}
+				if(allow) {
+					npSpans.add(new Span(null, new IntPair(
+							cons.getStartCharOffset(), cons.getEndCharOffset())));
+				}
+			}
+		}
+		// Make the spans ordered
+		Collections.sort(npSpans, new Comparator<Span>()  {  
+		  @Override  
+		  public int compare(Span o1, Span o2)  
+		  {  
+			  if(o1.ip.getFirst() < o2.ip.getSecond()) {
+				  return 1;
+			  } else {
+				  return -1;
+			  }
+			    
+		  }
+		});
+		return npSpans;		
+	}
+	
+	public static Operation getOperationFromString(String op) {
+		if(op.equals("ADD") || op.equals("+")) return Operation.ADD;
+		if(op.equals("SUB") || op.equals("-")) return Operation.SUB;
+		if(op.equals("MUL") || op.equals("*")) return Operation.MUL;
+		if(op.equals("DIV") || op.equals("/")) return Operation.DIV;
+		if(op.equals("EQ") || op.equals("=")) return Operation.EQ;
+		return null;
+	}
 }

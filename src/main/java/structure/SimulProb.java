@@ -15,6 +15,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import utils.Params;
+import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree;
@@ -30,7 +31,8 @@ public class SimulProb {
 	public String question;
 	public List<Equation> equations;
 	public List<Double> solutions;
-	public List<QuantSpan> quantities; 
+	public List<QuantSpan> quantities; 	
+	public List<Span> npSpans;   			
 	public List<Span> spans;
 	public Map<String, QuantState> clusterMap;
 	
@@ -108,6 +110,7 @@ public class SimulProb {
 		spans = newSpans;
 	}
 	
+	// To be called first, reads brat annotation files
 	public void extractVariableSpans() throws IOException {
 		spans = new ArrayList<Span>();
 		String fileName = Params.annotationDir + index + ".ann";
@@ -175,39 +178,35 @@ public class SimulProb {
 		}
 	}
 	
-	// Assumed to be called after extractVariableSpan()
+	// Assumed to be called after extractVariableSpan() and quantities, and problem 
+	// extraction
+	// Extracts candidate NPs which can belong to some entity
+	public void extractNpSpans() throws Exception {
+		List<Span> candidateNpSpans = Tools.getCandidateNPs(question, quantities);
+		for(Span span : candidateNpSpans) {
+			for(Span span1 : spans) {
+				if(Tools.doesIntersect(span.ip, span1.ip) && 
+						span1.label.startsWith("E")) {
+					span.label = span1.label;
+					npSpans.add(span);
+					break;
+				}
+			}
+		}
+	}
+	
+	
 	public void extractClusters() {
 		clusterMap = new HashMap<String, QuantState>();
-		for(Span vs : spans) {
-			if(vs.label.startsWith("E")) {
-				if(!clusterMap.keySet().contains(vs.label)) {
-					clusterMap.put(vs.label, new QuantState(vs.label));
+		for(Span span : npSpans) {
+			if(!clusterMap.keySet().contains(span.label)) {
+				clusterMap.put(span.label, new QuantState(span.label));
+			}
+			QuantSpan qs = getRelevantQuantSpans(span.ip);
+			if(qs != null) {
+				if(getValue(qs) != null) {
+					clusterMap.get(span.label).addToCluster(getValue(qs)+"", span.ip);
 				}
-				String varName = getVariable(vs.ip);
-				if(varName != null) {
-					clusterMap.get(vs.label).addToCluster(varName, vs.ip);
-				}
-				QuantSpan qs = getRelevantQuantSpans(vs.ip);
-				if(qs != null) {
-					boolean allow  = true;
-					if(getRelevantSpans(qs).size()>2 && varName != null) {
-						allow = false;
-					}
-					if(!allow) continue;
-					if(getValue(qs) != null) {
-						clusterMap.get(vs.label).addToCluster(getValue(qs)+"", vs.ip);
-					}
-					if(getUnit(qs) != null && 
-							(getUnit(qs).contains("%") || 
-							getUnit(qs).contains("percent") ||
-							getUnit(qs).contains("cents"))) {
-						clusterMap.get(vs.label).addToCluster("0.01", vs.ip);
-					}
-				}
-//				for(String entity : clusterMap.keySet()) {
-//					System.out.println(entity + " : " + Arrays.asList(
-//							clusterMap.get(entity).mentionLocMap.keySet()));
-//				}
 			}
 		}
 	}
@@ -251,16 +250,5 @@ public class SimulProb {
 			}
 		}
 		return null;
-	}
-	
-	public List<Span> getRelevantSpans(QuantSpan qs) {
-		List<Span> spanList = new ArrayList<Span>();
-		for(Span span : spans) {
-			if((qs.start <= span.ip.getFirst() && span.ip.getFirst() < qs.end) 
-					|| (span.ip.getFirst() <= qs.start  && qs.start < span.ip.getSecond())) {
-				spanList.add(span);
-			}
-		}
-		return spanList;
 	}
 }
