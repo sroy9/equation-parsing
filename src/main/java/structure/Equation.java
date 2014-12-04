@@ -4,10 +4,17 @@ import java.util.List;
 
 import utils.Tools;
 
+// Holds canonical equations
+// Ax +/- By +/- C = 0
+// where A = \product A_i, B = \product B_i and C = \product C_i
+// and A_i's, B_i's and C_i's are present in text
+
 public class Equation {
 	
 	public String label;
-	public List<String> terms;
+	public List<String> A;
+	public List<String> B;
+	public List<String> C;
 	public List<Operation> operations;
 	
 	public Equation(String label, List<String> terms, List<Operation> operations) {
@@ -18,7 +25,7 @@ public class Equation {
 	}
 	
 	public Equation(String eqString) {
-		String strArr[] = eqString.split("(\\+|\\-|\\*|\\/|=)");
+		String strArr[] = eqString.split("(\\+|\\-|=)");
 		assert strArr.length <= 3;
 		int lastLoc = 0;
 		for(int i = 0; i < eqString.length(); i++) {
