@@ -61,8 +61,7 @@ public class Tools {
 			System.out.println(cons.getLabel()+" : "+cons.getSurfaceString());
 		}
 		for(Constituent cons : treeNodes) {
-			if(cons.getLabel().equals("NP") && 
-					!cons.getSurfaceString().contains(" and ")) {
+			if(cons.getLabel().equals("NP")) {
 				int count = 0;
 				for(QuantSpan qs : quantSpans) {
 					if(cons.getStartCharOffset() <= qs.start && 
@@ -77,7 +76,6 @@ public class Tools {
 					for(Constituent cons1 : treeNodes) {
 						if(cons1 == cons) continue;
 						if(!cons1.getLabel().equals("NP")) continue;
-						if(cons1.getSurfaceString().contains(" and ")) continue;
 						if(cons1.getStartSpan() <= cons.getStartSpan() && 
 								cons1.getEndSpan() >= cons.getEndSpan()) {
 							int count1 = 0;
