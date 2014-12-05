@@ -42,6 +42,7 @@ public class SimulProb {
 		solutions = new ArrayList<Double>();
 		quantities = new ArrayList<QuantSpan>();
 		spans = new ArrayList<Span>();
+		npSpans = new ArrayList<>();
 		clusterMap = new HashMap<String, QuantState>();
 	}
 	
@@ -55,59 +56,15 @@ public class SimulProb {
 	
 	// Equations will be changed to replace variable names by V1, V2
 	// Needs to be called after calling extractVariableSpans()
-	public void extractQuestionsAndEquations() throws IOException {
+	public void extractQuestionsAndSolutions() throws IOException {
 		String fileName = Params.annotationDir + index + ".txt";
-		Map<String, String> variableNames = new HashMap<String, String>();
-		List<String> variableNamesSorted = new ArrayList<String>();
-		String txt = FileUtils.readFileToString(new File(fileName));
 		List<String> lines = FileUtils.readLines(new File(fileName));
 		question = lines.get(0);
-		// Find variable name maps
-		for(Span vs : spans) {
-			if(vs.ip.getFirst() >= question.length() && vs.label.startsWith("V")) {
-				variableNames.put(txt.substring(
-						vs.ip.getFirst(), vs.ip.getSecond()), vs.label);
-			}
-		}
-		// This is to ensure that longer name comes first, to prevent substring 
-		// matching problem
-		for(String var : variableNames.keySet()) {
-			variableNamesSorted.add(var);
-		}
-		if(variableNamesSorted.size() == 2) {
-			if(variableNamesSorted.get(0).length() < 
-					variableNamesSorted.get(1).length()) {
-				String tmp = variableNamesSorted.get(0);
-				variableNamesSorted.set(0, variableNamesSorted.get(1));
-				variableNamesSorted.set(1, tmp); 
-			}
-		}
-		equations = new ArrayList<Equation>();
-		for(int i = 2; i < lines.size()-1; ++i) {
-			if(i % 2 == 0) {
-				for(String varName : variableNamesSorted) {
-					lines.set(i, lines.get(i).replaceAll(
-							varName, 
-							variableNames.get(varName)));
-				}
-				equations.add(new Equation(lines.get(i)));
-			}
-		}
 		solutions = new ArrayList<Double>();
 		String ans[] = lines.get(lines.size()-1).split(" ");
 		for(String str : ans) {
 			solutions.add(Double.parseDouble(str.trim()));
 		}
-		// Remove equation annotations
-		List<Span> newSpans = new ArrayList<Span>();
-		for(Span vs : spans) {
-			if(vs.ip.getFirst() >= question.length()) {
-				continue;
-			} else {
-				newSpans.add(vs);
-			}
-		}
-		spans = newSpans;
 	}
 	
 	// To be called first, reads brat annotation files
@@ -195,7 +152,6 @@ public class SimulProb {
 		}
 	}
 	
-	
 	public void extractClusters() {
 		clusterMap = new HashMap<String, QuantState>();
 		for(Span span : npSpans) {
@@ -207,6 +163,45 @@ public class SimulProb {
 				if(getValue(qs) != null) {
 					clusterMap.get(span.label).addToCluster(getValue(qs)+"", span.ip);
 				}
+			}
+		}
+	}
+	
+	public void extractEquations() throws IOException {
+		String fileName = Params.annotationDir + index + ".txt";
+		Map<String, String> variableNames = new HashMap<String, String>();
+		List<String> variableNamesSorted = new ArrayList<String>();
+		String txt = FileUtils.readFileToString(new File(fileName));
+		List<String> lines = FileUtils.readLines(new File(fileName));
+		// Find variable name maps
+		for(Span vs : spans) {
+			if(vs.ip.getFirst() >= question.length() && vs.label.startsWith("V")) {
+				variableNames.put(txt.substring(
+						vs.ip.getFirst(), vs.ip.getSecond()), vs.label);
+			}
+		}
+		// This is to ensure that longer name comes first, to prevent substring 
+		// matching problem
+		for(String var : variableNames.keySet()) {
+			variableNamesSorted.add(var);
+		}
+		if(variableNamesSorted.size() == 2) {
+			if(variableNamesSorted.get(0).length() < 
+					variableNamesSorted.get(1).length()) {
+				String tmp = variableNamesSorted.get(0);
+				variableNamesSorted.set(0, variableNamesSorted.get(1));
+				variableNamesSorted.set(1, tmp); 
+			}
+		}
+		equations = new ArrayList<Equation>();
+		for(int i = 2; i < lines.size()-1; ++i) {
+			if(i % 2 == 0) {
+				for(String varName : variableNamesSorted) {
+					lines.set(i, lines.get(i).replaceAll(
+							varName, 
+							variableNames.get(varName)));
+				}
+				equations.add(new Equation(lines.get(i), clusterMap));
 			}
 		}
 	}

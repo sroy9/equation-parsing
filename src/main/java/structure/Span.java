@@ -17,4 +17,8 @@ public class Span {
 		this.ip = ip;
 	}
 	
-}
+	@Override
+	public String toString() {
+		return "[" + label + " " + ip+"] ";
+	}
+ }
