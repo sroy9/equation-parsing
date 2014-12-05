@@ -44,8 +44,9 @@ public class DocReader {
 					continue;
 				}
 				SimulProb simulProb = new SimulProb(index);
-				simulProb.extractVariableSpans();
 				simulProb.extractQuestionsAndSolutions();
+				simulProb.extractAllSpans();
+				simulProb.extractEqSpans();
 				KnowledgeBase.appendWorldKnowledge(simulProb);
 				simulProb.extractQuantities(quantifier);
 				System.out.println(simulProb.index+" : "+simulProb.question);

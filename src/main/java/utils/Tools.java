@@ -48,16 +48,21 @@ public class Tools {
 		return false;
 	}
 	
-	// Returns maximal NPs with at most one quantity per NP
+	// Returns maximal NPs with at most one quantity per NP, and no conjuction
 	public static List<Span> getCandidateNPs(String text, List<QuantSpan> quantSpans) 
 			throws Exception {
 		List<Span> npSpans = new ArrayList<>();
 		TextAnnotation ta = Tools.curator.getTextAnnotationWithSingleView(
-				text, ViewNames.PARSE_BERKELEY, false);
-		List<Constituent> treeNodes = ta.getView(ViewNames.PARSE_BERKELEY)
+				text, ViewNames.PARSE_STANFORD, false);
+		List<Constituent> treeNodes = ta.getView(ViewNames.PARSE_STANFORD)
 				.getConstituents();
+		System.out.println("Parse Tree");
 		for(Constituent cons : treeNodes) {
-			if(cons.getLabel().equals("NP")) {
+			System.out.println(cons.getLabel()+" : "+cons.getSurfaceString());
+		}
+		for(Constituent cons : treeNodes) {
+			if(cons.getLabel().equals("NP") && 
+					!cons.getSurfaceString().contains(" and ")) {
 				int count = 0;
 				for(QuantSpan qs : quantSpans) {
 					if(cons.getStartCharOffset() <= qs.start && 
@@ -72,6 +77,7 @@ public class Tools {
 					for(Constituent cons1 : treeNodes) {
 						if(cons1 == cons) continue;
 						if(!cons1.getLabel().equals("NP")) continue;
+						if(cons1.getSurfaceString().contains(" and ")) continue;
 						if(cons1.getStartSpan() <= cons.getStartSpan() && 
 								cons1.getEndSpan() >= cons.getEndSpan()) {
 							int count1 = 0;

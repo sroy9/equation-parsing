@@ -32,7 +32,8 @@ public class SimulProb {
 	public List<Equation> equations;
 	public List<Double> solutions;
 	public List<QuantSpan> quantities; 	
-	public List<Span> npSpans;   			
+	public List<Span> npSpans;
+	public List<Span> eqSpans;
 	public List<Span> spans;
 	public Map<String, QuantState> clusterMap;
 	
@@ -43,6 +44,7 @@ public class SimulProb {
 		quantities = new ArrayList<QuantSpan>();
 		spans = new ArrayList<Span>();
 		npSpans = new ArrayList<>();
+		eqSpans = new ArrayList<>();
 		clusterMap = new HashMap<String, QuantState>();
 	}
 	
@@ -68,8 +70,7 @@ public class SimulProb {
 	}
 	
 	// To be called first, reads brat annotation files
-	public void extractVariableSpans() throws IOException {
-		spans = new ArrayList<Span>();
+	public void extractAllSpans() throws IOException {
 		String fileName = Params.annotationDir + index + ".ann";
 		List<String> lines = FileUtils.readLines(new File(fileName));
 		String label; 
@@ -135,6 +136,14 @@ public class SimulProb {
 		}
 	}
 	
+	public void extractEqSpans() {
+		for(Span span : spans) {
+			if(span.ip.getFirst() >= question.length()) {
+				eqSpans.add(span);
+			}
+		}
+	}
+	
 	// Assumed to be called after extractVariableSpan() and quantities, and problem 
 	// extraction
 	// Extracts candidate NPs which can belong to some entity
@@ -179,12 +188,13 @@ public class SimulProb {
 		String txt = FileUtils.readFileToString(new File(fileName));
 		List<String> lines = FileUtils.readLines(new File(fileName));
 		// Find variable name maps
-		for(Span vs : spans) {
-			if(vs.ip.getFirst() >= question.length() && vs.label.startsWith("V")) {
+		for(Span vs : eqSpans) {
+			if(vs.label.startsWith("V")) {
 				variableNames.put(txt.substring(
 						vs.ip.getFirst(), vs.ip.getSecond()), vs.label);
 			}
 		}
+		System.out.println(Arrays.asList(variableNames));
 		// This is to ensure that longer name comes first, to prevent substring 
 		// matching problem
 		for(String var : variableNames.keySet()) {
@@ -202,9 +212,11 @@ public class SimulProb {
 		for(int i = 2; i < lines.size()-1; ++i) {
 			if(i % 2 == 0) {
 				for(String varName : variableNamesSorted) {
+					System.out.println("Replacing "+varName+" with "+variableNames.get(varName));
 					lines.set(i, lines.get(i).replaceAll(
 							varName, 
 							variableNames.get(varName)));
+					System.out.println("Resulting in "+lines.get(i));
 				}
 				equations.add(new Equation(lines.get(i), clusterMap));
 			}

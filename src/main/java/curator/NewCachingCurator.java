@@ -72,6 +72,8 @@ public class NewCachingCurator {
 				curator.addPOSView(ta, forceUpdate);
 			} else if(view.equals(ViewNames.PARSE_BERKELEY)) {
 				curator.addBerkeleyParse(ta, forceUpdate);
+			} else if(view.equals(ViewNames.PARSE_STANFORD)) {
+				curator.addStanfordParse(ta, forceUpdate);
 			} else if(view.equals(ViewNames.SRL_VERB)) {
 				curator.addSRLVerbView(ta, forceUpdate);
 			} else if(view.equals(ViewNames.DEPENDENCY_STANFORD)) {
