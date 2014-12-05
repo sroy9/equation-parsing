@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -12,10 +13,13 @@ import org.apache.commons.io.FileUtils;
 import com.google.gson.reflect.*;
 import com.google.gson.*;
 
+import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
+import structure.Equation;
 import structure.KnowledgeBase;
 import structure.SimpleProb;
 import structure.SimulProb;
+import structure.Span;
 
 public class DocReader {
 	
@@ -44,9 +48,29 @@ public class DocReader {
 				simulProb.extractQuestionsAndSolutions();
 				KnowledgeBase.appendWorldKnowledge(simulProb);
 				simulProb.extractQuantities(quantifier);
+				System.out.println(simulProb.index+" : "+simulProb.question);
+				System.out.println("Quantities :");
+				for(QuantSpan qs : simulProb.quantities) {
+					System.out.println(simulProb.question.substring(
+							qs.start, qs.end)+" : "+qs);
+				}
 				simulProb.extractNpSpans();
+				System.out.println("Spans :");
+				for(Span span : simulProb.npSpans) {
+					System.out.println(span.label+" : "+simulProb.question.substring(
+							span.ip.getFirst(), span.ip.getSecond())+ " : "+span.ip);
+				}
 				simulProb.extractClusters();
+				System.out.println("Cluster Map :");
+				for(String entity : simulProb.clusterMap.keySet()) {
+					System.out.println(entity + " : " + Arrays.asList(
+							simulProb.clusterMap.get(entity).mentionLocMap.keySet()));
+				}
 				simulProb.extractEquations();
+				System.out.println("Equations :");
+				for(Equation eq : simulProb.equations) {
+					System.out.println(eq.toString());
+				}
 				simulProb.spans = null; // To prevent it from being used
 				simulProbList.add(simulProb);
 			}

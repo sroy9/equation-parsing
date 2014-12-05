@@ -50,7 +50,7 @@ public class Equation {
 			
 			for(int i = 0; i < str.length(); i++) {
 				if(Tools.getOperationFromString(""+str.charAt(i)) != null) {
-					String term = (eqString.substring(lastLoc, i));
+					String term = (str.substring(lastLoc, i));
 					if(term.equals("V1") || term.equals("V2")) continue;
 					if(correctTerm.equals("A1")) A1.add(
 							new Pair<Operation, String>(lastOp, term));
@@ -66,7 +66,7 @@ public class Equation {
 					lastOp = Tools.getOperationFromString(""+str.charAt(i));
 				}
 			}
-			String term = (eqString.substring(lastLoc));
+			String term = (str.substring(lastLoc));
 			if(term.equals("V1") || term.equals("V2")) continue;
 			if(correctTerm.equals("A1")) A1.add(
 					new Pair<Operation, String>(lastOp, term));

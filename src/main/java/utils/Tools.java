@@ -99,9 +99,9 @@ public class Tools {
 		  public int compare(Span o1, Span o2)  
 		  {  
 			  if(o1.ip.getFirst() < o2.ip.getSecond()) {
-				  return 1;
-			  } else {
 				  return -1;
+			  } else {
+				  return 1;
 			  }
 			    
 		  }

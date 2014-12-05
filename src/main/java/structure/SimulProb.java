@@ -140,6 +140,11 @@ public class SimulProb {
 	// Extracts candidate NPs which can belong to some entity
 	public void extractNpSpans() throws Exception {
 		List<Span> candidateNpSpans = Tools.getCandidateNPs(question, quantities);
+		System.out.println("NP Spans : ");
+		for(Span span : candidateNpSpans) {
+			System.out.println(question.substring(
+					span.ip.getFirst(), span.ip.getSecond()));
+		}
 		for(Span span : candidateNpSpans) {
 			for(Span span1 : spans) {
 				if(Tools.doesIntersect(span.ip, span1.ip) && 
