@@ -23,19 +23,6 @@ public class KnowledgeBase {
 		knowledgeList = new ArrayList<Knowledge>();
 		int index1, index2;
 		Knowledge knowledge = new Knowledge(
-				"Sum is the addition of a number and another number.");
-		index1 = knowledge.knowledge.indexOf("one number");
-		index2 = knowledge.knowledge.indexOf("another number");
-		knowledge.addMentions(new ArrayList<Span>(Arrays.asList(
-				new Span("V1", new IntPair(index1, index1 + "one number".length())),
-				new Span("V2", new IntPair(index2, index2 + "another number".length())),
-				new Span("E1", new IntPair(index1, index1 + "one number".length())),
-				new Span("E2", new IntPair(index2, index2 + "another number".length()))
-				)));
-		knowledge.addTargets(new ArrayList<String>(Arrays.asList(
-				"sum")));
-		knowledgeList.add(knowledge);
-		knowledge = new Knowledge(
 				"A cow has 4 legs.");
 		index1 = knowledge.knowledge.indexOf("cow");
 		index2 = knowledge.knowledge.indexOf("4");

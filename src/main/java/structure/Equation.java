@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import utils.Tools;
 
 // Holds canonical equations
@@ -31,12 +32,24 @@ public class Equation {
 		}
 	}
 	
-	public Equation(String eqString, Map<String, QuantState> clusterMap) {
+	public Equation(String eqString, Map<String, List<QuantSpan>> clusterMap) {
 		this();
 		eqString = eqString.replace("(", "");
 		eqString = eqString.replace(")", "");
 		String strArr[] = eqString.split("(\\+|\\-|=)");
 		for(String str : strArr) {
+			// For the ratio problems
+			if(str.contains("V1") && str.contains("V2")) {
+				if(str.contains("V1/V2")) {
+					operations.set(0, Operation.MUL);
+					operations.set(2, Operation.DIV);
+				} else {
+					operations.set(0, Operation.DIV);
+					operations.set(2, Operation.MUL);
+				}
+				continue;
+			}
+			
 			int lastLoc = 0;
 			Operation lastOp = Operation.MUL;
 			String correctTerm = getTerm(str, clusterMap);
@@ -81,21 +94,24 @@ public class Equation {
 		}
 	}
 	
-	public String getTerm(String str, Map<String, QuantState> clusterMap) {
+	public String getTerm(String str, Map<String, List<QuantSpan>> clusterMap) {
 		if(str.contains("V1")) return "A1";
 		if(str.contains("V2")) return "B1";
 		int lastLoc = 0;
 		for(int i = 0; i < str.length(); i++) {
 			if(Tools.getOperationFromString(""+str.charAt(i)) != null) {
 				String term = (str.substring(lastLoc, i));
+				Double d = Double.parseDouble(term.trim());
 				int numCandidates = 0;
 				String candidate = null;
 				for(String key : clusterMap.keySet()) {
-					if(clusterMap.get(key).mentionLocMap.containsKey(term)) {
-						if(key.equals("E1")) candidate = "A2";
-						if(key.equals("E2")) candidate = "B2";
-						if(key.equals("E3")) candidate = "C";
-						numCandidates++;
+					for(QuantSpan qs : clusterMap.get(key)) {
+						if(SimulProb.getValue(qs) == d) {
+							if(key.equals("E1")) candidate = "A2";
+							if(key.equals("E2")) candidate = "B2";
+							if(key.equals("E3")) candidate = "C";
+							numCandidates++;
+						}
 					}
 				}
 				if(numCandidates == 1) {
@@ -105,14 +121,17 @@ public class Equation {
 			}
 		}
 		String term = (str.substring(lastLoc));
+		Double d = Double.parseDouble(term.trim());
 		int numCandidates = 0;
 		String candidate = null;
 		for(String key : clusterMap.keySet()) {
-			if(clusterMap.get(key).mentionLocMap.containsKey(term)) {
-				if(key.equals("E1")) candidate = "A2";
-				if(key.equals("E2")) candidate = "B2";
-				if(key.equals("E3")) candidate = "C";
-				numCandidates++;
+			for(QuantSpan qs : clusterMap.get(key)) {
+				if(SimulProb.getValue(qs) == d) {
+					if(key.equals("E1")) candidate = "A2";
+					if(key.equals("E2")) candidate = "B2";
+					if(key.equals("E3")) candidate = "C";
+					numCandidates++;
+				}
 			}
 		}
 		if(numCandidates == 1) {

@@ -40,14 +40,14 @@ public class Experiment {
 						qs.start, qs.end)+" : "+qs);
 			}
 			System.out.println("Spans :");
-			for(Span span : simulProb.npSpans) {
+			for(Span span : simulProb.spans) {
 				System.out.println(span.label+" : "+simulProb.question.substring(
 						span.ip.getFirst(), span.ip.getSecond())+ " : "+span.ip);
 			}
 			System.out.println("Cluster Map :");
 			for(String entity : simulProb.clusterMap.keySet()) {
 				System.out.println(entity + " : " + Arrays.asList(
-						simulProb.clusterMap.get(entity).mentionLocMap.keySet()));
+						simulProb.clusterMap.get(entity)));
 			}
 			System.out.println("Equations :");
 			for(Equation eq : simulProb.equations) {

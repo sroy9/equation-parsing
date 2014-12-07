@@ -32,10 +32,9 @@ public class SimulProb {
 	public List<Equation> equations;
 	public List<Double> solutions;
 	public List<QuantSpan> quantities; 	
-	public List<Span> npSpans;
 	public List<Span> eqSpans;
 	public List<Span> spans;
-	public Map<String, QuantState> clusterMap;
+	public Map<String, List<QuantSpan>> clusterMap;
 	
 	public SimulProb(int index) {
 		this.index = index;
@@ -43,9 +42,8 @@ public class SimulProb {
 		solutions = new ArrayList<Double>();
 		quantities = new ArrayList<QuantSpan>();
 		spans = new ArrayList<Span>();
-		npSpans = new ArrayList<>();
 		eqSpans = new ArrayList<>();
-		clusterMap = new HashMap<String, QuantState>();
+		clusterMap = new HashMap<String, List<QuantSpan>>();
 	}
 	
 	public void extractQuantities(Quantifier quantifier) throws IOException {
@@ -75,7 +73,6 @@ public class SimulProb {
 		List<String> lines = FileUtils.readLines(new File(fileName));
 		String label; 
 		int start, end;
-		
 		// Extract annotations from file
 		for (String line : lines) {
 			String strArr[] = line.split("\t")[1].split(" ");
@@ -84,7 +81,6 @@ public class SimulProb {
 			end = Integer.parseInt(strArr[2]);
 			spans.add(new Span(label, new IntPair(start, end)));
 		}
-		
 		// Fill up incomplete annotations, first create map of mentions to labels
 		Map<IntPair, Set<String>> mentionLabelsMap = 
 				new HashMap<IntPair, Set<String>>();
@@ -97,86 +93,43 @@ public class SimulProb {
 				mentionLabelsMap.put(vs.ip, labelsForASpan);
 			}
 		}
-		
+		// Fill up missing entries
 		for(Entry<IntPair, Set<String>> mention : mentionLabelsMap.entrySet()) {
 			if(mention.getValue().size() == 1) {
-				continue;
-			}
-			// Find variable and entity associated with a mention
-			String varName = null, entityName = null;
-			for(String str : mention.getValue()) {
-				if(str.startsWith("V")) {
-					varName = str;
-				}
-				if(str.startsWith("E")) {
-					entityName = str;
-				}
-			}
-			// Now check id varName has occurred with other entity
-			boolean withTwoEntities = false;
-			for(Entry<IntPair, Set<String>> mention1 : mentionLabelsMap.entrySet()) {
-				if(mention1.getValue().contains(varName)) {
-					for(String str : mention1.getValue()) {
-						if(str.startsWith("E") && !str.equals(entityName)) {
-							withTwoEntities = true;
-						}
+				String varName = null, entityName = null;
+				for(String str : mention.getValue()) {
+					if(str.startsWith("V")) {
+						varName = str;
+					}
+					if(str.startsWith("E")) {
+						entityName = str;
 					}
 				}
-			}
-			// If unique, go ahead and fill up missing entries
-			if(!withTwoEntities) {
-				for(Entry<IntPair, Set<String>> mention1 : mentionLabelsMap.entrySet()) {
-					if(mention1.getValue().contains(varName) && 
-							mention1.getValue().size() == 1) {
-						spans.add(new Span(entityName, mention1.getKey()));
-						mention1.getValue().add(entityName);
-					}
+				if(varName != null) {
+					spans.add(new Span("E"+varName.substring(1), mention.getKey()));
 				}
 			}
 		}
-	}
-	
-	public void extractEqSpans() {
+		// Fill up eqSpans, and remove them from spans
 		for(Span span : spans) {
 			if(span.ip.getFirst() >= question.length()) {
 				eqSpans.add(span);
 			}
 		}
-	}
-	
-	// Assumed to be called after extractVariableSpan() and quantities, and problem 
-	// extraction
-	// Extracts candidate NPs which can belong to some entity
-	public void extractNpSpans() throws Exception {
-		List<Span> candidateNpSpans = Tools.getCandidateNPs(question, quantities);
-		System.out.println("NP Spans : ");
-		for(Span span : candidateNpSpans) {
-			System.out.println(question.substring(
-					span.ip.getFirst(), span.ip.getSecond()));
-		}
-		for(Span span : candidateNpSpans) {
-			for(Span span1 : spans) {
-				if(Tools.doesIntersect(span.ip, span1.ip) && 
-						span1.label.startsWith("E")) {
-					span.label = span1.label;
-					npSpans.add(span);
-					break;
-				}
-			}
+		for(Span span : eqSpans) {
+			spans.remove(span);
 		}
 	}
 	
 	public void extractClusters() {
-		clusterMap = new HashMap<String, QuantState>();
-		for(Span span : npSpans) {
+		for(Span span : spans) {
+			if(!span.label.startsWith("E")) continue;
 			if(!clusterMap.keySet().contains(span.label)) {
-				clusterMap.put(span.label, new QuantState(span.label));
+				clusterMap.put(span.label, new ArrayList<QuantSpan>());
 			}
 			QuantSpan qs = getRelevantQuantSpans(span.ip);
 			if(qs != null) {
-				if(getValue(qs) != null) {
-					clusterMap.get(span.label).addToCluster(getValue(qs)+"", span.ip);
-				}
+				clusterMap.get(span.label).add(qs);
 			}
 		}
 	}
@@ -212,30 +165,18 @@ public class SimulProb {
 		for(int i = 2; i < lines.size()-1; ++i) {
 			if(i % 2 == 0) {
 				for(String varName : variableNamesSorted) {
-					System.out.println("Replacing "+varName+" with "+variableNames.get(varName));
+//					System.out.println("Replacing "+varName+" with "+variableNames.get(varName));
 					lines.set(i, lines.get(i).replaceAll(
 							varName, 
 							variableNames.get(varName)));
-					System.out.println("Resulting in "+lines.get(i));
+//					System.out.println("Resulting in "+lines.get(i));
 				}
 				equations.add(new Equation(lines.get(i), clusterMap));
 			}
 		}
 	}
-	
-	// Returns V1 or V2, if ip corresponds to such a label, otherwise returns null
-	public String getVariable(IntPair ip) {
-		for(Span vs : spans) {
-			if(vs.ip.getFirst() == ip.getFirst() 
-					&& vs.ip.getSecond() == ip.getSecond() 
-					&& vs.label.startsWith("V")) {
-				return vs.label;
-			}
-		}
-		return null;
-	}
-	
-	public Double getValue(QuantSpan qs) {
+
+	public static Double getValue(QuantSpan qs) {
 		if (qs.object instanceof Quantity) {
 			return ((Quantity)qs.object).value;
 		} else if (qs.object instanceof Ratio) {
@@ -245,7 +186,7 @@ public class SimulProb {
 		return null;
 	}
 	
-	public String getUnit(QuantSpan qs) {
+	public static String getUnit(QuantSpan qs) {
 		if (qs.object instanceof Quantity) {
 			return ((Quantity)qs.object).units;
 		} else if (qs.object instanceof Ratio) {

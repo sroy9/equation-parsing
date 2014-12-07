@@ -39,25 +39,23 @@ public class DocReader {
 				int index = Integer.parseInt(file.getName().substring(
 								0, 
 								file.getName().length()-4));
-				if(index == 2121 || index== 2157 || index == 1658 || 
-						index == 3583 || index == 5102) {
-					continue;
-				}
+//				if(index == 2121 || index== 2157 || index == 1658 || 
+//						index == 3583 || index == 5102) {
+//					continue;
+//				}
 				SimulProb simulProb = new SimulProb(index);
 				simulProb.extractQuestionsAndSolutions();
 				simulProb.extractAllSpans();
-				simulProb.extractEqSpans();
 				KnowledgeBase.appendWorldKnowledge(simulProb);
 				simulProb.extractQuantities(quantifier);
 				System.out.println(simulProb.index+" : "+simulProb.question);
 				System.out.println("Quantities :");
 				for(QuantSpan qs : simulProb.quantities) {
 					System.out.println(simulProb.question.substring(
-							qs.start, qs.end)+" : "+qs);
+							qs.start, qs.end)+" : "+qs + " : "+SimulProb.getValue(qs));
 				}
-				simulProb.extractNpSpans();
 				System.out.println("Spans :");
-				for(Span span : simulProb.npSpans) {
+				for(Span span : simulProb.spans) {
 					System.out.println(span.label+" : "+simulProb.question.substring(
 							span.ip.getFirst(), span.ip.getSecond())+ " : "+span.ip);
 				}
@@ -65,14 +63,13 @@ public class DocReader {
 				System.out.println("Cluster Map :");
 				for(String entity : simulProb.clusterMap.keySet()) {
 					System.out.println(entity + " : " + Arrays.asList(
-							simulProb.clusterMap.get(entity).mentionLocMap.keySet()));
+							simulProb.clusterMap.get(entity)));
 				}
 				simulProb.extractEquations();
 				System.out.println("Equations :");
 				for(Equation eq : simulProb.equations) {
 					System.out.println(eq.toString());
 				}
-				simulProb.spans = null; // To prevent it from being used
 				simulProbList.add(simulProb);
 			}
 		}
@@ -83,5 +80,5 @@ public class DocReader {
 			newSimulProbList.add(simulProbList.get(i));
 		}
 		return newSimulProbList;
-	}	
+	}		
 }
