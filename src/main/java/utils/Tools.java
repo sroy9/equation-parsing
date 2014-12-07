@@ -48,71 +48,6 @@ public class Tools {
 		return false;
 	}
 	
-	// Returns maximal NPs with at most one quantity per NP, and no conjuction
-	public static List<Span> getCandidateNPs(String text, List<QuantSpan> quantSpans) 
-			throws Exception {
-		List<Span> npSpans = new ArrayList<>();
-		TextAnnotation ta = Tools.curator.getTextAnnotationWithSingleView(
-				text, ViewNames.PARSE_STANFORD, false);
-		List<Constituent> treeNodes = ta.getView(ViewNames.PARSE_STANFORD)
-				.getConstituents();
-		System.out.println("Parse Tree");
-		for(Constituent cons : treeNodes) {
-			System.out.println(cons.getLabel()+" : "+cons.getSurfaceString());
-		}
-		for(Constituent cons : treeNodes) {
-			if(cons.getLabel().equals("NP")) {
-				int count = 0;
-				for(QuantSpan qs : quantSpans) {
-					if(cons.getStartCharOffset() <= qs.start && 
-							qs.end <= cons.getEndCharOffset()) {
-						count++;
-					}
-				}
-				boolean allow = false;
-				if(count <= 1) {
-					allow = true;
-					// Check if a parent can replace the child
-					for(Constituent cons1 : treeNodes) {
-						if(cons1 == cons) continue;
-						if(!cons1.getLabel().equals("NP")) continue;
-						if(cons1.getStartSpan() <= cons.getStartSpan() && 
-								cons1.getEndSpan() >= cons.getEndSpan()) {
-							int count1 = 0;
-							for(QuantSpan qs : quantSpans) {
-								if(cons1.getStartCharOffset() <= qs.start && 
-										qs.end <= cons1.getEndCharOffset()) {
-									count1++;
-								}
-							}
-							if(count1 <= 1) {
-								allow = false;
-							}
-						}
-					}
-				}
-				if(allow) {
-					npSpans.add(new Span(null, new IntPair(
-							cons.getStartCharOffset(), cons.getEndCharOffset())));
-				}
-			}
-		}
-		// Make the spans ordered
-		Collections.sort(npSpans, new Comparator<Span>()  {  
-		  @Override  
-		  public int compare(Span o1, Span o2)  
-		  {  
-			  if(o1.ip.getFirst() < o2.ip.getSecond()) {
-				  return -1;
-			  } else {
-				  return 1;
-			  }
-			    
-		  }
-		});
-		return npSpans;		
-	}
-	
 	public static Operation getOperationFromString(String op) {
 		if(op.equals("ADD") || op.equals("+")) return Operation.ADD;
 		if(op.equals("SUB") || op.equals("-")) return Operation.SUB;
@@ -120,5 +55,15 @@ public class Tools {
 		if(op.equals("DIV") || op.equals("/")) return Operation.DIV;
 		if(op.equals("EQ") || op.equals("=")) return Operation.EQ;
 		return null;
+	}
+	
+	public static boolean safeEquals(Double d1, Double d2) {
+		if(d1 == null || d2 == null) {
+			return false;
+		}
+		if(d1 > d2 - 0.0001 && d1 < d2 + 0.0001) {
+			return true;
+		}
+		return false;
 	}
 }

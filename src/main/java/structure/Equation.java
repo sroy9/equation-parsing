@@ -2,8 +2,10 @@ package structure;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
@@ -32,8 +34,44 @@ public class Equation {
 		}
 	}
 	
-	public Equation(String eqString, Map<String, List<QuantSpan>> clusterMap) {
+	public Equation(int index, String eqString, Map<String, List<QuantSpan>> clusterMap) {
 		this();
+		// For negative problems
+		if(eqString.equals("(2.0*V1)-(-8.0)=(-12.0)")) {
+			operations.set(0, Operation.ADD);
+			operations.set(1, Operation.SUB);
+			operations.set(3, Operation.EQ);
+			A1.add(new Pair<Operation, String>(Operation.MUL, "2.0"));
+			A2.add(new Pair<Operation, String>(Operation.MUL, "-8.0"));
+			C.add(new Pair<Operation, String>(Operation.MUL, "-12.0"));
+			return;
+		}
+		if(eqString.equals("0.833*V1=(-60.0)")) {
+			operations.set(0, Operation.ADD);
+			operations.set(3, Operation.EQ);
+			A1.add(new Pair<Operation, String>(Operation.MUL, "0.833"));
+			C.add(new Pair<Operation, String>(Operation.MUL, "-60.0"));
+			return;
+		}
+		if(index == 6666 && eqString.equals("V1+V2=(-64.0)")) {
+			operations.set(0, Operation.ADD);
+			operations.set(2, Operation.ADD);
+			operations.set(4, Operation.EQ);
+			C.add(new Pair<Operation, String>(Operation.MUL, "-64.0"));
+			return;
+		}
+
+		// For ambiguous matching
+		if(index == 6208 && eqString.equals("V1=(2.0*V2)+1.0")) {
+			operations.set(0, Operation.ADD);
+			operations.set(2, Operation.EQ);
+			operations.set(3, Operation.ADD);
+			B1.add(new Pair<Operation, String>(Operation.MUL, "2.0"));
+			B2.add(new Pair<Operation, String>(Operation.MUL, "1.0"));
+			return;
+		}
+		
+		// Replace brackets
 		eqString = eqString.replace("(", "");
 		eqString = eqString.replace(")", "");
 		String strArr[] = eqString.split("(\\+|\\-|=)");
@@ -49,7 +87,6 @@ public class Equation {
 				}
 				continue;
 			}
-			
 			int lastLoc = 0;
 			Operation lastOp = Operation.MUL;
 			String correctTerm = getTerm(str, clusterMap);
@@ -102,19 +139,22 @@ public class Equation {
 			if(Tools.getOperationFromString(""+str.charAt(i)) != null) {
 				String term = (str.substring(lastLoc, i));
 				Double d = Double.parseDouble(term.trim());
-				int numCandidates = 0;
+				Set<String> candidates = new HashSet<String>();
 				String candidate = null;
 				for(String key : clusterMap.keySet()) {
 					for(QuantSpan qs : clusterMap.get(key)) {
-						if(SimulProb.getValue(qs) == d) {
+						System.out.println("Comparing "+SimulProb.getValue(qs)+" with "+d);
+						if(Tools.safeEquals(SimulProb.getValue(qs), d)) {
 							if(key.equals("E1")) candidate = "A2";
 							if(key.equals("E2")) candidate = "B2";
 							if(key.equals("E3")) candidate = "C";
-							numCandidates++;
+							candidates.add(candidate);
 						}
 					}
 				}
-				if(numCandidates == 1) {
+				System.out.println("Searching candidates for "+term+
+						" : Found : "+candidates.size());
+				if(candidates.size() == 1) {
 					return candidate;
 				}
 				lastLoc = i;
@@ -122,19 +162,22 @@ public class Equation {
 		}
 		String term = (str.substring(lastLoc));
 		Double d = Double.parseDouble(term.trim());
-		int numCandidates = 0;
+		Set<String> candidates = new HashSet<String>();
 		String candidate = null;
 		for(String key : clusterMap.keySet()) {
 			for(QuantSpan qs : clusterMap.get(key)) {
-				if(SimulProb.getValue(qs) == d) {
+				System.out.println("Comparing "+SimulProb.getValue(qs)+" with "+d);
+				if(Tools.safeEquals(SimulProb.getValue(qs), d)) {
 					if(key.equals("E1")) candidate = "A2";
 					if(key.equals("E2")) candidate = "B2";
 					if(key.equals("E3")) candidate = "C";
-					numCandidates++;
+					candidates.add(candidate);
 				}
 			}
 		}
-		if(numCandidates == 1) {
+		System.out.println("Searching candidates for "+term+
+				" : Found : "+candidates.size());
+		if(candidates.size() == 1) {
 			return candidate;
 		}
 		return null;
@@ -179,5 +222,6 @@ public class Equation {
 		System.out.println("Operations : " + Arrays.asList(operations));
 		return str;
 	}
+	
 
 }

@@ -44,6 +44,9 @@ public class SimulProb {
 		spans = new ArrayList<Span>();
 		eqSpans = new ArrayList<>();
 		clusterMap = new HashMap<String, List<QuantSpan>>();
+		clusterMap.put("E1", new ArrayList<QuantSpan>());
+		clusterMap.put("E2", new ArrayList<QuantSpan>());
+		clusterMap.put("E3", new ArrayList<QuantSpan>());
 	}
 	
 	public void extractQuantities(Quantifier quantifier) throws IOException {
@@ -124,12 +127,18 @@ public class SimulProb {
 	public void extractClusters() {
 		for(Span span : spans) {
 			if(!span.label.startsWith("E")) continue;
-			if(!clusterMap.keySet().contains(span.label)) {
-				clusterMap.put(span.label, new ArrayList<QuantSpan>());
-			}
 			QuantSpan qs = getRelevantQuantSpans(span.ip);
-			if(qs != null) {
+			if(qs != null && !clusterMap.get(span.label).contains(qs)) {
 				clusterMap.get(span.label).add(qs);
+			}
+		}
+		// Remove duplicates if already present in E3
+		for(QuantSpan qs : clusterMap.get("E3")) {
+			if(clusterMap.get("E1").contains(qs)) {
+				clusterMap.get("E1").remove(qs);
+			}
+			if(clusterMap.get("E2").contains(qs)) {
+				clusterMap.get("E2").remove(qs);
 			}
 		}
 	}
@@ -171,7 +180,7 @@ public class SimulProb {
 							variableNames.get(varName)));
 //					System.out.println("Resulting in "+lines.get(i));
 				}
-				equations.add(new Equation(lines.get(i), clusterMap));
+				equations.add(new Equation(index, lines.get(i), clusterMap));
 			}
 		}
 	}
@@ -204,4 +213,5 @@ public class SimulProb {
 		}
 		return null;
 	}
+	
 }

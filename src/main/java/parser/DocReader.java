@@ -39,10 +39,9 @@ public class DocReader {
 				int index = Integer.parseInt(file.getName().substring(
 								0, 
 								file.getName().length()-4));
-//				if(index == 2121 || index== 2157 || index == 1658 || 
-//						index == 3583 || index == 5102) {
-//					continue;
-//				}
+				if(index == 2121 || index == 5894) {
+					continue;
+				}
 				SimulProb simulProb = new SimulProb(index);
 				simulProb.extractQuestionsAndSolutions();
 				simulProb.extractAllSpans();
