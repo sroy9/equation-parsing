@@ -9,8 +9,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
 
-import structure.LabelSet;
-import structure.VarSet;
 import utils.FeatureExtraction;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
@@ -18,7 +16,7 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.util.IFeatureVector;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
-public class FeatureExtractor extends AbstractFeatureGenerator implements Serializable{
+public class MentionFeatureExtractor extends AbstractFeatureGenerator implements Serializable{
 	/**
 	 * 
 	 */
@@ -33,7 +31,7 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements Serial
 	 */
 	protected Lexiconer lm = null;	
    
-	public FeatureExtractor(Lexiconer lm) {		
+	public MentionFeatureExtractor(Lexiconer lm) {		
 		this.lm = lm;
 	}
 

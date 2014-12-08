@@ -7,7 +7,6 @@ public class Params {
 	public static String cacheLoc = 
 			"/shared/trollope/sroy9/math_word_problems/cache/";
 //			"/Users/subhroroy/cache/";
-	public static String spModelFile = "data/model.sp";
 	public static String spConfigFile = "config/DCD.config";
 
 }

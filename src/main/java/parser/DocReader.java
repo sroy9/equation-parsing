@@ -20,6 +20,7 @@ import structure.KnowledgeBase;
 import structure.SimpleProb;
 import structure.SimulProb;
 import structure.Span;
+import utils.Tools;
 
 public class DocReader {
 	
@@ -51,7 +52,7 @@ public class DocReader {
 				System.out.println("Quantities :");
 				for(QuantSpan qs : simulProb.quantities) {
 					System.out.println(simulProb.question.substring(
-							qs.start, qs.end)+" : "+qs + " : "+SimulProb.getValue(qs));
+							qs.start, qs.end)+" : "+qs + " : "+Tools.getValue(qs));
 				}
 				System.out.println("Spans :");
 				for(Span span : simulProb.spans) {

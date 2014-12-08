@@ -1,4 +1,4 @@
-package structure;
+package mentiondetect;
 
 import java.util.ArrayList;
 import java.util.List;

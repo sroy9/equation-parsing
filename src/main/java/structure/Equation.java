@@ -34,13 +34,42 @@ public class Equation {
 		}
 	}
 	
+	// Takes into consideration that A's and B's can be interchanged
+	public boolean equals(Object obj) {
+		if(obj == null || !(obj instanceof Equation)) return false;
+		Equation eq = (Equation) obj;
+		if(Arrays.asList(A1).equals(Arrays.asList(eq.A1)) && 
+				Arrays.asList(A2).equals(Arrays.asList(eq.A2)) &&
+				Arrays.asList(B1).equals(Arrays.asList(eq.B1)) &&
+				Arrays.asList(B2).equals(Arrays.asList(eq.B2)) &&
+				Arrays.asList(C).equals(Arrays.asList(eq.C))) {
+			if(Arrays.asList(operations).equals(Arrays.asList(eq.operations))) {
+				return true;
+			}
+		}
+		if(Arrays.asList(A1).equals(Arrays.asList(eq.B1)) && 
+				Arrays.asList(A2).equals(Arrays.asList(eq.B2)) &&
+				Arrays.asList(B1).equals(Arrays.asList(eq.A1)) &&
+				Arrays.asList(B2).equals(Arrays.asList(eq.A2)) &&
+				Arrays.asList(C).equals(Arrays.asList(eq.C))) {
+			if(operations.get(0) == eq.operations.get(2) && 
+					operations.get(1) == eq.operations.get(3) && 
+					operations.get(2) == eq.operations.get(0) && 
+					operations.get(3) == eq.operations.get(1) && 
+					operations.get(4) == eq.operations.get(4)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public Equation(int index, String eqString, Map<String, List<QuantSpan>> clusterMap) {
 		this();
 		// For negative problems
 		if(eqString.equals("(2.0*V1)-(-8.0)=(-12.0)")) {
 			operations.set(0, Operation.ADD);
 			operations.set(1, Operation.SUB);
-			operations.set(3, Operation.EQ);
+			operations.set(3, Operation.SUB);
 			A1.add(new Pair<Operation, String>(Operation.MUL, "2.0"));
 			A2.add(new Pair<Operation, String>(Operation.MUL, "-8.0"));
 			C.add(new Pair<Operation, String>(Operation.MUL, "-12.0"));
@@ -48,7 +77,7 @@ public class Equation {
 		}
 		if(eqString.equals("0.833*V1=(-60.0)")) {
 			operations.set(0, Operation.ADD);
-			operations.set(3, Operation.EQ);
+			operations.set(3, Operation.SUB);
 			A1.add(new Pair<Operation, String>(Operation.MUL, "0.833"));
 			C.add(new Pair<Operation, String>(Operation.MUL, "-60.0"));
 			return;
@@ -56,7 +85,7 @@ public class Equation {
 		if(index == 6666 && eqString.equals("V1+V2=(-64.0)")) {
 			operations.set(0, Operation.ADD);
 			operations.set(2, Operation.ADD);
-			operations.set(4, Operation.EQ);
+			operations.set(4, Operation.SUB);
 			C.add(new Pair<Operation, String>(Operation.MUL, "-64.0"));
 			return;
 		}
@@ -64,7 +93,7 @@ public class Equation {
 		// For ambiguous matching
 		if(index == 6208 && eqString.equals("V1=(2.0*V2)+1.0")) {
 			operations.set(0, Operation.ADD);
-			operations.set(2, Operation.EQ);
+			operations.set(2, Operation.SUB);
 			operations.set(3, Operation.ADD);
 			B1.add(new Pair<Operation, String>(Operation.MUL, "2.0"));
 			B2.add(new Pair<Operation, String>(Operation.MUL, "1.0"));
@@ -90,7 +119,7 @@ public class Equation {
 			int lastLoc = 0;
 			Operation lastOp = Operation.MUL;
 			String correctTerm = getTerm(str, clusterMap);
-			if(correctTerm == null) System.out.println("EqString : "+eqString);
+//			if(correctTerm == null) System.out.println("EqString : "+eqString);
 
 			if(correctTerm.equals("A1")) operations.set(0, getOperation(str, eqString));
 			if(correctTerm.equals("A2")) operations.set(1, getOperation(str, eqString));
@@ -143,8 +172,8 @@ public class Equation {
 				String candidate = null;
 				for(String key : clusterMap.keySet()) {
 					for(QuantSpan qs : clusterMap.get(key)) {
-						System.out.println("Comparing "+SimulProb.getValue(qs)+" with "+d);
-						if(Tools.safeEquals(SimulProb.getValue(qs), d)) {
+						System.out.println("Comparing "+Tools.getValue(qs)+" with "+d);
+						if(Tools.safeEquals(Tools.getValue(qs), d)) {
 							if(key.equals("E1")) candidate = "A2";
 							if(key.equals("E2")) candidate = "B2";
 							if(key.equals("E3")) candidate = "C";
@@ -152,8 +181,6 @@ public class Equation {
 						}
 					}
 				}
-				System.out.println("Searching candidates for "+term+
-						" : Found : "+candidates.size());
 				if(candidates.size() == 1) {
 					return candidate;
 				}
@@ -166,8 +193,7 @@ public class Equation {
 		String candidate = null;
 		for(String key : clusterMap.keySet()) {
 			for(QuantSpan qs : clusterMap.get(key)) {
-				System.out.println("Comparing "+SimulProb.getValue(qs)+" with "+d);
-				if(Tools.safeEquals(SimulProb.getValue(qs), d)) {
+				if(Tools.safeEquals(Tools.getValue(qs), d)) {
 					if(key.equals("E1")) candidate = "A2";
 					if(key.equals("E2")) candidate = "B2";
 					if(key.equals("E3")) candidate = "C";
@@ -175,8 +201,6 @@ public class Equation {
 				}
 			}
 		}
-		System.out.println("Searching candidates for "+term+
-				" : Found : "+candidates.size());
 		if(candidates.size() == 1) {
 			return candidate;
 		}
@@ -188,7 +212,9 @@ public class Equation {
 		if(index == 0) {
 			return Operation.ADD;	
 		} else {
-			return Tools.getOperationFromString(""+eqString.charAt(index-1));
+			Operation op = Tools.getOperationFromString(""+eqString.charAt(index-1));
+			if(op == Operation.EQ) return Operation.SUB;
+			return op;
 		}
 	}
 	

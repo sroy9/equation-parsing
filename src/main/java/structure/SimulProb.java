@@ -21,8 +21,6 @@ import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
-import edu.illinois.cs.cogcomp.quant.standardize.Quantity;
-import edu.illinois.cs.cogcomp.quant.standardize.Ratio;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
  
 public class SimulProb {
@@ -156,7 +154,6 @@ public class SimulProb {
 						vs.ip.getFirst(), vs.ip.getSecond()), vs.label);
 			}
 		}
-		System.out.println(Arrays.asList(variableNames));
 		// This is to ensure that longer name comes first, to prevent substring 
 		// matching problem
 		for(String var : variableNames.keySet()) {
@@ -185,25 +182,6 @@ public class SimulProb {
 		}
 	}
 
-	public static Double getValue(QuantSpan qs) {
-		if (qs.object instanceof Quantity) {
-			return ((Quantity)qs.object).value;
-		} else if (qs.object instanceof Ratio) {
-			return ((Ratio)qs.object).numerator.value / 
-					((Ratio)qs.object).denominator.value;
-		}
-		return null;
-	}
-	
-	public static String getUnit(QuantSpan qs) {
-		if (qs.object instanceof Quantity) {
-			return ((Quantity)qs.object).units;
-		} else if (qs.object instanceof Ratio) {
-			return ((Ratio)qs.object).denominator.units;
-		}
-		return null;
-	}
-	
 	public QuantSpan getRelevantQuantSpans(IntPair ip) {
 		for(QuantSpan qs : quantities) {
 			if((qs.start <= ip.getFirst() && ip.getFirst() < qs.end) 

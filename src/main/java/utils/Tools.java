@@ -14,6 +14,8 @@ import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
+import edu.illinois.cs.cogcomp.quant.standardize.Quantity;
+import edu.illinois.cs.cogcomp.quant.standardize.Ratio;
 
 public class Tools {
 	
@@ -65,5 +67,24 @@ public class Tools {
 			return true;
 		}
 		return false;
+	}
+
+	public static Double getValue(QuantSpan qs) {
+		if (qs.object instanceof Quantity) {
+			return ((Quantity)qs.object).value;
+		} else if (qs.object instanceof Ratio) {
+			return ((Ratio)qs.object).numerator.value / 
+					((Ratio)qs.object).denominator.value;
+		}
+		return null;
+	}
+
+	public static String getUnit(QuantSpan qs) {
+		if (qs.object instanceof Quantity) {
+			return ((Quantity)qs.object).units;
+		} else if (qs.object instanceof Ratio) {
+			return ((Ratio)qs.object).denominator.units;
+		}
+		return null;
 	}
 }
