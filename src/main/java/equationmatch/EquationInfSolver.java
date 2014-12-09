@@ -31,22 +31,54 @@ implements Serializable {
 	@Override
 	public IStructure getBestStructure(WeightVector wv, IInstance x)
 			throws Exception {
-		
-		return null;
+		return getLossAugmentedBestStructure(wv, x, null);
 	}
 
 	@Override
 	public float getLoss(IInstance arg0, IStructure arg1, IStructure arg2) {
 		Lattice l1 = (Lattice) arg1;
 		Lattice l2 = (Lattice) arg2;
-		if(l1.equals(l2))
-		{
-			return 0;
+		float loss = 0.0f;
+		for(int i=0; i<2; ++i) {
+			Equation eq1 = l1.equations.get(i);
+			Equation eq2 = l2.equations.get(i);
+			for(Pair<Operation, Double> pair : eq1.A1) {
+				if(!eq2.A1.contains(pair)) loss = loss + 1;
+			}
+			for(Pair<Operation, Double> pair : eq1.A2) {
+				if(!eq2.A2.contains(pair)) loss = loss + 1;
+			}
+			for(Pair<Operation, Double> pair : eq1.B1) {
+				if(!eq2.B1.contains(pair)) loss = loss + 1;
+			}
+			for(Pair<Operation, Double> pair : eq1.B2) {
+				if(!eq2.B2.contains(pair)) loss = loss + 1;
+			}
+			for(Pair<Operation, Double> pair : eq1.C) {
+				if(!eq2.C.contains(pair)) loss = loss + 1;
+			}
+			for(Pair<Operation, Double> pair : eq2.A1) {
+				if(!eq1.A1.contains(pair)) loss = loss + 1;
+			}
+			for(Pair<Operation, Double> pair : eq2.A2) {
+				if(!eq1.A2.contains(pair)) loss = loss + 1;
+			}
+			for(Pair<Operation, Double> pair : eq2.B1) {
+				if(!eq1.B1.contains(pair)) loss = loss + 1;
+			}
+			for(Pair<Operation, Double> pair : eq2.B2) {
+				if(!eq1.B2.contains(pair)) loss = loss + 1;
+			}
+			for(Pair<Operation, Double> pair : eq2.C) {
+				if(!eq1.C.contains(pair)) loss = loss + 1;
+			}
+			for(int j=0; j<5; j++) {
+				if(eq1.operations.get(j) != eq2.operations.get(j)) {
+					loss = loss + 1;
+				}
+			}
 		}
-		else {
-//			System.out.println("LOSS!");
-			return 1;
-		}
+		return loss;
 	}
 
 	@Override
@@ -54,10 +86,12 @@ implements Serializable {
 			WeightVector wv, IInstance arg1, IStructure arg2) throws Exception {
 		Blob blob = (Blob) arg1;
 		Lattice gold = (Lattice) arg2;
+		List<Operation> operationList = Arrays.asList(
+				Operation.ADD, Operation.SUB, Operation.MUL, Operation.DIV, 
+				Operation.NONE);
 		Map<String, List<QuantSpan>> clusterMap = blob.simulProb.clusterMap;
 		List<Pair<Lattice, Double>> tmpLatticeList = 
 				new ArrayList<Pair<Lattice, Double>>();
-		Lattice best = null;
 		BoundedPriorityQueue<Pair<Lattice, Double>> beam = 
 				new BoundedPriorityQueue<Pair<Lattice, Double>>(50);
 		beam.add(new Pair<Lattice, Double>(new Lattice(), 0.0));
@@ -161,7 +195,6 @@ implements Serializable {
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
 							featGen.getFeaturesVector(blob, tmpLattice, i, "C"))));
 				}
-				best = beam.element().getFirst();
 				it = beam.iterator();
 				tmpLatticeList.clear();
 				for(;it.hasNext();) {
@@ -169,8 +202,46 @@ implements Serializable {
 				}
 				beam.clear();
 			}
+
+			for(Pair<Lattice, Double> pair : tmpLatticeList) {
+				for(Operation op1 : operationList) {
+					for(Operation op2 : operationList) {
+						for(Operation op3 : operationList) {
+							for(Operation op4 : operationList) {
+								for(Operation op5 : operationList) {
+									Lattice tmpLattice = new Lattice(pair.getFirst());
+									Equation tmpEq = tmpLattice.equations.get(i);
+									if(tmpEq.operations.get(1) != Operation.NONE &&
+											tmpEq.A2.size() == 0) continue;
+									if(tmpEq.operations.get(3) != Operation.NONE &&
+											tmpEq.B2.size() == 0) continue;
+									if(tmpEq.operations.get(4) != Operation.NONE &&
+											tmpEq.C.size() == 0) continue;
+									if(op1 == Operation.NONE && op2 == Operation.NONE) {
+										continue;
+									}
+									tmpEq.operations.set(0, op1);
+									tmpEq.operations.set(1, op2);
+									tmpEq.operations.set(2, op3);
+									tmpEq.operations.set(3, op4);
+									tmpEq.operations.set(4, op5);
+									beam.add(new Pair<Lattice, Double>(
+											tmpLattice, 
+											pair.getSecond()+wv.dotProduct(
+													featGen.getFeaturesVector(
+															blob, 
+															tmpLattice, 
+															i, 
+															"Op"))));
+								}
+							}
+						}
+					}
+				}
+			}
+			
 		}
-		return best;
+		return beam.element().getFirst();
 	}
 
 }

@@ -7,6 +7,9 @@ import java.util.List;
 import structure.Equation;
 import structure.Operation;
 import utils.FeatureExtraction;
+import utils.Tools;
+import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -39,7 +42,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<>();
 		// Enumerate all positions
 		for(int i=0; i<lattice.equations.size(); ++i) {
-			Equation eq = lattice.equations.get(i);
 			try {
 				features.addAll(getFeatures(blob, lattice, i, "A1"));
 				features.addAll(getFeatures(blob, lattice, i, "A2"));
@@ -48,26 +50,100 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				features.addAll(getFeatures(blob, lattice, i, "C"));
 				features.addAll(getFeatures(blob, lattice, i, "Op"));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		}
 		return FeatureExtraction.getFeatureVectorFromList(features, lm);
 	}
 
 	public List<String> getFeatures(
-			Blob blob, Lattice l, int eqNo, String arrayName) 
+			Blob blob, Lattice lattice, int eqNo, String arrayName) 
 					throws Exception {
 		List<String> feats = new ArrayList<>();
-		// All feature functions go here
+		feats.addAll(getNeighboringWordFeatures(blob, lattice, eqNo, arrayName));
 		return feats;
 	}
 
 	public IFeatureVector getFeaturesVector(
-			Blob blob, Lattice lattice, int eqNo, String arrayName) {
-		List<String> feats = new ArrayList<>();
+			Blob blob, Lattice lattice, int eqNo, String arrayName) throws Exception {
+		List<String> feats = getFeatures(blob, lattice, eqNo, arrayName);
 		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
 	}
 	
+	public List<String> getNeighboringWordFeatures(
+			Blob blob, Lattice lattice, int eqNo, String arrayName) throws Exception {
+		List<String> features = new ArrayList<String>();
+		String prefix = arrayName + "_" + eqNo;
+		List<QuantSpan> relevantQuantSpans = getRelevantQuantSpan(
+				blob, lattice, eqNo, arrayName);
+		for(QuantSpan qs : relevantQuantSpans) {
+			int pos = blob.ta.getTokenIdFromCharacterOffset(qs.start);
+			for(String feature : FeatureExtraction.getFormPP(blob.ta, pos, 2)) {
+				features.add(prefix + "_" + feature);
+			}
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features.add(prefix + "_" + feature);
+			}
+			for(String feature : FeatureExtraction.getPOSWindowPP(blob.posTags, pos, 2)) {
+				features.add(prefix + "_" + feature);
+			}
+		}
+		return features;
+	}
+	
+	public List<QuantSpan> getRelevantQuantSpan(
+			Blob blob, Lattice lattice, int eqNo, String arrayName) {
+		List<QuantSpan> relevantQuantSpans = new ArrayList<QuantSpan>();
+		if(arrayName.equals("A1")) {
+			for(QuantSpan qs : blob.clusterMap.get("E1")) {
+				for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).A1) {
+					if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
+						relevantQuantSpans.add(qs);
+						break;
+					}
+				}
+			}
+		}
+		if(arrayName.equals("A2")) {
+			for(QuantSpan qs : blob.clusterMap.get("E1")) {
+				for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).A2) {
+					if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
+						relevantQuantSpans.add(qs);
+						break;
+					}
+				}
+			}
+		}
+		if(arrayName.equals("B1")) {
+			for(QuantSpan qs : blob.clusterMap.get("E2")) {
+				for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).B1) {
+					if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
+						relevantQuantSpans.add(qs);
+						break;
+					}
+				}
+			}
+		}
+		if(arrayName.equals("B2")) {
+			for(QuantSpan qs : blob.clusterMap.get("E2")) {
+				for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).B2) {
+					if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
+						relevantQuantSpans.add(qs);
+						break;
+					}
+				}
+			}
+		}
+		if(arrayName.equals("C")) {
+			for(QuantSpan qs : blob.clusterMap.get("E3")) {
+				for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).C) {
+					if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
+						relevantQuantSpans.add(qs);
+						break;
+					}
+				}
+			}
+		}
+		return relevantQuantSpans;
+	}
 }

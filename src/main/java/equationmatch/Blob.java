@@ -1,6 +1,7 @@
 package equationmatch;
 
 import java.util.List;
+import java.util.Map;
 
 import structure.SimulProb;
 import utils.Tools;
@@ -17,10 +18,12 @@ public class Blob implements IInstance {
 	public List<Constituent> posTags;
 	public List<Constituent> lemmas;
 	public List<QuantSpan> quantities;
+	public Map<String, List<QuantSpan>> clusterMap;
 
 	public Blob(SimulProb simulProb) throws Exception {
 		this.simulProb = simulProb;
 		this.quantities = simulProb.quantities;
+		this.clusterMap = simulProb.clusterMap;
 		ta = new TextAnnotation("", "", simulProb.question);
 		posTags = Tools.curator.getTextAnnotationWithSingleView(
 				simulProb.question, ViewNames.POS, false)
