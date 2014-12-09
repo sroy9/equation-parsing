@@ -15,6 +15,7 @@ public class Lattice implements IStructure {
 		equations.add(new Equation());
 	}
 	
+	// We assume a canonical ordering of equations under lattice
 	public boolean equals(Object obj) {
 		if(obj == null || !(obj instanceof Lattice)) {
 			return false;
@@ -22,10 +23,6 @@ public class Lattice implements IStructure {
 		Lattice lattice = (Lattice) obj;
 		if(lattice.equations.get(0).equals(equations.get(0)) && 
 				lattice.equations.get(1).equals(equations.get(1))) {
-			return true;
-		}
-		if(lattice.equations.get(0).equals(equations.get(1)) && 
-				lattice.equations.get(1).equals(equations.get(0))) {
 			return true;
 		}
 		return false;

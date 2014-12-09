@@ -18,7 +18,7 @@ import utils.Tools;
 
 public class Equation {
 	
-	public List<Pair<Operation, String>> A1, A2, B1, B2, C;
+	public List<Pair<Operation, Double>> A1, A2, B1, B2, C;
 	// Should be of length 5, of which one of third or fifth should be EQ
 	List<Operation> operations; 
 	
@@ -31,6 +31,18 @@ public class Equation {
 		this.operations = new ArrayList<>();
 		for(int i=0; i<5; i++) {
 			operations.add(Operation.NONE);
+		}
+	}
+	
+	public Equation(Equation eq) {
+		this.A1 = new ArrayList<>(eq.A1);
+		this.A2 = new ArrayList<>(eq.A2);
+		this.B1 = new ArrayList<>(eq.B1);
+		this.B2 = new ArrayList<>(eq.B2);
+		this.C = new ArrayList<>(eq.C);
+		this.operations = new ArrayList<>();
+		for(int i=0; i<5; i++) {
+			operations.add(eq.operations.get(i));
 		}
 	}
 	
@@ -70,23 +82,23 @@ public class Equation {
 			operations.set(0, Operation.ADD);
 			operations.set(1, Operation.SUB);
 			operations.set(3, Operation.SUB);
-			A1.add(new Pair<Operation, String>(Operation.MUL, "2.0"));
-			A2.add(new Pair<Operation, String>(Operation.MUL, "-8.0"));
-			C.add(new Pair<Operation, String>(Operation.MUL, "-12.0"));
+			A1.add(new Pair<Operation, Double>(Operation.MUL, 2.0));
+			A2.add(new Pair<Operation, Double>(Operation.MUL, -8.0));
+			C.add(new Pair<Operation, Double>(Operation.MUL, -12.0));
 			return;
 		}
 		if(eqString.equals("0.833*V1=(-60.0)")) {
 			operations.set(0, Operation.ADD);
 			operations.set(3, Operation.SUB);
-			A1.add(new Pair<Operation, String>(Operation.MUL, "0.833"));
-			C.add(new Pair<Operation, String>(Operation.MUL, "-60.0"));
+			A1.add(new Pair<Operation, Double>(Operation.MUL, 0.833));
+			C.add(new Pair<Operation, Double>(Operation.MUL, -60.0));
 			return;
 		}
 		if(index == 6666 && eqString.equals("V1+V2=(-64.0)")) {
 			operations.set(0, Operation.ADD);
 			operations.set(2, Operation.ADD);
 			operations.set(4, Operation.SUB);
-			C.add(new Pair<Operation, String>(Operation.MUL, "-64.0"));
+			C.add(new Pair<Operation, Double>(Operation.MUL, -64.0));
 			return;
 		}
 
@@ -95,8 +107,8 @@ public class Equation {
 			operations.set(0, Operation.ADD);
 			operations.set(2, Operation.SUB);
 			operations.set(3, Operation.ADD);
-			B1.add(new Pair<Operation, String>(Operation.MUL, "2.0"));
-			B2.add(new Pair<Operation, String>(Operation.MUL, "1.0"));
+			B1.add(new Pair<Operation, Double>(Operation.MUL, 2.0));
+			B2.add(new Pair<Operation, Double>(Operation.MUL, 1.0));
 			return;
 		}
 		
@@ -132,15 +144,20 @@ public class Equation {
 					String term = (str.substring(lastLoc, i));
 					if(term.equals("V1") || term.equals("V2")) continue;
 					if(correctTerm.equals("A1")) A1.add(
-							new Pair<Operation, String>(lastOp, term));
+							new Pair<Operation, Double>(
+									lastOp, Double.parseDouble(term.trim())));
 					if(correctTerm.equals("A2")) A2.add(
-							new Pair<Operation, String>(lastOp, term));
+							new Pair<Operation, Double>(
+									lastOp, Double.parseDouble(term.trim())));
 					if(correctTerm.equals("B1")) B1.add(
-							new Pair<Operation, String>(lastOp, term));
+							new Pair<Operation, Double>(
+									lastOp, Double.parseDouble(term.trim())));
 					if(correctTerm.equals("B2")) B2.add(
-							new Pair<Operation, String>(lastOp, term));
+							new Pair<Operation, Double>(
+									lastOp, Double.parseDouble(term.trim())));
 					if(correctTerm.equals("C")) C.add(
-							new Pair<Operation, String>(lastOp, term));
+							new Pair<Operation, Double>(
+									lastOp, Double.parseDouble(term.trim())));
 					lastLoc = i+1;
 					lastOp = Tools.getOperationFromString(""+str.charAt(i));
 				}
@@ -148,15 +165,20 @@ public class Equation {
 			String term = (str.substring(lastLoc));
 			if(term.equals("V1") || term.equals("V2")) continue;
 			if(correctTerm.equals("A1")) A1.add(
-					new Pair<Operation, String>(lastOp, term));
+					new Pair<Operation, Double>(
+							lastOp, Double.parseDouble(term.trim())));
 			if(correctTerm.equals("A2")) A2.add(
-					new Pair<Operation, String>(lastOp, term));
+					new Pair<Operation, Double>(
+							lastOp, Double.parseDouble(term.trim())));
 			if(correctTerm.equals("B1")) B1.add(
-					new Pair<Operation, String>(lastOp, term));
+					new Pair<Operation, Double>(
+							lastOp, Double.parseDouble(term.trim())));
 			if(correctTerm.equals("B2")) B2.add(
-					new Pair<Operation, String>(lastOp, term));
+					new Pair<Operation, Double>(
+							lastOp, Double.parseDouble(term.trim())));
 			if(correctTerm.equals("C")) C.add(
-					new Pair<Operation, String>(lastOp, term));		
+					new Pair<Operation, Double>(
+							lastOp, Double.parseDouble(term.trim())));
 		}
 	}
 	
@@ -221,27 +243,27 @@ public class Equation {
 	public String toString() {
 		String str = "";
 		System.out.print("A1 : ");
-		for(Pair<Operation, String> pair : A1) {
+		for(Pair<Operation, Double> pair : A1) {
 			System.out.print("["+pair.getFirst()+" "+pair.getSecond()+"] ");
 		}
 		System.out.println();
 		System.out.print("A2 : ");
-		for(Pair<Operation, String> pair : A2) {
+		for(Pair<Operation, Double> pair : A2) {
 			System.out.print("["+pair.getFirst()+" "+pair.getSecond()+"] ");
 		}
 		System.out.println();
 		System.out.print("B1 : ");
-		for(Pair<Operation, String> pair : B1) {
+		for(Pair<Operation, Double> pair : B1) {
 			System.out.print("["+pair.getFirst()+" "+pair.getSecond()+"] ");
 		}
 		System.out.println();
 		System.out.print("B2 : ");
-		for(Pair<Operation, String> pair : B2) {
+		for(Pair<Operation, Double> pair : B2) {
 			System.out.print("["+pair.getFirst()+" "+pair.getSecond()+"] ");
 		}
 		System.out.println();
 		System.out.print("C : ");
-		for(Pair<Operation, String> pair : C) {
+		for(Pair<Operation, Double> pair : C) {
 			System.out.print("["+pair.getFirst()+" "+pair.getSecond()+"] ");
 		}
 		System.out.println();
