@@ -142,22 +142,23 @@ public class Equation {
 			for(int i = 0; i < str.length(); i++) {
 				if(Tools.getOperationFromString(""+str.charAt(i)) != null) {
 					String term = (str.substring(lastLoc, i));
-					if(term.equals("V1") || term.equals("V2")) continue;
-					if(correctTerm.equals("A1")) A1.add(
-							new Pair<Operation, Double>(
-									lastOp, Double.parseDouble(term.trim())));
-					if(correctTerm.equals("A2")) A2.add(
-							new Pair<Operation, Double>(
-									lastOp, Double.parseDouble(term.trim())));
-					if(correctTerm.equals("B1")) B1.add(
-							new Pair<Operation, Double>(
-									lastOp, Double.parseDouble(term.trim())));
-					if(correctTerm.equals("B2")) B2.add(
-							new Pair<Operation, Double>(
-									lastOp, Double.parseDouble(term.trim())));
-					if(correctTerm.equals("C")) C.add(
-							new Pair<Operation, Double>(
-									lastOp, Double.parseDouble(term.trim())));
+					if(!term.equals("V1") && !term.equals("V2")) {
+						if(correctTerm.equals("A1")) A1.add(
+								new Pair<Operation, Double>(
+										lastOp, Double.parseDouble(term.trim())));
+						if(correctTerm.equals("A2")) A2.add(
+								new Pair<Operation, Double>(
+										lastOp, Double.parseDouble(term.trim())));
+						if(correctTerm.equals("B1")) B1.add(
+								new Pair<Operation, Double>(
+										lastOp, Double.parseDouble(term.trim())));
+						if(correctTerm.equals("B2")) B2.add(
+								new Pair<Operation, Double>(
+										lastOp, Double.parseDouble(term.trim())));
+						if(correctTerm.equals("C")) C.add(
+								new Pair<Operation, Double>(
+										lastOp, Double.parseDouble(term.trim())));
+					}
 					lastLoc = i+1;
 					lastOp = Tools.getOperationFromString(""+str.charAt(i));
 				}
