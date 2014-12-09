@@ -15,6 +15,12 @@ public class Lattice implements IStructure {
 		equations.add(new Equation());
 	}
 	
+	public Lattice(Lattice lattice) {
+		equations = new ArrayList<Equation>();
+		equations.add(lattice.equations.get(0));
+		equations.add(lattice.equations.get(1));
+	}
+	
 	// We assume a canonical ordering of equations under lattice
 	public boolean equals(Object obj) {
 		if(obj == null || !(obj instanceof Lattice)) {

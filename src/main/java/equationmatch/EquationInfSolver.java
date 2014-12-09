@@ -55,9 +55,11 @@ implements Serializable {
 		Blob blob = (Blob) arg1;
 		Lattice gold = (Lattice) arg2;
 		Map<String, List<QuantSpan>> clusterMap = blob.simulProb.clusterMap;
-		List<Pair<Lattice, Double>> tmpLatticeList = new ArrayList<Pair<Lattice, Double>>();
+		List<Pair<Lattice, Double>> tmpLatticeList = 
+				new ArrayList<Pair<Lattice, Double>>();
+		Lattice best = null;
 		BoundedPriorityQueue<Pair<Lattice, Double>> beam = 
-				new BoundedPriorityQueue<Pair<Lattice,Double>>(50);
+				new BoundedPriorityQueue<Pair<Lattice, Double>>(50);
 		beam.add(new Pair<Lattice, Double>(new Lattice(), 0.0));
 		// Enumerate all equations
 		for(int i = 0; i < 2; i++) {
@@ -67,90 +69,108 @@ implements Serializable {
 			for(;it.hasNext();) {
 				tmpLatticeList.add(it.next());
 			}
+			beam.clear();
 			for(QuantSpan qs : clusterMap.get("E1")) {
-				for(Equation eq : eqList) {
-					Equation tmpEq = new Equation(eq);
-					tmpLatticeList.add(tmpEq);
-					tmpEq = new Equation(eq);
-					tmpEq.A1.add(new Pair<Operation, Double>(
+				for(Pair<Lattice, Double> pair : tmpLatticeList) {
+					Lattice tmpLattice = new Lattice(pair.getFirst());
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()));
+					
+					tmpLattice = new Lattice(pair.getFirst());
+					tmpLattice.equations.get(i).A1.add(new Pair<Operation, Double>(
 							Operation.MUL, Tools.getValue(qs)));
-					tmpLatticeList.add(tmpEq);
-					tmpEq = new Equation(eq);
-					tmpEq.A1.add(new Pair<Operation, Double>(
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "A1"))));
+					
+					tmpLattice = new Lattice(pair.getFirst());
+					tmpLattice.equations.get(i).A1.add(new Pair<Operation, Double>(
 							Operation.DIV, Tools.getValue(qs)));
-					tmpLatticeList.add(tmpEq);
-					tmpEq = new Equation(eq);
-					tmpEq.A2.add(new Pair<Operation, Double>(
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "A1"))));
+					
+					tmpLattice = new Lattice(pair.getFirst());
+					tmpLattice.equations.get(i).A2.add(new Pair<Operation, Double>(
 							Operation.MUL, Tools.getValue(qs)));
-					tmpLatticeList.add(tmpEq);
-					tmpEq = new Equation(eq);
-					tmpEq.A2.add(new Pair<Operation, Double>(
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "A2"))));
+					
+					tmpLattice = new Lattice(pair.getFirst());
+					tmpLattice.equations.get(i).A2.add(new Pair<Operation, Double>(
 							Operation.DIV, Tools.getValue(qs)));
-					tmpLatticeList.add(tmpEq);
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "A2"))));
 				}
+				it = beam.iterator();
+				tmpLatticeList.clear();
+				for(;it.hasNext();) {
+					tmpLatticeList.add(it.next());
+				}
+				beam.clear();
 			}
-		}
-		eqList.clear();
-		eqList.addAll(tmpLatticeList);
-		tmpLatticeList.clear();
-		
-		// TODO Do beam search here on operations 0 and 1, or can do at the end after 
-		// getting all the terms, Find all the equations first and then try to merge
-		
-		for(QuantSpan qs : clusterMap.get("E2")) {
-			for(Equation eq : eqList) {
-				Equation tmpEq = new Equation(eq);
-				tmpLatticeList.add(tmpEq);
-				tmpEq = new Equation(eq);
-				tmpEq.B1.add(new Pair<Operation, Double>(
-						Operation.MUL, Tools.getValue(qs)));
-				eqList.add(tmpEq);
-				tmpEq = new Equation(eq);
-				tmpEq.B1.add(new Pair<Operation, Double>(
-						Operation.DIV, Tools.getValue(qs)));
-				eqList.add(tmpEq);
-				tmpEq = new Equation(eq);
-				tmpEq.B2.add(new Pair<Operation, Double>(
-						Operation.MUL, Tools.getValue(qs)));
-				eqList.add(tmpEq);
-				tmpEq = new Equation(eq);
-				tmpEq.B2.add(new Pair<Operation, Double>(
-						Operation.DIV, Tools.getValue(qs)));
-				eqList.add(tmpEq);
+
+			for(QuantSpan qs : clusterMap.get("E2")) {
+				for(Pair<Lattice, Double> pair : tmpLatticeList) {
+					Lattice tmpLattice = new Lattice(pair.getFirst());
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()));
+					
+					tmpLattice = new Lattice(pair.getFirst());
+					tmpLattice.equations.get(i).B1.add(new Pair<Operation, Double>(
+							Operation.MUL, Tools.getValue(qs)));
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "B1"))));
+					
+					tmpLattice = new Lattice(pair.getFirst());
+					tmpLattice.equations.get(i).B1.add(new Pair<Operation, Double>(
+							Operation.DIV, Tools.getValue(qs)));
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "B1"))));
+					
+					tmpLattice = new Lattice(pair.getFirst());
+					tmpLattice.equations.get(i).B2.add(new Pair<Operation, Double>(
+							Operation.MUL, Tools.getValue(qs)));
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "B2"))));
+					
+					tmpLattice = new Lattice(pair.getFirst());
+					tmpLattice.equations.get(i).B2.add(new Pair<Operation, Double>(
+							Operation.DIV, Tools.getValue(qs)));
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "B2"))));
+				}
+				it = beam.iterator();
+				tmpLatticeList.clear();
+				for(;it.hasNext();) {
+					tmpLatticeList.add(it.next());
+				}
+				beam.clear();
 			}
-		}
-		eqList.clear();
-		eqList.addAll(tmpLatticeList);
-		tmpLatticeList.clear();
-		for(QuantSpan qs : clusterMap.get("E3")) {
-			for(Equation eq : eqList) {
-				Equation tmpEq = new Equation(eq);
-				tmpLatticeList.add(tmpEq);
-				tmpEq = new Equation(eq);
-				tmpEq.C.add(new Pair<Operation, Double>(
-						Operation.MUL, Tools.getValue(qs)));
-				eqList.add(tmpEq);
-				tmpEq = new Equation(eq);
-				tmpEq.C.add(new Pair<Operation, Double>(
-						Operation.DIV, Tools.getValue(qs)));
-				eqList.add(tmpEq);
-			}
-		}
-		eqList.clear();
-		eqList.addAll(tmpLatticeList);
-		tmpLatticeList.clear();
-		List<Operation> operationList = Arrays.asList(
-				Operation.ADD, Operation.SUB, Operation.MUL, Operation.DIV, 
-				Operation.NONE);
-		for(Equation eq : eqList) {
-			for(int i = 0; i < 5; i++) {
-				
-			}
-		}
-		
-		
-		return null;
 			
+			for(QuantSpan qs : clusterMap.get("E3")) {
+				for(Pair<Lattice, Double> pair : tmpLatticeList) {
+					Lattice tmpLattice = new Lattice(pair.getFirst());
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()));
+					
+					tmpLattice = new Lattice(pair.getFirst());
+					tmpLattice.equations.get(i).C.add(new Pair<Operation, Double>(
+							Operation.MUL, Tools.getValue(qs)));
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "C"))));
+					
+					tmpLattice = new Lattice(pair.getFirst());
+					tmpLattice.equations.get(i).C.add(new Pair<Operation, Double>(
+							Operation.DIV, Tools.getValue(qs)));
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "C"))));
+				}
+				best = beam.element().getFirst();
+				it = beam.iterator();
+				tmpLatticeList.clear();
+				for(;it.hasNext();) {
+					tmpLatticeList.add(it.next());
+				}
+				beam.clear();
+			}
+		}
+		return best;
 	}
 
 }
