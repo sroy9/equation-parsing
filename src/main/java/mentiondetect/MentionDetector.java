@@ -95,7 +95,7 @@ public class MentionDetector {
 		model.lm = lm;
 		MentionFeatureExtractor fg = new MentionFeatureExtractor(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new InferenceSolver(fg);
+		model.infSolver = new MentionInfSolver(fg);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
