@@ -20,7 +20,7 @@ public class Equation {
 	
 	public List<Pair<Operation, Double>> A1, A2, B1, B2, C;
 	// Should be of length 5, of which one of third or fifth should be EQ
-	List<Operation> operations; 
+	public List<Operation> operations; 
 	
 	public Equation() {
 		this.A1 = new ArrayList<>();
