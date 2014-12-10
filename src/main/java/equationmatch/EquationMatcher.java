@@ -58,9 +58,13 @@ public class EquationMatcher {
 		double acc = 0.0;
 		double total = sp.instanceList.size();
 		for (int i = 0; i < sp.instanceList.size(); i++) {
+			Blob blob = (Blob) sp.instanceList.get(i);
 			Lattice gold = (Lattice) sp.goldStructureList.get(i);
 			Lattice prediction = (Lattice) model.infSolver.getBestStructure(
 					model.wv, sp.instanceList.get(i));
+			System.out.println(blob.simulProb.index+" : "+blob.simulProb.question);
+			System.out.println("Gold : \n" + gold);
+			System.out.println("Predicted : \n" + prediction);
 			if (gold.equals(prediction)) {
 				acc += 1.0;
 			}
