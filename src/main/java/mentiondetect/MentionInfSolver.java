@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import structure.PairComparator;
 import edu.illinois.cs.cogcomp.core.datastructures.BoundedPriorityQueue;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
@@ -38,8 +39,11 @@ public class MentionInfSolver extends AbstractInferenceSolver implements Seriali
 		}
 		List<String> labels = Arrays.asList("E1", "E2", "E3", "O");
 		int numOfQuantities = varSet.quantities.size();
+		PairComparator<LabelSet> labelSetComparator = new PairComparator<LabelSet>() {
+		};
 		BoundedPriorityQueue<Pair<LabelSet, Double>> beam = 
-				new BoundedPriorityQueue<>(50);
+				new BoundedPriorityQueue<Pair<LabelSet, Double>>(
+						50, labelSetComparator);
 		List<Pair<LabelSet, Double>> presentBeam = new ArrayList<>();
 		beam.add(new Pair<LabelSet, Double>(new LabelSet(), 0.0));
 		for(int i=0; i<numOfQuantities; i++) {

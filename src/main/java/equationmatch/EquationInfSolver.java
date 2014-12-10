@@ -9,6 +9,7 @@ import java.util.Map;
 
 import structure.Equation;
 import structure.Operation;
+import structure.PairComparator;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.BoundedPriorityQueue;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
@@ -86,14 +87,13 @@ implements Serializable {
 			WeightVector wv, IInstance arg1, IStructure arg2) throws Exception {
 		Blob blob = (Blob) arg1;
 		Lattice gold = (Lattice) arg2;
-		List<Operation> operationList = Arrays.asList(
-				Operation.ADD, Operation.SUB, Operation.MUL, Operation.DIV, 
-				Operation.NONE);
 		Map<String, List<QuantSpan>> clusterMap = blob.simulProb.clusterMap;
 		List<Pair<Lattice, Double>> tmpLatticeList = 
 				new ArrayList<Pair<Lattice, Double>>();
+		PairComparator<Lattice> latticePairComparator = new PairComparator<Lattice>() {
+		};
 		BoundedPriorityQueue<Pair<Lattice, Double>> beam = 
-				new BoundedPriorityQueue<Pair<Lattice, Double>>(50);
+				new BoundedPriorityQueue<Pair<Lattice, Double>>(50, latticePairComparator);
 		beam.add(new Pair<Lattice, Double>(new Lattice(), 0.0));
 		// Enumerate all equations
 		for(int i = 0; i < 2; i++) {
