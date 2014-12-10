@@ -34,6 +34,15 @@ public class Lattice implements IStructure {
 		return false;
 	}
 
+	@Override
+	public String toString() {
+		String str = "";
+		for(Equation eq : equations) {
+			str += eq + "\n";
+		}
+		return str;
+	}
+	
 	public Lattice(List<Equation> equations) {
 		this.equations = equations;
 		if(this.equations.size() == 1) {
