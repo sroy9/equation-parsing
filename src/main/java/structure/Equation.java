@@ -243,32 +243,32 @@ public class Equation {
 	
 	public String toString() {
 		String str = "";
-		System.out.print("A1 : ");
+		str+="A1 : ";
 		for(Pair<Operation, Double> pair : A1) {
-			System.out.print("["+pair.getFirst()+" "+pair.getSecond()+"] ");
+			str+="["+pair.getFirst()+" "+pair.getSecond()+"] ";
 		}
-		System.out.println();
-		System.out.print("A2 : ");
+		str+="\n";
+		str+="A2 : ";
 		for(Pair<Operation, Double> pair : A2) {
-			System.out.print("["+pair.getFirst()+" "+pair.getSecond()+"] ");
+			str+="["+pair.getFirst()+" "+pair.getSecond()+"] ";
 		}
-		System.out.println();
-		System.out.print("B1 : ");
+		str+="\n";
+		str+="B1 : ";
 		for(Pair<Operation, Double> pair : B1) {
-			System.out.print("["+pair.getFirst()+" "+pair.getSecond()+"] ");
+			str+="["+pair.getFirst()+" "+pair.getSecond()+"] ";
 		}
-		System.out.println();
-		System.out.print("B2 : ");
+		str+="\n";
+		str+="B2 : ";
 		for(Pair<Operation, Double> pair : B2) {
-			System.out.print("["+pair.getFirst()+" "+pair.getSecond()+"] ");
+			str+="["+pair.getFirst()+" "+pair.getSecond()+"] ";
 		}
-		System.out.println();
-		System.out.print("C : ");
+		str+="\n";
+		str+="C : ";
 		for(Pair<Operation, Double> pair : C) {
-			System.out.print("["+pair.getFirst()+" "+pair.getSecond()+"] ");
+			str+="["+pair.getFirst()+" "+pair.getSecond()+"] ";
 		}
-		System.out.println();
-		System.out.println("Operations : " + Arrays.asList(operations));
+		str+="\n";
+		str+="Operations : " + Arrays.asList(operations) + "\n";
 		return str;
 	}
 	

@@ -257,6 +257,7 @@ implements Serializable {
 				}	
 			}
 		}
+		System.out.println("Best Choice : "+beam.element().getFirst());
 		return beam.element().getFirst();
 	}
 }
