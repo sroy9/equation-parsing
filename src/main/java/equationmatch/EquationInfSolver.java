@@ -246,8 +246,8 @@ implements Serializable {
 					for(Operation op2 : two) {
 						Lattice tmpLattice = new Lattice(pair.getFirst());
 						Equation tmpEq = tmpLattice.equations.get(i);
-						tmpEq.operations.set(0, op1);
-						tmpEq.operations.set(1, op2);
+						tmpEq.operations.set(2, op1);
+						tmpEq.operations.set(3, op2);
 						if(tmpEq.C.size() > 0) tmpEq.operations.set(4, Operation.SUB);
 						else tmpEq.operations.set(4, Operation.NONE);
 						beam.add(new Pair<Lattice, Double>(tmpLattice, pair.getSecond()+
@@ -257,8 +257,8 @@ implements Serializable {
 				}	
 			}
 		}
-		System.out.println("Gold choice : \n"+gold);
-		System.out.println("Best Choice : \n"+beam.element().getFirst());
+//		System.out.println("Gold choice : \n"+gold);
+//		System.out.println("Best Choice : \n"+beam.element().getFirst());
 		return beam.element().getFirst();
 	}
 }
