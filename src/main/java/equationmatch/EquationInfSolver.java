@@ -248,8 +248,8 @@ implements Serializable {
 						Equation tmpEq = tmpLattice.equations.get(i);
 						tmpEq.operations.set(0, op1);
 						tmpEq.operations.set(1, op2);
-						if(tmpEq.C.size() > 0) tmpEq.operations.set(4, Operation.NONE);
-						else tmpEq.operations.set(4, Operation.SUB);
+						if(tmpEq.C.size() > 0) tmpEq.operations.set(4, Operation.SUB);
+						else tmpEq.operations.set(4, Operation.NONE);
 						beam.add(new Pair<Lattice, Double>(tmpLattice, pair.getSecond()+
 								wv.dotProduct(featGen.getFeaturesVector(
 										blob, tmpLattice, i, "Op_E2"))));
@@ -257,7 +257,8 @@ implements Serializable {
 				}	
 			}
 		}
-		System.out.println("Best Choice : "+beam.element().getFirst());
+		System.out.println("Gold choice : \n"+gold);
+		System.out.println("Best Choice : \n"+beam.element().getFirst());
 		return beam.element().getFirst();
 	}
 }
