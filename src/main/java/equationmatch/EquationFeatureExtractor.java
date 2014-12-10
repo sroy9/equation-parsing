@@ -2,12 +2,14 @@ package equationmatch;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import structure.Equation;
 import structure.Operation;
 import utils.FeatureExtraction;
 import utils.Tools;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
@@ -42,14 +44,25 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<>();
 		// Enumerate all positions
 		for(int i=0; i<lattice.equations.size(); ++i) {
+			Equation eq = lattice.equations.get(i);
 			try {
-				features.addAll(getFeatures(blob, lattice, i, "A1"));
-				features.addAll(getFeatures(blob, lattice, i, "A2"));
-				features.addAll(getFeatures(blob, lattice, i, "B1"));
-				features.addAll(getFeatures(blob, lattice, i, "B2"));
-				features.addAll(getFeatures(blob, lattice, i, "C"));
-				features.addAll(getFeatures(blob, lattice, i, "Op_E1"));
-				features.addAll(getFeatures(blob, lattice, i, "Op_E2"));
+				for(Pair<Operation, Double> pair : eq.A1) {
+					features.addAll(getFeatures(blob, lattice, i, "A1", pair));
+				}
+				for(Pair<Operation, Double> pair : eq.A2) {
+					features.addAll(getFeatures(blob, lattice, i, "A2", pair));
+				}
+				for(Pair<Operation, Double> pair : eq.B1) {
+					features.addAll(getFeatures(blob, lattice, i, "B1", pair));
+				}
+				for(Pair<Operation, Double> pair : eq.B2) {
+					features.addAll(getFeatures(blob, lattice, i, "B2", pair));
+				}
+				for(Pair<Operation, Double> pair : eq.C) {
+					features.addAll(getFeatures(blob, lattice, i, "C", pair));
+				}
+				features.addAll(getFeatures(blob, lattice, i, "Op_E1", null));
+				features.addAll(getFeatures(blob, lattice, i, "Op_E2", null));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -58,93 +71,233 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 	}
 
 	public List<String> getFeatures(
-			Blob blob, Lattice lattice, int eqNo, String arrayName) 
+			Blob blob, Lattice lattice, int eqNo, String arrayName, Pair<Operation, Double> d) 
 					throws Exception {
 		List<String> feats = new ArrayList<>();
-		feats.addAll(getNeighboringWordFeatures(blob, lattice, eqNo, arrayName));
+		if(arrayName.contains("A1")) {
+			feats.addAll(getA1Features(blob, lattice, eqNo, d));
+		}
+		if(arrayName.contains("A2")) {
+			feats.addAll(getA2Features(blob, lattice, eqNo, d));
+		}	
+		if(arrayName.contains("B1")) {
+			feats.addAll(getB1Features(blob, lattice, eqNo, d));
+		}	
+		if(arrayName.contains("B2")) {
+			feats.addAll(getB2Features(blob, lattice, eqNo, d));
+		}	
+		if(arrayName.contains("C")) {
+			feats.addAll(getCFeatures(blob, lattice, eqNo, d));
+		}		
+		if(arrayName.contains("Op_E1")) {
+			feats.addAll(getOpE1Features(blob, lattice, eqNo, d));
+		}	
+		if(arrayName.contains("Op_E2")) {
+			feats.addAll(getOpE2Features(blob, lattice, eqNo, d));
+		}	
 		return feats;
 	}
-
-	public IFeatureVector getFeaturesVector(
-			Blob blob, Lattice lattice, int eqNo, String arrayName) throws Exception {
-		List<String> feats = getFeatures(blob, lattice, eqNo, arrayName);
-		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
-	}
 	
-	public List<String> getNeighboringWordFeatures(
-			Blob blob, Lattice lattice, int eqNo, String arrayName) throws Exception {
+	private Collection<? extends String> getOpE2Features(Blob blob,
+			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
-		String prefix = arrayName + "_" + eqNo;
-		List<QuantSpan> relevantQuantSpans = getRelevantQuantSpan(
-				blob, lattice, eqNo, arrayName);
-		for(QuantSpan qs : relevantQuantSpans) {
-			int pos = blob.ta.getTokenIdFromCharacterOffset(qs.start);
-			for(String feature : FeatureExtraction.getFormPP(blob.ta, pos, 2)) {
-				features.add(prefix + "_" + feature);
-			}
+		String prefix = "OpE2_"+eqNo;
+		features.add(prefix+"_B1size_"+lattice.equations.get(eqNo).B1.size());
+		features.add(prefix+"_B2size_"+lattice.equations.get(eqNo).B2.size());
+		features.add(prefix+"_Csize_"+lattice.equations.get(eqNo).C.size());
+		return features;
+	}
+
+	private Collection<? extends String> getOpE1Features(Blob blob,
+			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
+		List<String> features = new ArrayList<String>();
+		String prefix = "OpE1_"+eqNo;
+		features.add(prefix+"_A1size_"+lattice.equations.get(eqNo).A1.size());
+		features.add(prefix+"_A2size_"+lattice.equations.get(eqNo).A2.size());
+		features.add(prefix+"_Csize_"+lattice.equations.get(eqNo).C.size());
+		return features;
+	}
+
+	private Collection<? extends String> getCFeatures(Blob blob,
+			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
+		List<String> features = new ArrayList<String>();
+		String prefix = "C_"+eqNo+"_"+d.getFirst();
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "C", d.getSecond());
+		features.add(prefix+"_NumberOfMentions_"+spans.size());
+		for(IntPair span : spans) {
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
 			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
-				features.add(prefix + "_" + feature);
+				features.add(prefix+"_Neighbors_"+feature);
 			}
-			for(String feature : FeatureExtraction.getPOSWindowPP(blob.posTags, pos, 2)) {
-				features.add(prefix + "_" + feature);
+			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+				features.add(prefix+"_Sentence_"+feature);
+			}
+		}
+		if(eqNo > 0) {
+			for(Pair<Operation, Double> pair : lattice.equations.get(0).C) {
+				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
+					features.add(prefix+"_Already used in previous equation");
+					break;
+				}
 			}
 		}
 		return features;
 	}
+
+	private Collection<? extends String> getB2Features(Blob blob,
+			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
+		List<String> features = new ArrayList<String>();
+		String prefix = "B2_"+eqNo+"_"+d.getFirst();
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "B2", d.getSecond());
+		features.add(prefix+"_NumberOfMentions_"+spans.size());
+		for(IntPair span : spans) {
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features.add(prefix+"_Neighbors_"+feature);
+			}
+			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+				features.add(prefix+"_Sentence_"+feature);
+			}
+		}
+		if(eqNo > 0) {
+			for(Pair<Operation, Double> pair : lattice.equations.get(0).B2) {
+				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
+					features.add(prefix+"_Already used in previous equation");
+					break;
+				}
+			}
+		}
+		return features;
+	}
+
+	private Collection<? extends String> getB1Features(Blob blob,
+			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
+		List<String> features = new ArrayList<String>();
+		String prefix = "B1_"+eqNo+"_"+d.getFirst();
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "B1", d.getSecond());
+		features.add(prefix+"_NumberOfMentions_"+spans.size());
+		for(IntPair span : spans) {
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features.add(prefix+"_Neighbors_"+feature);
+			}
+			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+				features.add(prefix+"_Sentence_"+feature);
+			}
+		}
+		if(eqNo > 0) {
+			for(Pair<Operation, Double> pair : lattice.equations.get(0).B1) {
+				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
+					features.add(prefix+"_Already used in previous equation");
+					break;
+				}
+			}
+		}
+		return features;
+	}
+
+	private Collection<? extends String> getA2Features(Blob blob,
+			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
+		List<String> features = new ArrayList<String>();
+		String prefix = "A2_"+eqNo+"_"+d.getFirst();
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A2", d.getSecond());
+		features.add(prefix+"_NumberOfMentions_"+spans.size());
+		for(IntPair span : spans) {
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features.add(prefix+"_Neighbors_"+feature);
+			}
+			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+				features.add(prefix+"_Sentence_"+feature);
+			}
+		}
+		if(eqNo > 0) {
+			for(Pair<Operation, Double> pair : lattice.equations.get(0).A2) {
+				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
+					features.add(prefix+"_Already used in previous equation");
+					break;
+				}
+			}
+		}
+		return features;
+	}
+
+	private Collection<? extends String> getA1Features(Blob blob,
+			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
+		List<String> features = new ArrayList<String>();
+		String prefix = "A1_"+eqNo+"_"+d.getFirst();
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A1", d.getSecond());
+		features.add(prefix+"_NumberOfMentions_"+spans.size());
+		for(IntPair span : spans) {
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features.add(prefix+"_Neighbors_"+feature);
+			}
+			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+				features.add(prefix+"_Sentence_"+feature);
+			}
+		}
+		if(eqNo > 0) {
+			for(Pair<Operation, Double> pair : lattice.equations.get(0).A1) {
+				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
+					features.add(prefix+"_Already used in previous equation");
+					break;
+				}
+			}
+		}
+		return features;
+	}
+
+	public IFeatureVector getFeaturesVector(
+			Blob blob, Lattice lattice, int eqNo, String arrayName, Pair<Operation, Double> d) 
+					throws Exception {
+		List<String> feats = getFeatures(blob, lattice, eqNo, arrayName, d);
+		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
+	}
 	
-	public List<QuantSpan> getRelevantQuantSpan(
-			Blob blob, Lattice lattice, int eqNo, String arrayName) {
-		List<QuantSpan> relevantQuantSpans = new ArrayList<QuantSpan>();
+	public List<IntPair> getRelevantSpans(
+			Blob blob, Lattice lattice, int eqNo, String arrayName, Double d) {
+		List<IntPair> relevantSpans = new ArrayList<IntPair>();
 		if(arrayName.equals("A1") || arrayName.contains("E1")) {
 			for(QuantSpan qs : blob.clusterMap.get("E1")) {
-				for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).A1) {
-					if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
-						relevantQuantSpans.add(qs);
-						break;
-					}
+				if(Tools.safeEquals(d, Tools.getValue(qs))) {
+					relevantSpans.add(new IntPair(qs.start, qs.end));
+					break;
 				}
 			}
 		}
 		if(arrayName.equals("A2") || arrayName.contains("E1")) {
 			for(QuantSpan qs : blob.clusterMap.get("E1")) {
-				for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).A2) {
-					if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
-						relevantQuantSpans.add(qs);
-						break;
-					}
+				if(Tools.safeEquals(d, Tools.getValue(qs))) {
+					relevantSpans.add(new IntPair(qs.start, qs.end));
+					break;
 				}
 			}
 		}
 		if(arrayName.equals("B1") || arrayName.contains("E2")) {
 			for(QuantSpan qs : blob.clusterMap.get("E2")) {
-				for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).B1) {
-					if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
-						relevantQuantSpans.add(qs);
-						break;
-					}
+				if(Tools.safeEquals(d, Tools.getValue(qs))) {
+					relevantSpans.add(new IntPair(qs.start, qs.end));
+					break;
 				}
 			}
 		}
 		if(arrayName.equals("B2") || arrayName.contains("E2")) {
 			for(QuantSpan qs : blob.clusterMap.get("E2")) {
-				for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).B2) {
-					if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
-						relevantQuantSpans.add(qs);
-						break;
-					}
+				if(Tools.safeEquals(d, Tools.getValue(qs))) {
+					relevantSpans.add(new IntPair(qs.start, qs.end));
+					break;
 				}
 			}
 		}
 		if(arrayName.equals("C")) {
 			for(QuantSpan qs : blob.clusterMap.get("E3")) {
-				for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).C) {
-					if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
-						relevantQuantSpans.add(qs);
-						break;
-					}
+				if(Tools.safeEquals(d, Tools.getValue(qs))) {
+					relevantSpans.add(new IntPair(qs.start, qs.end));
+					break;
 				}
 			}
 		}
-		return relevantQuantSpans;
+		return relevantSpans;
 	}
 }
