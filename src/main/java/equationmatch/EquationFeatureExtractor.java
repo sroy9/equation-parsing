@@ -48,7 +48,8 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				features.addAll(getFeatures(blob, lattice, i, "B1"));
 				features.addAll(getFeatures(blob, lattice, i, "B2"));
 				features.addAll(getFeatures(blob, lattice, i, "C"));
-				features.addAll(getFeatures(blob, lattice, i, "Op"));
+				features.addAll(getFeatures(blob, lattice, i, "Op_E1"));
+				features.addAll(getFeatures(blob, lattice, i, "Op_E2"));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -94,7 +95,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 	public List<QuantSpan> getRelevantQuantSpan(
 			Blob blob, Lattice lattice, int eqNo, String arrayName) {
 		List<QuantSpan> relevantQuantSpans = new ArrayList<QuantSpan>();
-		if(arrayName.equals("A1")) {
+		if(arrayName.equals("A1") || arrayName.contains("E1")) {
 			for(QuantSpan qs : blob.clusterMap.get("E1")) {
 				for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).A1) {
 					if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
@@ -104,7 +105,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				}
 			}
 		}
-		if(arrayName.equals("A2")) {
+		if(arrayName.equals("A2") || arrayName.contains("E1")) {
 			for(QuantSpan qs : blob.clusterMap.get("E1")) {
 				for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).A2) {
 					if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
@@ -114,7 +115,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				}
 			}
 		}
-		if(arrayName.equals("B1")) {
+		if(arrayName.equals("B1") || arrayName.contains("E2")) {
 			for(QuantSpan qs : blob.clusterMap.get("E2")) {
 				for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).B1) {
 					if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
@@ -124,7 +125,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				}
 			}
 		}
-		if(arrayName.equals("B2")) {
+		if(arrayName.equals("B2") || arrayName.contains("E2")) {
 			for(QuantSpan qs : blob.clusterMap.get("E2")) {
 				for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).B2) {
 					if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {

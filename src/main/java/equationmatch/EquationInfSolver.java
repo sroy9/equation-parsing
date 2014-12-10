@@ -202,46 +202,61 @@ implements Serializable {
 				}
 				beam.clear();
 			}
-
-			for(Pair<Lattice, Double> pair : tmpLatticeList) {
-				for(Operation op1 : operationList) {
-					for(Operation op2 : operationList) {
-						for(Operation op3 : operationList) {
-							for(Operation op4 : operationList) {
-								for(Operation op5 : operationList) {
-									Lattice tmpLattice = new Lattice(pair.getFirst());
-									Equation tmpEq = tmpLattice.equations.get(i);
-									if(tmpEq.operations.get(1) != Operation.NONE &&
-											tmpEq.A2.size() == 0) continue;
-									if(tmpEq.operations.get(3) != Operation.NONE &&
-											tmpEq.B2.size() == 0) continue;
-									if(tmpEq.operations.get(4) != Operation.NONE &&
-											tmpEq.C.size() == 0) continue;
-									if(op1 == Operation.NONE && op2 == Operation.NONE) {
-										continue;
-									}
-									tmpEq.operations.set(0, op1);
-									tmpEq.operations.set(1, op2);
-									tmpEq.operations.set(2, op3);
-									tmpEq.operations.set(3, op4);
-									tmpEq.operations.set(4, op5);
-									beam.add(new Pair<Lattice, Double>(
-											tmpLattice, 
-											pair.getSecond()+wv.dotProduct(
-													featGen.getFeaturesVector(
-															blob, 
-															tmpLattice, 
-															i, 
-															"Op"))));
-								}
-							}
-						}
-					}
-				}
-			}
 			
+			// Operation related to E1
+			for(Pair<Lattice, Double> pair : tmpLatticeList) {
+				List<Operation> one = Arrays.asList(Operation.ADD, Operation.SUB, 
+						Operation.MUL, Operation.DIV, Operation.NONE);
+				List<Operation> two = null;
+				if(pair.getFirst().equations.get(i).A2.size() > 0) {
+					two = Arrays.asList(Operation.ADD, Operation.SUB);
+				} else {
+					two = Arrays.asList(Operation.NONE);
+				}
+				for(Operation op1 : one) {
+					for(Operation op2 : two) {
+						Lattice tmpLattice = new Lattice(pair.getFirst());
+						Equation tmpEq = tmpLattice.equations.get(i);
+						tmpEq.operations.set(0, op1);
+						tmpEq.operations.set(1, op2);
+						beam.add(new Pair<Lattice, Double>(tmpLattice, pair.getSecond()+
+								wv.dotProduct(featGen.getFeaturesVector(
+										blob, tmpLattice, i, "Op_E1"))));
+					}
+				}	
+			}
+			it = beam.iterator();
+			tmpLatticeList.clear();
+			for(;it.hasNext();) {
+				tmpLatticeList.add(it.next());
+			}
+			beam.clear();
+			
+			// Operation related to E2
+			for(Pair<Lattice, Double> pair : tmpLatticeList) {
+				List<Operation> one = Arrays.asList(Operation.ADD, Operation.SUB, 
+						Operation.MUL, Operation.DIV, Operation.NONE);
+				List<Operation> two = null;
+				if(pair.getFirst().equations.get(i).B2.size() > 0) {
+					two = Arrays.asList(Operation.ADD, Operation.SUB);
+				} else {
+					two = Arrays.asList(Operation.NONE);
+				}
+				for(Operation op1 : one) {
+					for(Operation op2 : two) {
+						Lattice tmpLattice = new Lattice(pair.getFirst());
+						Equation tmpEq = tmpLattice.equations.get(i);
+						tmpEq.operations.set(0, op1);
+						tmpEq.operations.set(1, op2);
+						if(tmpEq.C.size() > 0) tmpEq.operations.set(4, Operation.NONE);
+						else tmpEq.operations.set(4, Operation.SUB);
+						beam.add(new Pair<Lattice, Double>(tmpLattice, pair.getSecond()+
+								wv.dotProduct(featGen.getFeaturesVector(
+										blob, tmpLattice, i, "Op_E2"))));
+					}
+				}	
+			}
 		}
 		return beam.element().getFirst();
 	}
-
 }
