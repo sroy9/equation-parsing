@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Random;
 
 import parser.DocReader;
+import structure.EquationSolver;
 import structure.SimulProb;
 import utils.Params;
+import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLParameters;
@@ -65,7 +67,7 @@ public class EquationMatcher {
 			System.out.println(blob.simulProb.index+" : "+blob.simulProb.question);
 			System.out.println("Gold : \n" + gold);
 			System.out.println("Predicted : \n" + prediction);
-			if (gold.equals(prediction)) {
+			if (hasSameSolution(prediction, gold)) {
 				acc += 1.0;
 			}
 		}
@@ -73,6 +75,28 @@ public class EquationMatcher {
 				+ (acc / total));
 	}
 
+	private static boolean hasSameSolution(Lattice prediction, Lattice gold) {
+		List<Double> solutions1 = EquationSolver.solve(prediction);
+		List<Double> solutions2 = EquationSolver.solve(gold);
+		if(solutions1 == null || solutions2 == null) return false;
+		if(solutions1.size() != solutions2.size()) return false;		
+		if(solutions1.size() == 1) {
+			if(Tools.safeEquals(solutions1.get(0), solutions2.get(0))) {
+				return true; 
+			}
+		}	
+		if(solutions1.size() == 2) {
+			if(Tools.safeEquals(solutions1.get(0), solutions2.get(0)) &&
+					Tools.safeEquals(solutions1.get(1), solutions2.get(1)) ) {
+				return true; 
+			}
+			if(Tools.safeEquals(solutions1.get(0), solutions2.get(1)) &&
+					Tools.safeEquals(solutions1.get(1), solutions2.get(0)) ) {
+				return true; 
+			}
+		}
+		return false;
+	}
 	private static void trainModel(String modelPath, SLProblem train)
 			throws Exception {
 		SLModel model = new SLModel();

@@ -291,6 +291,15 @@ implements Serializable {
 		if(i==1 && EquationSolver.solve(lattice) == null) {
 			return false;
 		}
+		Equation eq = lattice.equations.get(i);
+		if((eq.operations.get(0)==Operation.ADD || eq.operations.get(0)==Operation.SUB) &&
+				(eq.operations.get(1)==Operation.MUL || eq.operations.get(1)==Operation.DIV)) {
+			return false;
+		}
+		if((eq.operations.get(0)==Operation.MUL || eq.operations.get(0)==Operation.DIV) &&
+				(eq.operations.get(1)==Operation.ADD || eq.operations.get(1)==Operation.SUB)) {
+			return false;
+		}
 		return true;
 	}
 
