@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import structure.Equation;
+import structure.EquationSolver;
 import structure.Operation;
 import structure.PairComparator;
 import utils.Tools;
@@ -285,6 +286,9 @@ implements Serializable {
 	private boolean isValid(int i, Lattice lattice) {
 		if(lattice.equations.get(i).operations.get(0) == Operation.NONE &&
 				lattice.equations.get(i).operations.get(2) == Operation.NONE) {
+			return false;
+		}
+		if(i==1 && EquationSolver.solve(lattice) == null) {
 			return false;
 		}
 		return true;
