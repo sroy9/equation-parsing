@@ -95,7 +95,7 @@ implements Serializable {
 		};
 		BoundedPriorityQueue<Pair<Lattice, Double>> beam = 
 				new BoundedPriorityQueue<Pair<Lattice, Double>>(
-						50, latticePairComparator);
+						100, latticePairComparator);
 		beam.add(new Pair<Lattice, Double>(new Lattice(), 0.0));
 		// Enumerate all equations
 		for(int i = 0; i < 2; i++) {
@@ -277,7 +277,7 @@ implements Serializable {
 						tmpEq.operations.set(3, op2);
 						if(tmpEq.C.size() > 0) tmpEq.operations.set(4, Operation.SUB);
 						else tmpEq.operations.set(4, Operation.NONE);
-						if(isValid(i, tmpLattice)) {
+						if(isValid(i, tmpLattice, blob)) {
 							beam.add(new Pair<Lattice, Double>(tmpLattice, pair.getSecond()+
 									wv.dotProduct(featGen.getFeaturesVector(
 											blob, tmpLattice, i, "Op_E2", null))));
@@ -291,8 +291,8 @@ implements Serializable {
 		return beam.element().getFirst();
 	}
 
-	private boolean isValid(int i, Lattice lattice) {
-		if(lattice.equations.get(i).operations.get(0) == Operation.NONE &&
+	private boolean isValid(int i, Lattice lattice, Blob blob) {
+		if(i==1 && lattice.equations.get(i).operations.get(0) == Operation.NONE &&
 				lattice.equations.get(i).operations.get(2) == Operation.NONE) {
 			return false;
 		}
@@ -308,6 +308,7 @@ implements Serializable {
 				(eq.operations.get(2)==Operation.ADD || eq.operations.get(2)==Operation.SUB)) {
 			return false;
 		}
+		if(i==1 && !isAllNumbersUsed(lattice, blob)) return false;
 		return true;
 	}
 
@@ -316,6 +317,56 @@ implements Serializable {
 			if(Tools.safeEquals(Tools.getValue(qs), Tools.getValue(item))) {
 				if(qs.start == item.start) return true;
 				else return false;
+			}
+		}
+		return true;
+	}
+	
+	private boolean isAllNumbersUsed(Lattice lattice, Blob blob) {
+		for(String entity : blob.clusterMap.keySet()) {
+			for(QuantSpan qs : blob.clusterMap.get(entity)) {
+				boolean found = false;
+				if(entity.equals("E1")) {
+					for(int j=0; j<lattice.equations.size(); ++j) {
+						Equation e = lattice.equations.get(j);
+						for(Pair<Operation, Double> pair : e.A1) {
+							if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
+								found = true;
+							}
+						}	
+						for(Pair<Operation, Double> pair : e.A2) {
+							if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
+								found = true;
+							}
+						}	
+					}
+				}
+				if(entity.equals("E2")) {
+					for(int j=0; j<lattice.equations.size(); ++j) {
+						Equation e = lattice.equations.get(j);
+						for(Pair<Operation, Double> pair : e.B1) {
+							if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
+								found = true;
+							}
+						}	
+						for(Pair<Operation, Double> pair : e.B2) {
+							if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
+								found = true;
+							}
+						}	
+					}
+				}
+				if(entity.equals("E3")) {
+					for(int j=0; j<lattice.equations.size(); ++j) {
+						Equation e = lattice.equations.get(j);
+						for(Pair<Operation, Double> pair : e.C) {
+							if(Tools.safeEquals(pair.getSecond(), Tools.getValue(qs))) {
+								found = true;
+							}
+						}	
+					}
+				}
+				if(!found) return false;
 			}
 		}
 		return true;

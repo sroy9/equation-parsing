@@ -102,6 +102,28 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
 		String prefix = "OpE2_"+eqNo;
+		for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).B2) {
+			for(IntPair span :  getRelevantSpans(blob, lattice, eqNo, "B2", pair.getSecond())) {
+				int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+				for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+					features.add(prefix+"_B2_Neighbors_"+feature);
+				}
+				for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+					features.add(prefix+"_B2_Sentence_"+feature);
+				}
+			}
+		}
+		for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).C) {
+			for(IntPair span :  getRelevantSpans(blob, lattice, eqNo, "C", pair.getSecond())) {
+				int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+				for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+					features.add(prefix+"_C_Neighbors_"+feature);
+				}
+				for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+					features.add(prefix+"_C_Sentence_"+feature);
+				}
+			}
+		}
 		return features;
 	}
 
@@ -109,6 +131,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
 		String prefix = "OpE1_"+eqNo;
+		
 		return features;
 	}
 
