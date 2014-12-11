@@ -102,9 +102,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
 		String prefix = "OpE2_"+eqNo;
-		features.add(prefix+"_B1size_"+lattice.equations.get(eqNo).B1.size());
-		features.add(prefix+"_B2size_"+lattice.equations.get(eqNo).B2.size());
-		features.add(prefix+"_Csize_"+lattice.equations.get(eqNo).C.size());
 		return features;
 	}
 
@@ -112,9 +109,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
 		String prefix = "OpE1_"+eqNo;
-		features.add(prefix+"_A1size_"+lattice.equations.get(eqNo).A1.size());
-		features.add(prefix+"_A2size_"+lattice.equations.get(eqNo).A2.size());
-		features.add(prefix+"_Csize_"+lattice.equations.get(eqNo).C.size());
 		return features;
 	}
 
