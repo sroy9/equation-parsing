@@ -308,7 +308,7 @@ implements Serializable {
 				(eq.operations.get(2)==Operation.ADD || eq.operations.get(2)==Operation.SUB)) {
 			return false;
 		}
-		if(i==1 && !isAllNumbersUsed(lattice, blob)) return false;
+//		if(i==1 && !isAllNumbersUsed(lattice, blob)) return false;
 		return true;
 	}
 
