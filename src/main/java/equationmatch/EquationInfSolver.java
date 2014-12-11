@@ -95,7 +95,7 @@ implements Serializable {
 		};
 		BoundedPriorityQueue<Pair<Lattice, Double>> beam = 
 				new BoundedPriorityQueue<Pair<Lattice, Double>>(
-						100, latticePairComparator);
+						50, latticePairComparator);
 		beam.add(new Pair<Lattice, Double>(new Lattice(), 0.0));
 		// Enumerate all equations
 		for(int i = 0; i < 2; i++) {
@@ -288,7 +288,8 @@ implements Serializable {
 		}
 //		System.out.println("Gold choice : \n"+gold);
 //		System.out.println("Best Choice : \n"+beam.element().getFirst());
-		return beam.element().getFirst();
+		Lattice prediction = beam.element().getFirst();
+		return prediction;
 	}
 
 	private boolean isValid(int i, Lattice lattice, Blob blob) {
@@ -306,6 +307,12 @@ implements Serializable {
 		}
 		if((eq.operations.get(0)==Operation.MUL || eq.operations.get(0)==Operation.DIV) &&
 				(eq.operations.get(2)==Operation.ADD || eq.operations.get(2)==Operation.SUB)) {
+			return false;
+		}
+		if(eq.operations.get(0)==Operation.MUL && eq.operations.get(2)==Operation.MUL) {
+			return false;
+		}
+		if(eq.operations.get(0)==Operation.DIV && eq.operations.get(2)==Operation.DIV) {
 			return false;
 		}
 //		if(i==1 && !isAllNumbersUsed(lattice, blob)) return false;
