@@ -21,6 +21,8 @@ import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
+import edu.illinois.cs.cogcomp.quant.standardize.Quantity;
+import edu.illinois.cs.cogcomp.quant.standardize.Ratio;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
  
 public class SimulProb {
@@ -51,7 +53,9 @@ public class SimulProb {
 		List<QuantSpan> spanArray = quantifier.getSpans(question, true);
 		quantities = new ArrayList<QuantSpan>();
 		for(QuantSpan span:spanArray){
-			quantities.add(span);
+			if(span.object instanceof Quantity || span.object instanceof Ratio) {
+				quantities.add(span);
+			}
 		}
 	}
 	
