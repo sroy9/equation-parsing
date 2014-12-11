@@ -292,14 +292,14 @@ implements Serializable {
 	}
 
 	private boolean isValid(int i, Lattice lattice, Blob blob) {
-		if(i==1 && lattice.equations.get(i).operations.get(0) == Operation.NONE &&
-				lattice.equations.get(i).operations.get(2) == Operation.NONE) {
-			return false;
-		}
 		if(i==1 && EquationSolver.solve(lattice) == null) {
 			return false;
 		}
 		Equation eq = lattice.equations.get(i);
+		if(eq.operations.get(0) == Operation.NONE &&
+				eq.operations.get(2) == Operation.NONE) {
+			return false;
+		}
 		if((eq.operations.get(0)==Operation.ADD || eq.operations.get(0)==Operation.SUB) &&
 				(eq.operations.get(2)==Operation.MUL || eq.operations.get(2)==Operation.DIV)) {
 			return false;
