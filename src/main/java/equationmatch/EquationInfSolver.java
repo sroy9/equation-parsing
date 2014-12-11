@@ -227,6 +227,9 @@ implements Serializable {
 				List<Operation> one = Arrays.asList(Operation.ADD, Operation.SUB, 
 						Operation.MUL, Operation.DIV, Operation.NONE);
 				List<Operation> two = null;
+				if(pair.getFirst().equations.get(i).A1.size() > 0) {
+					one.remove(Operation.NONE);
+				}
 				if(pair.getFirst().equations.get(i).A2.size() > 0) {
 					two = Arrays.asList(Operation.ADD, Operation.SUB);
 				} else {
@@ -256,6 +259,9 @@ implements Serializable {
 				List<Operation> one = Arrays.asList(Operation.ADD, Operation.SUB, 
 						Operation.MUL, Operation.DIV, Operation.NONE);
 				List<Operation> two = null;
+				if(pair.getFirst().equations.get(i).B1.size() > 0) {
+					one.remove(Operation.NONE);
+				}
 				if(pair.getFirst().equations.get(i).B2.size() > 0) {
 					two = Arrays.asList(Operation.ADD, Operation.SUB);
 				} else {
