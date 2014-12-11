@@ -225,10 +225,10 @@ implements Serializable {
 			// Operation related to E1
 			for(Pair<Lattice, Double> pair : tmpLatticeList) {
 				List<Operation> one = Arrays.asList(Operation.ADD, Operation.SUB, 
-						Operation.MUL, Operation.DIV, Operation.NONE);
+						Operation.MUL, Operation.DIV);
 				List<Operation> two = null;
-				if(pair.getFirst().equations.get(i).A1.size() > 0) {
-					one.remove(4);
+				if(pair.getFirst().equations.get(i).A1.size() == 0) {
+					one.add(Operation.NONE);
 				}
 				if(pair.getFirst().equations.get(i).A2.size() > 0) {
 					two = Arrays.asList(Operation.ADD, Operation.SUB);
@@ -257,10 +257,10 @@ implements Serializable {
 			// Operation related to E2
 			for(Pair<Lattice, Double> pair : tmpLatticeList) {
 				List<Operation> one = Arrays.asList(Operation.ADD, Operation.SUB, 
-						Operation.MUL, Operation.DIV, Operation.NONE);
+						Operation.MUL, Operation.DIV);
 				List<Operation> two = null;
-				if(pair.getFirst().equations.get(i).B1.size() > 0) {
-					one.remove(4);
+				if(pair.getFirst().equations.get(i).B1.size() == 0) {
+					one.add(Operation.NONE);
 				}
 				if(pair.getFirst().equations.get(i).B2.size() > 0) {
 					two = Arrays.asList(Operation.ADD, Operation.SUB);
