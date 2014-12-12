@@ -152,6 +152,40 @@ implements Serializable {
 				beam.clear();
 			}
 
+			// Operation related to E1
+			for(Pair<Lattice, Double> pair : tmpLatticeList) {
+				List<Operation> one = new ArrayList<Operation>(Arrays.asList(
+						Operation.ADD, Operation.SUB, 
+						Operation.MUL, Operation.DIV));
+				List<Operation> two = null;
+				if(pair.getFirst().equations.get(i).A1.size() == 0) {
+					one.add(Operation.NONE);
+				}
+				if(pair.getFirst().equations.get(i).A2.size() > 0) {
+					two = Arrays.asList(Operation.ADD, Operation.SUB);
+				} else {
+					two = Arrays.asList(Operation.NONE);
+				}
+				for(Operation op1 : one) {
+					for(Operation op2 : two) {
+						Lattice tmpLattice = new Lattice(pair.getFirst());
+						Equation tmpEq = tmpLattice.equations.get(i);
+						tmpEq.operations.set(0, op1);
+						tmpEq.operations.set(1, op2);
+						beam.add(new Pair<Lattice, Double>(tmpLattice, pair.getSecond()+
+								wv.dotProduct(featGen.getFeaturesVector(
+										blob, tmpLattice, i, "Op_E1", null))));
+					}
+				}	
+			}
+			it = beam.iterator();
+			tmpLatticeList.clear();
+			for(;it.hasNext();) {
+				tmpLatticeList.add(it.next());
+			}
+			beam.clear();
+			
+			
 			for(QuantSpan qs : clusterMap.get("E2")) {
 				if(!occurTwice(qs, clusterMap.get("E2"))) continue;
 				for(Pair<Lattice, Double> pair : tmpLatticeList) {
@@ -194,67 +228,7 @@ implements Serializable {
 				beam.clear();
 			}
 			
-			for(QuantSpan qs : clusterMap.get("E3")) {
-				if(!occurTwice(qs, clusterMap.get("E3"))) continue;
-				for(Pair<Lattice, Double> pair : tmpLatticeList) {
-					Lattice tmpLattice = new Lattice(pair.getFirst());
-					beam.add(new Pair<>(tmpLattice, pair.getSecond()));
-					
-					tmpLattice = new Lattice(pair.getFirst());
-					tmpLattice.equations.get(i).C.add(new Pair<Operation, Double>(
-							Operation.MUL, Tools.getValue(qs)));
-					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
-							featGen.getFeaturesVector(blob, tmpLattice, i, "C", new Pair<Operation, Double>(
-									Operation.MUL, Tools.getValue(qs))))));
-					
-					tmpLattice = new Lattice(pair.getFirst());
-					tmpLattice.equations.get(i).C.add(new Pair<Operation, Double>(
-							Operation.DIV, Tools.getValue(qs)));
-					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
-							featGen.getFeaturesVector(blob, tmpLattice, i, "C", new Pair<Operation, Double>(
-									Operation.DIV, Tools.getValue(qs))))));
-				}
-				it = beam.iterator();
-				tmpLatticeList.clear();
-				for(;it.hasNext();) {
-					tmpLatticeList.add(it.next());
-				}
-				beam.clear();
-			}
-			
-			// Operation related to E1
-			for(Pair<Lattice, Double> pair : tmpLatticeList) {
-				List<Operation> one = new ArrayList<Operation>(Arrays.asList(
-						Operation.ADD, Operation.SUB, 
-						Operation.MUL, Operation.DIV));
-				List<Operation> two = null;
-				if(pair.getFirst().equations.get(i).A1.size() == 0) {
-					one.add(Operation.NONE);
-				}
-				if(pair.getFirst().equations.get(i).A2.size() > 0) {
-					two = Arrays.asList(Operation.ADD, Operation.SUB);
-				} else {
-					two = Arrays.asList(Operation.NONE);
-				}
-				for(Operation op1 : one) {
-					for(Operation op2 : two) {
-						Lattice tmpLattice = new Lattice(pair.getFirst());
-						Equation tmpEq = tmpLattice.equations.get(i);
-						tmpEq.operations.set(0, op1);
-						tmpEq.operations.set(1, op2);
-						beam.add(new Pair<Lattice, Double>(tmpLattice, pair.getSecond()+
-								wv.dotProduct(featGen.getFeaturesVector(
-										blob, tmpLattice, i, "Op_E1", null))));
-					}
-				}	
-			}
-			it = beam.iterator();
-			tmpLatticeList.clear();
-			for(;it.hasNext();) {
-				tmpLatticeList.add(it.next());
-			}
-			beam.clear();
-			
+
 			// Operation related to E2
 			for(Pair<Lattice, Double> pair : tmpLatticeList) {
 				List<Operation> one = new ArrayList<Operation>(Arrays.asList(
@@ -275,15 +249,47 @@ implements Serializable {
 						Equation tmpEq = tmpLattice.equations.get(i);
 						tmpEq.operations.set(2, op1);
 						tmpEq.operations.set(3, op2);
-						if(tmpEq.C.size() > 0) tmpEq.operations.set(4, Operation.SUB);
-						else tmpEq.operations.set(4, Operation.NONE);
-						if(isValid(i, tmpLattice, blob)) {
-							beam.add(new Pair<Lattice, Double>(tmpLattice, pair.getSecond()+
-									wv.dotProduct(featGen.getFeaturesVector(
-											blob, tmpLattice, i, "Op_E2", null))));
-						}
+						beam.add(new Pair<Lattice, Double>(tmpLattice, pair.getSecond()+
+								wv.dotProduct(featGen.getFeaturesVector(
+										blob, tmpLattice, i, "Op_E2", null))));	
 					}
 				}	
+			}
+			it = beam.iterator();
+			tmpLatticeList.clear();
+			for(;it.hasNext();) {
+				tmpLatticeList.add(it.next());
+			}
+			beam.clear();
+			
+			for(QuantSpan qs : clusterMap.get("E3")) {
+				if(!occurTwice(qs, clusterMap.get("E3"))) continue;
+				for(Pair<Lattice, Double> pair : tmpLatticeList) {
+					Lattice tmpLattice = new Lattice(pair.getFirst());
+					if(isValid(i, tmpLattice, blob)) {
+						beam.add(new Pair<>(tmpLattice, pair.getSecond()));
+					}
+					tmpLattice = new Lattice(pair.getFirst());
+					tmpLattice.equations.get(i).C.add(new Pair<Operation, Double>(
+							Operation.MUL, Tools.getValue(qs)));
+					tmpLattice.equations.get(i).operations.set(4, Operation.SUB);
+					if(isValid(i, tmpLattice, blob)) {
+						beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
+								featGen.getFeaturesVector(blob, tmpLattice, i, "C", 
+										new Pair<Operation, Double>(
+										Operation.MUL, Tools.getValue(qs))))));
+					}
+					tmpLattice = new Lattice(pair.getFirst());
+					tmpLattice.equations.get(i).C.add(new Pair<Operation, Double>(
+							Operation.DIV, Tools.getValue(qs)));
+					tmpLattice.equations.get(i).operations.set(4, Operation.SUB);
+					if(isValid(i, tmpLattice, blob)) {
+						beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "C", 
+									new Pair<Operation, Double>(
+									Operation.DIV, Tools.getValue(qs))))));
+					}
+				}
 			}
 		}
 //		System.out.println("Gold choice : \n"+gold);
