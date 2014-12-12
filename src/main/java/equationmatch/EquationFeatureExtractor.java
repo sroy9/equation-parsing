@@ -254,6 +254,14 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("percent")) {
 				features.add(prefix+"_Percentage");
 			}
+			int sentId = blob.ta.getSentenceFromToken(pos).getSentenceId();
+			if(sentId == 0) features.add(prefix+"_Present_First_Sentence");
+			for(QuantSpan qs : blob.quantities) {
+				if(blob.ta.getSentenceFromToken(blob.ta.getTokenIdFromCharacterOffset(span.getFirst()))
+						.getSentenceId() == sentId && qs.start != span.getFirst()) {
+					features.add(prefix+"_OtherNumbersInSameSentence");
+				}
+			}
 			
 		}
 		if(eqNo > 0) {
