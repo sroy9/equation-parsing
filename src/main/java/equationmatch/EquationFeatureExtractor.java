@@ -120,7 +120,10 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		if(eq.A2.size() == 0) {
 			features.add(prefix+"_A2_Size_0");
 		}
-		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A2", d.getSecond());
+		List<IntPair> spans = new ArrayList<>();
+		for(Pair<Operation, Double> pair : eq.A2) {
+			spans.addAll(getRelevantSpans(blob, lattice, eqNo, "A2", pair.getSecond()));
+		}
 		for(IntPair span : spans) {
 			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
 			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
