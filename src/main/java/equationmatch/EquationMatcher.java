@@ -132,6 +132,52 @@ public class EquationMatcher {
 				acc += 1.0;
 			}
 		}
+		eqPred = prediction.equations.get(1);
+		eqGold = gold.equations.get(1);
+		if(params.contains("A1")) {
+			total+=1.0;
+			if(isEqual(eqPred.A1, eqGold.A1)) {
+				acc += 1.0;
+			}
+		}
+		if(params.contains("A2")) {
+			total+=1.0;
+			if(isEqual(eqPred.A2, eqGold.A2)) {
+				acc += 1.0;
+			}
+		}
+		if(params.contains("B1")) {
+			total+=1.0;
+			if(isEqual(eqPred.B1, eqGold.B1)) {
+				acc += 1.0;
+			}
+		}
+		if(params.contains("B2")) {
+			total+=1.0;
+			if(isEqual(eqPred.B2, eqGold.B2)) {
+				acc += 1.0;
+			}
+		}
+		if(params.contains("C")) {
+			total+=1.0;
+			if(isEqual(eqPred.C, eqGold.C)) {
+				acc += 1.0;
+			}
+		}
+		if(params.contains("Op_E1")) {
+			total+=1.0;
+			if(eqPred.operations.get(0) == eqGold.operations.get(0) && 
+					eqPred.operations.get(1) == eqGold.operations.get(1)) {
+				acc += 1.0;
+			}
+		}
+		if(params.contains("Op_E2")) {
+			total+=1.0;
+			if(eqPred.operations.get(2) == eqGold.operations.get(2) && 
+					eqPred.operations.get(3) == eqGold.operations.get(3)) {
+				acc += 1.0;
+			}
+		}
 		if(total == 0.0) return 0.0;
 		return acc/total;
 	}

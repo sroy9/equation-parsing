@@ -291,7 +291,11 @@ implements Serializable {
 				it = beam.iterator();
 				tmpLatticeList.clear();
 				for(;it.hasNext();) {
-					tmpLatticeList.add(it.next());
+					Pair<Lattice, Double> latticePair = it.next();
+					if(individualEqValidity(latticePair.getFirst(), i) && 
+							(i!=1 || fullEqSystemValidity(latticePair.getFirst()))) {
+						tmpLatticeList.add(latticePair);
+					}
 				}
 				prediction = beam.element().getFirst();
 				beam.clear();
@@ -302,11 +306,8 @@ implements Serializable {
 		return prediction;
 	}
 
-	private boolean isValid(int i, Lattice lattice, Blob blob) {
-		if(i==1 && EquationSolver.solve(lattice) == null) {
-			return false;
-		}
-		Equation eq = lattice.equations.get(i);
+	private boolean individualEqValidity(Lattice lattice, int index) {
+		Equation eq = lattice.equations.get(index);
 		if(eq.operations.get(0) == Operation.NONE &&
 				eq.operations.get(2) == Operation.NONE) {
 			return false;
@@ -324,6 +325,38 @@ implements Serializable {
 		}
 		if(eq.operations.get(0)==Operation.DIV && eq.operations.get(2)==Operation.DIV) {
 			return false;
+		}
+		if(eq.operations.get(1) != Operation.NONE && eq.A2.size() == 0) {
+			return false;
+		}
+		if(eq.operations.get(1) == Operation.NONE && eq.A2.size() > 0) {
+			return false;
+		}
+		if(eq.operations.get(3) != Operation.NONE && eq.B2.size() == 0) {
+			return false;
+		}
+		if(eq.operations.get(3) == Operation.NONE && eq.B2.size() > 0) {
+			return false;
+		}
+		if(eq.operations.get(4) != Operation.NONE && eq.C.size() == 0) {
+			return false;
+		}
+		if(eq.operations.get(4) == Operation.NONE && eq.C.size() > 0) {
+			return false;
+		}
+		return true;
+		
+	}
+	
+	private boolean fullEqSystemValidity(Lattice lattice) {
+		if(EquationSolver.solve(lattice) == null) {
+			return false;
+		}
+		if(lattice.equations.get(0).operations.get(0) == Operation.NONE ||
+				lattice.equations.get(0).operations.get(2) == Operation.NONE) {
+			for(Operation op : lattice.equations.get(1).operations) {
+				if(op != Operation.NONE) return false;
+			}
 		}
 //		if(i==1 && !isAllNumbersUsed(lattice, blob)) return false;
 		return true;

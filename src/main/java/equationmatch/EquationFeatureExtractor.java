@@ -159,22 +159,22 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 	private Collection<? extends String> getCFeatures(Blob blob,
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
-		String prefix = "C_"+eqNo+"_"+d.getFirst();
+		Equation eq = lattice.equations.get(eqNo);
+		String prefix = "C_"+eq.C.size()+"_"+d.getFirst();
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "C", d.getSecond());
-		if(spans.size() > 1) features.add(prefix+"_MentionedTwice");
+		for(IntPair span : spans) {
+			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("dollar") ||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("$") ||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("cents")) {
+				features.add(prefix+"_Dollar");
+				break;
+			}
+		}
 		for(IntPair span : spans) {
 			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
 			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
 				features.add(prefix+"_Neighbors_"+feature);
-			}
-		}
-		if(eqNo > 0) {
-			for(Pair<Operation, Double> pair : lattice.equations.get(0).C) {
-				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
-					features.add(prefix+"_Already used in previous equation");
-					break;
-				}
 			}
 		}
 		return features;
@@ -192,41 +192,19 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				features.add(prefix+"_Neighbors_"+feature);
 			}
 		}
-		if(eqNo > 0) {
-			for(Pair<Operation, Double> pair : lattice.equations.get(0).B2) {
-				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
-					features.add(prefix+"_Already used in previous equation");
-					break;
-				}
-			}
-		}
 		return features;
 	}
 
 	private Collection<? extends String> getB1Features(Blob blob,
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
-		Equation eq = lattice.equations.get(eqNo);
 		String prefix = "B1_"+eqNo+"_"+d.getFirst();
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "B1", d.getSecond());
-		if(spans.size() > 1) features.add(prefix+"_MentionedTwice");
-		features.add(prefix+"_A1Size_"+eq.A1.size());
-		features.add(prefix+"_A2Size_"+eq.A2.size());
-		features.add(prefix+"_Op_"+eq.operations.get(0)+"_"+eq.operations.get(1));
 		for(IntPair span : spans) {
 			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
 			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
 				features.add(prefix+"_Neighbors_"+feature);
-			}
-		}
-		
-		if(eqNo > 0) {
-			for(Pair<Operation, Double> pair : lattice.equations.get(0).B1) {
-				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
-					features.add(prefix+"_Already used in previous equation");
-					break;
-				}
 			}
 		}
 		return features;
@@ -244,14 +222,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				features.add(prefix+"_Neighbors_"+feature);
 			}
 		}
-		if(eqNo > 0) {
-			for(Pair<Operation, Double> pair : lattice.equations.get(0).A2) {
-				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
-					features.add(prefix+"_Already used in previous equation");
-					break;
-				}
-			}
-		}
 		return features;
 	}
 
@@ -261,19 +231,10 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		String prefix = "A1_"+eqNo+"_"+d.getFirst();
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A1", d.getSecond());
-		if(spans.size() > 1) features.add(prefix+"_MentionedTwice");
 		for(IntPair span : spans) {
 			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
 			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
 				features.add(prefix+"_Neighbors_"+feature);
-			}
-		}
-		if(eqNo > 0) {
-			for(Pair<Operation, Double> pair : lattice.equations.get(0).A1) {
-				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
-					features.add(prefix+"_Already used in previous equation");
-					break;
-				}
 			}
 		}
 		return features;
