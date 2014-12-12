@@ -104,7 +104,6 @@ implements Serializable {
 		for(int i = 0; i < 2; i++) {
 			for(QuantSpan qs : clusterMap.get("E1")) {
 				if(!occurTwice(qs, clusterMap.get("E1"))) continue;
-				System.out.println("Lattice List Length : "+tmpLatticeList.size());
 				for(Pair<Lattice, Double> pair : tmpLatticeList) {
 					Lattice tmpLattice = new Lattice(pair.getFirst());
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()));
@@ -298,7 +297,7 @@ implements Serializable {
 		}
 //		System.out.println("Gold choice : \n"+gold);
 //		System.out.println("Best Choice : \n"+beam.element().getFirst());
-		prediction = modifyForEarlyUpdate(beam.element().getFirst(), gold);
+		prediction = modifyForEarlyUpdate(prediction, gold);
 		return prediction;
 	}
 
