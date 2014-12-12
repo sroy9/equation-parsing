@@ -221,6 +221,13 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("percent")) {
 				features.add(prefix+"_Percentage");
 			}
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features.add(prefix+"_Neighbors_"+feature);
+			}
+			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+				features.add(prefix+"_Sentence_"+feature);
+			}
 		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).A2) {
@@ -249,6 +256,13 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("%")||
 					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("percent")) {
 				features.add(prefix+"_Percentage");
+			}
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features.add(prefix+"_Neighbors_"+feature);
+			}
+			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+				features.add(prefix+"_Sentence_"+feature);
 			}
 		}
 		if(eqNo > 0) {
