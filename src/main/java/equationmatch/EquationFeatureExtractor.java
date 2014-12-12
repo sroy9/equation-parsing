@@ -210,17 +210,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		String prefix = "A2_"+eqNo+"_"+d.getFirst();
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A2", d.getSecond());
-		if(spans.size() > 0) features.add(prefix+"_MentionedTwice");
 		for(IntPair span : spans) {
-			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("dollar")||
-					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("$")||
-					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("cents")) {
-				features.add(prefix+"_Money");
-			}
-			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("%")||
-					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("percent")) {
-				features.add(prefix+"_Percentage");
-			}
 			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
 			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
 				features.add(prefix+"_Neighbors_"+feature);
@@ -248,15 +238,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A1", d.getSecond());
 		if(spans.size() > 0) features.add(prefix+"_MentionedTwice");
 		for(IntPair span : spans) {
-			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("dollar")||
-					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("$")||
-					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("cents")) {
-				features.add(prefix+"_Money");
-			}
-			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("%")||
-					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("percent")) {
-				features.add(prefix+"_Percentage");
-			}
 			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
 			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
 				features.add(prefix+"_Neighbors_"+feature);

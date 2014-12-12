@@ -1,10 +1,13 @@
 package equationmatch;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 import parser.DocReader;
+import structure.Equation;
 import structure.EquationSolver;
+import structure.Operation;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
@@ -57,7 +60,9 @@ public class EquationMatcher {
 	private static void testModel(String modelPath, SLProblem sp)
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
+		List<String> params = Arrays.asList("A1");
 		double acc = 0.0;
+		double structAcc = 0.0;
 		double total = sp.instanceList.size();
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			Blob blob = (Blob) sp.instanceList.get(i);
@@ -67,14 +72,87 @@ public class EquationMatcher {
 			System.out.println(blob.simulProb.index+" : "+blob.simulProb.question);
 			System.out.println("Gold : \n" + gold);
 			System.out.println("Predicted : \n" + prediction);
+			structAcc += getStructAcc(prediction, gold, params);
 			if (hasSameSolution(prediction, gold)) {
 				acc += 1.0;
 			}
 		}
+		System.out.println("Structural Accuracy : " + structAcc + " / " + total + " = "
+				+ (structAcc / total));
 		System.out.println("Accuracy : " + acc + " / " + total + " = "
 				+ (acc / total));
 	}
 
+	private static double getStructAcc(Lattice prediction, Lattice gold,
+			List<String> params) {
+		double acc = 0.0, total = 0.0;
+		Equation eqPred = prediction.equations.get(0);
+		Equation eqGold = gold.equations.get(0);
+		if(params.contains("A1")) {
+			total+=1.0;
+			if(isEqual(eqPred.A1, eqGold.A1)) {
+				acc += 1.0;
+			}
+		}
+		if(params.contains("A2")) {
+			total+=1.0;
+			if(isEqual(eqPred.A2, eqGold.A2)) {
+				acc += 1.0;
+			}
+		}
+		if(params.contains("B1")) {
+			total+=1.0;
+			if(isEqual(eqPred.B1, eqGold.B1)) {
+				acc += 1.0;
+			}
+		}
+		if(params.contains("B2")) {
+			total+=1.0;
+			if(isEqual(eqPred.B2, eqGold.B2)) {
+				acc += 1.0;
+			}
+		}
+		if(params.contains("C")) {
+			total+=1.0;
+			if(isEqual(eqPred.C, eqGold.C)) {
+				acc += 1.0;
+			}
+		}
+		if(params.contains("Op_E1")) {
+			total+=1.0;
+			if(eqPred.operations.get(0) == eqGold.operations.get(0) && 
+					eqPred.operations.get(1) == eqGold.operations.get(1)) {
+				acc += 1.0;
+			}
+		}
+		if(params.contains("Op_E2")) {
+			total+=1.0;
+			if(eqPred.operations.get(2) == eqGold.operations.get(2) && 
+					eqPred.operations.get(3) == eqGold.operations.get(3)) {
+				acc += 1.0;
+			}
+		}
+		if(total == 0.0) return 0.0;
+		return acc/total;
+	}
+	
+	private static boolean isEqual(List<Pair<Operation, Double>> a1,
+			List<Pair<Operation, Double>> a2) {
+		if(a1.size() != a2.size()) {
+			return false;
+		}
+		for(Pair<Operation, Double> pair : a1) {
+			boolean found = false;
+			for(Pair<Operation, Double> pair2 : a2) {
+				if(pair == pair2) {
+					found = true;
+					break;
+				}
+			}
+			if(!found) return false;
+		}
+		return true;
+	}
 	private static boolean hasSameSolution(Lattice prediction, Lattice gold) {
 		List<Double> solutions1 = EquationSolver.solve(prediction);
 		List<Double> solutions2 = EquationSolver.solve(gold);
