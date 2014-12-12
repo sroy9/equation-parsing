@@ -159,8 +159,16 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 	private Collection<? extends String> getCFeatures(Blob blob,
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
-		String prefix = "C_"+eqNo+"_"+d.getFirst()+"_"+lattice.equations.get(eqNo).C.size();
+		String prefix = "C_"+eqNo+"_"+d.getFirst();
 		features.add(prefix);
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "C", d.getSecond());
+		if(spans.size() > 1) features.add(prefix+"_MentionedTwice");
+		for(IntPair span : spans) {
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features.add(prefix+"_Neighbors_"+feature);
+			}
+		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).C) {
 				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
