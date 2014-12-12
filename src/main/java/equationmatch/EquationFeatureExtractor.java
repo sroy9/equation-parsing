@@ -264,15 +264,15 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
 				features.add(prefix+"_Sentence_"+feature);
 			}
-			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("dollar")||
-					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("$")||
-					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("cents")) {
-				features.add(prefix+"_Money");
-			}
-			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("%")||
-					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("percent")) {
-				features.add(prefix+"_Percentage");
-			}
+//			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("dollar")||
+//					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("$")||
+//					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("cents")) {
+//				features.add(prefix+"_Money");
+//			}
+//			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("%")||
+//					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("percent")) {
+//				features.add(prefix+"_Percentage");
+//			}
 		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).A1) {
