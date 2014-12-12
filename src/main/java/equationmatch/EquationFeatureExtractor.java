@@ -103,27 +103,28 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
 		Equation eq = lattice.equations.get(eqNo);
-		String prefix = "OpE2_"+eqNo+"_"+eq.operations.get(2)+"_"+eq.operations.get(3);
+		String prefix = "OpE2_"+eqNo+"_"+eq.operations.get(0)+"_"+eq.operations.get(1)+
+				eq.operations.get(2)+"_"+eq.operations.get(3);
 		features.add(prefix);
-//		if(eq.B1.size() == 0) {
-//			features.add(prefix+"_B1_Size_0");
-//		}
-//		if(eq.B2.size() == 0) {
-//			features.add(prefix+"_B2_Size_0");
-//		}
-//		List<IntPair> spans = new ArrayList<>();
-//		for(Pair<Operation, Double> pair : eq.B2) {
-//			spans.addAll(getRelevantSpans(blob, lattice, eqNo, "B2", pair.getSecond()));
-//		}
-//		for(IntPair span : spans) {
-//			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
-//			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
-//				features.add(prefix+"_Neighbors_"+feature);
-//			}
-//			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
-//				features.add(prefix+"_Sentence_"+feature);
-//			}
-//		}
+		if(eq.B1.size() == 0) {
+			features.add(prefix+"_B1_Size_0");
+		}
+		if(eq.B2.size() == 0) {
+			features.add(prefix+"_B2_Size_0");
+		}
+		List<IntPair> spans = new ArrayList<>();
+		for(Pair<Operation, Double> pair : eq.B2) {
+			spans.addAll(getRelevantSpans(blob, lattice, eqNo, "B2", pair.getSecond()));
+		}
+		for(IntPair span : spans) {
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features.add(prefix+"_Neighbors_"+feature);
+			}
+			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+				features.add(prefix+"_Sentence_"+feature);
+			}
+		}
 		return features;
 	}
 
@@ -249,7 +250,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 	private Collection<? extends String> getA1Features(Blob blob,
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
-		String prefix = "A1_"+eqNo+"_"+d.getFirst();//+"_"+blob.clusterMap.get("E1").size();
+		String prefix = "A1_"+eqNo+"_"+d.getFirst();
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A1", d.getSecond());
 		if(spans.size() > 1) features.add(prefix+"_MentionedTwice");
