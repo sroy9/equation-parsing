@@ -97,16 +97,10 @@ implements Serializable {
 		BoundedPriorityQueue<Pair<Lattice, Double>> beam = 
 				new BoundedPriorityQueue<Pair<Lattice, Double>>(
 						50, latticePairComparator);
-		beam.add(new Pair<Lattice, Double>(new Lattice(), 0.0));
+		tmpLatticeList.add(new Pair<Lattice, Double>(new Lattice(), 0.0));
+		Iterator<Pair<Lattice, Double>> it;
 		// Enumerate all equations
 		for(int i = 0; i < 2; i++) {
-			// Transfer states from beam to tmpLatticeList
-			Iterator<Pair<Lattice, Double>> it = beam.iterator();
-			tmpLatticeList.clear();
-			for(;it.hasNext();) {
-				tmpLatticeList.add(it.next());
-			}
-			beam.clear();
 			for(QuantSpan qs : clusterMap.get("E1")) {
 				if(!occurTwice(qs, clusterMap.get("E1"))) continue;
 				for(Pair<Lattice, Double> pair : tmpLatticeList) {
