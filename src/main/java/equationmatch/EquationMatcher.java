@@ -142,10 +142,11 @@ public class EquationMatcher {
 		if(a1.size() != a2.size()) {
 			return false;
 		}
-		for(Pair<Operation, Double> pair : a1) {
+		for(Pair<Operation, Double> pair1 : a1) {
 			boolean found = false;
 			for(Pair<Operation, Double> pair2 : a2) {
-				if(pair == pair2) {
+				if(pair1.getFirst() == pair2.getFirst() &&
+						Tools.safeEquals(pair1.getSecond(), pair2.getSecond())) {
 					found = true;
 					break;
 				}
