@@ -252,7 +252,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 	private Collection<? extends String> getA1Features(Blob blob,
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
-		String prefix = "A1_"+eqNo+"_"+d.getFirst();
+		String prefix = "A1_"+eqNo+"_"+d.getFirst()+"_"+blob.clusterMap.get("E1").size();
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A1", d.getSecond());
 		if(spans.size() > 1) features.add(prefix+"_MentionedTwice");
@@ -264,15 +264,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
 				features.add(prefix+"_Sentence_"+feature);
 			}
-//			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("dollar")||
-//					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("$")||
-//					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("cents")) {
-//				features.add(prefix+"_Money");
-//			}
-//			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("%")||
-//					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("percent")) {
-//				features.add(prefix+"_Percentage");
-//			}
 		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).A1) {
