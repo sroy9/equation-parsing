@@ -105,6 +105,25 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		Equation eq = lattice.equations.get(eqNo);
 		String prefix = "OpE2_"+eqNo+"_"+eq.operations.get(2)+"_"+eq.operations.get(3);
 		features.add(prefix);
+		if(eq.B1.size() == 0) {
+			features.add(prefix+"_B1_Size_0");
+		}
+		if(eq.B2.size() == 0) {
+			features.add(prefix+"_B2_Size_0");
+		}
+		List<IntPair> spans = new ArrayList<>();
+		for(Pair<Operation, Double> pair : eq.B2) {
+			spans.addAll(getRelevantSpans(blob, lattice, eqNo, "B2", pair.getSecond()));
+		}
+		for(IntPair span : spans) {
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features.add(prefix+"_Neighbors_"+feature);
+			}
+			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+				features.add(prefix+"_Sentence_"+feature);
+			}
+		}
 		return features;
 	}
 
@@ -157,6 +176,16 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<String>();
 		String prefix = "B2_"+eqNo+"_"+d.getFirst();
 		features.add(prefix);
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "B2", d.getSecond());
+		for(IntPair span : spans) {
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features.add(prefix+"_Neighbors_"+feature);
+			}
+			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+				features.add(prefix+"_Sentence_"+feature);
+			}
+		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).B2) {
 				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
@@ -173,6 +202,16 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<String>();
 		String prefix = "B1_"+eqNo+"_"+d.getFirst();
 		features.add(prefix);
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "B1", d.getSecond());
+		for(IntPair span : spans) {
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features.add(prefix+"_Neighbors_"+feature);
+			}
+			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+				features.add(prefix+"_Sentence_"+feature);
+			}
+		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).B1) {
 				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
