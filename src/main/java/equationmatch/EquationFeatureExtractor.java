@@ -176,6 +176,16 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<String>();
 		String prefix = "B2_"+eqNo+"_"+d.getFirst();
 		features.add(prefix);
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "B2", d.getSecond());
+		for(IntPair span : spans) {
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features.add(prefix+"_Neighbors_"+feature);
+			}
+			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+				features.add(prefix+"_Sentence_"+feature);
+			}
+		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).B2) {
 				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
@@ -202,9 +212,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
 			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
 				features.add(prefix+"_Neighbors_"+feature);
-			}
-			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
-				features.add(prefix+"_Sentence_"+feature);
 			}
 		}
 		
