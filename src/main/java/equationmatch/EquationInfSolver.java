@@ -302,41 +302,6 @@ implements Serializable {
 		return prediction;
 	}
 
-	private Lattice modifyForEarlyUpdate(Lattice prediction, Lattice gold) {
-		if(!(isEqual(gold.equations.get(0).A1, prediction.equations.get(0).A1) &&
-				gold.equations.get(0).operations.get(0) == prediction.equations.get(0).operations.get(0) &&
-				gold.equations.get(0).operations.get(1) == prediction.equations.get(0).operations.get(1))) {
-			prediction.equations.set(1, gold.equations.get(1));
-		}
-		if(!(isEqual(gold.equations.get(0).A1, prediction.equations.get(0).A1) &&
-				gold.equations.get(0).operations.get(0) == prediction.equations.get(0).operations.get(0) &&
-				gold.equations.get(0).operations.get(1) == prediction.equations.get(0).operations.get(1))) {
-			
-		}
-		if(!(isEqual(gold.equations.get(0).A1, prediction.equations.get(0).A1) &&
-				gold.equations.get(0).operations.get(0) == prediction.equations.get(0).operations.get(0) &&
-				gold.equations.get(0).operations.get(1) == prediction.equations.get(0).operations.get(1))) {
-			
-		}
-		if(!(isEqual(gold.equations.get(0).A1, prediction.equations.get(0).A1) &&
-				gold.equations.get(0).operations.get(0) == prediction.equations.get(0).operations.get(0) &&
-				gold.equations.get(0).operations.get(1) == prediction.equations.get(0).operations.get(1))) {
-			
-		}
-		if(!(isEqual(gold.equations.get(0).A1, prediction.equations.get(0).A1) &&
-				gold.equations.get(0).operations.get(0) == prediction.equations.get(0).operations.get(0) &&
-				gold.equations.get(0).operations.get(1) == prediction.equations.get(0).operations.get(1))) {
-			
-		}
-		return prediction;
-	}
-
-	private boolean isEqual(List<Pair<Operation, Double>> a1,
-			List<Pair<Operation, Double>> a12) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	private boolean isValid(int i, Lattice lattice, Blob blob) {
 		if(i==1 && EquationSolver.solve(lattice) == null) {
 			return false;
