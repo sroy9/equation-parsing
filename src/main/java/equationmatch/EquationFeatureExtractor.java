@@ -103,7 +103,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
 		Equation eq = lattice.equations.get(eqNo);
-		String prefix = "OpE2_"+eqNo+"_"+Arrays.asList(eq.operations);
+		String prefix = "OpE2_"+eqNo+"_"+eq.operations.get(2)+"_"+eq.operations.get(3);
 		features.add(prefix);
 		return features;
 	}
