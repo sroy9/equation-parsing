@@ -98,11 +98,13 @@ implements Serializable {
 				new BoundedPriorityQueue<Pair<Lattice, Double>>(
 						50, latticePairComparator);
 		tmpLatticeList.add(new Pair<Lattice, Double>(new Lattice(), 0.0));
+		beam.clear();
 		Iterator<Pair<Lattice, Double>> it;
 		// Enumerate all equations
 		for(int i = 0; i < 2; i++) {
 			for(QuantSpan qs : clusterMap.get("E1")) {
 				if(!occurTwice(qs, clusterMap.get("E1"))) continue;
+				System.out.println("Lattice List Length : "+tmpLatticeList.size());
 				for(Pair<Lattice, Double> pair : tmpLatticeList) {
 					Lattice tmpLattice = new Lattice(pair.getFirst());
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()));
@@ -191,28 +193,32 @@ implements Serializable {
 					tmpLattice.equations.get(i).B1.add(new Pair<Operation, Double>(
 							Operation.MUL, Tools.getValue(qs)));
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
-							featGen.getFeaturesVector(blob, tmpLattice, i, "B1", new Pair<Operation, Double>(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "B1", 
+									new Pair<Operation, Double>(
 									Operation.MUL, Tools.getValue(qs))))));
 					
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).B1.add(new Pair<Operation, Double>(
 							Operation.DIV, Tools.getValue(qs)));
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
-							featGen.getFeaturesVector(blob, tmpLattice, i, "B1", new Pair<Operation, Double>(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "B1", 
+									new Pair<Operation, Double>(
 									Operation.DIV, Tools.getValue(qs))))));
 					
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).B2.add(new Pair<Operation, Double>(
 							Operation.MUL, Tools.getValue(qs)));
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
-							featGen.getFeaturesVector(blob, tmpLattice, i, "B2", new Pair<Operation, Double>(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "B2", 
+									new Pair<Operation, Double>(
 									Operation.MUL, Tools.getValue(qs))))));
 					
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).B2.add(new Pair<Operation, Double>(
 							Operation.DIV, Tools.getValue(qs)));
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
-							featGen.getFeaturesVector(blob, tmpLattice, i, "B2", new Pair<Operation, Double>(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "B2", 
+									new Pair<Operation, Double>(
 									Operation.DIV, Tools.getValue(qs))))));
 				}
 				it = beam.iterator();
