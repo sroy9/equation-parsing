@@ -245,10 +245,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
 				features.add(prefix+"_Sentence_"+feature);
 			}
-			String strArr[] = blob.ta.getSentenceFromToken(pos).getTokens();
-			for(int i=0; i<strArr.length-1; ++i) {
-				features.add(prefix+"_Sentence_"+strArr[i]+"_"+strArr[i+1]);
-			}
 		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).A1) {
