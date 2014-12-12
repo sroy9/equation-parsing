@@ -209,16 +209,16 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<String>();
 		String prefix = "A2_"+eqNo+"_"+d.getFirst();
 		features.add(prefix);
-//		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A2", d.getSecond());
-//		for(IntPair span : spans) {
-//			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
-//			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
-//				features.add(prefix+"_Neighbors_"+feature);
-//			}
-//			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
-//				features.add(prefix+"_Sentence_"+feature);
-//			}
-//		}
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A2", d.getSecond());
+		for(IntPair span : spans) {
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features.add(prefix+"_Neighbors_"+feature);
+			}
+			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+				features.add(prefix+"_Sentence_"+feature);
+			}
+		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).A2) {
 				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
@@ -254,15 +254,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("percent")) {
 				features.add(prefix+"_Percentage");
 			}
-			int sentId = blob.ta.getSentenceFromToken(pos).getSentenceId();
-			if(sentId == 0) features.add(prefix+"_Present_First_Sentence");
-			for(QuantSpan qs : blob.quantities) {
-				if(blob.ta.getSentenceFromToken(blob.ta.getTokenIdFromCharacterOffset(span.getFirst()))
-						.getSentenceId() == sentId && qs.start != span.getFirst()) {
-					features.add(prefix+"_OtherNumbersInSameSentence");
-				}
-			}
-			
 		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).A1) {
