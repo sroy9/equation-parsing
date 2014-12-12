@@ -103,7 +103,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
 		Equation eq = lattice.equations.get(eqNo);
-		String prefix = "OpE2_"+eqNo+"_"+eq.operations.get(0)+"_"+eq.operations.get(1)+
+		String prefix = "OpE2_"+eq.operations.get(0)+"_"+eq.operations.get(1)+
 				eq.operations.get(2)+"_"+eq.operations.get(3);
 		features.add(prefix);
 		if(eq.B1.size() == 0) {
@@ -132,7 +132,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
 		Equation eq = lattice.equations.get(eqNo);
-		String prefix = "OpE1_"+eqNo+"_"+eq.operations.get(0)+"_"+eq.operations.get(1);
+		String prefix = "OpE1_"+eq.operations.get(0)+"_"+eq.operations.get(1);
 		features.add(prefix);
 		if(eq.A1.size() == 0) {
 			features.add(prefix+"_A1_Size_0");
@@ -160,7 +160,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
 		Equation eq = lattice.equations.get(eqNo);
-		String prefix = "C_"+eq.C.size()+"_"+d.getFirst();
+		String prefix = "C_"+d.getFirst();
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "C", d.getSecond());
 		for(IntPair span : spans) {
@@ -183,7 +183,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 	private Collection<? extends String> getB2Features(Blob blob,
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
-		String prefix = "B2_"+eqNo+"_"+d.getFirst();
+		String prefix = "B2_"+d.getFirst();
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "B2", d.getSecond());
 		for(IntPair span : spans) {
@@ -198,7 +198,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 	private Collection<? extends String> getB1Features(Blob blob,
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
-		String prefix = "B1_"+eqNo+"_"+d.getFirst();
+		String prefix = "B1_"+d.getFirst();
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "B1", d.getSecond());
 		for(IntPair span : spans) {
@@ -213,7 +213,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 	private Collection<? extends String> getA2Features(Blob blob,
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
-		String prefix = "A2_"+eqNo+"_"+d.getFirst();
+		String prefix = "A2_"+d.getFirst();
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A2", d.getSecond());
 		for(IntPair span : spans) {
@@ -228,7 +228,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 	private Collection<? extends String> getA1Features(Blob blob,
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
-		String prefix = "A1_"+eqNo+"_"+d.getFirst();
+		String prefix = "A1_"+d.getFirst();
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A1", d.getSecond());
 		for(IntPair span : spans) {
