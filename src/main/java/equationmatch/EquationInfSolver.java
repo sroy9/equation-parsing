@@ -88,6 +88,7 @@ implements Serializable {
 			WeightVector wv, IInstance arg1, IStructure arg2) throws Exception {
 		Blob blob = (Blob) arg1;
 		Lattice gold = (Lattice) arg2;
+		Lattice prediction = null;
 		Map<String, List<QuantSpan>> clusterMap = blob.simulProb.clusterMap;
 		List<Pair<Lattice, Double>> tmpLatticeList = 
 				new ArrayList<Pair<Lattice, Double>>();
@@ -266,35 +267,42 @@ implements Serializable {
 				if(!occurTwice(qs, clusterMap.get("E3"))) continue;
 				for(Pair<Lattice, Double> pair : tmpLatticeList) {
 					Lattice tmpLattice = new Lattice(pair.getFirst());
-					if(isValid(i, tmpLattice, blob)) {
-						beam.add(new Pair<>(tmpLattice, pair.getSecond()));
-					}
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()));
+
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).C.add(new Pair<Operation, Double>(
 							Operation.MUL, Tools.getValue(qs)));
 					tmpLattice.equations.get(i).operations.set(4, Operation.SUB);
-					if(isValid(i, tmpLattice, blob)) {
-						beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
-								featGen.getFeaturesVector(blob, tmpLattice, i, "C", 
-										new Pair<Operation, Double>(
-										Operation.MUL, Tools.getValue(qs))))));
-					}
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
+							featGen.getFeaturesVector(blob, tmpLattice, i, "C", 
+									new Pair<Operation, Double>(
+									Operation.MUL, Tools.getValue(qs))))));
+
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).C.add(new Pair<Operation, Double>(
 							Operation.DIV, Tools.getValue(qs)));
 					tmpLattice.equations.get(i).operations.set(4, Operation.SUB);
-					if(isValid(i, tmpLattice, blob)) {
-						beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
-							featGen.getFeaturesVector(blob, tmpLattice, i, "C", 
-									new Pair<Operation, Double>(
-									Operation.DIV, Tools.getValue(qs))))));
-					}
+					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
+						featGen.getFeaturesVector(blob, tmpLattice, i, "C", 
+								new Pair<Operation, Double>(
+								Operation.DIV, Tools.getValue(qs))))));
 				}
+				it = beam.iterator();
+				tmpLatticeList.clear();
+				for(;it.hasNext();) {
+					tmpLatticeList.add(it.next());
+				}
+				prediction = beam.element().getFirst();
+				beam.clear();
 			}
 		}
 //		System.out.println("Gold choice : \n"+gold);
 //		System.out.println("Best Choice : \n"+beam.element().getFirst());
-		Lattice prediction = beam.element().getFirst();
+		prediction = modifyForEarlyUpdate(beam.element().getFirst(), gold);
+		return prediction;
+	}
+
+	private Lattice modifyForEarlyUpdate(Lattice prediction, Lattice gold) {
 		return prediction;
 	}
 
