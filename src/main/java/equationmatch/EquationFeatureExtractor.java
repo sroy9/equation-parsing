@@ -200,7 +200,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 	private Collection<? extends String> getB1Features(Blob blob,
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
-		String prefix = "B1_"+eqNo+"_"+d.getFirst();
+		String prefix = "B1_"+eqNo+"_"+d.getFirst()+"_"+blob.clusterMap.get("E2").size();
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "B1", d.getSecond());
 		for(IntPair span : spans) {
