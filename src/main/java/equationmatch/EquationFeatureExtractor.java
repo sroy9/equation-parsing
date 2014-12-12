@@ -191,18 +191,13 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
 		Equation eq = lattice.equations.get(eqNo);
-		String prefix = "B1_"+eqNo+"_"+d.getFirst()+"_"+blob.clusterMap.get("E2").size();;
+		String prefix = "B1_"+eqNo+"_"+d.getFirst();
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "B1", d.getSecond());
-		for(IntPair span : spans) {
-			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
-			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
-				features.add(prefix+"_Neighbors_"+feature);
-			}
-			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
-				features.add(prefix+"_Sentence_"+feature);
-			}
-		}
+		if(spans.size() > 1) features.add(prefix+"_MentionedTwice");
+		features.add(prefix+"_A1Size_"+eq.A1.size());
+		features.add(prefix+"_A2Size_"+eq.A2.size());
+		features.add(prefix+"_Op_"+eq.operations.get(0)+"_"+eq.operations.get(1));
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).B1) {
 				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
