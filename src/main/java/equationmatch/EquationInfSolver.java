@@ -291,11 +291,7 @@ implements Serializable {
 				it = beam.iterator();
 				tmpLatticeList.clear();
 				for(;it.hasNext();) {
-					Pair<Lattice, Double> latticePair = it.next();
-					if(individualEqValidity(latticePair.getFirst(), i) && 
-							(i!=1 || fullEqSystemValidity(latticePair.getFirst()))) {
-						tmpLatticeList.add(latticePair);
-					}
+					tmpLatticeList.add(it.next());
 				}
 				prediction = beam.element().getFirst();
 				beam.clear();
