@@ -145,6 +145,7 @@ implements Serializable {
 				for(;it.hasNext();) {
 					tmpLatticeList.add(it.next());
 				}
+				prediction = beam.element().getFirst();
 				beam.clear();
 			}
 
@@ -179,6 +180,7 @@ implements Serializable {
 			for(;it.hasNext();) {
 				tmpLatticeList.add(it.next());
 			}
+			prediction = beam.element().getFirst();
 			beam.clear();
 			
 			
@@ -225,6 +227,7 @@ implements Serializable {
 				for(;it.hasNext();) {
 					tmpLatticeList.add(it.next());
 				}
+				prediction = beam.element().getFirst();
 				beam.clear();
 			}
 			
@@ -260,6 +263,7 @@ implements Serializable {
 			for(;it.hasNext();) {
 				tmpLatticeList.add(it.next());
 			}
+			prediction = beam.element().getFirst();
 			beam.clear();
 			
 			for(QuantSpan qs : clusterMap.get("E3")) {
