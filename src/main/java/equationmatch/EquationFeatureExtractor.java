@@ -203,7 +203,19 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
 				features.add(prefix+"_Neighbors_"+feature);
 			}
+			int sentId = blob.ta.getSentenceFromToken(pos).getSentenceId();
+			for(Pair<Operation, Double> pair : eq.A1) {
+				for(IntPair span1 : getRelevantSpans(blob, lattice, eqNo, "A1", pair.getSecond())) {
+					int pos1 = blob.ta.getTokenIdFromCharacterOffset(span1.getFirst());
+					int sentId1 = blob.ta.getSentenceFromToken(pos1).getSentenceId();
+					if(sentId1 == sentId) {
+						features.add(prefix+"_SameSentenceWithA1"+pair.getFirst());
+					}
+				}
+			}
+			
 		}
+		
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).B1) {
 				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
