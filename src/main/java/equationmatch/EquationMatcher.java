@@ -42,7 +42,7 @@ public class EquationMatcher {
 				.splitTrainTest((int) (trainFrac * problem.size()));
 		SLProblem train = trainTest.getFirst();
 		SLProblem test = trainTest.getSecond();
-		trainModel("model.save", train);
+//		trainModel("model.save", train);
 		testModel("model.save", test);
 	}
 
@@ -72,6 +72,7 @@ public class EquationMatcher {
 			System.out.println(blob.simulProb.index+" : "+blob.simulProb.question);
 			System.out.println("Gold : \n" + gold);
 			System.out.println("Predicted : \n" + prediction);
+			System.out.println("Struct Acc : "+getStructAcc(prediction, gold, params));
 			structAcc += getStructAcc(prediction, gold, params);
 			if (hasSameSolution(prediction, gold)) {
 				acc += 1.0;
