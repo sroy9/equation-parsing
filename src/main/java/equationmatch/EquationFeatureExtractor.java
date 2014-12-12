@@ -122,6 +122,19 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<String>();
 		String prefix = "C_"+eqNo+"_"+d.getFirst()+"_"+lattice.equations.get(eqNo).C.size();
 		features.add(prefix);
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "C", d.getSecond());
+		if(spans.size() > 0) features.add(prefix+"_MentionedTwice");
+		for(IntPair span : spans) {
+			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("dollar")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("$")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("cents")) {
+				features.add(prefix+"_Money");
+			}
+			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("%")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("percent")) {
+				features.add(prefix+"_Percentage");
+			}
+		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).C) {
 				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
@@ -138,6 +151,19 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<String>();
 		String prefix = "B2_"+eqNo+"_"+d.getFirst();
 		features.add(prefix);
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "B2", d.getSecond());
+		if(spans.size() > 0) features.add(prefix+"_MentionedTwice");
+		for(IntPair span : spans) {
+			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("dollar")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("$")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("cents")) {
+				features.add(prefix+"_Money");
+			}
+			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("%")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("percent")) {
+				features.add(prefix+"_Percentage");
+			}
+		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).B2) {
 				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
@@ -154,6 +180,19 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<String>();
 		String prefix = "B1_"+eqNo+"_"+d.getFirst();
 		features.add(prefix);
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "B1", d.getSecond());
+		if(spans.size() > 0) features.add(prefix+"_MentionedTwice");
+		for(IntPair span : spans) {
+			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("dollar")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("$")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("cents")) {
+				features.add(prefix+"_Money");
+			}
+			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("%")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("percent")) {
+				features.add(prefix+"_Percentage");
+			}
+		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).B1) {
 				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
@@ -170,6 +209,19 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<String>();
 		String prefix = "A2_"+eqNo+"_"+d.getFirst();
 		features.add(prefix);
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A2", d.getSecond());
+		if(spans.size() > 0) features.add(prefix+"_MentionedTwice");
+		for(IntPair span : spans) {
+			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("dollar")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("$")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("cents")) {
+				features.add(prefix+"_Money");
+			}
+			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("%")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("percent")) {
+				features.add(prefix+"_Percentage");
+			}
+		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).A2) {
 				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {
@@ -186,6 +238,19 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<String>();
 		String prefix = "A1_"+eqNo+"_"+d.getFirst();
 		features.add(prefix);
+		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A1", d.getSecond());
+		if(spans.size() > 0) features.add(prefix+"_MentionedTwice");
+		for(IntPair span : spans) {
+			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("dollar")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("$")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("cents")) {
+				features.add(prefix+"_Money");
+			}
+			if(blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("%")||
+					blob.ta.getText().substring(span.getFirst(), span.getSecond()).contains("percent")) {
+				features.add(prefix+"_Percentage");
+			}
+		}
 		if(eqNo > 0) {
 			for(Pair<Operation, Double> pair : lattice.equations.get(0).A1) {
 				if(Tools.safeEquals(pair.getSecond(), d.getSecond())) {

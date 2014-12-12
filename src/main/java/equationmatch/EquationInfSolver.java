@@ -183,7 +183,6 @@ implements Serializable {
 			prediction = beam.element().getFirst();
 			beam.clear();
 			
-			
 			for(QuantSpan qs : clusterMap.get("E2")) {
 				if(!occurTwice(qs, clusterMap.get("E2"))) continue;
 				for(Pair<Lattice, Double> pair : tmpLatticeList) {
@@ -230,7 +229,6 @@ implements Serializable {
 				prediction = beam.element().getFirst();
 				beam.clear();
 			}
-			
 
 			// Operation related to E2
 			for(Pair<Lattice, Double> pair : tmpLatticeList) {
@@ -301,12 +299,42 @@ implements Serializable {
 		}
 //		System.out.println("Gold choice : \n"+gold);
 //		System.out.println("Best Choice : \n"+beam.element().getFirst());
-		prediction = modifyForEarlyUpdate(prediction, gold);
 		return prediction;
 	}
 
 	private Lattice modifyForEarlyUpdate(Lattice prediction, Lattice gold) {
+		if(!(isEqual(gold.equations.get(0).A1, prediction.equations.get(0).A1) &&
+				gold.equations.get(0).operations.get(0) == prediction.equations.get(0).operations.get(0) &&
+				gold.equations.get(0).operations.get(1) == prediction.equations.get(0).operations.get(1))) {
+			prediction.equations.set(1, gold.equations.get(1));
+		}
+		if(!(isEqual(gold.equations.get(0).A1, prediction.equations.get(0).A1) &&
+				gold.equations.get(0).operations.get(0) == prediction.equations.get(0).operations.get(0) &&
+				gold.equations.get(0).operations.get(1) == prediction.equations.get(0).operations.get(1))) {
+			
+		}
+		if(!(isEqual(gold.equations.get(0).A1, prediction.equations.get(0).A1) &&
+				gold.equations.get(0).operations.get(0) == prediction.equations.get(0).operations.get(0) &&
+				gold.equations.get(0).operations.get(1) == prediction.equations.get(0).operations.get(1))) {
+			
+		}
+		if(!(isEqual(gold.equations.get(0).A1, prediction.equations.get(0).A1) &&
+				gold.equations.get(0).operations.get(0) == prediction.equations.get(0).operations.get(0) &&
+				gold.equations.get(0).operations.get(1) == prediction.equations.get(0).operations.get(1))) {
+			
+		}
+		if(!(isEqual(gold.equations.get(0).A1, prediction.equations.get(0).A1) &&
+				gold.equations.get(0).operations.get(0) == prediction.equations.get(0).operations.get(0) &&
+				gold.equations.get(0).operations.get(1) == prediction.equations.get(0).operations.get(1))) {
+			
+		}
 		return prediction;
+	}
+
+	private boolean isEqual(List<Pair<Operation, Double>> a1,
+			List<Pair<Operation, Double>> a12) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	private boolean isValid(int i, Lattice lattice, Blob blob) {
