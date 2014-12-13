@@ -70,10 +70,7 @@ public class FeatureExtraction {
 		}
 		return bigrams;
 	}
-	public static List<String> getBigramsPOS(String text) throws Exception {
-		List<String> bigrams = new ArrayList<String>();
-		return bigrams;
-	}
+	
 	public static List<String> getConjunctions(List<String> features) {
 		List<String> conjunctions = new ArrayList<String>();
 		for(String feature1 : features) {
@@ -266,8 +263,7 @@ public class FeatureExtraction {
 		}
 		return features;
 	}
-		
-	// From Chunker
+	
 	public static List<String> getPOSWindowPP(List<Constituent> posTags, int pos, int window) 
 			throws Exception {
 		List<String> features = new ArrayList<String>();
