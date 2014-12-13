@@ -109,6 +109,9 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		String prefix = "Op_E2"+eq.operations.get(2)+"_"+eq.operations.get(3);
 		features.add(prefix);
 		features.add(prefix+"_"+eq.operations.get(0)+"_"+eq.operations.get(1));
+		for(String feature : getGlobalFeatures(blob)) {
+			features.add(prefix+"_"+feature);
+		}
 		return features;
 	}
 
@@ -118,6 +121,9 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		Equation eq = lattice.equations.get(eqNo);
 		String prefix = "Op_E1"+eq.operations.get(0)+"_"+eq.operations.get(1);
 		features.add(prefix);
+		for(String feature : getGlobalFeatures(blob)) {
+			features.add(prefix+"_"+feature);
+		}
 		return features;
 	}
 
@@ -131,6 +137,11 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		}
 		if(eqNo>0 && isPresent(d.getSecond(), "E3", lattice.equations.get(0))) {
 			features.add(prefix+"_Already_Present");
+		}
+		for(IntPair span : getRelevantSpans(blob, "C", d.getSecond())) {
+			for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3))	{
+				features.add(prefix+"_"+feature);
+			}
 		}
 		return features;
 	}
@@ -150,6 +161,11 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				lattice.equations.get(eqNo).B1, lattice.equations.get(eqNo).B2, blob, "B1", "B2")) {
 			features.add(prefix+"_"+feature);
 		}
+		for(IntPair span : getRelevantSpans(blob, "B2", d.getSecond())) {
+			for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3))	{
+				features.add(prefix+"_"+feature);
+			}
+		}
 		return features;
 	}
 
@@ -167,6 +183,11 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		for(String feature : getPairwiseFeatures(
 				lattice.equations.get(eqNo).A1, lattice.equations.get(eqNo).B1, blob, "A1", "B1")) {
 			features.add(prefix+"_"+feature);
+		}
+		for(IntPair span : getRelevantSpans(blob, "B1", d.getSecond())) {
+			for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3))	{
+				features.add(prefix+"_"+feature);
+			}
 		}
 		return features;
 	}
@@ -186,6 +207,11 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				lattice.equations.get(eqNo).A1, lattice.equations.get(eqNo).A2, blob, "A1", "A2")) {
 			features.add(prefix+"_"+feature);
 		}
+		for(IntPair span : getRelevantSpans(blob, "A2", d.getSecond())) {
+			for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3))	{
+				features.add(prefix+"_"+feature);
+			}
+		}
 		return features;
 	}
 
@@ -199,6 +225,11 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		}
 		if(eqNo>0 && isPresent(d.getSecond(), "E1", lattice.equations.get(0))) {
 			features.add(prefix+"_Already_Present");
+		}
+		for(IntPair span : getRelevantSpans(blob, "A1", d.getSecond())) {
+			for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3))	{
+				features.add(prefix+"_"+feature);
+			}
 		}
 		return features;
 	}
