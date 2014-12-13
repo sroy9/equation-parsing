@@ -296,6 +296,9 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
 				features.add(prefix+"_Neighbors_"+feature);
 			}
+			for(String feature : blob.ta.getSentenceFromToken(pos).getTokens()) {
+				features.add(prefix+"_Sentence_"+feature);
+			}
 		}
 		return features;
 	}
