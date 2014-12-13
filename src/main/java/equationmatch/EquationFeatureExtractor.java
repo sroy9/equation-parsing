@@ -161,6 +161,9 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<String>();
 		Equation eq = lattice.equations.get(eqNo);
 		String prefix = "C_"+d.getFirst();
+		if(eqNo>0 && isPresent(d.getSecond(), "E3", lattice.equations.get(0))) {
+			prefix+="_AlreadyUsed";
+		}
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "C", d.getSecond());
 		for(IntPair span : spans) {
@@ -184,6 +187,9 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
 		String prefix = "B2_"+d.getFirst();
+		if(eqNo>0 && isPresent(d.getSecond(), "E2", lattice.equations.get(0))) {
+			prefix+="_AlreadyUsed";
+		}
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "B2", d.getSecond());
 		for(IntPair span : spans) {
@@ -199,6 +205,9 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
 		String prefix = "B1_"+d.getFirst();
+		if(eqNo>0 && isPresent(d.getSecond(), "E2", lattice.equations.get(0))) {
+			prefix+="_AlreadyUsed";
+		}
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "B1", d.getSecond());
 		for(IntPair span : spans) {
@@ -214,6 +223,9 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
 		String prefix = "A2_"+d.getFirst();
+		if(eqNo>0 && isPresent(d.getSecond(), "E1", lattice.equations.get(0))) {
+			prefix+="_AlreadyUsed";
+		}
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A2", d.getSecond());
 		for(IntPair span : spans) {
@@ -229,6 +241,9 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
 		List<String> features = new ArrayList<String>();
 		String prefix = "A1_"+d.getFirst();
+		if(eqNo>0 && isPresent(d.getSecond(), "E1", lattice.equations.get(0))) {
+			prefix+="_AlreadyUsed";
+		}
 		features.add(prefix);
 		List<IntPair> spans = getRelevantSpans(blob, lattice, eqNo, "A1", d.getSecond());
 		for(IntPair span : spans) {
@@ -292,4 +307,40 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		}
 		return relevantSpans;
 	}
+	
+	private boolean isPresent(Double d, String entity, Equation eq) {
+		if(entity.equals("E1")) {
+			for(Pair<Operation, Double> pair : eq.A1) {
+				if(Tools.safeEquals(d, pair.getSecond())) {
+					return true;
+				}
+			}
+			for(Pair<Operation, Double> pair : eq.A2) {
+				if(Tools.safeEquals(d, pair.getSecond())) {
+					return true;
+				}
+			}
+		}
+		if(entity.equals("E2")) {
+			for(Pair<Operation, Double> pair : eq.B1) {
+				if(Tools.safeEquals(d, pair.getSecond())) {
+					return true;
+				}
+			}
+			for(Pair<Operation, Double> pair : eq.B2) {
+				if(Tools.safeEquals(d, pair.getSecond())) {
+					return true;
+				}
+			}
+		}
+		if(entity.equals("E3")) {
+			for(Pair<Operation, Double> pair : eq.C) {
+				if(Tools.safeEquals(d, pair.getSecond())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 }
