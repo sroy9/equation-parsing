@@ -60,7 +60,7 @@ public class EquationMatcher {
 	private static void testModel(String modelPath, SLProblem sp)
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
-		List<String> params = Arrays.asList("A1", "A2", "Op_E1");
+		List<String> params = Arrays.asList("A1", "A2", "Op_E1", "B1", "B2", "Op_E2", "C");
 		double acc = 0.0;
 		double structAcc = 0.0;
 		double total = sp.instanceList.size();
