@@ -13,6 +13,8 @@ import utils.FeatureExtraction;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
+import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
@@ -106,6 +108,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		Equation eq = lattice.equations.get(eqNo);
 		String prefix = "Op_E2"+eq.operations.get(2)+"_"+eq.operations.get(3);
 		features.add(prefix);
+		features.add(prefix+"_"+eq.operations.get(0)+"_"+eq.operations.get(1));
 		return features;
 	}
 
@@ -127,7 +130,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			features.add(prefix+"_"+feature);
 		}
 		if(eqNo>0 && isPresent(d.getSecond(), "E3", lattice.equations.get(0))) {
-			features.add("Already_Present");
+			features.add(prefix+"_Already_Present");
 		}
 		return features;
 	}
@@ -141,7 +144,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			features.add(prefix+"_"+feature);
 		}
 		if(eqNo>0 && isPresent(d.getSecond(), "E2", lattice.equations.get(0))) {
-			features.add("Already_Present");
+			features.add(prefix+"_Already_Present");
 		}
 		for(String feature : getPairwiseFeatures(
 				lattice.equations.get(eqNo).B1, lattice.equations.get(eqNo).B2, blob, "B1", "B2")) {
@@ -159,7 +162,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			features.add(prefix+"_"+feature);
 		}
 		if(eqNo>0 && isPresent(d.getSecond(), "E2", lattice.equations.get(0))) {
-			features.add("Already_Present");
+			features.add(prefix+"_Already_Present");
 		}
 		for(String feature : getPairwiseFeatures(
 				lattice.equations.get(eqNo).A1, lattice.equations.get(eqNo).B1, blob, "A1", "B1")) {
@@ -177,7 +180,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			features.add(prefix+"_"+feature);
 		}
 		if(eqNo>0 && isPresent(d.getSecond(), "E1", lattice.equations.get(0))) {
-			features.add("Already_Present");
+			features.add(prefix+"_Already_Present");
 		}
 		for(String feature : getPairwiseFeatures(
 				lattice.equations.get(eqNo).A1, lattice.equations.get(eqNo).A2, blob, "A1", "A2")) {
@@ -195,7 +198,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			features.add(prefix+"_"+feature);
 		}
 		if(eqNo>0 && isPresent(d.getSecond(), "E1", lattice.equations.get(0))) {
-			features.add("Already_Present");
+			features.add(prefix+"_Already_Present");
 		}
 		return features;
 	}
@@ -309,14 +312,28 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<>();
 		features.add("NumberOfSentences_"+blob.ta.getNumberOfSentences());
 		features.addAll(FeatureExtraction.getLemmatizedUnigrams(
-				blob.ta, blob.lemmas, 0, blob.ta.size()-1));
+				blob.lemmas, 0, blob.ta.size()-1));
 		features.addAll(FeatureExtraction.getLemmatizedBigrams(
-				blob.ta, blob.lemmas, 0, blob.ta.size()-1));
+				blob.lemmas, 0, blob.ta.size()-1));
 		features.add("E1_size_"+Tools.uniqueNumbers(blob.clusterMap.get("E1")).size());
 		features.add("E2_size_"+Tools.uniqueNumbers(blob.clusterMap.get("E2")).size());
 		features.add("E3_size_"+Tools.uniqueNumbers(blob.clusterMap.get("E3")).size());
 		features.add("QuestionSentence_"+FeatureExtraction.getQuestionSentences(blob.ta).size());
 		return features;	
+	}
+	
+	public List<String> nearbyTokens(
+			IntPair span, TextAnnotation ta, List<Constituent> lemmas, int window) {
+		List<String> features = new ArrayList<>();
+		int startPos = ta.getTokenIdFromCharacterOffset(span.getFirst());
+		int endPos = ta.getTokenIdFromCharacterOffset(span.getSecond());
+		for(int i=startPos-1; i>=Math.max(startPos-window,0); i--) {
+			features.add("Nearby_"+lemmas.get(i).getLabel());
+		}
+		for(int i=endPos+1; i<=Math.min(endPos+window,ta.size()-1); i++) {
+			features.add("Nearby_"+lemmas.get(i).getLabel());
+		}
+		return features;
 	}
 	
 	

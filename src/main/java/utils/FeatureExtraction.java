@@ -32,7 +32,7 @@ public class FeatureExtraction {
 	}
 	
 	public static List<String> getLemmatizedUnigrams(
-			TextAnnotation ta, List<Constituent> lemmas, int start, int end) {
+			List<Constituent> lemmas, int start, int end) {
 		List<String> unigrams = new ArrayList<String>();
 		for(int i = start; i <= end; ++i) {
 			unigrams.add(lemmas.get(i).getLabel());
@@ -41,7 +41,7 @@ public class FeatureExtraction {
 	}
 
 	public static List<String> getLemmatizedBigrams(
-			TextAnnotation ta, List<Constituent> lemmas, int start, int end) {
+			List<Constituent> lemmas, int start, int end) {
 		List<String> bigrams = new ArrayList<String>();
 		for(int i = start; i < end; ++i) {
 			bigrams.add(lemmas.get(i).getLabel()+"_"+lemmas.get(i+1).getLabel());
