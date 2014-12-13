@@ -280,9 +280,9 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<>();
 		features.add("NumberOfSentences_"+blob.ta.getNumberOfSentences());
 		features.addAll(FeatureExtraction.getLemmatizedUnigrams(
-				blob.ta, blob.lemmas, 0, blob.ta.size()));
+				blob.ta, blob.lemmas, 0, blob.ta.size()-1));
 		features.addAll(FeatureExtraction.getLemmatizedBigrams(
-				blob.ta, blob.lemmas, 0, blob.ta.size()));
+				blob.ta, blob.lemmas, 0, blob.ta.size()-1));
 		features.add("E1_size_"+Tools.uniqueNumbers(blob.clusterMap.get("E1")).size());
 		features.add("E2_size_"+Tools.uniqueNumbers(blob.clusterMap.get("E2")).size());
 		features.add("E3_size_"+Tools.uniqueNumbers(blob.clusterMap.get("E3")).size());
