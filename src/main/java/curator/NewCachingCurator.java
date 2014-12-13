@@ -77,7 +77,7 @@ public class NewCachingCurator {
 			} else if(view.equals(ViewNames.DEPENDENCY_STANFORD)) {
 				curator.addStanfordDependencyView(ta, forceUpdate);
 			} else if(view.equals(ViewNames.DEPENDENCY)) {
-				curator.addDependencyTreeView(ta, forceUpdate, ViewNames.DEPENDENCY, ViewNames.DEPENDENCY);
+				curator.addDependencyTreeView(ta, forceUpdate, ViewNames.DEPENDENCY_STANFORD, ViewNames.DEPENDENCY_STANFORD);
 			} else if(view.equals(ViewNames.LEMMA)) {
 				curator.addLemmaView(ta, forceUpdate);
 			} else {
