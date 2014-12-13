@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.math.NumberUtils;
+
 import de.bwaldvogel.liblinear.Feature;
 import structure.Equation;
 import structure.Operation;
@@ -358,11 +360,19 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<>();
 		int startPos = ta.getTokenIdFromCharacterOffset(span.getFirst());
 		int endPos = ta.getTokenIdFromCharacterOffset(span.getSecond());
-		for(int i=startPos-1; i>=Math.max(startPos-window,0); i--) {
-			features.add("Nearby_"+lemmas.get(i).getLabel());
+		List<String> unigrams = new ArrayList<>();
+		for(int i=Math.max(startPos-window,0); i<=Math.min(endPos+window,ta.size()-1); i++) {
+			if(NumberUtils.isNumber(ta.getToken(i))) {
+				unigrams.add("NUMBER");
+			} else {
+				unigrams.add(lemmas.get(i).getLabel());
+			}
 		}
-		for(int i=endPos+1; i<=Math.min(endPos+window,ta.size()-1); i++) {
-			features.add("Nearby_"+lemmas.get(i).getLabel());
+		for(int i=0; i<unigrams.size(); i++) {
+			features.add("Nearby_"+unigrams.get(i));
+		}
+		for(int i=0; i<unigrams.size()-1; i++) {
+			features.add("Nearby_"+unigrams.get(i)+"_"+unigrams.get(i+1));
 		}
 		return features;
 	}
