@@ -88,40 +88,6 @@ public class NewCachingCurator {
 		}
 		return ta;
 	}
-	
-	public TextAnnotation getTextAnnotation(String text, boolean forceUpdate) 
-			throws Exception {
-		String md5sum = getMD5Checksum(text);
-		String savePath = pathToSaveCachedFiles + "/" + md5sum + ".cached";
-		TextAnnotation ta;
-		if (new File(savePath).exists()) {
-			ta = AnnotationHelper.deserialize(readJson(savePath));
-		}
-//		 if we reached here, either the text saved in the file didn't match,
-//		 or the file didn't exist, so we need to build the annotation.
-		else {
-//			System.out.println("Not cached! ...");
-			ta = curator.getTextAnnotation("", "", text, forceUpdate);
-			
-			for(String view:views) {
-				if(view.equals("SHALLOW_PARSE"))
-					curator.addChunkView(ta, forceUpdate);
-					
-				if(view.equals("POS"))
-					curator.addPOSView(ta, forceUpdate);
-				
-				if(view.equals("PARSE_BERKELEY"))
-					curator.addBerkeleyParse(ta, forceUpdate);
-				
-				if(view.equals("SRL"))
-					curator.addSRLVerbView(ta, forceUpdate);
-					
-			}
-			writeJson(savePath, AnnotationHelper.serialize(ta));
-			
-		}
-		return ta;
-	}
 
 	public static void writeJson(String fileName, String json) 
 			throws FileNotFoundException, IOException{
