@@ -102,43 +102,38 @@ implements Serializable {
 		Iterator<Pair<Lattice, Double>> it;
 		// Enumerate all equations
 		for(int i = 0; i < 2; i++) {
-			for(QuantSpan qs : clusterMap.get("E1")) {
-				if(!occurTwice(qs, clusterMap.get("E1"))) continue;
+			for(Double d : Tools.uniqueNumbers(clusterMap.get("E1"))) {
 				for(Pair<Lattice, Double> pair : tmpLatticeList) {
 					Lattice tmpLattice = new Lattice(pair.getFirst());
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()));
 					
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).A1.add(new Pair<Operation, Double>(
-							Operation.MUL, Tools.getValue(qs)));
+							Operation.MUL, d));
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
 							featGen.getFeaturesVector(blob, tmpLattice, i, "A1", 
-									new Pair<Operation, Double>(
-									Operation.MUL, Tools.getValue(qs))))));
+									new Pair<Operation, Double>(Operation.MUL, d)))));
 					
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).A1.add(new Pair<Operation, Double>(
-							Operation.DIV, Tools.getValue(qs)));
+							Operation.DIV, d));
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
 							featGen.getFeaturesVector(blob, tmpLattice, i, "A1", 
-									new Pair<Operation, Double>(
-									Operation.DIV, Tools.getValue(qs))))));
+									new Pair<Operation, Double>(Operation.DIV, d)))));
 					
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).A2.add(new Pair<Operation, Double>(
-							Operation.MUL, Tools.getValue(qs)));
+							Operation.MUL, d));
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
 							featGen.getFeaturesVector(blob, tmpLattice, i, "A2", 
-									new Pair<Operation, Double>(
-									Operation.MUL, Tools.getValue(qs))))));
+									new Pair<Operation, Double>(Operation.MUL, d)))));
 					
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).A2.add(new Pair<Operation, Double>(
-							Operation.DIV, Tools.getValue(qs)));
+							Operation.DIV, d));
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
 							featGen.getFeaturesVector(blob, tmpLattice, i, "A2", 
-									new Pair<Operation, Double>(
-									Operation.DIV, Tools.getValue(qs))))));
+									new Pair<Operation, Double>(Operation.DIV, d)))));
 				}
 				it = beam.iterator();
 				tmpLatticeList.clear();
@@ -183,43 +178,42 @@ implements Serializable {
 			prediction = beam.element().getFirst();
 			beam.clear();
 			
-			for(QuantSpan qs : clusterMap.get("E2")) {
-				if(!occurTwice(qs, clusterMap.get("E2"))) continue;
+			for(Double d : Tools.uniqueNumbers(clusterMap.get("E2"))) {
 				for(Pair<Lattice, Double> pair : tmpLatticeList) {
 					Lattice tmpLattice = new Lattice(pair.getFirst());
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()));
 					
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).B1.add(new Pair<Operation, Double>(
-							Operation.MUL, Tools.getValue(qs)));
+							Operation.MUL, d));
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
 							featGen.getFeaturesVector(blob, tmpLattice, i, "B1", 
 									new Pair<Operation, Double>(
-									Operation.MUL, Tools.getValue(qs))))));
+									Operation.MUL, d)))));
 					
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).B1.add(new Pair<Operation, Double>(
-							Operation.DIV, Tools.getValue(qs)));
+							Operation.DIV, d));
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
 							featGen.getFeaturesVector(blob, tmpLattice, i, "B1", 
 									new Pair<Operation, Double>(
-									Operation.DIV, Tools.getValue(qs))))));
+									Operation.DIV, d)))));
 					
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).B2.add(new Pair<Operation, Double>(
-							Operation.MUL, Tools.getValue(qs)));
+							Operation.MUL, d));
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
 							featGen.getFeaturesVector(blob, tmpLattice, i, "B2", 
 									new Pair<Operation, Double>(
-									Operation.MUL, Tools.getValue(qs))))));
+									Operation.MUL, d)))));
 					
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).B2.add(new Pair<Operation, Double>(
-							Operation.DIV, Tools.getValue(qs)));
+							Operation.DIV, d));
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
 							featGen.getFeaturesVector(blob, tmpLattice, i, "B2", 
 									new Pair<Operation, Double>(
-									Operation.DIV, Tools.getValue(qs))))));
+									Operation.DIV, d)))));
 				}
 				it = beam.iterator();
 				tmpLatticeList.clear();
@@ -264,29 +258,28 @@ implements Serializable {
 			prediction = beam.element().getFirst();
 			beam.clear();
 			
-			for(QuantSpan qs : clusterMap.get("E3")) {
-				if(!occurTwice(qs, clusterMap.get("E3"))) continue;
+			for(Double d : Tools.uniqueNumbers(clusterMap.get("E3"))) {
 				for(Pair<Lattice, Double> pair : tmpLatticeList) {
 					Lattice tmpLattice = new Lattice(pair.getFirst());
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()));
 
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).C.add(new Pair<Operation, Double>(
-							Operation.MUL, Tools.getValue(qs)));
+							Operation.MUL, d));
 					tmpLattice.equations.get(i).operations.set(4, Operation.SUB);
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
 							featGen.getFeaturesVector(blob, tmpLattice, i, "C", 
 									new Pair<Operation, Double>(
-									Operation.MUL, Tools.getValue(qs))))));
+									Operation.MUL, d)))));
 
 					tmpLattice = new Lattice(pair.getFirst());
 					tmpLattice.equations.get(i).C.add(new Pair<Operation, Double>(
-							Operation.DIV, Tools.getValue(qs)));
+							Operation.DIV, d));
 					tmpLattice.equations.get(i).operations.set(4, Operation.SUB);
 					beam.add(new Pair<>(tmpLattice, pair.getSecond()+wv.dotProduct(
 						featGen.getFeaturesVector(blob, tmpLattice, i, "C", 
 								new Pair<Operation, Double>(
-								Operation.DIV, Tools.getValue(qs))))));
+								Operation.DIV, d)))));
 				}
 				it = beam.iterator();
 				tmpLatticeList.clear();
@@ -355,16 +348,6 @@ implements Serializable {
 			}
 		}
 //		if(i==1 && !isAllNumbersUsed(lattice, blob)) return false;
-		return true;
-	}
-
-	private boolean occurTwice(QuantSpan qs, List<QuantSpan> list) {
-		for(QuantSpan item : list) {
-			if(Tools.safeEquals(Tools.getValue(qs), Tools.getValue(item))) {
-				if(qs.start == item.start) return true;
-				else return false;
-			}
-		}
 		return true;
 	}
 	

@@ -17,6 +17,7 @@ public class Blob implements IInstance {
 	public TextAnnotation ta;
 	public List<Constituent> posTags;
 	public List<Constituent> lemmas;
+	public List<Constituent> dependencyParse;
 	public List<QuantSpan> quantities;
 	public Map<String, List<QuantSpan>> clusterMap;
 
@@ -31,6 +32,9 @@ public class Blob implements IInstance {
 		lemmas = Tools.curator.getTextAnnotationWithSingleView(
 				simulProb.question, ViewNames.LEMMA, false)
 				.getView(ViewNames.LEMMA).getConstituents();
+		dependencyParse = Tools.curator.getTextAnnotationWithSingleView(
+				simulProb.question, ViewNames.DEPENDENCY_STANFORD, false)
+				.getView(ViewNames.DEPENDENCY_STANFORD).getConstituents();
 	}
 	
 	public Lattice getGold() {

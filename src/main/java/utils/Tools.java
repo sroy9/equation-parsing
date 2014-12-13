@@ -87,4 +87,20 @@ public class Tools {
 		}
 		return null;
 	}
+
+	public static List<Double> uniqueNumbers(List<QuantSpan> quantSpans) {
+		List<Double> uniqueNos = new ArrayList<>();
+		for(int i=0; i<quantSpans.size(); i++) {
+			QuantSpan qs = quantSpans.get(i);
+			boolean allow = true;
+			for(int j=0; j<i; j++) {
+				if(Tools.safeEquals(Tools.getValue(qs), Tools.getValue(quantSpans.get(j)))) {
+					allow = false;
+					break;
+				}
+			}
+			if(allow) uniqueNos.add(Tools.getValue(qs));
+		}
+		return uniqueNos;
+	}
 }
