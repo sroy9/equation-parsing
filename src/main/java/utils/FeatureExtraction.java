@@ -297,8 +297,7 @@ public class FeatureExtraction {
 	
 	// From Chunker
 	public static List<String> getMixed(
-			TextAnnotation ta, List<Constituent> posTags, int pos, int window) 
-			throws Exception {
+			TextAnnotation ta, List<Constituent> posTags, int pos, int window) {
 		List<String> features = new ArrayList<String>();
 		int before = 2;
 		int after = 2;

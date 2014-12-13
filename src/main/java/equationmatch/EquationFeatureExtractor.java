@@ -180,6 +180,24 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				features.add(prefix+"_Neighbors_"+feature);
 			}
 		}
+		for(IntPair span : spans) {
+			for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).A1) {
+				for(IntPair span1 : getRelevantSpans(blob, lattice, eqNo, "A1", pair.getSecond())) {
+					for(String feature : getPairwiseFeatures(span, span1, blob)) {
+						features.add(prefix+"_A1_"+feature);
+					}
+				}
+			}
+		}
+		for(IntPair span : spans) {
+			for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).B1) {
+				for(IntPair span1 : getRelevantSpans(blob, lattice, eqNo, "B1", pair.getSecond())) {
+					for(String feature : getPairwiseFeatures(span, span1, blob)) {
+						features.add(prefix+"_B1_"+feature);
+					}
+				}
+			}
+		}
 		return features;
 	}
 
@@ -196,6 +214,15 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
 			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
 				features.add(prefix+"_Neighbors_"+feature);
+			}
+		}
+		for(IntPair span : spans) {
+			for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).B1) {
+				for(IntPair span1 : getRelevantSpans(blob, lattice, eqNo, "B1", pair.getSecond())) {
+					for(String feature : getPairwiseFeatures(span, span1, blob)) {
+						features.add(prefix+"_B1_"+feature);
+					}
+				}
 			}
 		}
 		return features;
@@ -216,6 +243,15 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				features.add(prefix+"_Neighbors_"+feature);
 			}
 		}
+		for(IntPair span : spans) {
+			for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).A1) {
+				for(IntPair span1 : getRelevantSpans(blob, lattice, eqNo, "A1", pair.getSecond())) {
+					for(String feature : getPairwiseFeatures(span, span1, blob)) {
+						features.add(prefix+"_A1_"+feature);
+					}
+				}
+			}
+		}
 		return features;
 	}
 
@@ -232,6 +268,15 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
 			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
 				features.add(prefix+"_Neighbors_"+feature);
+			}
+		}
+		for(IntPair span : spans) {
+			for(Pair<Operation, Double> pair : lattice.equations.get(eqNo).A1) {
+				for(IntPair span1 : getRelevantSpans(blob, lattice, eqNo, "A1", pair.getSecond())) {
+					for(String feature : getPairwiseFeatures(span, span1, blob)) {
+						features.add(prefix+"_A1_"+feature);
+					}
+				}
 			}
 		}
 		return features;
@@ -342,5 +387,48 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		}
 		return false;
 	}
+	
+	public List<String> getPairwiseFeatures(IntPair span1, IntPair span2, Blob blob) {
+		List<String> features = new ArrayList<>();
+		int pos1 = blob.ta.getTokenIdFromCharacterOffset(span1.getFirst());
+		int pos2 = blob.ta.getTokenIdFromCharacterOffset(span1.getSecond());
+		int sent1 = blob.ta.getSentenceFromToken(pos1).getSentenceId();
+		int sent2 = blob.ta.getSentenceFromToken(pos2).getSentenceId();
+		if(sent1 == sent2) {
+			features.add("SameSentence");
+			for(int i=Math.min(pos1, pos2); i<=Math.max(pos1, pos2); i++) {
+				features.add("WordsInBetween_"+blob.ta.getToken(i));
+			}
+		} else {
+			List<String> features1 = new ArrayList<>();
+			List<String> features2 = new ArrayList<>();
+			int pos = blob.ta.getTokenIdFromCharacterOffset(span1.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features1.add("Neighbors_"+feature);
+			}
+			pos = blob.ta.getTokenIdFromCharacterOffset(span2.getFirst());
+			for(String feature : FeatureExtraction.getMixed(blob.ta, blob.posTags, pos, 2)) {
+				features2.add("Neighbors_"+feature);
+			}
+			for(String feature : blob.ta.getSentenceFromToken(pos1).getTokens()) {
+				features1.add("Sentence_"+feature);
+			}
+			for(String feature : blob.ta.getSentenceFromToken(pos2).getTokens()) {
+				features2.add("Sentence_"+feature);
+			}
+			for(String feature : features1) {
+				if(features2.contains(feature)) {
+					features.add("CommonFeature_"+feature);
+				}
+			}
+		}
+		return features;
+	}
+	
+	
+	
+	
+	
+	
 	
 }
