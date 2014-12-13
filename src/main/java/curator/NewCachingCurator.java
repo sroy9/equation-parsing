@@ -76,6 +76,8 @@ public class NewCachingCurator {
 				curator.addSRLVerbView(ta, forceUpdate);
 			} else if(view.equals(ViewNames.DEPENDENCY_STANFORD)) {
 				curator.addStanfordDependencyView(ta, forceUpdate);
+			} else if(view.equals(ViewNames.DEPENDENCY)) {
+				curator.addDependencyTreeView(ta, forceUpdate, "", ViewNames.DEPENDENCY);
 			} else if(view.equals(ViewNames.LEMMA)) {
 				curator.addLemmaView(ta, forceUpdate);
 			} else {

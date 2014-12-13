@@ -33,8 +33,8 @@ public class Blob implements IInstance {
 				simulProb.question, ViewNames.LEMMA, false)
 				.getView(ViewNames.LEMMA).getConstituents();
 		dependencyParse = Tools.curator.getTextAnnotationWithSingleView(
-				simulProb.question, ViewNames.DEPENDENCY_STANFORD, false)
-				.getView(ViewNames.DEPENDENCY_STANFORD).getConstituents();
+				simulProb.question, ViewNames.DEPENDENCY, false)
+				.getView(ViewNames.DEPENDENCY).getConstituents();
 	}
 	
 	public Lattice getGold() {
