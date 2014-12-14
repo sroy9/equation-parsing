@@ -296,7 +296,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		}
 		// Filtering
 		List<Lattice> newLatticeList = new ArrayList<>();
-		for (Lattice lattice : newLatticeList) {
+		for (Lattice lattice : latticeList) {
 			Equation eq = lattice.equations.get(eqNo);
 			if (eq.operations.get(0) == Operation.MUL
 					&& eq.operations.get(2) != Operation.DIV) {
