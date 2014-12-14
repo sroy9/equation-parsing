@@ -241,7 +241,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		}
 		List<Lattice> newSeedList = new ArrayList<>();
 		for(Lattice lattice : seedList) {
-			if(fullEqSystemValidity(lattice, blob) || eqNo != 1) {
+			if(isAllNumbersUsed(lattice, blob) || eqNo != 1) {
 				newSeedList.add(lattice);
 			}
 		}
@@ -318,24 +318,20 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 					&& eq.operations.get(2) == Operation.NONE) {
 				continue;
 			}
+			if (eqNo == 1 && (lattice.equations.get(0).operations.get(0) == Operation.NONE
+					|| lattice.equations.get(0).operations.get(2) == Operation.NONE)) {
+				boolean allow = true;
+				for (Operation op : eq.operations) {
+					if (op != Operation.NONE) {
+						allow = false;
+						break;
+					}
+				}
+				if(!allow) continue;
+			}
 			newLatticeList.add(lattice);
 		}
 		return newLatticeList;
-	}
-
-	private boolean fullEqSystemValidity(Lattice lattice, Blob blob) {
-		if (EquationSolver.solve(lattice) == null) {
-			return false;
-		}
-		if (lattice.equations.get(0).operations.get(0) == Operation.NONE
-				|| lattice.equations.get(0).operations.get(2) == Operation.NONE) {
-			for (Operation op : lattice.equations.get(1).operations) {
-				if (op != Operation.NONE)
-					return false;
-			}
-		}
-		 if(!isAllNumbersUsed(lattice, blob)) return false;
-		return true;
 	}
 
 	private boolean isAllNumbersUsed(Lattice lattice, Blob blob) {
