@@ -239,7 +239,13 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			seedList.addAll(latticeList);
 			latticeList.clear();
 		}
-		return seedList;
+		List<Lattice> newSeedList = new ArrayList<>();
+		for(Lattice lattice : seedList) {
+			if(fullEqSystemValidity(lattice, blob) || eqNo != 1) {
+				newSeedList.add(lattice);
+			}
+		}
+		return newSeedList;
 	}
 
 	public List<Lattice> enumerateEquationOperations(Lattice startSeed,
@@ -317,7 +323,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		return newLatticeList;
 	}
 
-	private boolean fullEqSystemValidity(Lattice lattice) {
+	private boolean fullEqSystemValidity(Lattice lattice, Blob blob) {
 		if (EquationSolver.solve(lattice) == null) {
 			return false;
 		}
@@ -328,7 +334,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 					return false;
 			}
 		}
-		// if(i==1 && !isAllNumbersUsed(lattice, blob)) return false;
+		 if(!isAllNumbersUsed(lattice, blob)) return false;
 		return true;
 	}
 
