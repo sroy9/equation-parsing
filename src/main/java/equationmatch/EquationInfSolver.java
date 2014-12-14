@@ -137,7 +137,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			for (; it.hasNext();) {
 				tmpLatticeList.add(it.next());
 			}
-			System.out.println("Beam Size After Number Enumeration: "+beam.size());
+//			System.out.println("Beam Size After Number Enumeration: "+beam.size());
 			beam.clear();
 			for (Pair<Lattice, Double> pair : tmpLatticeList) {
 				for (Lattice lattice : enumerateEquationOperations(
@@ -154,7 +154,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			for (; it.hasNext();) {
 				tmpLatticeList.add(it.next());
 			}
-			System.out.println("Beam Size After Operation Enumeration: "+beam.size());
+//			System.out.println("Beam Size After Operation Enumeration: "+beam.size());
 			prediction = beam.element().getFirst();
 			beam.clear();
 		}
@@ -191,6 +191,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		seedList.clear();
 		seedList.addAll(latticeList);
 		latticeList.clear();
+		if(seedList.size() == 0) seedList.add(startSeed);
 		for (Lattice seed : seedList) {
 			for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E2"))) {
 				Lattice lattice = new Lattice(seed);
@@ -216,6 +217,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		seedList.clear();
 		seedList.addAll(latticeList);
 		latticeList.clear();
+		if(seedList.size() == 0) seedList.add(startSeed);
 		for (Lattice seed : seedList) {
 			for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E3"))) {
 				Lattice lattice = new Lattice(seed);
@@ -230,6 +232,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 				latticeList.add(lattice);
 			}
 		}
+		if(latticeList.size() == 0) latticeList.add(startSeed);
 		return latticeList;
 	}
 
