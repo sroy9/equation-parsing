@@ -137,7 +137,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			for (; it.hasNext();) {
 				tmpLatticeList.add(it.next());
 			}
-			System.out.println("Beam Size After Number Enumeration: "+beam.size());
+//			System.out.println("Beam Size After Number Enumeration: "+beam.size());
 			beam.clear();
 			for (Pair<Lattice, Double> pair : tmpLatticeList) {
 				for (Lattice lattice : enumerateEquationOperations(
@@ -154,7 +154,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			for (; it.hasNext();) {
 				tmpLatticeList.add(it.next());
 			}
-			System.out.println("Beam Size After Operation Enumeration: "+beam.size());
+//			System.out.println("Beam Size After Operation Enumeration: "+beam.size());
 			prediction = beam.element().getFirst();
 			beam.clear();
 		}
@@ -166,7 +166,6 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		List<Lattice> seedList = new ArrayList<>();
 		seedList.add(startSeed);
 		List<Lattice> latticeList = new ArrayList<>();
-		System.out.println("E1Size : "+blob.clusterMap.get("E1").size());
 		for (Lattice seed : seedList) {
 			for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E1"))) {
 				Lattice lattice = new Lattice(seed);
@@ -189,13 +188,11 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 				latticeList.add(lattice);
 			}
 		}
-		System.out.println("LatticeListSize : "+latticeList.size());
 		if(latticeList.size() > 0) { 
 			seedList.clear();
 			seedList.addAll(latticeList);
 			latticeList.clear();
 		}
-		System.out.println("E2Size : "+blob.clusterMap.get("E2").size());
 		for (Lattice seed : seedList) {
 			for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E2"))) {
 				Lattice lattice = new Lattice(seed);
@@ -218,13 +215,11 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 				latticeList.add(lattice);
 			}
 		}
-		System.out.println("LatticeListSize : "+latticeList.size());
 		if(latticeList.size() > 0) { 
 			seedList.clear();
 			seedList.addAll(latticeList);
 			latticeList.clear();
 		}
-		System.out.println("E3Size : "+blob.clusterMap.get("E3").size());
 		for (Lattice seed : seedList) {
 			for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E3"))) {
 				Lattice lattice = new Lattice(seed);
@@ -239,7 +234,6 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 				latticeList.add(lattice);
 			}
 		}
-		System.out.println("LatticeListSize : "+latticeList.size());
 		if(latticeList.size() > 0) { 
 			seedList.clear();
 			seedList.addAll(latticeList);
