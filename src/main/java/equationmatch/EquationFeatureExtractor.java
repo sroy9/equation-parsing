@@ -59,11 +59,32 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 
 	public List<String> getOperationFeatures(Blob blob, Lattice lattice, int eqNo) {
 		List<String> features = new ArrayList<>();
+		Equation eq = lattice.equations.get(eqNo);
+		String prefix = "" + Arrays.asList(eq.operations);
+		for(String feature : getGlobalFeatures(blob)) {
+			features.add(prefix+"_"+feature);
+		}
+		features.add(prefix+"_EquationNo_"+eqNo);
 		return features;
 	}
 	
 	public List<String> getNumberFeatures(Blob blob, Lattice lattice, int eqNo) {
 		List<String> features = new ArrayList<>();
+		Equation eq = lattice.equations.get(eqNo);
+		String prefix = "A1";
+		for(Pair<Operation, Double> pair : eq.A1) prefix += "_" + pair.getFirst();
+		prefix+="_A2";
+		for(Pair<Operation, Double> pair : eq.A2) prefix += "_" + pair.getFirst();
+		prefix+="_B1";
+		for(Pair<Operation, Double> pair : eq.B1) prefix += "_" + pair.getFirst();
+		prefix+="_B2";
+		for(Pair<Operation, Double> pair : eq.B2) prefix += "_" + pair.getFirst();
+		prefix+="_C";
+		for(Pair<Operation, Double> pair : eq.C) prefix += "_" + pair.getFirst();
+		for(String feature : getGlobalFeatures(blob)) {
+			features.add(prefix+"_"+feature);
+		}
+		features.add(prefix+"_EquationNo_"+eqNo);
 		return features;
 	}
 	

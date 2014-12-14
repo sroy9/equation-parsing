@@ -60,7 +60,6 @@ public class EquationMatcher {
 	private static void testModel(String modelPath, SLProblem sp)
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
-		List<String> params = Arrays.asList("A1", "A2", "Op_E1", "B1", "B2", "Op_E2", "C");
 		double acc = 0.0;
 		double structAcc = 0.0;
 		double total = sp.instanceList.size();
@@ -72,7 +71,7 @@ public class EquationMatcher {
 			System.out.println(blob.simulProb.index+" : "+blob.simulProb.question);
 			System.out.println("Gold : \n" + gold);
 			System.out.println("Predicted : \n" + prediction);
-			structAcc += getStructAcc(prediction, gold, params);
+			structAcc += getStructAcc(prediction, gold);
 			if (hasSameSolution(prediction, gold)) {
 				acc += 1.0;
 			}
@@ -83,102 +82,37 @@ public class EquationMatcher {
 				+ (acc / total));
 	}
 
-	private static double getStructAcc(Lattice prediction, Lattice gold,
-			List<String> params) {
+	private static double getStructAcc(Lattice prediction, Lattice gold) {
 		double acc = 0.0, total = 0.0;
-		Equation eqPred = prediction.equations.get(0);
-		Equation eqGold = gold.equations.get(0);
-		if(params.contains("A1")) {
+		for(int i=0; i<2; ++i) {
+			Equation eqPred = prediction.equations.get(i);
+			Equation eqGold = gold.equations.get(i);
 			total+=1.0;
 			if(isEqual(eqPred.A1, eqGold.A1)) {
 				acc += 1.0;
 			}
-		}
-		if(params.contains("A2")) {
 			total+=1.0;
 			if(isEqual(eqPred.A2, eqGold.A2)) {
 				acc += 1.0;
 			}
-		}
-		if(params.contains("B1")) {
 			total+=1.0;
 			if(isEqual(eqPred.B1, eqGold.B1)) {
 				acc += 1.0;
 			}
-		}
-		if(params.contains("B2")) {
 			total+=1.0;
 			if(isEqual(eqPred.B2, eqGold.B2)) {
 				acc += 1.0;
 			}
-		}
-		if(params.contains("C")) {
 			total+=1.0;
 			if(isEqual(eqPred.C, eqGold.C)) {
 				acc += 1.0;
 			}
-		}
-		if(params.contains("Op_E1")) {
 			total+=1.0;
-			if(eqPred.operations.get(0) == eqGold.operations.get(0) && 
-					eqPred.operations.get(1) == eqGold.operations.get(1)) {
+			if(Arrays.asList(eqPred.operations.get(i)).toString().equals(
+					Arrays.asList(eqGold.operations.get(i)))){
 				acc += 1.0;
 			}
 		}
-		if(params.contains("Op_E2")) {
-			total+=1.0;
-			if(eqPred.operations.get(2) == eqGold.operations.get(2) && 
-					eqPred.operations.get(3) == eqGold.operations.get(3)) {
-				acc += 1.0;
-			}
-		}
-		eqPred = prediction.equations.get(1);
-		eqGold = gold.equations.get(1);
-		if(params.contains("A1")) {
-			total+=1.0;
-			if(isEqual(eqPred.A1, eqGold.A1)) {
-				acc += 1.0;
-			}
-		}
-		if(params.contains("A2")) {
-			total+=1.0;
-			if(isEqual(eqPred.A2, eqGold.A2)) {
-				acc += 1.0;
-			}
-		}
-		if(params.contains("B1")) {
-			total+=1.0;
-			if(isEqual(eqPred.B1, eqGold.B1)) {
-				acc += 1.0;
-			}
-		}
-		if(params.contains("B2")) {
-			total+=1.0;
-			if(isEqual(eqPred.B2, eqGold.B2)) {
-				acc += 1.0;
-			}
-		}
-		if(params.contains("C")) {
-			total+=1.0;
-			if(isEqual(eqPred.C, eqGold.C)) {
-				acc += 1.0;
-			}
-		}
-		if(params.contains("Op_E1")) {
-			total+=1.0;
-			if(eqPred.operations.get(0) == eqGold.operations.get(0) && 
-					eqPred.operations.get(1) == eqGold.operations.get(1)) {
-				acc += 1.0;
-			}
-		}
-		if(params.contains("Op_E2")) {
-			total+=1.0;
-			if(eqPred.operations.get(2) == eqGold.operations.get(2) && 
-					eqPred.operations.get(3) == eqGold.operations.get(3)) {
-				acc += 1.0;
-			}
-		}
-		if(total == 0.0) return 0.0;
 		return acc/total;
 	}
 	

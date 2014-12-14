@@ -36,7 +36,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		return getLossAugmentedBestStructure(wv, x, null);
 	}
 
-	public float getOperationLoss(Lattice l1, Lattice l2, int eqNo) {
+	public static float getOperationLoss(Lattice l1, Lattice l2, int eqNo) {
 		float loss = 0.0f;
 		Equation eq1 = l1.equations.get(eqNo);
 		Equation eq2 = l2.equations.get(eqNo);
@@ -48,7 +48,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		return loss;
 	}
 
-	public float getNumberLoss(Lattice l1, Lattice l2, int eqNo) {
+	public static float getNumberLoss(Lattice l1, Lattice l2, int eqNo) {
 		float loss = 0.0f;
 		Equation eq1 = l1.equations.get(eqNo);
 		Equation eq2 = l2.equations.get(eqNo);
@@ -60,7 +60,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		return loss;
 	}
 
-	public float getSymmetricDifference(List<Pair<Operation, Double>> list1,
+	public static float getSymmetricDifference(List<Pair<Operation, Double>> list1,
 			List<Pair<Operation, Double>> list2) {
 		float loss = 0.0f;
 		for (Pair<Operation, Double> pair1 : list1) {
@@ -127,7 +127,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 						pair.getFirst(), i, blob)) {
 					beam.add(new Pair<Lattice, Double>(lattice, 
 							pair.getSecond()
-							+ getNumberLoss(lattice, gold, i)
+							+ (goldStructure == null ? 0 : getNumberLoss(lattice, gold, i))
 							+ wv.dotProduct(featGen.getNumberFeatureVector(
 									blob, lattice, i))));
 				}
@@ -143,7 +143,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 						pair.getFirst(), i, blob)) {
 					beam.add(new Pair<Lattice, Double>(lattice, 
 							pair.getSecond()
-							+ getOperationLoss(lattice, gold, i)
+							+ (goldStructure == null ? 0 : getOperationLoss(lattice, gold, i))
 							+ wv.dotProduct(featGen.getNumberFeatureVector(
 									blob, lattice, i))));
 				}
@@ -246,14 +246,12 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			if (eq.A2.size() == 0) {
 				two = Arrays.asList(Operation.NONE);
 			} else {
-				two = Arrays.asList(Operation.ADD, Operation.SUB,
-						Operation.MUL, Operation.DIV);
+				two = Arrays.asList(Operation.ADD, Operation.SUB);
 			}
 			if (eq.B2.size() == 0) {
 				four = Arrays.asList(Operation.NONE);
 			} else {
-				four = Arrays.asList(Operation.ADD, Operation.SUB,
-						Operation.MUL, Operation.DIV);
+				four = Arrays.asList(Operation.ADD, Operation.SUB);
 			}
 			if (eq.C.size() == 0) {
 				five = Arrays.asList(Operation.NONE);
