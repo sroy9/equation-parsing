@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.apache.commons.lang.math.NumberUtils;
 
-import de.bwaldvogel.liblinear.Feature;
 import structure.Equation;
 import structure.Operation;
 import utils.FeatureExtraction;
@@ -26,21 +25,23 @@ import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
 public class EquationFeatureExtractor extends AbstractFeatureGenerator implements
 		Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1810851154558168679L;
-	/**
-	 * This function returns a feature vector \Phi(x,y) based on an
-	 * instance-structure pair.
-	 * 
-	 * @return Feature Vector \Phi(x,y), where x is the input instance and y is
-	 *         the output structure
-	 */
 	public Lexiconer lm = null;
 
 	public EquationFeatureExtractor(Lexiconer lm) {
 		this.lm = lm;
+	}
+	
+	public IFeatureVector getOperationFeatureVector(
+			Blob blob, Lattice lattice, int eqNo) throws Exception {
+		List<String> feats = getOperationFeatures(blob, lattice, eqNo);
+		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
+	}
+	
+	public IFeatureVector getNumberFeatureVector(
+			Blob blob, Lattice lattice, int eqNo) throws Exception {
+		List<String> feats = getNumberFeatures(blob, lattice, eqNo);
+		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
 	}
 
 	@Override
@@ -49,199 +50,23 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		Lattice lattice = (Lattice) arg1;
 		List<String> features = new ArrayList<>();
 		// Enumerate all positions
-		for(int i=0; i<lattice.equations.size(); ++i) {
-			Equation eq = lattice.equations.get(i);
-			try {
-				for(Pair<Operation, Double> pair : eq.A1) {
-					features.addAll(getFeatures(blob, lattice, i, "A1", pair));
-				}
-				for(Pair<Operation, Double> pair : eq.A2) {
-					features.addAll(getFeatures(blob, lattice, i, "A2", pair));
-				}
-				for(Pair<Operation, Double> pair : eq.B1) {
-					features.addAll(getFeatures(blob, lattice, i, "B1", pair));
-				}
-				for(Pair<Operation, Double> pair : eq.B2) {
-					features.addAll(getFeatures(blob, lattice, i, "B2", pair));
-				}
-				for(Pair<Operation, Double> pair : eq.C) {
-					features.addAll(getFeatures(blob, lattice, i, "C", pair));
-				}
-				features.addAll(getFeatures(blob, lattice, i, "Op_E1", null));
-				features.addAll(getFeatures(blob, lattice, i, "Op_E2", null));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		for(int i=0; i<2; ++i) {
+			features.addAll(getNumberFeatures(blob, lattice, i));
+			features.addAll(getOperationFeatures(blob, lattice, i));
 		}
 		return FeatureExtraction.getFeatureVectorFromList(features, lm);
 	}
 
-	public List<String> getFeatures(
-			Blob blob, Lattice lattice, int eqNo, String arrayName, Pair<Operation, Double> d) 
-					throws Exception {
-		List<String> feats = new ArrayList<>();
-		if(arrayName.contains("A1")) {
-			feats.addAll(getA1Features(blob, lattice, eqNo, d));
-		}
-		if(arrayName.contains("A2")) {
-			feats.addAll(getA2Features(blob, lattice, eqNo, d));
-		}	
-		if(arrayName.contains("B1")) {
-			feats.addAll(getB1Features(blob, lattice, eqNo, d));
-		}	
-		if(arrayName.contains("B2")) {
-			feats.addAll(getB2Features(blob, lattice, eqNo, d));
-		}	
-		if(arrayName.contains("C")) {
-			feats.addAll(getCFeatures(blob, lattice, eqNo, d));
-		}		
-		if(arrayName.contains("Op_E1")) {
-			feats.addAll(getOpE1Features(blob, lattice, eqNo));
-		}	
-		if(arrayName.contains("Op_E2")) {
-			feats.addAll(getOpE2Features(blob, lattice, eqNo));
-		}	
-		return feats;
+	public List<String> getOperationFeatures(Blob blob, Lattice lattice, int eqNo) {
+		List<String> features = new ArrayList<>();
+		return features;
 	}
 	
-	private Collection<? extends String> getOpE2Features(Blob blob,
-			Lattice lattice, int eqNo) throws Exception {
-		List<String> features = new ArrayList<String>();
-		Equation eq = lattice.equations.get(eqNo);
-		String prefix = "Op_E2"+eq.operations.get(2)+"_"+eq.operations.get(3);
-		features.add(prefix);
-		features.add(prefix+"_"+eq.operations.get(0)+"_"+eq.operations.get(1));
-		for(String feature : getGlobalFeatures(blob)) {
-			features.add(prefix+"_"+feature);
-		}
+	public List<String> getNumberFeatures(Blob blob, Lattice lattice, int eqNo) {
+		List<String> features = new ArrayList<>();
 		return features;
 	}
-
-	private Collection<? extends String> getOpE1Features(Blob blob,
-			Lattice lattice, int eqNo) throws Exception {
-		List<String> features = new ArrayList<String>();
-		Equation eq = lattice.equations.get(eqNo);
-		String prefix = "Op_E1"+eq.operations.get(0)+"_"+eq.operations.get(1);
-		features.add(prefix);
-		for(String feature : getGlobalFeatures(blob)) {
-			features.add(prefix+"_"+feature);
-		}
-		return features;
-	}
-
-	private Collection<? extends String> getCFeatures(Blob blob,
-			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
-		List<String> features = new ArrayList<String>();
-		String prefix = "C_"+d.getFirst();
-		features.add(prefix);
-		for(String feature : getGlobalFeatures(blob)) {
-			features.add(prefix+"_"+feature);
-		}
-		if(eqNo>0 && isPresent(d.getSecond(), "E3", lattice.equations.get(0))) {
-			features.add(prefix+"_Already_Present");
-		}
-		for(IntPair span : getRelevantSpans(blob, "C", d.getSecond())) {
-			for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3))	{
-				features.add(prefix+"_"+feature);
-			}
-		}
-		return features;
-	}
-
-	private Collection<? extends String> getB2Features(Blob blob,
-			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
-		List<String> features = new ArrayList<String>();
-		String prefix = "B2_"+d.getFirst();
-		features.add(prefix);
-		for(String feature : getGlobalFeatures(blob)) {
-			features.add(prefix+"_"+feature);
-		}
-		if(eqNo>0 && isPresent(d.getSecond(), "E2", lattice.equations.get(0))) {
-			features.add(prefix+"_Already_Present");
-		}
-		for(String feature : getPairwiseFeatures(
-				lattice.equations.get(eqNo).B1, lattice.equations.get(eqNo).B2, blob, "B1", "B2")) {
-			features.add(prefix+"_"+feature);
-		}
-		for(IntPair span : getRelevantSpans(blob, "B2", d.getSecond())) {
-			for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3))	{
-				features.add(prefix+"_"+feature);
-			}
-		}
-		return features;
-	}
-
-	private Collection<? extends String> getB1Features(Blob blob,
-			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
-		List<String> features = new ArrayList<String>();
-		String prefix = "B1_"+d.getFirst();
-		features.add(prefix);
-		for(String feature : getGlobalFeatures(blob)) {
-			features.add(prefix+"_"+feature);
-		}
-		if(eqNo>0 && isPresent(d.getSecond(), "E2", lattice.equations.get(0))) {
-			features.add(prefix+"_Already_Present");
-		}
-		for(String feature : getPairwiseFeatures(
-				lattice.equations.get(eqNo).A1, lattice.equations.get(eqNo).B1, blob, "A1", "B1")) {
-			features.add(prefix+"_"+feature);
-		}
-		for(IntPair span : getRelevantSpans(blob, "B1", d.getSecond())) {
-			for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3))	{
-				features.add(prefix+"_"+feature);
-			}
-		}
-		return features;
-	}
-
-	private Collection<? extends String> getA2Features(Blob blob,
-			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
-		List<String> features = new ArrayList<String>();
-		String prefix = "A2_"+d.getFirst();
-		features.add(prefix);
-		for(String feature : getGlobalFeatures(blob)) {
-			features.add(prefix+"_"+feature);
-		}
-		if(eqNo>0 && isPresent(d.getSecond(), "E1", lattice.equations.get(0))) {
-			features.add(prefix+"_Already_Present");
-		}
-		for(String feature : getPairwiseFeatures(
-				lattice.equations.get(eqNo).A1, lattice.equations.get(eqNo).A2, blob, "A1", "A2")) {
-			features.add(prefix+"_"+feature);
-		}
-		for(IntPair span : getRelevantSpans(blob, "A2", d.getSecond())) {
-			for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3))	{
-				features.add(prefix+"_"+feature);
-			}
-		}
-		return features;
-	}
-
-	private Collection<? extends String> getA1Features(Blob blob,
-			Lattice lattice, int eqNo, Pair<Operation, Double> d) throws Exception {
-		List<String> features = new ArrayList<String>();
-		String prefix = "A1_"+d.getFirst();
-		features.add(prefix);
-		for(String feature : getGlobalFeatures(blob)) {
-			features.add(prefix+"_"+feature);
-		}
-		if(eqNo>0 && isPresent(d.getSecond(), "E1", lattice.equations.get(0))) {
-			features.add(prefix+"_Already_Present");
-		}
-		for(IntPair span : getRelevantSpans(blob, "A1", d.getSecond())) {
-			for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3))	{
-				features.add(prefix+"_"+feature);
-			}
-		}
-		return features;
-	}
-
-	public IFeatureVector getFeaturesVector(
-			Blob blob, Lattice lattice, int eqNo, String arrayName, Pair<Operation, Double> d) 
-					throws Exception {
-		List<String> feats = getFeatures(blob, lattice, eqNo, arrayName, d);
-		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
-	}
+	
 	
 	public List<IntPair> getRelevantSpans(
 			Blob blob, String arrayName, Double d) {
