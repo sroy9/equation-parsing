@@ -137,6 +137,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			for (; it.hasNext();) {
 				tmpLatticeList.add(it.next());
 			}
+			System.out.println("Beam Size After Number Enumeration: "+beam.size());
 			beam.clear();
 			for (Pair<Lattice, Double> pair : tmpLatticeList) {
 				for (Lattice lattice : enumerateEquationOperations(
@@ -153,6 +154,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			for (; it.hasNext();) {
 				tmpLatticeList.add(it.next());
 			}
+			System.out.println("Beam Size After Operation Enumeration: "+beam.size());
 			prediction = beam.element().getFirst();
 			beam.clear();
 		}
