@@ -190,10 +190,11 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			}
 		}
 		System.out.println("LatticeListSize : "+latticeList.size());
-		seedList.clear();
-		seedList.addAll(latticeList);
-		latticeList.clear();
-		if(seedList.size() == 0) seedList.add(startSeed);
+		if(latticeList.size() > 0) { 
+			seedList.clear();
+			seedList.addAll(latticeList);
+			latticeList.clear();
+		}
 		System.out.println("E2Size : "+blob.clusterMap.get("E2").size());
 		for (Lattice seed : seedList) {
 			for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E2"))) {
@@ -218,10 +219,11 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			}
 		}
 		System.out.println("LatticeListSize : "+latticeList.size());
-		seedList.clear();
-		seedList.addAll(latticeList);
-		latticeList.clear();
-		if(seedList.size() == 0) seedList.add(startSeed);
+		if(latticeList.size() > 0) { 
+			seedList.clear();
+			seedList.addAll(latticeList);
+			latticeList.clear();
+		}
 		System.out.println("E3Size : "+blob.clusterMap.get("E3").size());
 		for (Lattice seed : seedList) {
 			for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E3"))) {
@@ -238,8 +240,12 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			}
 		}
 		System.out.println("LatticeListSize : "+latticeList.size());
-		if(latticeList.size() == 0) latticeList.add(startSeed);
-		return latticeList;
+		if(latticeList.size() > 0) { 
+			seedList.clear();
+			seedList.addAll(latticeList);
+			latticeList.clear();
+		}
+		return seedList;
 	}
 
 	public List<Lattice> enumerateEquationOperations(Lattice startSeed,
