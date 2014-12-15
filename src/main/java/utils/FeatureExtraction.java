@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.math.NumberUtils;
+
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.Sentence;
@@ -35,7 +37,11 @@ public class FeatureExtraction {
 			List<Constituent> lemmas, int start, int end) {
 		List<String> unigrams = new ArrayList<String>();
 		for(int i = start; i <= end; ++i) {
-			unigrams.add(lemmas.get(i).getLabel());
+			if(NumberUtils.isNumber(lemmas.get(i).getLabel())) {
+				unigrams.add("NUMBER");
+			} else {
+				unigrams.add(lemmas.get(i).getLabel());
+			}
 		}
 		return unigrams;
 	}
@@ -43,8 +49,9 @@ public class FeatureExtraction {
 	public static List<String> getLemmatizedBigrams(
 			List<Constituent> lemmas, int start, int end) {
 		List<String> bigrams = new ArrayList<String>();
-		for(int i = start; i < end; ++i) {
-			bigrams.add(lemmas.get(i).getLabel()+"_"+lemmas.get(i+1).getLabel());
+		List<String> unigrams = getLemmatizedUnigrams(lemmas, start, end);
+		for(int i = 0; i < unigrams.size()-1; ++i) {
+			bigrams.add(unigrams.get(i)+"_"+unigrams.get(i+1));
 		}
 		return bigrams;
 	}
