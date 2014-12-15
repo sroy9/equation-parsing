@@ -235,9 +235,18 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		}
 		List<Lattice> newSeedList = new ArrayList<>();
 		for(Lattice lattice : seedList) {
-			if(isAllNumbersUsed(lattice, blob) || eqNo != 1) {
-				newSeedList.add(lattice);
+			if(!isAllNumbersUsed(lattice, blob) && eqNo == 1) {
+				continue;
 			}
+			if(eqNo == 1 && (lattice.equations.get(0).operations.get(0) == Operation.NONE || 
+					lattice.equations.get(0).operations.get(0) == Operation.NONE)) {
+				Equation eq = lattice.equations.get(eqNo);
+				if(eq.A1.size() > 0 || eq.A2.size() > 0 || eq.B1.size() > 0 || 
+						eq.B2.size() > 0 || eq.C.size() > 0) {
+					continue;
+				}
+			}
+			newSeedList.add(lattice);
 		}
 		return newSeedList;
 	}
@@ -309,17 +318,17 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 					&& e.operations.get(2) == Operation.NONE) {
 				continue;
 			}
-//			if (eqNo == 1 && (lattice.equations.get(0).operations.get(0) == Operation.NONE
-//					|| lattice.equations.get(0).operations.get(2) == Operation.NONE)) {
-//				boolean allow = true;
-//				for (Operation op : eq.operations) {
-//					if (op != Operation.NONE) {
-//						allow = false;
-//						break;
-//					}
-//				}
-//				if(!allow) continue;
-//			}
+			if (eqNo == 1 && (lattice.equations.get(0).operations.get(0) == Operation.NONE
+					|| lattice.equations.get(0).operations.get(2) == Operation.NONE)) {
+				boolean allow = true;
+				for (Operation op : eq.operations) {
+					if (op != Operation.NONE) {
+						allow = false;
+						break;
+					}
+				}
+				if(!allow) continue;
+			}
 			newLatticeList.add(lattice);
 		}
 		System.out.println("LatticeList After filtering : "+newLatticeList.size());
