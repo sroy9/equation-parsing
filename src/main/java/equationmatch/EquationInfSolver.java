@@ -5,16 +5,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import structure.Equation;
-import structure.EquationSolver;
 import structure.Operation;
 import structure.PairComparator;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.BoundedPriorityQueue;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
-import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -144,7 +141,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 					beam.add(new Pair<Lattice, Double>(lattice, 
 							pair.getSecond()
 							+ (goldStructure == null ? 0 : getOperationLoss(lattice, gold, i))
-							+ wv.dotProduct(featGen.getNumberFeatureVector(
+							+ wv.dotProduct(featGen.getOperationFeatureVector(
 									blob, lattice, i))));
 				}
 			}
