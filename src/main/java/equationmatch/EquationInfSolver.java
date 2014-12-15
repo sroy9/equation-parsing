@@ -137,7 +137,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			for (; it.hasNext();) {
 				tmpLatticeList.add(it.next());
 			}
-			System.out.println("Beam Size After Number Enumeration: "+beam.size());
+//			System.out.println("Beam Size After Number Enumeration: "+beam.size());
 			beam.clear();
 			for (Pair<Lattice, Double> pair : tmpLatticeList) {
 				for (Lattice lattice : enumerateEquationOperations(
@@ -154,7 +154,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			for (; it.hasNext();) {
 				tmpLatticeList.add(it.next());
 			}
-			System.out.println("Beam Size After Operation Enumeration: "+beam.size());
+//			System.out.println("Beam Size After Operation Enumeration: "+beam.size());
 			prediction = beam.element().getFirst();
 			beam.clear();
 		}
@@ -293,7 +293,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 				}
 			}
 		}
-		System.out.println("LatticeList Before filtering : "+latticeList.size());
+//		System.out.println("LatticeList Before filtering : "+latticeList.size());
 		// Filtering
 		List<Lattice> newLatticeList = new ArrayList<>();
 		for (Lattice lattice : latticeList) {
@@ -331,7 +331,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			}
 			newLatticeList.add(lattice);
 		}
-		System.out.println("LatticeList After filtering : "+newLatticeList.size());
+//		System.out.println("LatticeList After filtering : "+newLatticeList.size());
 		return newLatticeList;
 	}
 
