@@ -62,9 +62,9 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<>();
 		Equation eq = lattice.equations.get(eqNo);
 		String prefix = "" + Arrays.asList(eq.operations);
-//		for(String feature : getGlobalFeatures(blob)) {
-//			features.add(prefix+"_"+feature);
-//		}
+		for(String feature : getGlobalFeatures(blob)) {
+			features.add(prefix+"_"+feature);
+		}
 		for(Pair<Operation, Double> pair : eq.C) {
 			for(IntPair span : getRelevantSpans(blob, "C", pair.getSecond())) {
 				for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {
@@ -115,9 +115,9 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		prefix+="_C";
 		for(Pair<Operation, Double> pair : eq.C) prefix += "_" + pair.getFirst();
 		prefix+="_EquationNo_"+eqNo;
-//		for(String feature : getGlobalFeatures(blob)) {
-//			features.add(prefix+"_"+feature);
-//		}
+		for(String feature : getGlobalFeatures(blob)) {
+			features.add(prefix+"_"+feature);
+		}
 		for(Pair<Operation, Double> pair : eq.C) {
 			for(IntPair span : getRelevantSpans(blob, "C", pair.getSecond())) {
 				for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {

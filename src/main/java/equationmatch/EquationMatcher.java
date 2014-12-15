@@ -42,8 +42,8 @@ public class EquationMatcher {
 				.splitTrainTest((int) (trainFrac * problem.size()));
 		SLProblem train = trainTest.getFirst();
 		SLProblem test = trainTest.getSecond();
-		trainModel("model.save", train);
-		testModel("model.save", test);
+		trainModel("modelSaruman.save", train);
+		testModel("modelSaruman.save", test);
 	}
 
 	private static SLProblem getSP() throws Exception {
