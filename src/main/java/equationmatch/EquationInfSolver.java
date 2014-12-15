@@ -288,6 +288,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 				}
 			}
 		}
+		System.out.println("LatticeList Before filtering : "+latticeList.size());
 		// Filtering
 		List<Lattice> newLatticeList = new ArrayList<>();
 		for (Lattice lattice : latticeList) {
@@ -325,6 +326,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 			}
 			newLatticeList.add(lattice);
 		}
+		System.out.println("LatticeList After filtering : "+newLatticeList.size());
 		return newLatticeList;
 	}
 
