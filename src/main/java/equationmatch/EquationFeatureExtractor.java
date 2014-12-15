@@ -75,6 +75,29 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				}
 			}
 		}
+		if(eq.C.size() == 0) {
+			for(Pair<Operation, Double> pair : eq.B1) {
+				for(IntPair span : getRelevantSpans(blob, "B1", pair.getSecond())) {
+					for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {
+						features.add(prefix+"_"+feature);
+					}
+					for(String feature : sameSentenceTokens(span, blob.ta, blob.lemmas, 3)) {
+						features.add(prefix+"_"+feature);
+					}
+				}
+			}
+			for(Pair<Operation, Double> pair : eq.A1) {
+				for(IntPair span : getRelevantSpans(blob, "A1", pair.getSecond())) {
+					for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {
+						features.add(prefix+"_"+feature);
+					}
+					for(String feature : sameSentenceTokens(span, blob.ta, blob.lemmas, 3)) {
+						features.add(prefix+"_"+feature);
+					}
+				}
+			}
+			
+		}
 		return features;
 	}
 	
