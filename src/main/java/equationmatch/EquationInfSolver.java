@@ -244,45 +244,41 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 
 	public List<Lattice> enumerateEquationOperations(Lattice startSeed,
 			int eqNo, Blob blob) {
-		List<Lattice> seedList = new ArrayList<>();
-		seedList.add(startSeed);
 		List<Lattice> latticeList = new ArrayList<>();
-		for (Lattice seed : seedList) {
-			Equation eq = seed.equations.get(eqNo);
-			List<Operation> one = Arrays.asList(Operation.ADD, Operation.SUB,
-					Operation.MUL, Operation.DIV, Operation.NONE);
-			List<Operation> three = Arrays.asList(Operation.ADD, Operation.SUB,
-					Operation.MUL, Operation.DIV, Operation.NONE);
-			List<Operation> two = null, four = null, five = null;
-			if (eq.A2.size() == 0) {
-				two = Arrays.asList(Operation.NONE);
-			} else {
-				two = Arrays.asList(Operation.ADD, Operation.SUB);
-			}
-			if (eq.B2.size() == 0) {
-				four = Arrays.asList(Operation.NONE);
-			} else {
-				four = Arrays.asList(Operation.ADD, Operation.SUB);
-			}
-			if (eq.C.size() == 0) {
-				five = Arrays.asList(Operation.NONE);
-			} else {
-				five = Arrays.asList(Operation.SUB);
-			}
-			for (Operation op1 : one) {
-				for (Operation op2 : two) {
-					for (Operation op3 : three) {
-						for (Operation op4 : four) {
-							for (Operation op5 : five) {
-								Lattice lattice = new Lattice(seed);
-								Equation e = lattice.equations.get(eqNo);
-								e.operations.set(0, op1);
-								e.operations.set(1, op2);
-								e.operations.set(2, op3);
-								e.operations.set(3, op4);
-								e.operations.set(4, op5);
-								latticeList.add(lattice);
-							}
+		Equation eq = startSeed.equations.get(eqNo);
+		List<Operation> one = Arrays.asList(Operation.ADD, Operation.SUB,
+				Operation.MUL, Operation.DIV, Operation.NONE);
+		List<Operation> three = Arrays.asList(Operation.ADD, Operation.SUB,
+				Operation.MUL, Operation.DIV, Operation.NONE);
+		List<Operation> two = null, four = null, five = null;
+		if (eq.A2.size() == 0) {
+			two = Arrays.asList(Operation.NONE);
+		} else {
+			two = Arrays.asList(Operation.ADD, Operation.SUB);
+		}
+		if (eq.B2.size() == 0) {
+			four = Arrays.asList(Operation.NONE);
+		} else {
+			four = Arrays.asList(Operation.ADD, Operation.SUB);
+		}
+		if (eq.C.size() == 0) {
+			five = Arrays.asList(Operation.NONE);
+		} else {
+			five = Arrays.asList(Operation.SUB);
+		}
+		for (Operation op1 : one) {
+			for (Operation op2 : two) {
+				for (Operation op3 : three) {
+					for (Operation op4 : four) {
+						for (Operation op5 : five) {
+							Lattice lattice = new Lattice(startSeed);
+							Equation e = lattice.equations.get(eqNo);
+							e.operations.set(0, op1);
+							e.operations.set(1, op2);
+							e.operations.set(2, op3);
+							e.operations.set(3, op4);
+							e.operations.set(4, op5);
+							latticeList.add(lattice);
 						}
 					}
 				}
@@ -292,38 +288,38 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		// Filtering
 		List<Lattice> newLatticeList = new ArrayList<>();
 		for (Lattice lattice : latticeList) {
-			Equation eq = lattice.equations.get(eqNo);
-			if (eq.operations.get(0) == Operation.MUL
-					&& eq.operations.get(2) != Operation.DIV) {
+			Equation e = lattice.equations.get(eqNo);
+			if (e.operations.get(0) == Operation.MUL
+					&& e.operations.get(2) != Operation.DIV) {
 				continue;
 			}
-			if (eq.operations.get(0) == Operation.DIV
-					&& eq.operations.get(2) != Operation.MUL) {
+			if (e.operations.get(0) == Operation.DIV
+					&& e.operations.get(2) != Operation.MUL) {
 				continue;
 			}
-			if (eq.operations.get(2) == Operation.MUL
-					&& eq.operations.get(0) != Operation.DIV) {
+			if (e.operations.get(2) == Operation.MUL
+					&& e.operations.get(0) != Operation.DIV) {
 				continue;
 			}
-			if (eq.operations.get(2) == Operation.DIV
-					&& eq.operations.get(0) != Operation.MUL) {
+			if (e.operations.get(2) == Operation.DIV
+					&& e.operations.get(0) != Operation.MUL) {
 				continue;
 			}
-			if (eq.operations.get(0) == Operation.NONE
-					&& eq.operations.get(2) == Operation.NONE) {
+			if (e.operations.get(0) == Operation.NONE
+					&& e.operations.get(2) == Operation.NONE) {
 				continue;
 			}
-			if (eqNo == 1 && (lattice.equations.get(0).operations.get(0) == Operation.NONE
-					|| lattice.equations.get(0).operations.get(2) == Operation.NONE)) {
-				boolean allow = true;
-				for (Operation op : eq.operations) {
-					if (op != Operation.NONE) {
-						allow = false;
-						break;
-					}
-				}
-				if(!allow) continue;
-			}
+//			if (eqNo == 1 && (lattice.equations.get(0).operations.get(0) == Operation.NONE
+//					|| lattice.equations.get(0).operations.get(2) == Operation.NONE)) {
+//				boolean allow = true;
+//				for (Operation op : eq.operations) {
+//					if (op != Operation.NONE) {
+//						allow = false;
+//						break;
+//					}
+//				}
+//				if(!allow) continue;
+//			}
 			newLatticeList.add(lattice);
 		}
 		System.out.println("LatticeList After filtering : "+newLatticeList.size());
