@@ -83,37 +83,52 @@ public class EquationMatcher {
 	}
 
 	private static double getStructAcc(Lattice prediction, Lattice gold) {
-		double acc = 0.0, total = 0.0;
+		double acc1 = 0.0, acc2 = 0.0, total = 0.0;
 		for(int i=0; i<2; ++i) {
-			Equation eqPred = prediction.equations.get(i);
+			Equation eqPred1 = prediction.equations.get(i);
+			Equation eqPred2 = prediction.equations.get(1-i);
 			Equation eqGold = gold.equations.get(i);
-			total+=1.0;
-			if(isEqual(eqPred.A1, eqGold.A1)) {
-				acc += 1.0;
+			total+=6.0;
+			if(isEqual(eqPred1.A1, eqGold.A1)) {
+				acc1 += 1.0;
 			}
-			total+=1.0;
-			if(isEqual(eqPred.A2, eqGold.A2)) {
-				acc += 1.0;
+			if(isEqual(eqPred1.A2, eqGold.A2)) {
+				acc1 += 1.0;
 			}
-			total+=1.0;
-			if(isEqual(eqPred.B1, eqGold.B1)) {
-				acc += 1.0;
+			if(isEqual(eqPred1.B1, eqGold.B1)) {
+				acc1 += 1.0;
 			}
-			total+=1.0;
-			if(isEqual(eqPred.B2, eqGold.B2)) {
-				acc += 1.0;
+			if(isEqual(eqPred1.B2, eqGold.B2)) {
+				acc1 += 1.0;
 			}
-			total+=1.0;
-			if(isEqual(eqPred.C, eqGold.C)) {
-				acc += 1.0;
+			if(isEqual(eqPred1.C, eqGold.C)) {
+				acc1 += 1.0;
 			}
-			total+=1.0;
-			if(Arrays.asList(eqPred.operations.get(i)).toString().equals(
+			if(Arrays.asList(eqPred1.operations.get(i)).toString().equals(
 					Arrays.asList(eqGold.operations.get(i)))){
-				acc += 1.0;
+				acc1 += 1.0;
+			}
+			if(isEqual(eqPred2.A1, eqGold.A1)) {
+				acc2 += 1.0;
+			}
+			if(isEqual(eqPred2.A2, eqGold.A2)) {
+				acc2 += 1.0;
+			}
+			if(isEqual(eqPred2.B1, eqGold.B1)) {
+				acc2 += 1.0;
+			}
+			if(isEqual(eqPred2.B2, eqGold.B2)) {
+				acc2 += 1.0;
+			}
+			if(isEqual(eqPred2.C, eqGold.C)) {
+				acc2 += 1.0;
+			}
+			if(Arrays.asList(eqPred2.operations.get(i)).toString().equals(
+					Arrays.asList(eqGold.operations.get(i)))){
+				acc2 += 1.0;
 			}
 		}
-		return acc/total;
+		return Math.max(acc1, acc2)/total;
 	}
 	
 	private static boolean isEqual(List<Pair<Operation, Double>> a1,
@@ -156,6 +171,7 @@ public class EquationMatcher {
 		}
 		return false;
 	}
+	
 	private static void trainModel(String modelPath, SLProblem train)
 			throws Exception {
 		SLModel model = new SLModel();
