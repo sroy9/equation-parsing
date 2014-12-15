@@ -89,7 +89,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		for(Pair<Operation, Double> pair : eq.B2) prefix += "_" + pair.getFirst();
 		prefix+="_C";
 		for(Pair<Operation, Double> pair : eq.C) prefix += "_" + pair.getFirst();
-		prefix+="_EquationNo_"+eqNo;
 		features.add(prefix);
 		for(Pair<Operation, Double> pair : eq.C) {
 			for(IntPair span : getRelevantSpans(blob, "C", pair.getSecond())) {
