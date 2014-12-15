@@ -166,8 +166,8 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		List<Lattice> seedList = new ArrayList<>();
 		seedList.add(startSeed);
 		List<Lattice> latticeList = new ArrayList<>();
-		for (Lattice seed : seedList) {
-			for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E1"))) {
+		for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E1"))) {
+			for (Lattice seed : seedList) {
 				Lattice lattice = new Lattice(seed);
 				latticeList.add(lattice);
 				lattice = new Lattice(seed);
@@ -187,14 +187,12 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 						Operation.DIV, d));
 				latticeList.add(lattice);
 			}
-		}
-		if(latticeList.size() > 0) { 
 			seedList.clear();
 			seedList.addAll(latticeList);
 			latticeList.clear();
 		}
-		for (Lattice seed : seedList) {
-			for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E2"))) {
+		for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E2"))) {
+			for (Lattice seed : seedList) {
 				Lattice lattice = new Lattice(seed);
 				latticeList.add(lattice);
 				lattice = new Lattice(seed);
@@ -214,14 +212,12 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 						Operation.DIV, d));
 				latticeList.add(lattice);
 			}
-		}
-		if(latticeList.size() > 0) { 
 			seedList.clear();
 			seedList.addAll(latticeList);
-			latticeList.clear();
+			latticeList.clear();	
 		}
-		for (Lattice seed : seedList) {
-			for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E3"))) {
+		for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E3"))) {
+			for (Lattice seed : seedList) {
 				Lattice lattice = new Lattice(seed);
 				latticeList.add(lattice);
 				lattice = new Lattice(seed);
@@ -233,8 +229,6 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 						Operation.DIV, d));
 				latticeList.add(lattice);
 			}
-		}
-		if(latticeList.size() > 0) { 
 			seedList.clear();
 			seedList.addAll(latticeList);
 			latticeList.clear();
