@@ -115,8 +115,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		PairComparator<Lattice> latticePairComparator = new PairComparator<Lattice>() {
 		};
 		BoundedPriorityQueue<Pair<Lattice, Double>> beam = 
-				new BoundedPriorityQueue<Pair<Lattice, Double>>(
-				2, latticePairComparator);
+				new BoundedPriorityQueue<Pair<Lattice, Double>>(2, latticePairComparator);
 		tmpLatticeList.add(new Pair<Lattice, Double>(new Lattice(), 0.0));
 		beam.clear();
 		Iterator<Pair<Lattice, Double>> it;
