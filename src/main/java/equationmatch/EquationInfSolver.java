@@ -238,7 +238,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 				continue;
 			}
 			if(eqNo == 1 && (lattice.equations.get(0).operations.get(0) == Operation.NONE || 
-					lattice.equations.get(0).operations.get(0) == Operation.NONE)) {
+					lattice.equations.get(0).operations.get(2) == Operation.NONE)) {
 				Equation eq = lattice.equations.get(eqNo);
 				if(eq.A1.size() > 0 || eq.A2.size() > 0 || eq.B1.size() > 0 || 
 						eq.B2.size() > 0 || eq.C.size() > 0) {
