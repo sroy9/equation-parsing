@@ -329,58 +329,52 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 	}
 
 	private boolean isAllNumbersUsed(Lattice lattice, Blob blob) {
-		for (String entity : blob.clusterMap.keySet()) {
-			for (QuantSpan qs : blob.clusterMap.get(entity)) {
-				boolean found = false;
-				if (entity.equals("E1")) {
-					for (int j = 0; j < lattice.equations.size(); ++j) {
-						Equation e = lattice.equations.get(j);
-						for (Pair<Operation, Double> pair : e.A1) {
-							if (Tools.safeEquals(pair.getSecond(),
-									Tools.getValue(qs))) {
-								found = true;
-							}
-						}
-						for (Pair<Operation, Double> pair : e.A2) {
-							if (Tools.safeEquals(pair.getSecond(),
-									Tools.getValue(qs))) {
-								found = true;
-							}
-						}
+		for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E1"))) {
+			boolean found = false;
+			for (int j = 0; j < 2; ++j) {
+				Equation e = lattice.equations.get(j);
+				for (Pair<Operation, Double> pair : e.A1) {
+					if (Tools.safeEquals(pair.getSecond(), d)) {
+						found = true;
 					}
 				}
-				if (entity.equals("E2")) {
-					for (int j = 0; j < lattice.equations.size(); ++j) {
-						Equation e = lattice.equations.get(j);
-						for (Pair<Operation, Double> pair : e.B1) {
-							if (Tools.safeEquals(pair.getSecond(),
-									Tools.getValue(qs))) {
-								found = true;
-							}
-						}
-						for (Pair<Operation, Double> pair : e.B2) {
-							if (Tools.safeEquals(pair.getSecond(),
-									Tools.getValue(qs))) {
-								found = true;
-							}
-						}
+				for (Pair<Operation, Double> pair : e.A2) {
+					if (Tools.safeEquals(pair.getSecond(), d)) {
+						found = true;
 					}
 				}
-				if (entity.equals("E3")) {
-					for (int j = 0; j < lattice.equations.size(); ++j) {
-						Equation e = lattice.equations.get(j);
-						for (Pair<Operation, Double> pair : e.C) {
-							if (Tools.safeEquals(pair.getSecond(),
-									Tools.getValue(qs))) {
-								found = true;
-							}
-						}
-					}
-				}
-				if (!found)
-					return false;
 			}
+			if(!found) return false;
 		}
+		for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E2"))) {
+			boolean found = false;
+			for (int j = 0; j < 2; ++j) {
+				Equation e = lattice.equations.get(j);
+				for (Pair<Operation, Double> pair : e.B1) {
+					if (Tools.safeEquals(pair.getSecond(), d)) {
+						found = true;
+					}
+				}
+				for (Pair<Operation, Double> pair : e.B2) {
+					if (Tools.safeEquals(pair.getSecond(), d)) {
+						found = true;
+					}
+				}
+			}
+			if(!found) return false;
+		}
+		for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E3"))) {
+			boolean found = false;
+			for (int j = 0; j < 2; ++j) {
+				Equation e = lattice.equations.get(j);
+				for (Pair<Operation, Double> pair : e.C) {
+					if (Tools.safeEquals(pair.getSecond(), d)) {
+						found = true;
+					}
+				}
+			}
+			if(!found) return false;
+		}		
 		return true;
 	}
 }
