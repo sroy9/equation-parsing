@@ -107,59 +107,37 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		Blob blob = (Blob) x;
 		Lattice gold = (Lattice) goldStructure;
 		Lattice prediction = null;
-		int beamSize = 50, opFromEach = 5;
+		int beamSize = 50;
 		PairComparator<Lattice> latticePairComparator = new PairComparator<Lattice>() {
 		};
-		PairComparator<Equation> equationPairComparator = new PairComparator<Equation>() {
-		};
-		BoundedPriorityQueue<Pair<Equation, Double>> equationNumberBeam = 
-				new BoundedPriorityQueue<Pair<Equation, Double>>(beamSize, equationPairComparator);
-		BoundedPriorityQueue<Pair<Equation, Double>> equationOperationBeam = 
-				new BoundedPriorityQueue<Pair<Equation, Double>>(beamSize, equationPairComparator);
 		BoundedPriorityQueue<Pair<Lattice, Double>> latticeBeam = 
+				new BoundedPriorityQueue<Pair<Lattice, Double>>(beamSize, latticePairComparator);
+		BoundedPriorityQueue<Pair<Lattice, Double>> opBeam = 
 				new BoundedPriorityQueue<Pair<Lattice, Double>>(beamSize, latticePairComparator);
 		
 		// Enumerate all equations
-		for (Equation equation : enumerateEquationNumbers(blob)) {
-			equationNumberBeam.add(new Pair<Equation, Double>(equation,
-					1.0*wv.dotProduct(featGen.getNumberFeatureVector(blob, equation))));
+		List<Equation> equationList = enumerateEquationNumbers(blob);
+		for (int i=0; i<equationList.size(); ++i) {
+			Equation eq1 = equationList.get(i);
+			for(int j=i+1; j<equationList.size(); ++j) {
+				Equation eq2 = equationList.get(j);
+				Lattice lattice = new Lattice(Arrays.asList(eq1, eq2));
+				if(isAllNumbersUsed(lattice, blob)) {
+					latticeBeam.add(new Pair<Lattice, Double>(lattice, 
+							1.0*wv.dotProduct(featGen.getNumberFeatureVector(blob, lattice))));
+				}
+			}
 		}
-//		System.out.println("EquationNumberBeam : "+equationNumberBeam.size());
+		System.out.println("LatticeNumberBeam : "+latticeBeam.size());
 		
-		for (Pair<Equation, Double> pair : equationNumberBeam) {
-			BoundedPriorityQueue<Pair<Equation, Double>> opBeam = 
-					new BoundedPriorityQueue<Pair<Equation, Double>>(opFromEach, equationPairComparator);
-			for (Equation equation : enumerateEquationOperations(pair.getFirst())) {
-				opBeam.add(new Pair<Equation, Double>(equation, 
+		for (Pair<Lattice, Double> pair : latticeBeam) {
+			for (Lattice lattice : enumerateLattices(pair.getFirst())) {
+				opBeam.add(new Pair<Lattice, Double>(lattice, 
 						pair.getSecond() + 
-						wv.dotProduct(featGen.getOperationFeatureVector(blob, equation))));
-			}
-			equationOperationBeam.addAll(opBeam);
-		}
-//		System.out.println("EquationOperationBeam : "+equationOperationBeam.size());
-		
-		// Enumerate all lattices
-		for(Pair<Equation, Double> pair1 : equationOperationBeam) {
-			if(pair1.getFirst().operations.get(0) == Operation.NONE || 
-					pair1.getFirst().operations.get(2) == Operation.NONE) {
-				Equation eq = new Equation();
-				eq.operations = Arrays.asList(Operation.NONE, Operation.NONE, Operation.NONE, 
-						Operation.NONE, Operation.NONE);
-				Lattice lattice = new Lattice(Arrays.asList(pair1.getFirst(), eq));
-				latticeBeam.add(new Pair<Lattice, Double>(lattice, 
-						pair1.getSecond()+
-						wv.dotProduct(featGen.getLatticeFeatureVector(blob, lattice))));
-				continue;
-			}
-			for(Pair<Equation, Double> pair2 : equationOperationBeam) {
-				if(pair1.equals(pair2)) continue;
-				Lattice lattice = new Lattice(Arrays.asList(pair1.getFirst(), pair2.getFirst()));
-				latticeBeam.add(new Pair<Lattice, Double>(lattice, 
-						pair1.getSecond()+pair2.getSecond()+
-						wv.dotProduct(featGen.getLatticeFeatureVector(blob, lattice))));
+						wv.dotProduct(featGen.getOperationFeatureVector(blob, lattice))));
 			}
 		}
-//		System.out.println("LatticeBeam : "+latticeBeam.size());
+		System.out.println("LatticeOperationBeam : "+opBeam.size());
 		prediction = latticeBeam.element().getFirst();
 		return prediction;
 	}
@@ -238,6 +216,30 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		return seedList;
 	}
 
+	public List<Lattice> enumerateLattices(Lattice seed) {
+		List<Lattice> latticeList = new ArrayList<>();
+		for(Equation eq1 : enumerateEquationOperations(seed.equations.get(0))) {
+			if(eq1.operations.get(0) == Operation.NONE || 
+					eq1.operations.get(2) == Operation.NONE) {
+				Equation eq = new Equation();
+				eq.operations = Arrays.asList(Operation.NONE, Operation.NONE, 
+						Operation.NONE, Operation.NONE, Operation.NONE);
+				Lattice lattice = new Lattice(Arrays.asList(eq1, eq));
+				if(EquationSolver.solve(lattice) != null) {
+					latticeList.add(lattice);
+				}
+				continue;
+			}
+			for(Equation eq2 : enumerateEquationOperations(seed.equations.get(1))) {
+				Lattice lattice = new Lattice(Arrays.asList(eq1, eq2));
+				if(EquationSolver.solve(lattice) != null) {
+					latticeList.add(lattice);
+				}
+			}
+		}
+		return latticeList;
+	}
+	
 	public static List<Equation> enumerateEquationOperations(Equation eq) {
 		List<Equation> equationList = new ArrayList<>();
 		List<Operation> one = Arrays.asList(Operation.ADD, Operation.SUB,

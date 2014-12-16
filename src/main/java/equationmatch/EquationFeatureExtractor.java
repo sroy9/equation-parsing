@@ -34,21 +34,15 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		this.lm = lm;
 	}
 	
-	public IFeatureVector getLatticeFeatureVector(
-			Blob blob, Lattice lattice) throws Exception {
-		List<String> feats = getLatticeFeatures(blob, lattice);
-		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
-	}
-	
 	public IFeatureVector getOperationFeatureVector(
-			Blob blob, Equation eq) throws Exception {
-		List<String> feats = getOperationFeatures(blob, eq);
+			Blob blob, Lattice lattice) throws Exception {
+		List<String> feats = getOperationFeatures(blob, lattice);
 		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
 	}
 	
 	public IFeatureVector getNumberFeatureVector(
-			Blob blob, Equation eq) throws Exception {
-		List<String> feats = getNumberFeatures(blob, eq);
+			Blob blob, Lattice lattice) throws Exception {
+		List<String> feats = getNumberFeatures(blob, lattice);
 		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
 	}
 
@@ -57,142 +51,68 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		Blob blob = (Blob) arg0;
 		Lattice lattice = (Lattice) arg1;
 		List<String> features = new ArrayList<>();
-		// Enumerate all positions
-		for(int i=0; i<2; ++i) {
-			features.addAll(getNumberFeatures(blob, lattice.equations.get(i)));
-			features.addAll(getOperationFeatures(blob, lattice.equations.get(i)));
-		}
-		features.addAll(getLatticeFeatures(blob, lattice));
+		features.addAll(getNumberFeatures(blob, lattice));
+		features.addAll(getOperationFeatures(blob, lattice));
 		return FeatureExtraction.getFeatureVectorFromList(features, lm);
 	}
 
-	public List<String> getLatticeFeatures(Blob blob, Lattice lattice) {
-		List<String> features = new ArrayList<String>();
-		List<Double> solutions = EquationSolver.solve(lattice);
-		if(solutions == null) features.add("Not_Solvable");
-		if(!EquationInfSolver.isAllNumbersUsed(lattice, blob)) {
-			features.add("All_numbers_not_used");
-		}
-		String prefix = "";
-		for(int i=0; i<2; ++i) {
-			Equation eq = lattice.equations.get(i);
-			prefix+="_A1_"+eq.A1.size();
-			prefix+="_A2_"+eq.A2.size();
-			prefix+="_B1_"+eq.B1.size();
-			prefix+="_B2_"+eq.B2.size();
-			prefix+="_C_"+eq.C.size();
-		}
-		features.add(prefix);
-		for(Double d : Tools.uniqueNumbers(blob.clusterMap.get("E1"))) {
-			if(isPresent(d, "E1", lattice.equations.get(0)) && 
-					isPresent(d, "E1", lattice.equations.get(1))) {
-				features.add("Something_In_E1_Twice_Present");
-			}
-		}
-		for(Double d : Tools.uniqueNumbers(blob.clusterMap.get("E2"))) {
-			if(isPresent(d, "E2", lattice.equations.get(0)) && 
-					isPresent(d, "E2", lattice.equations.get(1))) {
-				features.add("Something_In_E2_Twice_Present");
-			}
-		}
-		return FeatureExtraction.getConjunctions(features);
-	}
-
-	public List<String> getOperationFeatures(Blob blob, Equation eq) {
+	public List<String> getOperationFeatures(Blob blob, Lattice lattice) {
 		List<String> features = new ArrayList<>();
-		String prefix = "" + Arrays.asList(eq.operations);
-		features.add(prefix);
-		for(Pair<Operation, Double> pair : eq.C) {
-			for(IntPair span : getRelevantSpans(blob, "C", pair.getSecond())) {
-				for(String feature : FeatureExtraction.getMixed(
-						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add(prefix+"_C_"+pair.getFirst()+"_"+feature);
-				}
-			}
-		}
-		for(Pair<Operation, Double> pair : eq.B2) {
-			for(IntPair span : getRelevantSpans(blob, "B2", pair.getSecond())) {
-				for(String feature : FeatureExtraction.getMixed(
-						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add(eq.operations.get(3)+"_B2_"+pair.getFirst()+"_"+feature);
-				}
-			}
-		}
-		for(Pair<Operation, Double> pair : eq.B1) {
-			for(IntPair span : getRelevantSpans(blob, "B1", pair.getSecond())) {
-				for(String feature : FeatureExtraction.getMixed(
-						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add(eq.operations.get(2)+"_B1_"+pair.getFirst()+"_"+feature);
-				}
-			}
-		}
-		for(Pair<Operation, Double> pair : eq.A2) {
-			for(IntPair span : getRelevantSpans(blob, "A2", pair.getSecond())) {
-				for(String feature : FeatureExtraction.getMixed(
-						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add(eq.operations.get(1)+"_A2_"+pair.getFirst()+"_"+feature);
-				}
-			}
-		}
-		for(Pair<Operation, Double> pair : eq.A1) {
-			for(IntPair span : getRelevantSpans(blob, "A1", pair.getSecond())) {
-				for(String feature : FeatureExtraction.getMixed(
-						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add(eq.operations.get(0)+"_A1_"+pair.getFirst()+"_"+feature);
-				}
-			}
+		for(int i=0; i<2; i++) {
+			Equation eq = lattice.equations.get(i);
+			features.add(""+Arrays.asList(eq.operations));
 		}
 		return features;
 	}
 	
-	public List<String> getNumberFeatures(Blob blob, Equation eq) {
+	public List<String> getNumberFeatures(Blob blob, Lattice lattice) {
 		List<String> features = new ArrayList<>();
-		String prefix = "A1_"+eq.A1.size();
-		prefix+="_A2_"+eq.A2.size();
-		prefix+="_B1_"+eq.B1.size();
-		prefix+="_B2_"+eq.B2.size();
-		prefix+="_C_"+eq.C.size();
-		features.add(prefix);
-		for(Pair<Operation, Double> pair : eq.C) {
-			for(IntPair span : getRelevantSpans(blob, "C", pair.getSecond())) {
-				for(String feature : FeatureExtraction.getMixed(
-						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add("C_"+pair.getFirst()+"_"+feature);
-				}
-			}
-		}
-		for(Pair<Operation, Double> pair : eq.B2) {
-			for(IntPair span : getRelevantSpans(blob, "B2", pair.getSecond())) {
-				for(String feature : FeatureExtraction.getMixed(
-						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add("B2_"+pair.getFirst()+"_"+feature);
-				}
-			}
-		}
-		for(Pair<Operation, Double> pair : eq.B1) {
-			for(IntPair span : getRelevantSpans(blob, "B1", pair.getSecond())) {
-				for(String feature : FeatureExtraction.getMixed(
-						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add("B1_"+pair.getFirst()+"_"+feature);
-				}
-			}
-		}
-		for(Pair<Operation, Double> pair : eq.A2) {
-			for(IntPair span : getRelevantSpans(blob, "A2", pair.getSecond())) {
-				for(String feature : FeatureExtraction.getMixed(
-						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add("A2_"+pair.getFirst()+"_"+feature);
-				}
-			}
-		}
-		for(Pair<Operation, Double> pair : eq.A1) {
-			for(IntPair span : getRelevantSpans(blob, "A1", pair.getSecond())) {
-				for(String feature : FeatureExtraction.getMixed(
-						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add("A1_"+pair.getFirst()+"_"+feature);
-				}
-			}
-		}
+//		String prefix = "A1_"+eq.A1.size();
+//		prefix+="_A2_"+eq.A2.size();
+//		prefix+="_B1_"+eq.B1.size();
+//		prefix+="_B2_"+eq.B2.size();
+//		prefix+="_C_"+eq.C.size();
+//		features.add(prefix);
+//		for(Pair<Operation, Double> pair : eq.C) {
+//			for(IntPair span : getRelevantSpans(blob, "C", pair.getSecond())) {
+//				for(String feature : FeatureExtraction.getMixed(
+//						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+//					features.add("C_"+pair.getFirst()+"_"+feature);
+//				}
+//			}
+//		}
+//		for(Pair<Operation, Double> pair : eq.B2) {
+//			for(IntPair span : getRelevantSpans(blob, "B2", pair.getSecond())) {
+//				for(String feature : FeatureExtraction.getMixed(
+//						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+//					features.add("B2_"+pair.getFirst()+"_"+feature);
+//				}
+//			}
+//		}
+//		for(Pair<Operation, Double> pair : eq.B1) {
+//			for(IntPair span : getRelevantSpans(blob, "B1", pair.getSecond())) {
+//				for(String feature : FeatureExtraction.getMixed(
+//						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+//					features.add("B1_"+pair.getFirst()+"_"+feature);
+//				}
+//			}
+//		}
+//		for(Pair<Operation, Double> pair : eq.A2) {
+//			for(IntPair span : getRelevantSpans(blob, "A2", pair.getSecond())) {
+//				for(String feature : FeatureExtraction.getMixed(
+//						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+//					features.add("A2_"+pair.getFirst()+"_"+feature);
+//				}
+//			}
+//		}
+//		for(Pair<Operation, Double> pair : eq.A1) {
+//			for(IntPair span : getRelevantSpans(blob, "A1", pair.getSecond())) {
+//				for(String feature : FeatureExtraction.getMixed(
+//						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+//					features.add("A1_"+pair.getFirst()+"_"+feature);
+//				}
+//			}
+//		}
 		return features;
 	}
 	
