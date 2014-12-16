@@ -123,8 +123,8 @@ public class EquationSolver {
 		}
 		List<Double> solutions = new ArrayList<>();
 		if(isOneVar) {
-			solutions.add(-(A2.get(0)+B2.get(0)+C.get(0))/(A1.get(0)+B1.get(0)));
 			if(Tools.safeEquals(A1.get(0)+B1.get(0), 0.0)) return null;
+			solutions.add(-(A2.get(0)+B2.get(0)+C.get(0))/(A1.get(0)+B1.get(0)));
 			return solutions;
 		} else {
 			Double a1 = A1.get(0), a2 = A1.get(1), b1 = B1.get(0), b2 = B1.get(1),

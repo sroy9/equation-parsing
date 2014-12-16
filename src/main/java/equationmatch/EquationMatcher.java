@@ -104,8 +104,8 @@ public class EquationMatcher {
 			if(isEqual(eqPred1.C, eqGold.C)) {
 				acc1 += 1.0;
 			}
-			if(Arrays.asList(eqPred1.operations.get(i)).toString().equals(
-					Arrays.asList(eqGold.operations.get(i)))){
+			if(Arrays.asList(eqPred1.operations).toString().equals(
+					Arrays.asList(eqGold.operations))){
 				acc1 += 1.0;
 			}
 			if(isEqual(eqPred2.A1, eqGold.A1)) {
@@ -123,8 +123,8 @@ public class EquationMatcher {
 			if(isEqual(eqPred2.C, eqGold.C)) {
 				acc2 += 1.0;
 			}
-			if(Arrays.asList(eqPred2.operations.get(i)).toString().equals(
-					Arrays.asList(eqGold.operations.get(i)))){
+			if(Arrays.asList(eqPred2.operations).toString().equals(
+					Arrays.asList(eqGold.operations))){
 				acc2 += 1.0;
 			}
 		}
@@ -180,7 +180,7 @@ public class EquationMatcher {
 		model.lm = lm;
 		EquationFeatureExtractor fg = new EquationFeatureExtractor(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new EquationInfSolver(fg);
+		model.infSolver = new BruteForceInfSolver(fg);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
