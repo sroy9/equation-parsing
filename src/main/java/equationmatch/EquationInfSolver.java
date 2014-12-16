@@ -129,7 +129,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		for (Pair<Equation, Double> pair : equationNumberBeam) {
 			BoundedPriorityQueue<Pair<Equation, Double>> opBeam = 
 					new BoundedPriorityQueue<Pair<Equation, Double>>(opFromEach, equationPairComparator);
-			for (Equation equation : enumerateEquationOperations(pair.getFirst(), blob)) {
+			for (Equation equation : enumerateEquationOperations(pair.getFirst())) {
 				opBeam.add(new Pair<Equation, Double>(equation, 
 						pair.getSecond() + 
 						wv.dotProduct(featGen.getOperationFeatureVector(blob, equation))));
@@ -164,7 +164,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		return prediction;
 	}
 
-	public List<Equation> enumerateEquationNumbers(Blob blob) {
+	public static List<Equation> enumerateEquationNumbers(Blob blob) {
 		List<Equation> seedList = new ArrayList<>();
 		seedList.add(new Equation());
 		List<Equation> equationList = new ArrayList<>();
@@ -238,7 +238,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		return seedList;
 	}
 
-	public List<Equation> enumerateEquationOperations(Equation eq, Blob blob) {
+	public static List<Equation> enumerateEquationOperations(Equation eq) {
 		List<Equation> equationList = new ArrayList<>();
 		List<Operation> one = Arrays.asList(Operation.ADD, Operation.SUB,
 				Operation.MUL, Operation.DIV, Operation.NONE);
