@@ -58,10 +58,12 @@ implements Serializable {
 		List<Equation> equationNumberList = 
 				EquationInfSolver.enumerateEquationNumbers(blob);
 		List<Equation> equationOpList = new ArrayList<>();
+		System.out.println("EquationNumberList : "+equationNumberList.size());
 		for(Equation eq : equationNumberList) {
 			equationOpList.addAll(
 					EquationInfSolver.enumerateEquationOperations(eq));
 		}
+		System.out.println("EquationOpList : "+equationOpList.size());
 		for(int i=0; i<equationOpList.size(); ++i) {
 			Equation eq1 = equationOpList.get(i);
 			if(eq1.operations.get(0) == Operation.NONE || 
@@ -80,12 +82,14 @@ implements Serializable {
 				latticeList.add(lattice);
 			}
 		}
+		System.out.println("LatticeList : "+latticeList.size());
 		List<Lattice> newLatticeList = new ArrayList<>();
 		for(Lattice lattice : latticeList) {
 			if(!EquationInfSolver.isAllNumbersUsed(lattice, blob)) continue;
 			if(EquationSolver.solve(lattice) == null) continue;
 			newLatticeList.add(lattice);
 		}
+		System.out.println("LatticeList after pruning : "+newLatticeList);
 		return newLatticeList;
 	}
 
