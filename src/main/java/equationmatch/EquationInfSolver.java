@@ -117,6 +117,7 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		
 		// Enumerate all equations
 		List<Equation> equationList = enumerateEquationNumbers(blob);
+		System.out.println("EquationList : "+equationList.size());
 		for (int i=0; i<equationList.size(); ++i) {
 			Equation eq1 = equationList.get(i);
 			for(int j=i+1; j<equationList.size(); ++j) {
