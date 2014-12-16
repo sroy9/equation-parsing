@@ -107,127 +107,191 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 		Blob blob = (Blob) x;
 		Lattice gold = (Lattice) goldStructure;
 		Lattice prediction = null;
-		int beamSize = 50;
+		int beamSize = 10;
 		PairComparator<Lattice> latticePairComparator = new PairComparator<Lattice>() {
 		};
-		BoundedPriorityQueue<Pair<Lattice, Double>> latticeBeam = 
+		BoundedPriorityQueue<Pair<Lattice, Double>> latticeE1Beam = 
 				new BoundedPriorityQueue<Pair<Lattice, Double>>(beamSize, latticePairComparator);
-		BoundedPriorityQueue<Pair<Lattice, Double>> opBeam = 
+		BoundedPriorityQueue<Pair<Lattice, Double>> latticeE2Beam = 
+				new BoundedPriorityQueue<Pair<Lattice, Double>>(beamSize, latticePairComparator);
+		BoundedPriorityQueue<Pair<Lattice, Double>> latticeE3Beam = 
+				new BoundedPriorityQueue<Pair<Lattice, Double>>(beamSize, latticePairComparator);
+		BoundedPriorityQueue<Pair<Lattice, Double>> latticeOpBeam = 
 				new BoundedPriorityQueue<Pair<Lattice, Double>>(beamSize, latticePairComparator);
 		
-		// Enumerate all equations
-		List<Equation> equationList = enumerateEquationNumbers(blob);
-		System.out.println("EquationList : "+equationList.size());
-		for (int i=0; i<equationList.size(); ++i) {
-			Equation eq1 = equationList.get(i);
-			for(int j=i+1; j<equationList.size(); ++j) {
-				Equation eq2 = equationList.get(j);
-				Lattice lattice = new Lattice(Arrays.asList(eq1, eq2));
-				if(isAllNumbersUsed(lattice, blob)) {
-					latticeBeam.add(new Pair<Lattice, Double>(lattice, 
-							1.0*wv.dotProduct(featGen.getNumberFeatureVector(blob, lattice))));
-				}
+		for(Lattice lattice : enumerateE1(blob, new Lattice())) {
+			latticeE1Beam.add(new Pair<Lattice, Double>(
+					lattice, wv.dotProduct(featGen.getE1FeatureVector(blob, lattice))*1.0));
+		}
+		for (Pair<Lattice, Double> pair : latticeE1Beam) {
+			for (Lattice lattice : enumerateE2(blob, pair.getFirst())) {
+				latticeE2Beam.add(new Pair<Lattice, Double>(lattice, 
+						pair.getSecond() + 
+						wv.dotProduct(featGen.getE2FeatureVector(blob, lattice))));
 			}
 		}
-		System.out.println("LatticeNumberBeam : "+latticeBeam.size());
-		
-		for (Pair<Lattice, Double> pair : latticeBeam) {
-			for (Lattice lattice : enumerateLattices(pair.getFirst())) {
-				opBeam.add(new Pair<Lattice, Double>(lattice, 
+		for (Pair<Lattice, Double> pair : latticeE2Beam) {
+			for (Lattice lattice : enumerateE3(blob, pair.getFirst())) {
+				latticeE3Beam.add(new Pair<Lattice, Double>(lattice, 
+						pair.getSecond() + 
+						wv.dotProduct(featGen.getE3FeatureVector(blob, lattice))));
+			}
+		}
+		for (Pair<Lattice, Double> pair : latticeE3Beam) {
+			for (Lattice lattice : enumerateLatticeOperations(pair.getFirst())) {
+				latticeOpBeam.add(new Pair<Lattice, Double>(lattice, 
 						pair.getSecond() + 
 						wv.dotProduct(featGen.getOperationFeatureVector(blob, lattice))));
 			}
 		}
-		System.out.println("LatticeOperationBeam : "+opBeam.size());
-		prediction = latticeBeam.element().getFirst();
+		prediction = latticeOpBeam.element().getFirst();
 		return prediction;
 	}
 
-	public static List<Equation> enumerateEquationNumbers(Blob blob) {
-		List<Equation> seedList = new ArrayList<>();
-		seedList.add(new Equation());
-		List<Equation> equationList = new ArrayList<>();
+	public static List<Lattice> enumerateE1(Blob blob, Lattice startSeed) {
+		List<Lattice> seedList = new ArrayList<Lattice>();
+		seedList.add(startSeed);
+		List<Lattice> latticeList = new ArrayList<>();
 		for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E1"))) {
-			for (Equation seed : seedList) {
-				Equation eq = new Equation(seed);
-				equationList.add(eq);
-				
-				eq = new Equation(seed);
-				eq.A1.add(new Pair<Operation, Double>(Operation.MUL, d));
-				equationList.add(eq);
-				
-				eq = new Equation(seed);
-				eq.A1.add(new Pair<Operation, Double>(Operation.DIV, d));
-				equationList.add(eq);
-				
-				eq = new Equation(seed);
-				eq.A1.add(new Pair<Operation, Double>(Operation.MUL, d));
-				equationList.add(eq);
-				
-				eq = new Equation(seed);
-				eq.A1.add(new Pair<Operation, Double>(Operation.DIV, d));
-				equationList.add(eq);
+			for(int i=0; i<2; i++) {
+				for (Lattice seed : seedList) {
+					Lattice lattice = new Lattice(seed);
+					latticeList.add(lattice);
+					
+					lattice = new Lattice(seed);
+					lattice.equations.get(i).A1.add(
+							new Pair<Operation, Double>(Operation.MUL, d));
+					latticeList.add(lattice);
+					
+					lattice = new Lattice(seed);
+					lattice.equations.get(i).A1.add(
+							new Pair<Operation, Double>(Operation.DIV, d));
+					latticeList.add(lattice);
+					
+					lattice = new Lattice(seed);
+					lattice.equations.get(i).A2.add(
+							new Pair<Operation, Double>(Operation.MUL, d));
+					latticeList.add(lattice);
+					
+					lattice = new Lattice(seed);
+					lattice.equations.get(i).A2.add(
+							new Pair<Operation, Double>(Operation.DIV, d));
+					latticeList.add(lattice);
+				}
+				seedList.clear();
+				seedList.addAll(latticeList);
+				latticeList.clear();
+			}
+			for(Lattice seed : seedList) {
+				if(EquationFeatureExtractor.isPresent(d, "E1", seed.equations.get(0)) ||
+						EquationFeatureExtractor.isPresent(d, "E1", seed.equations.get(1))) {
+					latticeList.add(seed);
+				}
 			}
 			seedList.clear();
-			seedList.addAll(equationList);
-			equationList.clear();
+			seedList.addAll(latticeList);
+			latticeList.clear();
 		}
+		return seedList;
+	}
+	
+	public static List<Lattice> enumerateE2(Blob blob, Lattice startSeed) {
+		List<Lattice> seedList = new ArrayList<Lattice>();
+		seedList.add(startSeed);
+		List<Lattice> latticeList = new ArrayList<>();
 		for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E2"))) {
-			for (Equation seed : seedList) {
-				Equation eq = new Equation(seed);
-				equationList.add(eq);
-				
-				eq = new Equation(seed);
-				eq.B1.add(new Pair<Operation, Double>(Operation.MUL, d));
-				equationList.add(eq);
-				
-				eq = new Equation(seed);
-				eq.B1.add(new Pair<Operation, Double>(Operation.DIV, d));
-				equationList.add(eq);
-				
-				eq = new Equation(seed);
-				eq.B2.add(new Pair<Operation, Double>(Operation.MUL, d));
-				equationList.add(eq);
-				
-				eq = new Equation(seed);
-				eq.B2.add(new Pair<Operation, Double>(Operation.DIV, d));
-				equationList.add(eq);
+			for(int i=0; i<2; i++) {
+				for (Lattice seed : seedList) {
+					Lattice lattice = new Lattice(seed);
+					latticeList.add(lattice);
+					lattice = new Lattice(seed);
+					lattice.equations.get(i).B1.add(
+							new Pair<Operation, Double>(Operation.MUL, d));
+					latticeList.add(lattice);
+					
+					lattice = new Lattice(seed);
+					lattice.equations.get(i).B1.add(
+							new Pair<Operation, Double>(Operation.DIV, d));
+					latticeList.add(lattice);
+					
+					lattice = new Lattice(seed);
+					lattice.equations.get(i).B2.add(
+							new Pair<Operation, Double>(Operation.MUL, d));
+					latticeList.add(lattice);
+					
+					lattice = new Lattice(seed);
+					lattice.equations.get(i).B2.add(
+							new Pair<Operation, Double>(Operation.DIV, d));
+					latticeList.add(lattice);
+				}
+				seedList.clear();
+				seedList.addAll(latticeList);
+				latticeList.clear();
+			}
+			for(Lattice seed : seedList) {
+				if(EquationFeatureExtractor.isPresent(d, "E2", seed.equations.get(0)) ||
+						EquationFeatureExtractor.isPresent(d, "E2", seed.equations.get(1))) {
+					latticeList.add(seed);
+				}
 			}
 			seedList.clear();
-			seedList.addAll(equationList);
-			equationList.clear();
+			seedList.addAll(latticeList);
+			latticeList.clear();
 		}
+		return seedList;
+	}
+	
+	public static List<Lattice> enumerateE3(Blob blob, Lattice startSeed) {
+		List<Lattice> seedList = new ArrayList<Lattice>();
+		seedList.add(startSeed);
+		List<Lattice> latticeList = new ArrayList<>();
 		for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E3"))) {
-			for (Equation seed : seedList) {
-				Equation eq = new Equation(seed);
-				equationList.add(eq);
-				
-				eq = new Equation(seed);
-				eq.C.add(new Pair<Operation, Double>(Operation.MUL, d));
-				equationList.add(eq);
-				
-				eq = new Equation(seed);
-				eq.C.add(new Pair<Operation, Double>(Operation.DIV, d));
-				equationList.add(eq);
+			for(int i=0; i<2; i++) {
+				for (Lattice seed : seedList) {
+					Lattice lattice = new Lattice(seed);
+					latticeList.add(lattice);
+					
+					lattice = new Lattice(seed);
+					lattice.equations.get(i).C.add(
+							new Pair<Operation, Double>(Operation.MUL, d));
+					latticeList.add(lattice);
+					
+					lattice = new Lattice(seed);
+					lattice.equations.get(i).C.add(
+							new Pair<Operation, Double>(Operation.DIV, d));
+					latticeList.add(lattice);
+				}
+				seedList.clear();
+				seedList.addAll(latticeList);
+				latticeList.clear();
+			}
+			for(Lattice seed : seedList) {
+				if(EquationFeatureExtractor.isPresent(d, "E3", seed.equations.get(0)) ||
+						EquationFeatureExtractor.isPresent(d, "E3", seed.equations.get(1))) {
+					latticeList.add(seed);
+				}
 			}
 			seedList.clear();
-			seedList.addAll(equationList);
-			equationList.clear();
+			seedList.addAll(latticeList);
+			latticeList.clear();
 		}
 		return seedList;
 	}
 
-	public List<Lattice> enumerateLattices(Lattice seed) {
+	public List<Lattice> enumerateLatticeOperations(Lattice seed) {
 		List<Lattice> latticeList = new ArrayList<>();
 		for(Equation eq1 : enumerateEquationOperations(seed.equations.get(0))) {
 			if(eq1.operations.get(0) == Operation.NONE || 
 					eq1.operations.get(2) == Operation.NONE) {
-				Equation eq = new Equation();
-				eq.operations = Arrays.asList(Operation.NONE, Operation.NONE, 
-						Operation.NONE, Operation.NONE, Operation.NONE);
-				Lattice lattice = new Lattice(Arrays.asList(eq1, eq));
-				if(EquationSolver.solve(lattice) != null) {
-					latticeList.add(lattice);
+				Equation eq2 = new Equation(seed.equations.get(1));
+				if(eq2.A1.size() == 0  && eq2.A2.size() == 0  && eq2.B1.size() == 0  && 
+						eq2.B2.size() == 0  && eq2.C.size() == 0) {
+					eq2.operations = Arrays.asList(Operation.NONE, Operation.NONE, 
+							Operation.NONE, Operation.NONE, Operation.NONE);
+					Lattice lattice = new Lattice(Arrays.asList(eq1, eq2));
+					if(EquationSolver.solve(lattice) != null) {
+						latticeList.add(lattice);
+					}
 				}
 				continue;
 			}

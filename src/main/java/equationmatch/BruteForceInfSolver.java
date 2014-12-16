@@ -56,7 +56,7 @@ implements Serializable {
 	public static List<Lattice> enumerateLattices(Blob blob) {
 		List<Lattice> latticeList = new ArrayList<>();
 		List<Equation> equationNumberList = 
-				EquationInfSolver.enumerateEquationNumbers(blob);
+				EquationInfSolver.enumerateLatticeNumbers(blob);
 		List<Equation> equationOpList = new ArrayList<>();
 		System.out.println("EquationNumberList : "+equationNumberList.size());
 		for(Equation eq : equationNumberList) {

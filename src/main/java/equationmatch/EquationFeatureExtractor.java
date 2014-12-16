@@ -34,72 +34,56 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		this.lm = lm;
 	}
 	
+	@Override
+	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
+		Blob blob = (Blob) arg0;
+		Lattice lattice = (Lattice) arg1;
+		List<String> features = new ArrayList<>();
+		features.addAll(getE1Features(blob, lattice));
+		features.addAll(getE2Features(blob, lattice));
+		features.addAll(getE3Features(blob, lattice));
+		features.addAll(getOperationFeatures(blob, lattice));
+		return FeatureExtraction.getFeatureVectorFromList(features, lm);
+	}
+
+	// Operation Features
 	public IFeatureVector getOperationFeatureVector(
 			Blob blob, Lattice lattice) throws Exception {
 		List<String> feats = getOperationFeatures(blob, lattice);
 		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
 	}
 	
-	public IFeatureVector getNumberFeatureVector(
-			Blob blob, Lattice lattice) throws Exception {
-		List<String> feats = getNumberFeatures(blob, lattice);
-		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
-	}
-
-	@Override
-	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
-		Blob blob = (Blob) arg0;
-		Lattice lattice = (Lattice) arg1;
-		List<String> features = new ArrayList<>();
-		features.addAll(getNumberFeatures(blob, lattice));
-		features.addAll(getOperationFeatures(blob, lattice));
-		return FeatureExtraction.getFeatureVectorFromList(features, lm);
-	}
-
 	public List<String> getOperationFeatures(Blob blob, Lattice lattice) {
 		List<String> features = new ArrayList<>();
 		for(int i=0; i<2; i++) {
 			Equation eq = lattice.equations.get(i);
+			String prefix = eq.A1.size()+"_"+eq.A2.size()+"_"+eq.B1.size()+"_"+eq.B2.size()+
+					"_"+eq.C.size();
 			features.add(""+Arrays.asList(eq.operations));
-		}
-		return features;
-	}
-	
-	public List<String> getNumberFeatures(Blob blob, Lattice lattice) {
-		List<String> features = new ArrayList<>();
-		for(int i=0; i<2; i++) {
-			Equation eq = lattice.equations.get(i);
-			String prefix = "A1_"+eq.A1.size();
-			prefix+="_A2_"+eq.A2.size();
-			prefix+="_B1_"+eq.B1.size();
-			prefix+="_B2_"+eq.B2.size();
-			prefix+="_C_"+eq.C.size();
 			features.add(prefix);
-			
 			for(Pair<Operation, Double> pair : eq.C) {
 				for(IntPair span : getRelevantSpans(blob, "C", pair.getSecond())) {
 					for(String feature : FeatureExtraction.getMixed(
 							blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-						features.add("C_"+pair.getFirst()+"_"+feature);
+						features.add(prefix+"_C_"+pair.getFirst()+"_"+feature);
 					}
 				}
 			}
-			for(Pair<Operation, Double> pair : eq.B2) {
-				for(IntPair span : getRelevantSpans(blob, "B2", pair.getSecond())) {
-					for(String feature : FeatureExtraction.getMixed(
-							blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-						features.add("B2_"+pair.getFirst()+"_"+feature);
-					}
-				}
-			}
-			for(Pair<Operation, Double> pair : eq.B1) {
-				for(IntPair span : getRelevantSpans(blob, "B1", pair.getSecond())) {
-					for(String feature : FeatureExtraction.getMixed(
-							blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-						features.add("B1_"+pair.getFirst()+"_"+feature);
-					}
-				}
-			}
+		}
+		return features;
+	}
+
+	// Number Features
+	public IFeatureVector getE1FeatureVector(
+			Blob blob, Lattice lattice) throws Exception {
+		List<String> feats = getE1Features(blob, lattice);
+		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
+	}
+	
+	public List<String> getE1Features(Blob blob, Lattice lattice) {
+		List<String> features = new ArrayList<>();
+		for(int i=0; i<2; i++) {
+			Equation eq = lattice.equations.get(i);
 			for(Pair<Operation, Double> pair : eq.A2) {
 				for(IntPair span : getRelevantSpans(blob, "A2", pair.getSecond())) {
 					for(String feature : FeatureExtraction.getMixed(
@@ -116,12 +100,63 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 					}
 				}
 			}
-			
 		}
-		
 		return features;
 	}
 	
+	public IFeatureVector getE2FeatureVector(
+			Blob blob, Lattice lattice) throws Exception {
+		List<String> feats = getE2Features(blob, lattice);
+		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
+	}
+	
+	public List<String> getE2Features(Blob blob, Lattice lattice) {
+		List<String> features = new ArrayList<>();
+		for(int i=0; i<2; i++) {
+			Equation eq = lattice.equations.get(i);
+			for(Pair<Operation, Double> pair : eq.B2) {
+				for(IntPair span : getRelevantSpans(blob, "B2", pair.getSecond())) {
+					for(String feature : FeatureExtraction.getMixed(
+							blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+						features.add("B2_"+pair.getFirst()+"_"+feature);
+					}
+				}
+			}
+			for(Pair<Operation, Double> pair : eq.B1) {
+				for(IntPair span : getRelevantSpans(blob, "B1", pair.getSecond())) {
+					for(String feature : FeatureExtraction.getMixed(
+							blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+						features.add("B1_"+pair.getFirst()+"_"+feature);
+					}
+				}
+			}
+		}
+		return features;
+	}
+	
+	public IFeatureVector getE3FeatureVector(
+			Blob blob, Lattice lattice) throws Exception {
+		List<String> feats = getE3Features(blob, lattice);
+		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
+	}
+	
+	public List<String> getE3Features(Blob blob, Lattice lattice) {
+		List<String> features = new ArrayList<>();
+		for(int i=0; i<2; i++) {
+			Equation eq = lattice.equations.get(i);
+			for(Pair<Operation, Double> pair : eq.C) {
+				for(IntPair span : getRelevantSpans(blob, "C", pair.getSecond())) {
+					for(String feature : FeatureExtraction.getMixed(
+							blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+						features.add("C_"+pair.getFirst()+"_"+feature);
+					}
+				}
+			}
+		}
+		return features;
+	}
+	
+	// Utility functions
 	
 	public List<IntPair> getRelevantSpans(
 			Blob blob, String arrayName, Double d) {
@@ -153,7 +188,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		return relevantSpans;
 	}
 	
-	public boolean isPresent(Double d, String entity, Equation eq) {
+	public static boolean isPresent(Double d, String entity, Equation eq) {
 		if(entity.equals("E1")) {
 			for(Pair<Operation, Double> pair : eq.A1) {
 				if(Tools.safeEquals(d, pair.getSecond())) {
