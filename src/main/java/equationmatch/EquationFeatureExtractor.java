@@ -83,7 +83,19 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			prefix+="_C_"+eq.C.size();
 		}
 		features.add(prefix);
-		return features;
+		for(Double d : Tools.uniqueNumbers(blob.clusterMap.get("E1"))) {
+			if(isPresent(d, "E1", lattice.equations.get(0)) && 
+					isPresent(d, "E1", lattice.equations.get(1))) {
+				features.add("Something_In_E1_Twice_Present");
+			}
+		}
+		for(Double d : Tools.uniqueNumbers(blob.clusterMap.get("E2"))) {
+			if(isPresent(d, "E2", lattice.equations.get(0)) && 
+					isPresent(d, "E2", lattice.equations.get(1))) {
+				features.add("Something_In_E2_Twice_Present");
+			}
+		}
+		return FeatureExtraction.getConjunctions(features);
 	}
 
 	public List<String> getOperationFeatures(Blob blob, Equation eq) {
@@ -92,15 +104,45 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		features.add(prefix);
 		for(Pair<Operation, Double> pair : eq.C) {
 			for(IntPair span : getRelevantSpans(blob, "C", pair.getSecond())) {
-				for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {
-					features.add(prefix+"_"+feature);
-				}
-				for(String feature : sameSentenceTokens(span, blob.ta, blob.lemmas)) {
+				for(String feature : FeatureExtraction.getMixed(
+						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
 					features.add(prefix+"_"+feature);
 				}
 			}
 		}
-		return features;
+		for(Pair<Operation, Double> pair : eq.B2) {
+			for(IntPair span : getRelevantSpans(blob, "B2", pair.getSecond())) {
+				for(String feature : FeatureExtraction.getMixed(
+						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+					features.add("B2_"+pair.getFirst()+"_"+feature);
+				}
+			}
+		}
+		for(Pair<Operation, Double> pair : eq.B1) {
+			for(IntPair span : getRelevantSpans(blob, "B1", pair.getSecond())) {
+				for(String feature : FeatureExtraction.getMixed(
+						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+					features.add("B1_"+pair.getFirst()+"_"+feature);
+				}
+			}
+		}
+		for(Pair<Operation, Double> pair : eq.A2) {
+			for(IntPair span : getRelevantSpans(blob, "A2", pair.getSecond())) {
+				for(String feature : FeatureExtraction.getMixed(
+						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+					features.add("A2_"+pair.getFirst()+"_"+feature);
+				}
+			}
+		}
+		for(Pair<Operation, Double> pair : eq.A1) {
+			for(IntPair span : getRelevantSpans(blob, "A1", pair.getSecond())) {
+				for(String feature : FeatureExtraction.getMixed(
+						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+					features.add("A1_"+pair.getFirst()+"_"+feature);
+				}
+			}
+		}
+		return FeatureExtraction.getConjunctions(features);
 	}
 	
 	public List<String> getNumberFeatures(Blob blob, Equation eq) {
@@ -113,40 +155,45 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		features.add(prefix);
 		for(Pair<Operation, Double> pair : eq.C) {
 			for(IntPair span : getRelevantSpans(blob, "C", pair.getSecond())) {
-				for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {
-					features.add(prefix+"_"+"C_"+pair.getFirst()+"_"+feature);
+				for(String feature : FeatureExtraction.getMixed(
+						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+					features.add("C_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
 		for(Pair<Operation, Double> pair : eq.B2) {
 			for(IntPair span : getRelevantSpans(blob, "B2", pair.getSecond())) {
-				for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {
-					features.add(prefix+"_"+"AB2_"+pair.getFirst()+"_"+feature);
+				for(String feature : FeatureExtraction.getMixed(
+						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+					features.add("B2_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
 		for(Pair<Operation, Double> pair : eq.B1) {
 			for(IntPair span : getRelevantSpans(blob, "B1", pair.getSecond())) {
-				for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {
-					features.add(prefix+"_"+"AB1_"+pair.getFirst()+"_"+feature);
+				for(String feature : FeatureExtraction.getMixed(
+						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+					features.add("B1_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
 		for(Pair<Operation, Double> pair : eq.A2) {
 			for(IntPair span : getRelevantSpans(blob, "A2", pair.getSecond())) {
-				for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {
-					features.add(prefix+"_"+"AB2_"+pair.getFirst()+"_"+feature);
+				for(String feature : FeatureExtraction.getMixed(
+						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+					features.add("A2_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
 		for(Pair<Operation, Double> pair : eq.A1) {
 			for(IntPair span : getRelevantSpans(blob, "A1", pair.getSecond())) {
-				for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {
-					features.add(prefix+"_"+"AB1_"+pair.getFirst()+"_"+feature);
+				for(String feature : FeatureExtraction.getMixed(
+						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
+					features.add("A1_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
-		return features;
+		return FeatureExtraction.getConjunctions(features);
 	}
 	
 	

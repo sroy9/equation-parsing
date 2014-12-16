@@ -77,17 +77,21 @@ public class FeatureExtraction {
 		return conjunctions;
 	}
 	
-	// From Chunker
-	public static List<String> getFormPP(TextAnnotation ta, int pos, int window) {
+	public static List<String> getFormPP(TextAnnotation ta, List<Constituent> lemmas, 
+			int pos, int window) {
 		List<String> features = new ArrayList<String>();
-		int before = 2;
-		int after = 2;
+		int before = window;
+		int after = window;
 		int k = 2;
 		String[] forms = new String[before+after+1];
 		for (int i = Math.max(0, pos-before); 
 				i <= Math.min(ta.size()-1, pos+after); 
 				++i) {
-			forms[i-Math.max(0, pos-before)] = ta.getToken(i);
+			if(NumberUtils.isNumber(ta.getToken(i))) {
+				forms[i-Math.max(0, pos-before)] = "NUMBER";
+			} else {
+				forms[i-Math.max(0, pos-before)] = lemmas.get(i).getLabel();
+			}
 		}  
 		for (int j = 0; j < k; j++) {
 			for (int i = 0; i < forms.length; i++) {
@@ -104,8 +108,8 @@ public class FeatureExtraction {
 	
 	public static List<String> getPOSWindowPP(List<Constituent> posTags, int pos, int window) {
 		List<String> features = new ArrayList<String>();
-		int before = 3;
-		int after = 3;
+		int before = window;
+		int after = window;
 		int k = 3;
 		String[] tags = new String[before+after+1];
 		for (int i = Math.max(0, pos-before); 
@@ -130,10 +134,11 @@ public class FeatureExtraction {
 	
 	// From Chunker
 	public static List<String> getMixed(
-			TextAnnotation ta, List<Constituent> posTags, int pos, int window) {
+			TextAnnotation ta, List<Constituent> lemmas, List<Constituent> posTags, 
+			int pos, int window) {
 		List<String> features = new ArrayList<String>();
-		int before = 2;
-		int after = 2;
+		int before = window;
+		int after = window;
 		int k = 2;
 		String[] tags = new String[before+after+1];
 		String[] forms = new String[before+after+1];
@@ -141,7 +146,11 @@ public class FeatureExtraction {
 				i <= Math.min(ta.size()-1, pos+after); 
 				++i) {
 			tags[i-Math.max(0, pos-before)] = posTags.get(i).getLabel();
-			forms[i-Math.max(0, pos-before)] = ta.getToken(i);
+			if(NumberUtils.isNumber(ta.getToken(i))) {
+				forms[i-Math.max(0, pos-before)] = "NUMBER";
+			} else {
+				forms[i-Math.max(0, pos-before)] = lemmas.get(i).getLabel();
+			}
 		}
 		for (int j = 1; j < k; j++) {
 			for (int x = 0; x < 2; x++) {
