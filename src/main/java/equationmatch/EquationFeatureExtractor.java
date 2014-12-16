@@ -73,6 +73,16 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		if(!EquationInfSolver.isAllNumbersUsed(lattice, blob)) {
 			features.add("All_numbers_not_used");
 		}
+		String prefix = "";
+		for(int i=0; i<2; ++i) {
+			Equation eq = lattice.equations.get(i);
+			prefix+="_A1_"+eq.A1.size();
+			prefix+="_A2_"+eq.A2.size();
+			prefix+="_B1_"+eq.B1.size();
+			prefix+="_B2_"+eq.B2.size();
+			prefix+="_C_"+eq.C.size();
+		}
+		features.add(prefix);
 		return features;
 	}
 
@@ -90,9 +100,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				}
 			}
 		}
-		if(eq.C.size() == 0) {
-			
-		}
 		return features;
 	}
 	
@@ -107,11 +114,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		for(Pair<Operation, Double> pair : eq.C) {
 			for(IntPair span : getRelevantSpans(blob, "C", pair.getSecond())) {
 				for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {
-					features.add("C_"+pair.getFirst()+"_"+feature);
-					features.add(prefix+"_"+"C_"+pair.getFirst()+"_"+feature);
-				}
-				for(String feature : sameSentenceTokens(span, blob.ta, blob.lemmas)) {
-					features.add("C_"+pair.getFirst()+"_"+feature);
 					features.add(prefix+"_"+"C_"+pair.getFirst()+"_"+feature);
 				}
 			}
@@ -119,11 +121,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		for(Pair<Operation, Double> pair : eq.B2) {
 			for(IntPair span : getRelevantSpans(blob, "B2", pair.getSecond())) {
 				for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {
-					features.add("AB2_"+feature);
-					features.add(prefix+"_"+"AB2_"+pair.getFirst()+"_"+feature);
-				}
-				for(String feature : sameSentenceTokens(span, blob.ta, blob.lemmas)) {
-					features.add("AB2_"+feature);
 					features.add(prefix+"_"+"AB2_"+pair.getFirst()+"_"+feature);
 				}
 			}
@@ -131,11 +128,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		for(Pair<Operation, Double> pair : eq.B1) {
 			for(IntPair span : getRelevantSpans(blob, "B1", pair.getSecond())) {
 				for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {
-					features.add("AB1_"+feature);
-					features.add(prefix+"_"+"AB1_"+pair.getFirst()+"_"+feature);
-				}
-				for(String feature : sameSentenceTokens(span, blob.ta, blob.lemmas)) {
-					features.add("AB1_"+feature);
 					features.add(prefix+"_"+"AB1_"+pair.getFirst()+"_"+feature);
 				}
 			}
@@ -143,11 +135,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		for(Pair<Operation, Double> pair : eq.A2) {
 			for(IntPair span : getRelevantSpans(blob, "A2", pair.getSecond())) {
 				for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {
-					features.add("AB2_"+feature);
-					features.add(prefix+"_"+"AB2_"+pair.getFirst()+"_"+feature);
-				}
-				for(String feature : sameSentenceTokens(span, blob.ta, blob.lemmas)) {
-					features.add("AB2_"+feature);
 					features.add(prefix+"_"+"AB2_"+pair.getFirst()+"_"+feature);
 				}
 			}
@@ -155,11 +142,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		for(Pair<Operation, Double> pair : eq.A1) {
 			for(IntPair span : getRelevantSpans(blob, "A1", pair.getSecond())) {
 				for(String feature : nearbyTokens(span, blob.ta, blob.lemmas, 3)) {
-					features.add("AB1_"+feature);
-					features.add(prefix+"_"+"AB1_"+pair.getFirst()+"_"+feature);
-				}
-				for(String feature : sameSentenceTokens(span, blob.ta, blob.lemmas)) {
-					features.add("AB1_"+feature);
 					features.add(prefix+"_"+"AB1_"+pair.getFirst()+"_"+feature);
 				}
 			}
@@ -285,8 +267,12 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<>();
 		int startPos = ta.getTokenIdFromCharacterOffset(span.getFirst());
 		int endPos = ta.getTokenIdFromCharacterOffset(span.getSecond());
+		int startSentPos = ta.getSentenceFromToken(startPos).getStartSpan();
+		int endSentPos = ta.getSentenceFromToken(startPos).getEndSpan(); 
 		List<String> unigrams = FeatureExtraction.getLemmatizedUnigrams(
-				lemmas, Math.max(startPos-window,0), Math.min(endPos+window,ta.size()-1));
+				lemmas, 
+				Math.max(startPos-window, startSentPos), 
+				Math.min(endPos+window-1, endSentPos-1));
 		for(int i=0; i<unigrams.size(); i++) {
 			features.add("Nearby_"+unigrams.get(i));
 		}
