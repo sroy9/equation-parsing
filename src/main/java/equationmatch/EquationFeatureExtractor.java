@@ -106,7 +106,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			for(IntPair span : getRelevantSpans(blob, "C", pair.getSecond())) {
 				for(String feature : FeatureExtraction.getMixed(
 						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add(prefix+"_"+feature);
+					features.add(prefix+"_C_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
@@ -114,7 +114,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			for(IntPair span : getRelevantSpans(blob, "B2", pair.getSecond())) {
 				for(String feature : FeatureExtraction.getMixed(
 						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add("B2_"+pair.getFirst()+"_"+feature);
+					features.add(eq.operations.get(3)+"_B2_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
@@ -122,7 +122,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			for(IntPair span : getRelevantSpans(blob, "B1", pair.getSecond())) {
 				for(String feature : FeatureExtraction.getMixed(
 						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add("B1_"+pair.getFirst()+"_"+feature);
+					features.add(eq.operations.get(2)+"_B1_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
@@ -130,7 +130,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			for(IntPair span : getRelevantSpans(blob, "A2", pair.getSecond())) {
 				for(String feature : FeatureExtraction.getMixed(
 						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add("A2_"+pair.getFirst()+"_"+feature);
+					features.add(eq.operations.get(1)+"_A2_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
@@ -138,11 +138,11 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			for(IntPair span : getRelevantSpans(blob, "A1", pair.getSecond())) {
 				for(String feature : FeatureExtraction.getMixed(
 						blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-					features.add("A1_"+pair.getFirst()+"_"+feature);
+					features.add(eq.operations.get(0)+"_A1_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
-		return FeatureExtraction.getConjunctions(features);
+		return features;
 	}
 	
 	public List<String> getNumberFeatures(Blob blob, Equation eq) {
@@ -193,7 +193,7 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				}
 			}
 		}
-		return FeatureExtraction.getConjunctions(features);
+		return features;
 	}
 	
 	
