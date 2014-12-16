@@ -180,7 +180,7 @@ public class EquationMatcher {
 		model.lm = lm;
 		EquationFeatureExtractor fg = new EquationFeatureExtractor(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new BruteForceInfSolver(fg);
+		model.infSolver = new EquationInfSolver(fg);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
