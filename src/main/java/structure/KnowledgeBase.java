@@ -61,7 +61,7 @@ public class KnowledgeBase {
 		knowledge = new Knowledge(
 				"A pig has 4 legs.");
 		index1 = knowledge.knowledge.indexOf("pig");
-		index2 = knowledge.knowledge.indexOf("pig");
+		index2 = knowledge.knowledge.indexOf("4");
 		knowledge.addMentions(new ArrayList<Span>(Arrays.asList(
 				new Span("V1", new IntPair(index1, index1 + "pig".length())),
 				new Span("E1", new IntPair(index1, index1 + "pig".length())),
