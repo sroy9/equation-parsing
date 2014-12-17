@@ -146,7 +146,7 @@ public class KnowledgeBase {
 							knowledge.mentions.get(0).ip.getSecond());
 					for(Constituent cons : questionLemmas) {
 						if(cons.getLabel().equals(mention)) {
-							for(Span span : simulProb.spans) {
+							for(Span span : simulProb.eqSpans) {
 								if(Tools.doesIntersect(span.ip, new IntPair(
 										cons.getStartCharOffset(), 
 										cons.getEndCharOffset())) &&
