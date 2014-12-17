@@ -57,18 +57,8 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<>();
 		for(int i=0; i<2; i++) {
 			Equation eq = lattice.equations.get(i);
-			String prefix = eq.A1.size()+"_"+eq.A2.size()+"_"+eq.B1.size()+"_"+eq.B2.size()+
-					"_"+eq.C.size();
-			features.add(""+Arrays.asList(eq.operations));
+			String prefix = ""+Arrays.asList(eq.operations);
 			features.add(prefix);
-			for(Pair<Operation, Double> pair : eq.C) {
-				for(IntPair span : getRelevantSpans(blob, "C", pair.getSecond())) {
-					for(String feature : FeatureExtraction.getMixed(
-							blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-						features.add(prefix+"_C_"+pair.getFirst()+"_"+feature);
-					}
-				}
-			}
 		}
 		return features;
 	}
@@ -85,19 +75,13 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		for(int i=0; i<2; i++) {
 			Equation eq = lattice.equations.get(i);
 			for(Pair<Operation, Double> pair : eq.A2) {
-				for(IntPair span : getRelevantSpans(blob, "A2", pair.getSecond())) {
-					for(String feature : FeatureExtraction.getMixed(
-							blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-						features.add("A2_"+pair.getFirst()+"_"+feature);
-					}
+				for(String feature : singleFeatures(pair.getSecond(), "E1", blob)) {
+					features.add("A2_"+pair.getFirst()+"_"+feature);
 				}
 			}
 			for(Pair<Operation, Double> pair : eq.A1) {
-				for(IntPair span : getRelevantSpans(blob, "A1", pair.getSecond())) {
-					for(String feature : FeatureExtraction.getMixed(
-							blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-						features.add("A1_"+pair.getFirst()+"_"+feature);
-					}
+				for(String feature : singleFeatures(pair.getSecond(), "E1", blob)) {
+					features.add("A1_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
@@ -115,19 +99,13 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		for(int i=0; i<2; i++) {
 			Equation eq = lattice.equations.get(i);
 			for(Pair<Operation, Double> pair : eq.B2) {
-				for(IntPair span : getRelevantSpans(blob, "B2", pair.getSecond())) {
-					for(String feature : FeatureExtraction.getMixed(
-							blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-						features.add("B2_"+pair.getFirst()+"_"+feature);
-					}
+				for(String feature : singleFeatures(pair.getSecond(), "E2", blob)) {
+					features.add("B2_"+pair.getFirst()+"_"+feature);
 				}
 			}
 			for(Pair<Operation, Double> pair : eq.B1) {
-				for(IntPair span : getRelevantSpans(blob, "B1", pair.getSecond())) {
-					for(String feature : FeatureExtraction.getMixed(
-							blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-						features.add("B1_"+pair.getFirst()+"_"+feature);
-					}
+				for(String feature : singleFeatures(pair.getSecond(), "E2", blob)) {
+					features.add("B1_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
@@ -145,11 +123,8 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		for(int i=0; i<2; i++) {
 			Equation eq = lattice.equations.get(i);
 			for(Pair<Operation, Double> pair : eq.C) {
-				for(IntPair span : getRelevantSpans(blob, "C", pair.getSecond())) {
-					for(String feature : FeatureExtraction.getMixed(
-							blob.ta, blob.lemmas, blob.posTags, span.getFirst(), 3)) {
-						features.add("C_"+pair.getFirst()+"_"+feature);
-					}
+				for(String feature : singleFeatures(pair.getSecond(), "E3", blob)) {
+					features.add("C_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
@@ -161,7 +136,8 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 	public List<IntPair> getRelevantSpans(
 			Blob blob, String arrayName, Double d) {
 		List<IntPair> relevantSpans = new ArrayList<IntPair>();
-		if(arrayName.equals("A1") || arrayName.equals("A2") || arrayName.contains("E1")) {
+		if(arrayName.equals("A1") || arrayName.equals("A2") 
+				|| arrayName.contains("E1")) {
 			for(QuantSpan qs : blob.clusterMap.get("E1")) {
 				if(Tools.safeEquals(d, Tools.getValue(qs))) {
 					relevantSpans.add(new IntPair(qs.start, qs.end));
@@ -169,7 +145,8 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 				}
 			}
 		}
-		if(arrayName.equals("B1") || arrayName.equals("B2") || arrayName.contains("E2")) {
+		if(arrayName.equals("B1") || arrayName.equals("B2") 
+				|| arrayName.contains("E2")) {
 			for(QuantSpan qs : blob.clusterMap.get("E2")) {
 				if(Tools.safeEquals(d, Tools.getValue(qs))) {
 					relevantSpans.add(new IntPair(qs.start, qs.end));
@@ -223,26 +200,13 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		return false;
 	}
 	
-	public List<String> getPairwiseFeatures(List<Pair<Operation, Double>> list1,
-			List<Pair<Operation, Double>> list2, Blob blob, String arrayName1, String arrayName2) {
+	public List<String> pairwiseFeatures(
+			Double d1, String arrayName1, Double d2, String arrayName2, Blob blob) {
 		List<String> features = new ArrayList<>();
-		for(Pair<Operation, Double> pair1 : list1) {
-			for(IntPair span1 : getRelevantSpans(blob, arrayName1, pair1.getSecond())) {
-				for(Pair<Operation, Double> pair2 : list2) {
-					for(IntPair span2 : getRelevantSpans(
-							blob, arrayName2, pair2.getSecond())) {
-						features.addAll(getPairwiseFeatures(span1, span2, blob));
-					}
-				}
-			}
-		}
-		return features;
-	}
-	
-	public List<String> getPairwiseFeatures(IntPair span1, IntPair span2, Blob blob) {
-		List<String> features = new ArrayList<>();
-		int pos1 = blob.ta.getTokenIdFromCharacterOffset(span1.getFirst());
-		int pos2 = blob.ta.getTokenIdFromCharacterOffset(span1.getSecond());
+		List<IntPair> spans1 = getRelevantSpans(blob, arrayName1, d1);
+		List<IntPair> spans2 = getRelevantSpans(blob, arrayName2, d2);
+		int pos1 = blob.ta.getTokenIdFromCharacterOffset(spans1.get(0).getFirst());
+		int pos2 = blob.ta.getTokenIdFromCharacterOffset(spans2.get(0).getFirst());
 		int sent1 = blob.ta.getSentenceFromToken(pos1).getSentenceId();
 		int sent2 = blob.ta.getSentenceFromToken(pos2).getSentenceId();
 		if(sent1 == sent2) {
@@ -250,57 +214,50 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			for(int i=Math.min(pos1, pos2)+1; i<Math.max(pos1, pos2); i++) {
 				features.add("WordsInBetween_"+blob.ta.getToken(i));
 			}
+			for(int i=Math.min(pos1, pos2)+1; i<Math.max(pos1, pos2)-1; i++) {
+				features.add("WordsInBetween_"+blob.ta.getToken(i)+"_"+blob.ta.getToken(i+1));
+			}
 		} else {
 			features.add("DifferentSentence");
 		}
 		return features;
 	}
 	
-	public List<String> getGlobalFeatures(Blob blob) {
+	public List<String> globalFeatures(Blob blob) {
 		List<String> features = new ArrayList<>();
-		features.add("NumberOfSentences_"+blob.ta.getNumberOfSentences());
-		features.addAll(FeatureExtraction.getLemmatizedUnigrams(
-				blob.lemmas, 0, blob.ta.size()-1));
-		features.addAll(FeatureExtraction.getLemmatizedBigrams(
-				blob.lemmas, 0, blob.ta.size()-1));
-		features.add("E1_size_"+Tools.uniqueNumbers(blob.clusterMap.get("E1")).size());
-		features.add("E2_size_"+Tools.uniqueNumbers(blob.clusterMap.get("E2")).size());
-		features.add("E3_size_"+Tools.uniqueNumbers(blob.clusterMap.get("E3")).size());
-		features.add("QuestionSentence_"+FeatureExtraction.getQuestionSentences(blob.ta).size());
 		return features;	
 	}
 	
-	public List<String> nearbyTokens(
-			IntPair span, TextAnnotation ta, List<Constituent> lemmas, int window) {
+	public List<String> singleFeatures(Double d, String arrayName, Blob blob) {
 		List<String> features = new ArrayList<>();
-		int startPos = ta.getTokenIdFromCharacterOffset(span.getFirst());
-		int endPos = ta.getTokenIdFromCharacterOffset(span.getSecond());
-		int startSentPos = ta.getSentenceFromToken(startPos).getStartSpan();
-		int endSentPos = ta.getSentenceFromToken(startPos).getEndSpan(); 
-		List<String> unigrams = FeatureExtraction.getLemmatizedUnigrams(
-				lemmas, 
-				Math.max(startPos-window, startSentPos), 
-				Math.min(endPos+window-1, endSentPos-1));
-		for(int i=0; i<unigrams.size(); i++) {
-			features.add("Nearby_"+unigrams.get(i));
+		
+		// Ready the data structures
+		List<IntPair> spans = getRelevantSpans(blob, arrayName, d);
+		int pos = blob.ta.getTokenIdFromCharacterOffset(spans.get(0).getFirst());
+		Sentence sent = blob.ta.getSentenceFromToken(pos);
+		String tokens[] = new String[blob.ta.size()];
+		for(int i=0; i<blob.ta.size(); ++i) {
+			if(NumberUtils.isNumber(blob.ta.getToken(i))) {
+				tokens[i] = "NUMBER";
+			} else if(blob.ta.getToken(i).contains("$") 
+					|| blob.ta.getToken(i).contains("dollar") 
+					|| blob.ta.getToken(i).contains("cents")) {
+				tokens[i] = "MONEY_UNIT";
+			} else {
+				tokens[i] = blob.lemmas.get(i).getLabel();
+			}
 		}
-		for(int i=0; i<unigrams.size()-1; i++) {
-			features.add("Nearby_"+unigrams.get(i)+"_"+unigrams.get(i+1));
+		
+		// Nearby unigrams and bigrams
+		for(int i = Math.max(pos-2, sent.getStartSpan());
+				i <= Math.min(pos+2, sent.getEndSpan()-1); ++i) {
+			features.add("Unigram_"+(i-pos)+"_"+tokens[i]);
+			features.add("Unigram_"+tokens[i]);
 		}
-		return features;
-	}
-	
-	public List<String> sameSentenceTokens(
-			IntPair span, TextAnnotation ta, List<Constituent> lemmas) {
-		List<String> features = new ArrayList<>();
-		Sentence sent = ta.getSentenceFromToken(ta.getTokenIdFromCharacterOffset(span.getFirst()));
-		List<String> unigrams = FeatureExtraction.getLemmatizedUnigrams(
-				lemmas, sent.getStartSpan(), sent.getEndSpan()-1);
-		for(int i=0; i<unigrams.size(); i++) {
-			features.add("SameSentence_"+unigrams.get(i));
-		}
-		for(int i=0; i<unigrams.size()-1; i++) {
-			features.add("SameSentence_"+unigrams.get(i)+"_"+unigrams.get(i+1));
+		for(int i = Math.max(pos-2, sent.getStartSpan());
+				i <= Math.min(pos+2, sent.getEndSpan()-1)-1; ++i) {
+			features.add("Bigram_"+(i-pos)+"_"+tokens[i]+"_"+tokens[i+1]);
+			features.add("Bigram_"+tokens[i]+"_"+tokens[i+1]);
 		}
 		return features;
 	}
