@@ -57,8 +57,24 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<>();
 		for(int i=0; i<2; i++) {
 			Equation eq = lattice.equations.get(i);
-			String prefix = ""+Arrays.asList(eq.operations);
+			String prefix = eq.A1.size()+"_"+eq.A2.size()+"_"+eq.B1.size()+"_"+
+					eq.B2.size()+"_"+eq.C.size();
 			features.add(prefix);
+			for(Pair<Operation, Double> pair : eq.A1) {
+				for(String feature : singleFeatures(pair.getSecond(), "E1", blob)) {
+					features.add(prefix+"_A1_"+pair.getFirst()+"_"+feature);
+				}
+			}
+			for(Pair<Operation, Double> pair : eq.B1) {
+				for(String feature : singleFeatures(pair.getSecond(), "E2", blob)) {
+					features.add(prefix+"_B1_"+pair.getFirst()+"_"+feature);
+				}
+			}
+			for(Pair<Operation, Double> pair : eq.C) {
+				for(String feature : singleFeatures(pair.getSecond(), "E3", blob)) {
+					features.add(prefix+"_C_"+pair.getFirst()+"_"+feature);
+				}
+			}
 		}
 		return features;
 	}
@@ -98,14 +114,15 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<>();
 		for(int i=0; i<2; i++) {
 			Equation eq = lattice.equations.get(i);
+			String prefix = eq.A1.size()+"_"+eq.A2.size();
 			for(Pair<Operation, Double> pair : eq.B2) {
 				for(String feature : singleFeatures(pair.getSecond(), "E2", blob)) {
-					features.add("B2_"+pair.getFirst()+"_"+feature);
+					features.add(prefix+"_B2_"+pair.getFirst()+"_"+feature);
 				}
 			}
 			for(Pair<Operation, Double> pair : eq.B1) {
 				for(String feature : singleFeatures(pair.getSecond(), "E2", blob)) {
-					features.add("B1_"+pair.getFirst()+"_"+feature);
+					features.add(prefix+"_B1_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
@@ -122,9 +139,10 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		List<String> features = new ArrayList<>();
 		for(int i=0; i<2; i++) {
 			Equation eq = lattice.equations.get(i);
+			String prefix = eq.A1.size()+"_"+eq.A2.size()+"_"+eq.B1.size()+"_"+eq.B2.size();
 			for(Pair<Operation, Double> pair : eq.C) {
 				for(String feature : singleFeatures(pair.getSecond(), "E3", blob)) {
-					features.add("C_"+pair.getFirst()+"_"+feature);
+					features.add(prefix+"_C_"+pair.getFirst()+"_"+feature);
 				}
 			}
 		}
