@@ -37,7 +37,7 @@ public class EquationMatcher {
 	public static void doTrainTest() throws Exception
 	{
 		SLProblem problem=getSP();
-		double trainFrac = 1.0;
+		double trainFrac = 0.8;
 		Pair<SLProblem, SLProblem> trainTest = problem
 				.splitTrainTest((int) (trainFrac * problem.size()));
 		SLProblem train = trainTest.getFirst();
