@@ -48,28 +48,28 @@ public class DocReader {
 				simulProb.extractAllSpans();
 				KnowledgeBase.appendWorldKnowledge(simulProb);
 				simulProb.extractQuantities(quantifier);
-//				System.out.println(simulProb.index+" : "+simulProb.question);
-//				System.out.println("Quantities :");
-//				for(QuantSpan qs : simulProb.quantities) {
-//					System.out.println(simulProb.question.substring(
-//							qs.start, qs.end)+" : "+qs + " : "+Tools.getValue(qs));
-//				}
-//				System.out.println("Spans :");
-//				for(Span span : simulProb.spans) {
-//					System.out.println(span.label+" : "+simulProb.question.substring(
-//							span.ip.getFirst(), span.ip.getSecond())+ " : "+span.ip);
-//				}
+				System.out.println(simulProb.index+" : "+simulProb.question);
+				System.out.println("Quantities :");
+				for(QuantSpan qs : simulProb.quantities) {
+					System.out.println(simulProb.question.substring(
+							qs.start, qs.end)+" : "+qs + " : "+Tools.getValue(qs));
+				}
+				System.out.println("Spans :");
+				for(Span span : simulProb.spans) {
+					System.out.println(span.label+" : "+simulProb.question.substring(
+							span.ip.getFirst(), span.ip.getSecond())+ " : "+span.ip);
+				}
 				simulProb.extractClusters();
-//				System.out.println("Cluster Map :");
-//				for(String entity : simulProb.clusterMap.keySet()) {
-//					System.out.println(entity + " : " + Arrays.asList(
-//							simulProb.clusterMap.get(entity)));
-//				}
+				System.out.println("Cluster Map :");
+				for(String entity : simulProb.clusterMap.keySet()) {
+					System.out.println(entity + " : " + Arrays.asList(
+							simulProb.clusterMap.get(entity)));
+				}
 				simulProb.extractEquations();
-//				System.out.println("Equations :");
-//				for(Equation eq : simulProb.equations) {
-//					System.out.println(eq.toString());
-//				}
+				System.out.println("Equations :");
+				for(Equation eq : simulProb.equations) {
+					System.out.println(eq.toString());
+				}
 				simulProbList.add(simulProb);
 			}
 		}
