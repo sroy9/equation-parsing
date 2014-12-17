@@ -141,9 +141,14 @@ public class KnowledgeBase {
 			if(count == knowledge.targets.size()) {
 				// Check if span labels need to be changed
 				boolean change = false;
-				if(foundOne) {
-					change = true;
-					foundOne = true;
+				IntPair pos = new IntPair(simulProb.question.indexOf(knowledge.targets.get(0)),
+						simulProb.question.indexOf(knowledge.targets.get(0))+
+						knowledge.targets.get(0).length());
+				for(Span span : simulProb.spans) {
+					if(Tools.doesIntersect(pos, span.ip) && span.label.equals("V2")) {
+						change = true;
+						break;
+					}
 				}
 				// Add the spans to simulProb
 				for(Span span : knowledge.mentions) {
