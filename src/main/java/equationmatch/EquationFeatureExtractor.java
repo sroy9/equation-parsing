@@ -230,6 +230,11 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		
 		// Ready the data structures
 		List<IntPair> spans = getRelevantSpans(blob, arrayName, d);
+		if(spans.size() == 0) {
+			System.out.println("Number not found : "+d);
+			System.out.println("Text : "+blob.ta);
+			System.out.println("Quantities : "+Arrays.asList(blob.quantities));
+		}
 		int pos = blob.ta.getTokenIdFromCharacterOffset(spans.get(0).getFirst());
 		Sentence sent = blob.ta.getSentenceFromToken(pos);
 		String tokens[] = new String[blob.ta.size()];
