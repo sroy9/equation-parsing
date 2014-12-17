@@ -127,8 +127,9 @@ public class KnowledgeBase {
 				simulProb.question, ViewNames.LEMMA, false);
 		List<Constituent> questionLemmas = 
 				ta.getView(ViewNames.LEMMA).getConstituents();
+		boolean foundOne = false;
 		for(Knowledge knowledge : KnowledgeBase.knowledgeList) {
-			int count = 0;
+			int count = 0; 
 			for(String target : knowledge.targets) {
 				for(Constituent lemma : questionLemmas) {
 					if(lemma.getLabel().equals(target)) {
@@ -140,23 +141,9 @@ public class KnowledgeBase {
 			if(count == knowledge.targets.size()) {
 				// Check if span labels need to be changed
 				boolean change = false;
-				if(knowledge.mentions.size() == 3) {
-					String mention = knowledge.knowledge.substring(
-							knowledge.mentions.get(0).ip.getFirst(),
-							knowledge.mentions.get(0).ip.getSecond());
-					for(Constituent cons : questionLemmas) {
-						if(cons.getLabel().equals(mention)) {
-							for(Span span : simulProb.eqSpans) {
-								if(Tools.doesIntersect(span.ip, new IntPair(
-										cons.getStartCharOffset(), 
-										cons.getEndCharOffset())) &&
-										span.label.equals("V2")) {
-									change = true;
-									break;
-								}
-							}
-						}
-					}
+				if(foundOne) {
+					change = true;
+					foundOne = true;
 				}
 				// Add the spans to simulProb
 				for(Span span : knowledge.mentions) {
