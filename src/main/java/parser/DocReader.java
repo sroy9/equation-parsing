@@ -41,7 +41,7 @@ public class DocReader {
 								0, 
 								file.getName().length()-4));
 				if(index == 2121 || index == 5894 || index == 1583 || index == 2455
-						|| index == 5133) {
+						|| index == 5133 || index == 6027) {
 					continue;
 				}
 				SimulProb simulProb = new SimulProb(index);
