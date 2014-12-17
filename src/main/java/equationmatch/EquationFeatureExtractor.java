@@ -141,7 +141,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			for(QuantSpan qs : blob.clusterMap.get("E1")) {
 				if(Tools.safeEquals(d, Tools.getValue(qs))) {
 					relevantSpans.add(new IntPair(qs.start, qs.end));
-					break;
 				}
 			}
 		}
@@ -150,15 +149,13 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 			for(QuantSpan qs : blob.clusterMap.get("E2")) {
 				if(Tools.safeEquals(d, Tools.getValue(qs))) {
 					relevantSpans.add(new IntPair(qs.start, qs.end));
-					break;
 				}
 			}
 		}
-		if(arrayName.equals("C")) {
+		if(arrayName.equals("C") || arrayName.equals("E3")) {
 			for(QuantSpan qs : blob.clusterMap.get("E3")) {
 				if(Tools.safeEquals(d, Tools.getValue(qs))) {
 					relevantSpans.add(new IntPair(qs.start, qs.end));
-					break;
 				}
 			}
 		}
