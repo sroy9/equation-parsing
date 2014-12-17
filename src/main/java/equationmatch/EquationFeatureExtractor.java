@@ -251,13 +251,13 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 		}
 		
 		// Nearby unigrams and bigrams
-		for(int i = Math.max(pos-2, sent.getStartSpan());
-				i <= Math.min(pos+2, sent.getEndSpan()-1); ++i) {
+		for(int i = Math.max(pos-3, sent.getStartSpan());
+				i <= Math.min(pos+3, sent.getEndSpan()-1); ++i) {
 			features.add("Unigram_"+(i-pos)+"_"+tokens[i]);
 			features.add("Unigram_"+tokens[i]);
 		}
-		for(int i = Math.max(pos-2, sent.getStartSpan());
-				i <= Math.min(pos+2, sent.getEndSpan()-1)-1; ++i) {
+		for(int i = Math.max(pos-3, sent.getStartSpan());
+				i <= Math.min(pos+3, sent.getEndSpan()-1)-1; ++i) {
 			features.add("Bigram_"+(i-pos)+"_"+tokens[i]+"_"+tokens[i+1]);
 			features.add("Bigram_"+tokens[i]+"_"+tokens[i+1]);
 		}
