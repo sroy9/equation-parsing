@@ -1,4 +1,4 @@
-package equationmatch;
+package latentsvm;
 
 import java.util.Arrays;
 import java.util.List;

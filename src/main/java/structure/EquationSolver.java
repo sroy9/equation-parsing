@@ -3,9 +3,9 @@ package structure;
 import java.util.ArrayList;
 import java.util.List;
 
+import latentsvm.Lattice;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
-import equationmatch.Lattice;
 
 public class EquationSolver {
 
