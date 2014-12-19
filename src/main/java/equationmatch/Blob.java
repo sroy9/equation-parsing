@@ -24,7 +24,6 @@ public class Blob implements IInstance {
 	public Blob(SimulProb simulProb) throws Exception {
 		this.simulProb = simulProb;
 		this.quantities = simulProb.quantities;
-		this.clusterMap = simulProb.clusterMap;
 		ta = new TextAnnotation("", "", simulProb.question);
 		posTags = Tools.curator.getTextAnnotationWithSingleView(
 				simulProb.question, ViewNames.POS, false)

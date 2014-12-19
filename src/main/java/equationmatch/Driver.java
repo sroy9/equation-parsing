@@ -19,7 +19,7 @@ import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
-public class EquationMatcher {
+public class Driver {
 	
 	public static void crossVal() throws Exception {
 		SLProblem problem = getSP();
@@ -178,9 +178,9 @@ public class EquationMatcher {
 		Lexiconer lm = new Lexiconer();
 		lm.setAllowNewFeatures(true);
 		model.lm = lm;
-		EquationFeatureExtractor fg = new EquationFeatureExtractor(lm);
+		FeatureExtractor fg = new FeatureExtractor(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new EquationInfSolver(fg);
+		model.infSolver = new InfSolver(fg);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
@@ -190,6 +190,6 @@ public class EquationMatcher {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		EquationMatcher.doTrainTest();
+		Driver.doTrainTest();
 	}
 }

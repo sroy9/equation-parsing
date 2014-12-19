@@ -2,13 +2,9 @@ package structure;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
-import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import utils.Tools;
 
 // Holds canonical equations
@@ -75,7 +71,7 @@ public class Equation {
 		return false;
 	}
 	
-	public Equation(int index, String eqString, Map<String, List<QuantSpan>> clusterMap) {
+	public Equation(int index, String eqString) {
 		this();
 		// For negative problems
 		if(eqString.equals("(2.0*V1)-(-8.0)=(-12.0)")) {
@@ -116,118 +112,6 @@ public class Equation {
 		eqString = eqString.replace("(", "");
 		eqString = eqString.replace(")", "");
 		String strArr[] = eqString.split("(\\+|\\-|=)");
-		for(String str : strArr) {
-			// For the ratio problems
-			if(str.contains("V1") && str.contains("V2")) {
-				if(str.contains("V1/V2")) {
-					operations.set(0, Operation.MUL);
-					operations.set(2, Operation.DIV);
-				} else {
-					operations.set(0, Operation.DIV);
-					operations.set(2, Operation.MUL);
-				}
-				continue;
-			}
-			int lastLoc = 0;
-			Operation lastOp = Operation.MUL;
-			String correctTerm = getTerm(str, clusterMap);
-//			if(correctTerm == null) System.out.println("EqString : "+eqString);
-
-			if(correctTerm.equals("A1")) operations.set(0, getOperation(str, eqString));
-			if(correctTerm.equals("A2")) operations.set(1, getOperation(str, eqString));
-			if(correctTerm.equals("B1")) operations.set(2, getOperation(str, eqString));
-			if(correctTerm.equals("B2")) operations.set(3, getOperation(str, eqString));
-			if(correctTerm.equals("C")) operations.set(4, getOperation(str, eqString));
-			
-			for(int i = 0; i < str.length(); i++) {
-				if(Tools.getOperationFromString(""+str.charAt(i)) != null) {
-					String term = (str.substring(lastLoc, i));
-					if(!term.equals("V1") && !term.equals("V2")) {
-						if(correctTerm.equals("A1")) A1.add(
-								new Pair<Operation, Double>(
-										lastOp, Double.parseDouble(term.trim())));
-						if(correctTerm.equals("A2")) A2.add(
-								new Pair<Operation, Double>(
-										lastOp, Double.parseDouble(term.trim())));
-						if(correctTerm.equals("B1")) B1.add(
-								new Pair<Operation, Double>(
-										lastOp, Double.parseDouble(term.trim())));
-						if(correctTerm.equals("B2")) B2.add(
-								new Pair<Operation, Double>(
-										lastOp, Double.parseDouble(term.trim())));
-						if(correctTerm.equals("C")) C.add(
-								new Pair<Operation, Double>(
-										lastOp, Double.parseDouble(term.trim())));
-					}
-					lastLoc = i+1;
-					lastOp = Tools.getOperationFromString(""+str.charAt(i));
-				}
-			}
-			String term = (str.substring(lastLoc));
-			if(term.equals("V1") || term.equals("V2")) continue;
-			if(correctTerm.equals("A1")) A1.add(
-					new Pair<Operation, Double>(
-							lastOp, Double.parseDouble(term.trim())));
-			if(correctTerm.equals("A2")) A2.add(
-					new Pair<Operation, Double>(
-							lastOp, Double.parseDouble(term.trim())));
-			if(correctTerm.equals("B1")) B1.add(
-					new Pair<Operation, Double>(
-							lastOp, Double.parseDouble(term.trim())));
-			if(correctTerm.equals("B2")) B2.add(
-					new Pair<Operation, Double>(
-							lastOp, Double.parseDouble(term.trim())));
-			if(correctTerm.equals("C")) C.add(
-					new Pair<Operation, Double>(
-							lastOp, Double.parseDouble(term.trim())));
-		}
-	}
-	
-	public String getTerm(String str, Map<String, List<QuantSpan>> clusterMap) {
-		if(str.contains("V1")) return "A1";
-		if(str.contains("V2")) return "B1";
-		int lastLoc = 0;
-		for(int i = 0; i < str.length(); i++) {
-			if(Tools.getOperationFromString(""+str.charAt(i)) != null) {
-				String term = (str.substring(lastLoc, i));
-				Double d = Double.parseDouble(term.trim());
-				Set<String> candidates = new HashSet<String>();
-				String candidate = null;
-				for(String key : clusterMap.keySet()) {
-					for(QuantSpan qs : clusterMap.get(key)) {
-						System.out.println("Comparing "+Tools.getValue(qs)+" with "+d);
-						if(Tools.safeEquals(Tools.getValue(qs), d)) {
-							if(key.equals("E1")) candidate = "A2";
-							if(key.equals("E2")) candidate = "B2";
-							if(key.equals("E3")) candidate = "C";
-							candidates.add(candidate);
-						}
-					}
-				}
-				if(candidates.size() == 1) {
-					return candidate;
-				}
-				lastLoc = i;
-			}
-		}
-		String term = (str.substring(lastLoc));
-		Double d = Double.parseDouble(term.trim());
-		Set<String> candidates = new HashSet<String>();
-		String candidate = null;
-		for(String key : clusterMap.keySet()) {
-			for(QuantSpan qs : clusterMap.get(key)) {
-				if(Tools.safeEquals(Tools.getValue(qs), d)) {
-					if(key.equals("E1")) candidate = "A2";
-					if(key.equals("E2")) candidate = "B2";
-					if(key.equals("E3")) candidate = "C";
-					candidates.add(candidate);
-				}
-			}
-		}
-		if(candidates.size() == 1) {
-			return candidate;
-		}
-		return null;
 	}
 	
 	public Operation getOperation(String str, String eqString) {

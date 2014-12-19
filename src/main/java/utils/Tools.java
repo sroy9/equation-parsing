@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import structure.Operation;
-import structure.Span;
 import curator.NewCachingCurator;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;

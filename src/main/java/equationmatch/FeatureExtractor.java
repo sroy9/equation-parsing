@@ -25,12 +25,12 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.util.IFeatureVector;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
-public class EquationFeatureExtractor extends AbstractFeatureGenerator implements
+public class FeatureExtractor extends AbstractFeatureGenerator implements
 		Serializable {
 	private static final long serialVersionUID = 1810851154558168679L;
 	public Lexiconer lm = null;
 
-	public EquationFeatureExtractor(Lexiconer lm) {
+	public FeatureExtractor(Lexiconer lm) {
 		this.lm = lm;
 	}
 	
@@ -154,29 +154,6 @@ public class EquationFeatureExtractor extends AbstractFeatureGenerator implement
 	public List<IntPair> getRelevantSpans(
 			Blob blob, String arrayName, Double d) {
 		List<IntPair> relevantSpans = new ArrayList<IntPair>();
-		if(arrayName.equals("A1") || arrayName.equals("A2") 
-				|| arrayName.contains("E1")) {
-			for(QuantSpan qs : blob.clusterMap.get("E1")) {
-				if(Tools.safeEquals(d, Tools.getValue(qs))) {
-					relevantSpans.add(new IntPair(qs.start, qs.end));
-				}
-			}
-		}
-		if(arrayName.equals("B1") || arrayName.equals("B2") 
-				|| arrayName.contains("E2")) {
-			for(QuantSpan qs : blob.clusterMap.get("E2")) {
-				if(Tools.safeEquals(d, Tools.getValue(qs))) {
-					relevantSpans.add(new IntPair(qs.start, qs.end));
-				}
-			}
-		}
-		if(arrayName.equals("C") || arrayName.equals("E3")) {
-			for(QuantSpan qs : blob.clusterMap.get("E3")) {
-				if(Tools.safeEquals(d, Tools.getValue(qs))) {
-					relevantSpans.add(new IntPair(qs.start, qs.end));
-				}
-			}
-		}
 		return relevantSpans;
 	}
 	

@@ -17,9 +17,7 @@ import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
 import structure.Equation;
 import structure.KnowledgeBase;
-import structure.SimpleProb;
 import structure.SimulProb;
-import structure.Span;
 import utils.Tools;
 
 public class DocReader {
@@ -46,7 +44,6 @@ public class DocReader {
 				}
 				SimulProb simulProb = new SimulProb(index);
 				simulProb.extractQuestionsAndSolutions();
-				simulProb.extractAllSpans();
 				KnowledgeBase.appendWorldKnowledge(simulProb);
 				simulProb.extractQuantities(quantifier);
 				System.out.println(simulProb.index+" : "+simulProb.question);
@@ -54,17 +51,6 @@ public class DocReader {
 				for(QuantSpan qs : simulProb.quantities) {
 					System.out.println(simulProb.question.substring(
 							qs.start, qs.end)+" : "+qs + " : "+Tools.getValue(qs));
-				}
-				System.out.println("Spans :");
-				for(Span span : simulProb.spans) {
-					System.out.println(span.label+" : "+simulProb.question.substring(
-							span.ip.getFirst(), span.ip.getSecond())+ " : "+span.ip);
-				}
-				simulProb.extractClusters();
-				System.out.println("Cluster Map :");
-				for(String entity : simulProb.clusterMap.keySet()) {
-					System.out.println(entity + " : " + Arrays.asList(
-							simulProb.clusterMap.get(entity)));
 				}
 				simulProb.extractEquations();
 				System.out.println("Equations :");

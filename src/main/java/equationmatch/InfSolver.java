@@ -18,13 +18,13 @@ import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
-public class EquationInfSolver extends AbstractInferenceSolver implements
+public class InfSolver extends AbstractInferenceSolver implements
 		Serializable {
 
 	private static final long serialVersionUID = 5253748728743334706L;
-	private EquationFeatureExtractor featGen;
+	private FeatureExtractor featGen;
 
-	public EquationInfSolver(EquationFeatureExtractor featGen) {
+	public InfSolver(FeatureExtractor featGen) {
 		this.featGen = featGen;
 	}
 
@@ -183,8 +183,8 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 				latticeList.clear();
 			}
 			for(Lattice seed : seedList) {
-				if(EquationFeatureExtractor.isPresent(d, "E1", seed.equations.get(0)) ||
-						EquationFeatureExtractor.isPresent(d, "E1", seed.equations.get(1))) {
+				if(FeatureExtractor.isPresent(d, "E1", seed.equations.get(0)) ||
+						FeatureExtractor.isPresent(d, "E1", seed.equations.get(1))) {
 					latticeList.add(seed);
 				}
 			}
@@ -229,8 +229,8 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 				latticeList.clear();
 			}
 			for(Lattice seed : seedList) {
-				if(EquationFeatureExtractor.isPresent(d, "E2", seed.equations.get(0)) ||
-						EquationFeatureExtractor.isPresent(d, "E2", seed.equations.get(1))) {
+				if(FeatureExtractor.isPresent(d, "E2", seed.equations.get(0)) ||
+						FeatureExtractor.isPresent(d, "E2", seed.equations.get(1))) {
 					latticeList.add(seed);
 				}
 			}
@@ -266,8 +266,8 @@ public class EquationInfSolver extends AbstractInferenceSolver implements
 				latticeList.clear();
 			}
 			for(Lattice seed : seedList) {
-				if(EquationFeatureExtractor.isPresent(d, "E3", seed.equations.get(0)) ||
-						EquationFeatureExtractor.isPresent(d, "E3", seed.equations.get(1))) {
+				if(FeatureExtractor.isPresent(d, "E3", seed.equations.get(0)) ||
+						FeatureExtractor.isPresent(d, "E3", seed.equations.get(1))) {
 					latticeList.add(seed);
 				}
 			}
