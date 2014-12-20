@@ -15,7 +15,6 @@ import utils.Tools;
 public class Equation {
 	
 	public List<Pair<Operation, Double>> A1, A2, B1, B2, C;
-	// Should be of length 5, of which one of third or fifth should be EQ
 	public List<Operation> operations; 
 	
 	public Equation() {
@@ -37,7 +36,7 @@ public class Equation {
 		this.B2 = new ArrayList<>(eq.B2);
 		this.C = new ArrayList<>(eq.C);
 		this.operations = new ArrayList<>();
-		for(int i=0; i<5; i++) {
+		for(int i=0; i<4; i++) {
 			operations.add(eq.operations.get(i));
 		}
 	}
@@ -73,56 +72,95 @@ public class Equation {
 	
 	public Equation(int index, String eqString) {
 		this();
-		// For negative problems
-		if(eqString.equals("(2.0*V1)-(-8.0)=(-12.0)")) {
-			operations.set(0, Operation.ADD);
-			operations.set(1, Operation.SUB);
-			operations.set(3, Operation.SUB);
-			A1.add(new Pair<Operation, Double>(Operation.MUL, 2.0));
-			A2.add(new Pair<Operation, Double>(Operation.MUL, -8.0));
-			C.add(new Pair<Operation, Double>(Operation.MUL, -12.0));
-			return;
-		}
-		if(eqString.equals("0.833*V1=(-60.0)")) {
-			operations.set(0, Operation.ADD);
-			operations.set(3, Operation.SUB);
-			A1.add(new Pair<Operation, Double>(Operation.MUL, 0.833));
-			C.add(new Pair<Operation, Double>(Operation.MUL, -60.0));
-			return;
-		}
-		if(index == 6666 && eqString.equals("V1+V2=(-64.0)")) {
-			operations.set(0, Operation.ADD);
-			operations.set(2, Operation.ADD);
-			operations.set(4, Operation.SUB);
-			C.add(new Pair<Operation, Double>(Operation.MUL, -64.0));
-			return;
-		}
-
-		// For ambiguous matching
-		if(index == 6208 && eqString.equals("V1=(2.0*V2)+1.0")) {
-			operations.set(0, Operation.ADD);
-			operations.set(2, Operation.SUB);
-			operations.set(3, Operation.ADD);
-			B1.add(new Pair<Operation, Double>(Operation.MUL, 2.0));
-			B2.add(new Pair<Operation, Double>(Operation.MUL, 1.0));
-			return;
-		}
-		
-		// Replace brackets
 		eqString = eqString.replace("(", "");
 		eqString = eqString.replace(")", "");
-		String strArr[] = eqString.split("(\\+|\\-|=)");
+		eqString = eqString.trim()+" ";
+		int lastLoc = 0;
+		for(int i=0; i<eqString.length(); ++i) {
+			char ch = eqString.charAt(i);
+			char prevCh = ' ';
+			if(i>0) prevCh = eqString.charAt(i-1);
+			if(ch == '=' || ch =='+' || (ch == '-' && !isSymbol(prevCh)) ||
+					i == eqString.length()-1) {
+				String term = eqString.substring(lastLoc, i);
+				Operation op = Operation.NONE;
+				if(lastLoc == 0 || eqString.charAt(lastLoc-1) == '+' 
+						|| eqString.charAt(lastLoc-1) == '=') {
+					op = Operation.ADD;
+				} else {
+					op = Operation.SUB;
+				}
+				if(term.contains("V1")) { 
+					addTerm(A1, term); 
+					operations.set(0, op); 
+				} else if(term.contains("V2")) {
+					addTerm(B1, term);
+					operations.set(2, op);
+				} else if(sameSideOfEquation(eqString, "V2", "V1")) {
+					addTerm(C, term);
+				} else if(sameSideOfEquation(eqString, term, "V1") || 
+							!diffSideOfEquation(eqString, term, "V2")) {
+					addTerm(A2, term);
+					operations.set(1, op);
+				} else if(sameSideOfEquation(eqString, term, "V2") || 
+						!diffSideOfEquation(eqString, term, "V1")) {
+					addTerm(B2, term);
+					operations.set(3, op);
+				} else {
+					System.out.println("ISSUE HERE : "+index);
+				}
+				lastLoc = i+1;
+			}
+		}
 	}
 	
-	public Operation getOperation(String str, String eqString) {
-		int index = eqString.indexOf(str);
-		if(index == 0) {
-			return Operation.ADD;	
-		} else {
-			Operation op = Tools.getOperationFromString(""+eqString.charAt(index-1));
-			if(op == Operation.EQ) return Operation.SUB;
-			return op;
+	private void addTerm(List<Pair<Operation, Double>> list, String term) {
+		int lastLoc = 0;
+		term = term + " ";
+		for(int i=0; i<term.length(); ++i) {
+			char ch = term.charAt(i);
+			if(ch == '*' || ch == '/' || i == term.length()-1) {
+				String number = term.substring(lastLoc, i);
+				Double d = Double.parseDouble(number);
+				if(lastLoc == 0 || term.charAt(lastLoc-1) == '*') {
+					list.add(new Pair<Operation, Double>(Operation.MUL, d));
+				} else {
+					list.add(new Pair<Operation, Double>(Operation.DIV, d));
+				}
+				lastLoc = i+1;
+			}
 		}
+	}
+
+	public boolean isSymbol(char ch) {
+		if(ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '=') {
+			return true;
+		}
+		return false;
+	}
+	
+	// Assumes key1 and key2 both substrings of eqString
+	public boolean sameSideOfEquation(String eqString, String key1, String key2) {
+		String strArr[] = eqString.split("=");
+		if(strArr[0].contains(key1) && strArr[0].contains(key2)) {
+			return true;
+		}
+		if(strArr[1].contains(key1) && strArr[1].contains(key2)) {
+			return true;
+		}
+		return false;
+	}
+	
+	// Assumes key1 and key2 both substrings of eqString
+	public boolean diffSideOfEquation(String eqString, String key1, String key2) {
+		String strArr[] = eqString.split("=");
+		if(strArr[0].contains(key1) && strArr[1].contains(key2)) {
+			return true;
+		}
+		if(strArr[1].contains(key1) && strArr[0].contains(key2)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public String toString() {

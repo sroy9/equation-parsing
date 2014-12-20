@@ -52,8 +52,6 @@ public class SimulProb {
 		}
 	}
 	
-	// Equations will be changed to replace variable names by V1, V2
-	// Needs to be called after calling extractVariableSpans()
 	public void extractQuestionsAndSolutions() throws IOException {
 		String fileName = Params.annotationDir + index + ".txt";
 		List<String> lines = FileUtils.readLines(new File(fileName));
@@ -64,18 +62,52 @@ public class SimulProb {
 			solutions.add(Double.parseDouble(str.trim()));
 		}
 	}
-	
+
+	// Equations will be changed to replace variable names by V1, V2
 	public void extractEquations() throws IOException {
 		String fileName = Params.annotationDir + index + ".txt";
 		Map<String, String> variableNames = new HashMap<String, String>();
 		List<String> variableNamesSorted = new ArrayList<String>();
-		String txt = FileUtils.readFileToString(new File(fileName));
 		List<String> lines = FileUtils.readLines(new File(fileName));
+		List<String> equationStrings = new ArrayList<>();
 		equations = new ArrayList<Equation>();
 		for(int i = 2; i < lines.size()-1; ++i) {
 			if(i % 2 == 0) {
-				equations.add(new Equation(index, lines.get(i)));
+				equationStrings.add(lines.get(i));
 			}
+		}
+		for(String eq : equationStrings) {
+			for(String str : eq.split("(\\+|\\-|\\*|\\/|=)")) {
+				if(str.length() <=1) continue;
+				try {
+					Double d = Double.parseDouble(str.trim());
+				} catch(NumberFormatException e) {
+					int size = variableNames.size();
+					variableNames.put(str.trim(), "V"+(size+1));
+				}
+			}
+		}
+		
+		if(variableNames.size() > 2) System.out.println("ISSUE HERE : "+index);
+		
+		for(String var : variableNames.keySet()) {
+			variableNamesSorted.add(var);
+		}
+		if(variableNamesSorted.size() == 2) {
+			if(variableNamesSorted.get(0).length() < 
+					variableNamesSorted.get(1).length()) {
+				String tmp = variableNamesSorted.get(0);
+				variableNamesSorted.set(0, variableNamesSorted.get(1));
+				variableNamesSorted.set(1, tmp); 
+			}
+		}
+		for(int i=0; i<equationStrings.size(); ++i) {
+			for(String varName : variableNamesSorted) {
+				equationStrings.set(i, equationStrings.get(i).replaceAll(
+						varName, 
+						variableNames.get(varName)));
+			}
+			equations.add(new Equation(index, equationStrings.get(i)));
 		}
 	}
 
@@ -87,6 +119,10 @@ public class SimulProb {
 			}
 		}
 		return null;
+	}
+	
+	public void checkSolver() {
+		
 	}
 	
 	
