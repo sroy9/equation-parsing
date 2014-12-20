@@ -101,11 +101,11 @@ public class EquationSolver {
 			}
 			if(eq.operations.get(2) == Operation.SUB) B1.set(i, B1.get(i)*-1);
 			if(eq.operations.get(3) == Operation.SUB 
-					&& eq.operations.get(2)!=Operation.SUB) {
+					&& eq.operations.get(2)==Operation.ADD) {
 				B2.set(i, B2.get(i)*-1);
 			}
 			if(eq.operations.get(2) == Operation.SUB 
-					&& eq.operations.get(3)!=Operation.SUB) {
+					&& eq.operations.get(3)==Operation.ADD) {
 				B2.set(i, B2.get(i)*-1);
 			}
 			C.set(i, C.get(i)*-1);

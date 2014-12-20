@@ -43,8 +43,6 @@ public class Equation {
 	
 	public Equation(int index, String eqString) {
 		this();
-		eqString = eqString.replace("(", "");
-		eqString = eqString.replace(")", "");
 		eqString = eqString.trim()+" ";
 		int lastLoc = 0;
 		for(int i=0; i<eqString.length(); ++i) {
@@ -54,6 +52,7 @@ public class Equation {
 			if(ch == '=' || ch =='+' || (ch == '-' && !isSymbol(prevCh)) ||
 					i == eqString.length()-1) {
 				String term = eqString.substring(lastLoc, i);
+				System.out.println("Term : "+term);
 				Operation op = Operation.NONE;
 				if(lastLoc == 0 || eqString.charAt(lastLoc-1) == '+' 
 						|| eqString.charAt(lastLoc-1) == '=') {
@@ -67,14 +66,15 @@ public class Equation {
 				} else if(term.contains("V2")) {
 					addTerm(B1, term);
 					operations.set(2, op);
-				} else if(sameSideOfEquation(eqString, "V2", "V1")) {
+				} else if(sameSideOfEquation(eqString, "V2", "V1") && 
+						!sameSideOfEquation(eqString, term, "V1")) {
 					addTerm(C, term);
 				} else if(sameSideOfEquation(eqString, term, "V1") || 
-							!diffSideOfEquation(eqString, term, "V2")) {
+							diffSideOfEquation(eqString, term, "V2")) {
 					addTerm(A2, term);
 					operations.set(1, op);
 				} else if(sameSideOfEquation(eqString, term, "V2") || 
-						!diffSideOfEquation(eqString, term, "V1")) {
+						diffSideOfEquation(eqString, term, "V1")) {
 					addTerm(B2, term);
 					operations.set(3, op);
 				} else {
@@ -92,11 +92,16 @@ public class Equation {
 			char ch = term.charAt(i);
 			if(ch == '*' || ch == '/' || i == term.length()-1) {
 				String number = term.substring(lastLoc, i);
-				Double d = Double.parseDouble(number);
-				if(lastLoc == 0 || term.charAt(lastLoc-1) == '*') {
-					list.add(new Pair<Operation, Double>(Operation.MUL, d));
-				} else {
-					list.add(new Pair<Operation, Double>(Operation.DIV, d));
+				try {
+					Double d = Double.parseDouble(number);
+					System.out.println("Number : "+d);
+					if(lastLoc == 0 || term.charAt(lastLoc-1) == '*') {
+						list.add(new Pair<Operation, Double>(Operation.MUL, d));
+					} else {
+						list.add(new Pair<Operation, Double>(Operation.DIV, d));
+					}
+				} catch (NumberFormatException e) {
+					
 				}
 				lastLoc = i+1;
 			}
