@@ -149,6 +149,7 @@ public class Driver {
 		}
 		return true;
 	}
+	
 	private static boolean hasSameSolution(Lattice prediction, Lattice gold) {
 		List<Double> solutions1 = EquationSolver.solve(prediction);
 		List<Double> solutions2 = EquationSolver.solve(gold);
@@ -180,7 +181,7 @@ public class Driver {
 		model.lm = lm;
 		FeatureExtractor fg = new FeatureExtractor(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new InfSolver(fg);
+		model.infSolver = new InfSolver(fg, train);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);

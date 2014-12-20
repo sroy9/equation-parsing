@@ -3,8 +3,10 @@ package latentsvm;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import structure.Equation;
 import structure.EquationSolver;
@@ -13,9 +15,11 @@ import structure.PairComparator;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.BoundedPriorityQueue;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
+import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
 public class InfSolver extends AbstractInferenceSolver implements
@@ -23,9 +27,39 @@ public class InfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private FeatureExtractor featGen;
+	private List<Lattice> templates;
 
-	public InfSolver(FeatureExtractor featGen) {
+	public InfSolver(FeatureExtractor featGen, SLProblem slProb) {
 		this.featGen = featGen;
+		this.templates = extractTemplates(slProb);
+	}
+
+	private List<Lattice> extractTemplates(SLProblem slProb) {
+		List<Lattice> templates = new ArrayList<>();
+		for(IStructure struct : slProb.goldStructureList) {
+			Lattice lattice = (Lattice) struct;
+			for(int i=0; i<2; ++i) {
+				Equation eq = lattice.equations.get(i);
+				for(Pair<Operation, Double> pair : eq.A1) {
+					pair.setSecond(null);
+				}
+				for(Pair<Operation, Double> pair : eq.A2) {
+					pair.setSecond(null);
+				}
+				for(Pair<Operation, Double> pair : eq.B1) {
+					pair.setSecond(null);
+				}
+				for(Pair<Operation, Double> pair : eq.B2) {
+					pair.setSecond(null);
+				}
+				for(Pair<Operation, Double> pair : eq.C) {
+					pair.setSecond(null);
+				}
+			}
+			if(!templates.contains(lattice)) templates.add(lattice);
+		}
+		System.out.println("Number of templates : "+templates.size());
+		return templates;
 	}
 
 	@Override
@@ -60,8 +94,8 @@ public class InfSolver extends AbstractInferenceSolver implements
 		for (Pair<Operation, Double> pair1 : list1) {
 			boolean found = false;
 			for (Pair<Operation, Double> pair2 : list2) {
-				if (pair1.getFirst() == pair2.getFirst()
-						&& Tools.safeEquals(pair1.getSecond(), pair2.getSecond())) {
+				if (pair1.getFirst() == pair2.getFirst() && 
+						Tools.safeEquals(pair1.getSecond(), pair2.getSecond())) {
 					found = true;
 					break;
 				}
@@ -71,8 +105,8 @@ public class InfSolver extends AbstractInferenceSolver implements
 		for (Pair<Operation, Double> pair2 : list2) {
 			boolean found = false;
 			for (Pair<Operation, Double> pair1 : list1) {
-				if (pair1.getFirst() == pair2.getFirst()
-						&& Tools.safeEquals(pair1.getSecond(), pair2.getSecond())) {
+				if (pair1.getFirst() == pair2.getFirst() && 
+						Tools.safeEquals(pair1.getSecond(), pair2.getSecond())) {
 					found = true;
 					break;
 				}
@@ -106,11 +140,142 @@ public class InfSolver extends AbstractInferenceSolver implements
 			IInstance x, IStructure goldStructure) throws Exception {
 		Blob blob = (Blob) x;
 		Lattice gold = (Lattice) goldStructure;
-		Lattice prediction = null;
-		int beamSize = 10;
-		PairComparator<Lattice> latticePairComparator = new PairComparator<Lattice>() {
-		};
-		return prediction;
+		Lattice prediction = new Lattice();
+
+		PairComparator<Lattice> latticePairComparator = 
+				new PairComparator<Lattice>() {};
+		BoundedPriorityQueue<Pair<Lattice, Double>> beam1 = 
+				new BoundedPriorityQueue<Pair<Lattice, Double>>(50, latticePairComparator);
+		BoundedPriorityQueue<Pair<Lattice, Double>> beam2 = 
+				new BoundedPriorityQueue<Pair<Lattice, Double>>(50, latticePairComparator);
+		
+		// Infer clustering
+		List<String> labels = Arrays.asList("E1", "E2", "E3", "NONE");
+		for(int i=0; i<blob.quantities.size(); ++i) {
+			double maxScore = -Double.MAX_VALUE;
+			String bestLabel = null;
+			for(String label : labels) {
+				prediction.labelSet.addLabel(label);
+				double score = wv.dotProduct(
+						featGen.getClusterFeatureVector(blob, prediction.labelSet, i));
+				if(score > maxScore) {
+					maxScore = score;
+					bestLabel = label;
+				}
+				prediction.labelSet.removeLast();
+			}
+			prediction.labelSet.addLabel(bestLabel);
+		}
+		// Create a cluster map
+		Map<String, List<QuantSpan>> clusterMap = new HashMap<>();
+		clusterMap.put("E1", new ArrayList<QuantSpan>());
+		clusterMap.put("E2", new ArrayList<QuantSpan>());
+		clusterMap.put("E3", new ArrayList<QuantSpan>());
+		for(int i=0; i<blob.quantities.size(); ++i) {
+			if(!prediction.labelSet.labels.get(i).equals("NONE")) {
+				clusterMap.get(prediction.labelSet.labels.get(i)).add(
+						blob.quantities.get(i));
+			}
+		}
+		
+		// Infer equations, respecting clustering
+		for(Lattice template : templates) {
+			template.labelSet = prediction.labelSet;
+			beam1.add(new Pair<Lattice, Double>(template, 0.0));
+		}
+		
+		for(Pair<Lattice, Double> pair : beam1) {
+			boolean emptySlotFound = false;
+			Lattice lattice = pair.getFirst();
+			for(int i=0; i<2; ++i) {
+				Equation eq = lattice.equations.get(i);
+				for(int j=0; j<eq.A1.size(); ++j) {
+					Pair<Operation, Double> term = eq.A1.get(j);
+					if(term.getSecond() == null) {
+						emptySlotFound = true;
+						for(Double d : Tools.uniqueNumbers(clusterMap.get("E1"))) {
+							Lattice newLattice = new Lattice(lattice);
+							newLattice.equations.get(i).A1.get(j).setSecond(d);
+							beam2.add(new Pair<Lattice, Double>(newLattice, 
+									pair.getSecond()+
+									wv.dotProduct(featGen.getEquationFeatureVector(
+											blob, newLattice, i, "A1", j))));
+						}
+						break;
+					}
+				}
+				if(emptySlotFound) break;
+				for(int j=0; j<eq.A2.size(); ++j) {
+					Pair<Operation, Double> term = eq.A2.get(j);
+					if(term.getSecond() == null) {
+						emptySlotFound = true;
+						for(Double d : Tools.uniqueNumbers(clusterMap.get("E1"))) {
+							Lattice newLattice = new Lattice(lattice);
+							newLattice.equations.get(i).A2.get(j).setSecond(d);
+							beam2.add(new Pair<Lattice, Double>(newLattice, 
+									pair.getSecond()+
+									wv.dotProduct(featGen.getEquationFeatureVector(
+											blob, newLattice, i, "A2", j))));
+						}
+						break;
+					}
+				}
+				if(emptySlotFound) break;
+				for(int j=0; j<eq.B1.size(); ++j) {
+					Pair<Operation, Double> term = eq.B1.get(j);
+					if(term.getSecond() == null) {
+						emptySlotFound = true;
+						for(Double d : Tools.uniqueNumbers(clusterMap.get("E2"))) {
+							Lattice newLattice = new Lattice(lattice);
+							newLattice.equations.get(i).B1.get(j).setSecond(d);
+							beam2.add(new Pair<Lattice, Double>(newLattice, 
+									pair.getSecond()+
+									wv.dotProduct(featGen.getEquationFeatureVector(
+											blob, newLattice, i, "B1", j))));
+						}
+						break;
+					}
+				}
+				if(emptySlotFound) break;
+				for(int j=0; j<eq.B2.size(); ++j) {
+					Pair<Operation, Double> term = eq.B2.get(j);
+					if(term.getSecond() == null) {
+						emptySlotFound = true;
+						for(Double d : Tools.uniqueNumbers(clusterMap.get("E2"))) {
+							Lattice newLattice = new Lattice(lattice);
+							newLattice.equations.get(i).B2.get(j).setSecond(d);
+							beam2.add(new Pair<Lattice, Double>(newLattice, 
+									pair.getSecond()+
+									wv.dotProduct(featGen.getEquationFeatureVector(
+											blob, newLattice, i, "B2", j))));
+						}
+						break;
+					}
+				}
+				if(emptySlotFound) break;
+				for(int j=0; j<eq.C.size(); ++j) {
+					Pair<Operation, Double> term = eq.C.get(j);
+					if(term.getSecond() == null) {
+						emptySlotFound = true;
+						for(Double d : Tools.uniqueNumbers(clusterMap.get("E3"))) {
+							Lattice newLattice = new Lattice(lattice);
+							newLattice.equations.get(i).C.get(j).setSecond(d);
+							beam2.add(new Pair<Lattice, Double>(newLattice, 
+									pair.getSecond()+
+									wv.dotProduct(featGen.getEquationFeatureVector(
+											blob, newLattice, i, "C", j))));
+						}
+						break;
+					}
+				}
+				if(emptySlotFound) break;
+			}
+			if(!emptySlotFound) beam2.add(pair);
+			beam1.clear();
+			beam1.addAll(beam2);
+			beam2.clear();
+		}
+		return beam1.element().getFirst();
 	}
 
 	public static boolean isAllNumbersUsed(Lattice lattice, Blob blob) {

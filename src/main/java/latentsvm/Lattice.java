@@ -1,24 +1,33 @@
 package latentsvm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import structure.Equation;
+import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
 public class Lattice implements IStructure {
 	public List<Equation> equations;
+	public LabelSet labelSet;
 	
 	public Lattice() {
 		equations = new ArrayList<Equation>();
 		equations.add(new Equation());
 		equations.add(new Equation());
+		labelSet = new LabelSet();
 	}
 	
 	public Lattice(Lattice lattice) {
 		equations = new ArrayList<Equation>();
 		equations.add(new Equation(lattice.equations.get(0)));
 		equations.add(new Equation(lattice.equations.get(1)));
+		labelSet = new LabelSet();
+		for(String label : lattice.labelSet.labels) {
+			labelSet.addLabel(label);
+		}
 	}
 	
 	// We assume a canonical ordering of equations under lattice

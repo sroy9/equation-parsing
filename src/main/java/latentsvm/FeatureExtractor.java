@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -39,21 +40,51 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 		Blob blob = (Blob) arg0;
 		Lattice lattice = (Lattice) arg1;
 		List<String> features = new ArrayList<>();
-		features.addAll(getE1Features(blob, lattice));
-		features.addAll(getE2Features(blob, lattice));
-		features.addAll(getE3Features(blob, lattice));
-		features.addAll(getOperationFeatures(blob, lattice));
+		for(int i=0; i<lattice.labelSet.labels.size(); ++i) {
+			features.addAll(getClusterFeatures(blob, lattice.labelSet, i));
+		}
+		for(int i=0; i<2; i++) {
+			Equation eq = lattice.equations.get(i);
+			for(int j=0; j<eq.A1.size(); ++j) {
+				features.addAll(getEquationFeatures(blob, lattice, i, "A1", j));
+			}
+			for(int j=0; j<eq.A2.size(); ++j) {
+				features.addAll(getEquationFeatures(blob, lattice, i, "A2", j));
+			}
+			for(int j=0; j<eq.B1.size(); ++j) {
+				features.addAll(getEquationFeatures(blob, lattice, i, "B1", j));
+			}
+			for(int j=0; j<eq.B2.size(); ++j) {
+				features.addAll(getEquationFeatures(blob, lattice, i, "B2", j));
+			}
+			for(int j=0; j<eq.C.size(); ++j) {
+				features.addAll(getEquationFeatures(blob, lattice, i, "C", j));
+			}
+		}
 		return FeatureExtraction.getFeatureVectorFromList(features, lm);
 	}
 
 	// Operation Features
-	public IFeatureVector getOperationFeatureVector(
-			Blob blob, Lattice lattice) throws Exception {
-		List<String> feats = getOperationFeatures(blob, lattice);
+	public IFeatureVector getClusterFeatureVector(
+			Blob blob, LabelSet labelSet, int index) {
+		List<String> feats = getClusterFeatures(blob, labelSet, index);
 		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
 	}
 	
-	public List<String> getOperationFeatures(Blob blob, Lattice lattice) {
+	public List<String> getClusterFeatures(
+			Blob blob, LabelSet labelSet, int index) {
+		List<String> features = new ArrayList<>();
+		return features;
+	}
+	
+	// Operation Features
+	public IFeatureVector getEquationFeatureVector(
+			Blob blob, Lattice lattice, int eqNo, String arrayName, int index) throws Exception {
+		List<String> feats = getEquationFeatures(blob, lattice, eqNo, arrayName, index);
+		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
+	}
+	
+	public List<String> getEquationFeatures(Blob blob, Lattice lattice, int eqNo, String arrayName, int index) {
 		List<String> features = new ArrayList<>();
 		for(int i=0; i<2; i++) {
 			Equation eq = lattice.equations.get(i);
@@ -79,75 +110,6 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 		return features;
 	}
 
-	// Number Features
-	public IFeatureVector getE1FeatureVector(
-			Blob blob, Lattice lattice) throws Exception {
-		List<String> feats = getE1Features(blob, lattice);
-		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
-	}
-	
-	public List<String> getE1Features(Blob blob, Lattice lattice) {
-		List<String> features = new ArrayList<>();
-		for(int i=0; i<2; i++) {
-			Equation eq = lattice.equations.get(i);
-			for(Pair<Operation, Double> pair : eq.A2) {
-				for(String feature : singleFeatures(pair.getSecond(), "E1", blob)) {
-					features.add("A2_"+pair.getFirst()+"_"+feature);
-				}
-			}
-			for(Pair<Operation, Double> pair : eq.A1) {
-				for(String feature : singleFeatures(pair.getSecond(), "E1", blob)) {
-					features.add("A1_"+pair.getFirst()+"_"+feature);
-				}
-			}
-		}
-		return features;
-	}
-	
-	public IFeatureVector getE2FeatureVector(
-			Blob blob, Lattice lattice) throws Exception {
-		List<String> feats = getE2Features(blob, lattice);
-		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
-	}
-	
-	public List<String> getE2Features(Blob blob, Lattice lattice) {
-		List<String> features = new ArrayList<>();
-		for(int i=0; i<2; i++) {
-			Equation eq = lattice.equations.get(i);
-			String prefix = eq.A1.size()+"_"+eq.A2.size();
-			for(Pair<Operation, Double> pair : eq.B2) {
-				for(String feature : singleFeatures(pair.getSecond(), "E2", blob)) {
-					features.add(prefix+"_B2_"+pair.getFirst()+"_"+feature);
-				}
-			}
-			for(Pair<Operation, Double> pair : eq.B1) {
-				for(String feature : singleFeatures(pair.getSecond(), "E2", blob)) {
-					features.add(prefix+"_B1_"+pair.getFirst()+"_"+feature);
-				}
-			}
-		}
-		return features;
-	}
-	
-	public IFeatureVector getE3FeatureVector(
-			Blob blob, Lattice lattice) throws Exception {
-		List<String> feats = getE3Features(blob, lattice);
-		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
-	}
-	
-	public List<String> getE3Features(Blob blob, Lattice lattice) {
-		List<String> features = new ArrayList<>();
-		for(int i=0; i<2; i++) {
-			Equation eq = lattice.equations.get(i);
-			String prefix = eq.A1.size()+"_"+eq.A2.size()+"_"+eq.B1.size()+"_"+eq.B2.size();
-			for(Pair<Operation, Double> pair : eq.C) {
-				for(String feature : singleFeatures(pair.getSecond(), "E3", blob)) {
-					features.add(prefix+"_C_"+pair.getFirst()+"_"+feature);
-				}
-			}
-		}
-		return features;
-	}
 	
 	// Utility functions
 	
