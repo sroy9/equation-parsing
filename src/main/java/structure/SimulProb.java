@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import latentsvm.Lattice;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -122,7 +124,23 @@ public class SimulProb {
 	}
 	
 	public void checkSolver() {
-		
+		List<Double> solns = EquationSolver.solve(new Lattice(equations));
+		if(this.solutions.size() == solns.size()) {
+			for(Double d1 : solutions) {
+				boolean present = false;
+				for(Double d2 : solns) {
+					if(Tools.safeEquals(d1, d2)) {
+						present = true;
+						break;
+					}
+				}
+				if(!present) {
+					System.out.println("Error : Solutions not matching : "+index);
+				}
+			}
+		} else { 
+			System.out.println("Error : Solution size different : "+index);
+		}
 	}
 	
 	

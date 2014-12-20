@@ -24,7 +24,7 @@ public class Equation {
 		this.B2 = new ArrayList<>();
 		this.C = new ArrayList<>();
 		this.operations = new ArrayList<>();
-		for(int i=0; i<5; i++) {
+		for(int i=0; i<4; i++) {
 			operations.add(Operation.NONE);
 		}
 	}
@@ -39,35 +39,6 @@ public class Equation {
 		for(int i=0; i<4; i++) {
 			operations.add(eq.operations.get(i));
 		}
-	}
-	
-	// Takes into consideration that A's and B's can be interchanged
-	public boolean equals(Object obj) {
-		if(obj == null || !(obj instanceof Equation)) return false;
-		Equation eq = (Equation) obj;
-		if(Arrays.asList(A1).equals(Arrays.asList(eq.A1)) && 
-				Arrays.asList(A2).equals(Arrays.asList(eq.A2)) &&
-				Arrays.asList(B1).equals(Arrays.asList(eq.B1)) &&
-				Arrays.asList(B2).equals(Arrays.asList(eq.B2)) &&
-				Arrays.asList(C).equals(Arrays.asList(eq.C))) {
-			if(Arrays.asList(operations).equals(Arrays.asList(eq.operations))) {
-				return true;
-			}
-		}
-		if(Arrays.asList(A1).equals(Arrays.asList(eq.B1)) && 
-				Arrays.asList(A2).equals(Arrays.asList(eq.B2)) &&
-				Arrays.asList(B1).equals(Arrays.asList(eq.A1)) &&
-				Arrays.asList(B2).equals(Arrays.asList(eq.A2)) &&
-				Arrays.asList(C).equals(Arrays.asList(eq.C))) {
-			if(operations.get(0) == eq.operations.get(2) && 
-					operations.get(1) == eq.operations.get(3) && 
-					operations.get(2) == eq.operations.get(0) && 
-					operations.get(3) == eq.operations.get(1) && 
-					operations.get(4) == eq.operations.get(4)) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	public Equation(int index, String eqString) {

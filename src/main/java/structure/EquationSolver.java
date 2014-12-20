@@ -76,7 +76,7 @@ public class EquationSolver {
 				}
 				B2.add(a);
 			}
-			if(eq.operations.get(4) == Operation.NONE) {
+			if(eq.C.size() == 0) {
 				C.add(0.0);
 			} else {
 				double a = 1.0;
@@ -88,16 +88,6 @@ public class EquationSolver {
 					}
 				}
 				C.add(a);
-			}
-
-			if(eq.operations.get(2) == Operation.DIV) {
-				B1.set(i, B1.get(i)*C.get(i));
-				B2.set(i, B2.get(i)*C.get(i));
-			}
-
-			if(eq.operations.get(0) == Operation.DIV) {
-				A1.set(i, A1.get(i)*C.get(i));
-				A2.set(i, A2.get(i)*C.get(i));
 			}
 			
 			if(eq.operations.get(0) == Operation.SUB) A1.set(i, A1.get(i)*-1);
@@ -118,7 +108,11 @@ public class EquationSolver {
 					&& eq.operations.get(3)!=Operation.SUB) {
 				B2.set(i, B2.get(i)*-1);
 			}
-			if(eq.operations.get(4) == Operation.SUB) C.set(i, C.get(i)*-1);
+			C.set(i, C.get(i)*-1);
+			if(eq.C.size() == 0) {
+				B1.set(i, B1.get(i)*-1);
+				B2.set(i, B2.get(i)*-1);
+			}
 				
 		}
 		List<Double> solutions = new ArrayList<>();

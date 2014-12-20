@@ -18,6 +18,7 @@ import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
 import structure.Equation;
 import structure.KnowledgeBase;
 import structure.SimulProb;
+import utils.Params;
 import utils.Tools;
 
 public class DocReader {
@@ -28,7 +29,7 @@ public class DocReader {
 	}
 	
 	// Reads list of files from brat folder
-	public List<SimulProb> readSimulProbFromBratDir(
+	public static List<SimulProb> readSimulProbFromBratDir(
 			String bratDir, double start, double end) throws Exception {
 		List<SimulProb> simulProbList = new ArrayList<SimulProb>();
 		Quantifier quantifier = new Quantifier();
@@ -57,6 +58,7 @@ public class DocReader {
 				for(Equation eq : simulProb.equations) {
 					System.out.println(eq.toString());
 				}
+				simulProb.checkSolver();
 				simulProbList.add(simulProb);
 			}
 		}
@@ -67,5 +69,9 @@ public class DocReader {
 			newSimulProbList.add(simulProbList.get(i));
 		}
 		return newSimulProbList;
-	}		
+	}
+	
+	public static void main(String args[]) throws Exception {
+		DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
+	}
 }
