@@ -36,6 +36,6 @@ public class Blob implements IInstance {
 	}
 	
 	public Lattice getGold() {
-		return new Lattice(simulProb.equations);
+		return new Lattice(simulProb.equations, this);
 	}
 }

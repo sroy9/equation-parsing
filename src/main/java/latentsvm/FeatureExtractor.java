@@ -89,14 +89,17 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 	
 	// Equation Features
 	public IFeatureVector getEquationFeatureVector(
-			Blob blob, Lattice lattice, int eqNo, String arrayName, int index, Double d) throws Exception {
+			Blob blob, Lattice lattice, int eqNo, String arrayName, int index, Double d) 
+					throws Exception {
 		List<String> feats = getEquationFeatures(blob, lattice, eqNo, arrayName, index, d);
 		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
 	}
 	
 	public List<String> getEquationFeatures(
 			Blob blob, Lattice lattice, int eqNo, String arrayName, int index, Double d) {
+		System.out.println(Arrays.asList(lattice.clusterMap));
 		List<String> features = new ArrayList<>();
+		if(d == null) return features;
 		String prefix = "";
 		if(arrayName.endsWith("1")) prefix = "AB1";
 		if(arrayName.endsWith("2")) prefix = "AB2";
@@ -241,9 +244,4 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 		}
 		return features;
 	}
-	
-	
-	
-	
-	
 }

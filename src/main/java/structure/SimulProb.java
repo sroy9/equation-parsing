@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import latentsvm.Blob;
 import latentsvm.Lattice;
 
 import org.apache.commons.io.FileUtils;
@@ -125,8 +126,8 @@ public class SimulProb {
 		return null;
 	}
 	
-	public void checkSolver() {
-		List<Double> solns = EquationSolver.solve(new Lattice(equations));
+	public void checkSolver() throws Exception {
+		List<Double> solns = EquationSolver.solve(new Lattice(equations, new Blob(this)));
 		System.out.println("Gold solutions : "+Arrays.asList(solutions));
 		System.out.println("Predicted solutions : "+Arrays.asList(solns));
 		if(solns == null) System.out.println("Error : No solutions : "+index);

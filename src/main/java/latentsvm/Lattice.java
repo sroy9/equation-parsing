@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import structure.Equation;
+import structure.Operation;
+import utils.Tools;
+import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
@@ -35,6 +38,53 @@ public class Lattice implements IStructure {
 		}
 		clusterMap = lattice.clusterMap;
 	}
+
+	public Lattice(List<Equation> equations, Blob blob) {
+		this.equations = equations;
+		if(this.equations.size() == 1) {
+			this.equations.add(new Equation());
+		}
+		assert this.equations.size() == 2;
+		labelSet = new LabelSet();
+		clusterMap = new HashMap<>();
+		clusterMap.put("E1", new ArrayList<QuantSpan>());
+		clusterMap.put("E2", new ArrayList<QuantSpan>());
+		clusterMap.put("E3", new ArrayList<QuantSpan>());
+		for(QuantSpan qs : blob.quantities) {
+			for(Equation eq : equations) {
+				for(Pair<Operation, Double> pair : eq.A1) {
+					if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
+						clusterMap.get("E1").add(qs);
+						break;
+					}
+				}
+				for(Pair<Operation, Double> pair : eq.A2) {
+					if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
+						clusterMap.get("E1").add(qs);
+						break;
+					}
+				}
+				for(Pair<Operation, Double> pair : eq.B1) {
+					if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
+						clusterMap.get("E2").add(qs);
+						break;
+					}
+				}
+				for(Pair<Operation, Double> pair : eq.B2) {
+					if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
+						clusterMap.get("E2").add(qs);
+						break;
+					}
+				}
+				for(Pair<Operation, Double> pair : eq.C) {
+					if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
+						clusterMap.get("E3").add(qs);
+						break;
+					}
+				}
+			}
+		}
+	}
 	
 	// We assume a canonical ordering of equations under lattice
 	public boolean equals(Object obj) {
@@ -58,11 +108,4 @@ public class Lattice implements IStructure {
 		return str;
 	}
 	
-	public Lattice(List<Equation> equations) {
-		this.equations = equations;
-		if(this.equations.size() == 1) {
-			this.equations.add(new Equation());
-		}
-		assert this.equations.size() == 2;
-	}
 }
