@@ -11,6 +11,7 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
 public class Lattice implements IStructure {
 	public List<Equation> equations;
+	public Map<String, List<QuantSpan>> clusterMap;
 	public LabelSet labelSet;
 	
 	public Lattice() {
@@ -18,6 +19,10 @@ public class Lattice implements IStructure {
 		equations.add(new Equation());
 		equations.add(new Equation());
 		labelSet = new LabelSet();
+		clusterMap = new HashMap<>();
+		clusterMap.put("E1", new ArrayList<QuantSpan>());
+		clusterMap.put("E2", new ArrayList<QuantSpan>());
+		clusterMap.put("E3", new ArrayList<QuantSpan>());
 	}
 	
 	public Lattice(Lattice lattice) {
@@ -28,6 +33,7 @@ public class Lattice implements IStructure {
 		for(String label : lattice.labelSet.labels) {
 			labelSet.addLabel(label);
 		}
+		clusterMap = lattice.clusterMap;
 	}
 	
 	// We assume a canonical ordering of equations under lattice

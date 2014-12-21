@@ -46,25 +46,30 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 		for(int i=0; i<2; i++) {
 			Equation eq = lattice.equations.get(i);
 			for(int j=0; j<eq.A1.size(); ++j) {
-				features.addAll(getEquationFeatures(blob, lattice, i, "A1", j));
+				features.addAll(getEquationFeatures(
+						blob, lattice, i, "A1", j, eq.A1.get(j).getSecond()));
 			}
 			for(int j=0; j<eq.A2.size(); ++j) {
-				features.addAll(getEquationFeatures(blob, lattice, i, "A2", j));
+				features.addAll(getEquationFeatures(
+						blob, lattice, i, "A2", j, eq.A2.get(j).getSecond()));
 			}
 			for(int j=0; j<eq.B1.size(); ++j) {
-				features.addAll(getEquationFeatures(blob, lattice, i, "B1", j));
+				features.addAll(getEquationFeatures(
+						blob, lattice, i, "B1", j, eq.B1.get(j).getSecond()));
 			}
 			for(int j=0; j<eq.B2.size(); ++j) {
-				features.addAll(getEquationFeatures(blob, lattice, i, "B2", j));
+				features.addAll(getEquationFeatures(
+						blob, lattice, i, "B2", j, eq.B2.get(j).getSecond()));
 			}
 			for(int j=0; j<eq.C.size(); ++j) {
-				features.addAll(getEquationFeatures(blob, lattice, i, "C", j));
+				features.addAll(getEquationFeatures(
+						blob, lattice, i, "C", j, eq.C.get(j).getSecond()));
 			}
 		}
 		return FeatureExtraction.getFeatureVectorFromList(features, lm);
 	}
 
-	// Operation Features
+	// Cluster Features
 	public IFeatureVector getClusterFeatureVector(
 			Blob blob, LabelSet labelSet, int index) {
 		List<String> feats = getClusterFeatures(blob, labelSet, index);
@@ -74,48 +79,62 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 	public List<String> getClusterFeatures(
 			Blob blob, LabelSet labelSet, int index) {
 		List<String> features = new ArrayList<>();
-		return features;
-	}
-	
-	// Operation Features
-	public IFeatureVector getEquationFeatureVector(
-			Blob blob, Lattice lattice, int eqNo, String arrayName, int index) throws Exception {
-		List<String> feats = getEquationFeatures(blob, lattice, eqNo, arrayName, index);
-		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
-	}
-	
-	public List<String> getEquationFeatures(Blob blob, Lattice lattice, int eqNo, String arrayName, int index) {
-		List<String> features = new ArrayList<>();
-		for(int i=0; i<2; i++) {
-			Equation eq = lattice.equations.get(i);
-			String prefix = eq.A1.size()+"_"+eq.A2.size()+"_"+eq.B1.size()+"_"+
-					eq.B2.size()+"_"+eq.C.size();
-			features.add(prefix);
-			for(Pair<Operation, Double> pair : eq.A1) {
-				for(String feature : singleFeatures(pair.getSecond(), "E1", blob)) {
-					features.add(prefix+"_A1_"+pair.getFirst()+"_"+feature);
-				}
-			}
-			for(Pair<Operation, Double> pair : eq.B1) {
-				for(String feature : singleFeatures(pair.getSecond(), "E2", blob)) {
-					features.add(prefix+"_B1_"+pair.getFirst()+"_"+feature);
-				}
-			}
-			for(Pair<Operation, Double> pair : eq.C) {
-				for(String feature : singleFeatures(pair.getSecond(), "E3", blob)) {
-					features.add(prefix+"_C_"+pair.getFirst()+"_"+feature);
-				}
-			}
+		String prefix = labelSet.labels.get(index);
+		QuantSpan qs = blob.quantities.get(index);
+		for(String feature : singleFeatures(new IntPair(qs.start, qs.end), blob)) {
+			features.add(prefix+"_"+feature);
 		}
 		return features;
 	}
-
+	
+	// Equation Features
+	public IFeatureVector getEquationFeatureVector(
+			Blob blob, Lattice lattice, int eqNo, String arrayName, int index, Double d) throws Exception {
+		List<String> feats = getEquationFeatures(blob, lattice, eqNo, arrayName, index, d);
+		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
+	}
+	
+	public List<String> getEquationFeatures(
+			Blob blob, Lattice lattice, int eqNo, String arrayName, int index, Double d) {
+		List<String> features = new ArrayList<>();
+		String prefix = "";
+		if(arrayName.endsWith("1")) prefix = "AB1";
+		if(arrayName.endsWith("2")) prefix = "AB2";
+		if(arrayName.equals("C")) prefix = "C";
+		for(String feature : singleFeatures(d, arrayName, blob, lattice)) {
+			features.add(prefix+"_"+feature);
+		}
+		return features;
+	}
 	
 	// Utility functions
 	
 	public List<IntPair> getRelevantSpans(
-			Blob blob, String arrayName, Double d) {
+			Blob blob, String arrayName, Double d, Map<String, List<QuantSpan>> clusterMap) {
 		List<IntPair> relevantSpans = new ArrayList<IntPair>();
+		if(arrayName.equals("A1") || arrayName.equals("A2") 
+				|| arrayName.contains("E1")) {
+			for(QuantSpan qs : clusterMap.get("E1")) {
+				if(Tools.safeEquals(d, Tools.getValue(qs))) {
+					relevantSpans.add(new IntPair(qs.start, qs.end));
+				}
+			}
+		}
+		if(arrayName.equals("B1") || arrayName.equals("B2") 
+				|| arrayName.contains("E2")) {
+			for(QuantSpan qs : clusterMap.get("E2")) {
+				if(Tools.safeEquals(d, Tools.getValue(qs))) {
+					relevantSpans.add(new IntPair(qs.start, qs.end));
+				}
+			}
+		}
+		if(arrayName.equals("C") || arrayName.equals("E3")) {
+			for(QuantSpan qs : clusterMap.get("E3")) {
+				if(Tools.safeEquals(d, Tools.getValue(qs))) {
+					relevantSpans.add(new IntPair(qs.start, qs.end));
+				}
+			}
+		}
 		return relevantSpans;
 	}
 	
@@ -155,10 +174,10 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 	}
 	
 	public List<String> pairwiseFeatures(
-			Double d1, String arrayName1, Double d2, String arrayName2, Blob blob) {
+			Double d1, String arrayName1, Double d2, String arrayName2, Blob blob, Lattice lattice) {
 		List<String> features = new ArrayList<>();
-		List<IntPair> spans1 = getRelevantSpans(blob, arrayName1, d1);
-		List<IntPair> spans2 = getRelevantSpans(blob, arrayName2, d2);
+		List<IntPair> spans1 = getRelevantSpans(blob, arrayName1, d1, lattice.clusterMap);
+		List<IntPair> spans2 = getRelevantSpans(blob, arrayName2, d2, lattice.clusterMap);
 		int pos1 = blob.ta.getTokenIdFromCharacterOffset(spans1.get(0).getFirst());
 		int pos2 = blob.ta.getTokenIdFromCharacterOffset(spans2.get(0).getFirst());
 		int sent1 = blob.ta.getSentenceFromToken(pos1).getSentenceId();
@@ -182,17 +201,20 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 		return features;	
 	}
 	
-	public List<String> singleFeatures(Double d, String arrayName, Blob blob) {
-		List<String> features = new ArrayList<>();
-		
+	public List<String> singleFeatures(Double d, String arrayName, Blob blob, Lattice lattice) {
 		// Ready the data structures
-		List<IntPair> spans = getRelevantSpans(blob, arrayName, d);
+		List<IntPair> spans = getRelevantSpans(blob, arrayName, d, lattice.clusterMap);
 		if(spans.size() == 0) {
 			System.out.println("Number not found : "+d);
 			System.out.println(blob.simulProb.index+" :Text : "+blob.ta);
 			System.out.println("Quantities : "+Arrays.asList(blob.quantities));
 		}
-		int pos = blob.ta.getTokenIdFromCharacterOffset(spans.get(0).getFirst());
+		return singleFeatures(spans.get(0), blob);
+	}
+	
+	public List<String> singleFeatures(IntPair span, Blob blob) {
+		List<String> features = new ArrayList<>();
+		int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
 		Sentence sent = blob.ta.getSentenceFromToken(pos);
 		String tokens[] = new String[blob.ta.size()];
 		for(int i=0; i<blob.ta.size(); ++i) {
@@ -206,7 +228,6 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 				tokens[i] = blob.lemmas.get(i).getLabel();
 			}
 		}
-		
 		// Nearby unigrams and bigrams
 		for(int i = Math.max(pos-3, sent.getStartSpan());
 				i <= Math.min(pos+3, sent.getEndSpan()-1); ++i) {
@@ -220,8 +241,6 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 		}
 		return features;
 	}
-	
-	
 	
 	
 	

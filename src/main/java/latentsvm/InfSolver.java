@@ -167,17 +167,14 @@ public class InfSolver extends AbstractInferenceSolver implements
 			prediction.labelSet.addLabel(bestLabel);
 		}
 		// Create a cluster map
-		Map<String, List<QuantSpan>> clusterMap = new HashMap<>();
-		clusterMap.put("E1", new ArrayList<QuantSpan>());
-		clusterMap.put("E2", new ArrayList<QuantSpan>());
-		clusterMap.put("E3", new ArrayList<QuantSpan>());
 		for(int i=0; i<blob.quantities.size(); ++i) {
 			if(!prediction.labelSet.labels.get(i).equals("NONE")) {
-				clusterMap.get(prediction.labelSet.labels.get(i)).add(
+		 		prediction.clusterMap.get(prediction.labelSet.labels.get(i)).add(
 						blob.quantities.get(i));
 			}
 		}
-		
+		Map<String, List<QuantSpan>> clusterMap = prediction.clusterMap;
+ 		
 		// Infer equations, respecting clustering
 		for(Lattice template : templates) {
 			template.labelSet = prediction.labelSet;
@@ -199,7 +196,7 @@ public class InfSolver extends AbstractInferenceSolver implements
 							beam2.add(new Pair<Lattice, Double>(newLattice, 
 									pair.getSecond()+
 									wv.dotProduct(featGen.getEquationFeatureVector(
-											blob, newLattice, i, "A1", j))));
+											blob, newLattice, i, "A1", j, d))));
 						}
 						break;
 					}
@@ -215,7 +212,7 @@ public class InfSolver extends AbstractInferenceSolver implements
 							beam2.add(new Pair<Lattice, Double>(newLattice, 
 									pair.getSecond()+
 									wv.dotProduct(featGen.getEquationFeatureVector(
-											blob, newLattice, i, "A2", j))));
+											blob, newLattice, i, "A2", j, d))));
 						}
 						break;
 					}
@@ -231,7 +228,7 @@ public class InfSolver extends AbstractInferenceSolver implements
 							beam2.add(new Pair<Lattice, Double>(newLattice, 
 									pair.getSecond()+
 									wv.dotProduct(featGen.getEquationFeatureVector(
-											blob, newLattice, i, "B1", j))));
+											blob, newLattice, i, "B1", j, d))));
 						}
 						break;
 					}
@@ -247,7 +244,7 @@ public class InfSolver extends AbstractInferenceSolver implements
 							beam2.add(new Pair<Lattice, Double>(newLattice, 
 									pair.getSecond()+
 									wv.dotProduct(featGen.getEquationFeatureVector(
-											blob, newLattice, i, "B2", j))));
+											blob, newLattice, i, "B2", j, d))));
 						}
 						break;
 					}
@@ -263,7 +260,7 @@ public class InfSolver extends AbstractInferenceSolver implements
 							beam2.add(new Pair<Lattice, Double>(newLattice, 
 									pair.getSecond()+
 									wv.dotProduct(featGen.getEquationFeatureVector(
-											blob, newLattice, i, "C", j))));
+											blob, newLattice, i, "C", j, d))));
 						}
 						break;
 					}
@@ -278,8 +275,9 @@ public class InfSolver extends AbstractInferenceSolver implements
 		return beam1.element().getFirst();
 	}
 
-	public static boolean isAllNumbersUsed(Lattice lattice, Blob blob) {
-		for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E1"))) {
+	public static boolean isAllNumbersUsed(Lattice lattice, Blob blob, 
+			Map<String, List<QuantSpan>> clusterMap) {
+		for (Double d : Tools.uniqueNumbers(clusterMap.get("E1"))) {
 			boolean found = false;
 			for (int j = 0; j < 2; ++j) {
 				Equation e = lattice.equations.get(j);
@@ -296,7 +294,7 @@ public class InfSolver extends AbstractInferenceSolver implements
 			}
 			if(!found) return false;
 		}
-		for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E2"))) {
+		for (Double d : Tools.uniqueNumbers(clusterMap.get("E2"))) {
 			boolean found = false;
 			for (int j = 0; j < 2; ++j) {
 				Equation e = lattice.equations.get(j);
@@ -313,7 +311,7 @@ public class InfSolver extends AbstractInferenceSolver implements
 			}
 			if(!found) return false;
 		}
-		for (Double d : Tools.uniqueNumbers(blob.clusterMap.get("E3"))) {
+		for (Double d : Tools.uniqueNumbers(clusterMap.get("E3"))) {
 			boolean found = false;
 			for (int j = 0; j < 2; ++j) {
 				Equation e = lattice.equations.get(j);

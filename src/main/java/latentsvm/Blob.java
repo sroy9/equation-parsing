@@ -19,7 +19,6 @@ public class Blob implements IInstance {
 	public List<Constituent> lemmas;
 	public List<Constituent> dependencyParse;
 	public List<QuantSpan> quantities;
-	public Map<String, List<QuantSpan>> clusterMap;
 
 	public Blob(SimulProb simulProb) throws Exception {
 		this.simulProb = simulProb;
