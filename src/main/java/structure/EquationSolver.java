@@ -28,7 +28,7 @@ public class EquationSolver {
 				A1.add(0.0);
 			} else {
 				double a = 1.0;
-				for(Pair<Operation, Double> pair : eq.A1) {
+				for(Pair<Operation, Double> pair : eq.terms.get(0)) {
 					if(pair.getFirst() == Operation.MUL) {
 						a*=pair.getSecond();
 					} else {
@@ -41,7 +41,7 @@ public class EquationSolver {
 				A2.add(0.0);
 			} else {
 				double a = 1.0;
-				for(Pair<Operation, Double> pair : eq.A2) {
+				for(Pair<Operation, Double> pair : eq.terms.get(1)) {
 					if(pair.getFirst() == Operation.MUL) {
 						a*=pair.getSecond();
 					} else {
@@ -54,7 +54,7 @@ public class EquationSolver {
 				B1.add(0.0);
 			} else {
 				double a = 1.0;
-				for(Pair<Operation, Double> pair : eq.B1) {
+				for(Pair<Operation, Double> pair : eq.terms.get(2)) {
 					if(pair.getFirst() == Operation.MUL) {
 						a*=pair.getSecond();
 					} else {
@@ -67,7 +67,7 @@ public class EquationSolver {
 				B2.add(0.0);
 			} else {
 				double a = 1.0;
-				for(Pair<Operation, Double> pair : eq.B2) {
+				for(Pair<Operation, Double> pair : eq.terms.get(3)) {
 					if(pair.getFirst() == Operation.MUL) {
 						a*=pair.getSecond();
 					} else {
@@ -76,11 +76,11 @@ public class EquationSolver {
 				}
 				B2.add(a);
 			}
-			if(eq.C.size() == 0) {
+			if(eq.terms.get(4).size() == 0) {
 				C.add(0.0);
 			} else {
 				double a = 1.0;
-				for(Pair<Operation, Double> pair : eq.C) {
+				for(Pair<Operation, Double> pair : eq.terms.get(4)) {
 					if(pair.getFirst() == Operation.MUL) {
 						a *= pair.getSecond();
 					} else {
@@ -109,7 +109,7 @@ public class EquationSolver {
 				B2.set(i, B2.get(i)*-1);
 			}
 			C.set(i, C.get(i)*-1);
-			if(eq.C.size() == 0) {
+			if(eq.terms.get(4).size() == 0) {
 				B1.set(i, B1.get(i)*-1);
 				B2.set(i, B2.get(i)*-1);
 			}

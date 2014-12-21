@@ -61,7 +61,6 @@ public class Driver {
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
 		double acc = 0.0;
-		double structAcc = 0.0;
 		double total = sp.instanceList.size();
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			Blob blob = (Blob) sp.instanceList.get(i);
@@ -71,83 +70,11 @@ public class Driver {
 			System.out.println(blob.simulProb.index+" : "+blob.simulProb.question);
 			System.out.println("Gold : \n" + gold);
 			System.out.println("Predicted : \n" + prediction);
-			structAcc += getStructAcc(prediction, gold);
 			if (hasSameSolution(prediction, gold)) {
 				acc += 1.0;
 			}
-		}
-		System.out.println("Structural Accuracy : " + structAcc + " / " + total + " = "
-				+ (structAcc / total));
-		System.out.println("Accuracy : " + acc + " / " + total + " = "
+		}System.out.println("Accuracy : " + acc + " / " + total + " = "
 				+ (acc / total));
-	}
-
-	private static double getStructAcc(Lattice prediction, Lattice gold) {
-		double acc1 = 0.0, acc2 = 0.0, total = 0.0;
-		for(int i=0; i<2; ++i) {
-			Equation eqPred1 = prediction.equations.get(i);
-			Equation eqPred2 = prediction.equations.get(1-i);
-			Equation eqGold = gold.equations.get(i);
-			total+=6.0;
-			if(isEqual(eqPred1.A1, eqGold.A1)) {
-				acc1 += 1.0;
-			}
-			if(isEqual(eqPred1.A2, eqGold.A2)) {
-				acc1 += 1.0;
-			}
-			if(isEqual(eqPred1.B1, eqGold.B1)) {
-				acc1 += 1.0;
-			}
-			if(isEqual(eqPred1.B2, eqGold.B2)) {
-				acc1 += 1.0;
-			}
-			if(isEqual(eqPred1.C, eqGold.C)) {
-				acc1 += 1.0;
-			}
-			if(Arrays.asList(eqPred1.operations).toString().equals(
-					Arrays.asList(eqGold.operations))){
-				acc1 += 1.0;
-			}
-			if(isEqual(eqPred2.A1, eqGold.A1)) {
-				acc2 += 1.0;
-			}
-			if(isEqual(eqPred2.A2, eqGold.A2)) {
-				acc2 += 1.0;
-			}
-			if(isEqual(eqPred2.B1, eqGold.B1)) {
-				acc2 += 1.0;
-			}
-			if(isEqual(eqPred2.B2, eqGold.B2)) {
-				acc2 += 1.0;
-			}
-			if(isEqual(eqPred2.C, eqGold.C)) {
-				acc2 += 1.0;
-			}
-			if(Arrays.asList(eqPred2.operations).toString().equals(
-					Arrays.asList(eqGold.operations))){
-				acc2 += 1.0;
-			}
-		}
-		return Math.max(acc1, acc2)/total;
-	}
-	
-	private static boolean isEqual(List<Pair<Operation, Double>> a1,
-			List<Pair<Operation, Double>> a2) {
-		if(a1.size() != a2.size()) {
-			return false;
-		}
-		for(Pair<Operation, Double> pair1 : a1) {
-			boolean found = false;
-			for(Pair<Operation, Double> pair2 : a2) {
-				if(pair1.getFirst() == pair2.getFirst() &&
-						Tools.safeEquals(pair1.getSecond(), pair2.getSecond())) {
-					found = true;
-					break;
-				}
-			}
-			if(!found) return false;
-		}
-		return true;
 	}
 	
 	private static boolean hasSameSolution(Lattice prediction, Lattice gold) {

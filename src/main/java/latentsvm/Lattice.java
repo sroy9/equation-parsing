@@ -14,7 +14,7 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
 public class Lattice implements IStructure {
 	public List<Equation> equations;
-	public Map<String, List<QuantSpan>> clusterMap;
+	public List<List<QuantSpan>> clusters;
 	public LabelSet labelSet;
 	
 	public Lattice() {
@@ -22,10 +22,10 @@ public class Lattice implements IStructure {
 		equations.add(new Equation());
 		equations.add(new Equation());
 		labelSet = new LabelSet();
-		clusterMap = new HashMap<>();
-		clusterMap.put("E1", new ArrayList<QuantSpan>());
-		clusterMap.put("E2", new ArrayList<QuantSpan>());
-		clusterMap.put("E3", new ArrayList<QuantSpan>());
+		clusters = new ArrayList<>();
+		for(int i=0; i<3; ++i) {
+			clusters.add(new ArrayList<QuantSpan>());
+		}
 	}
 	
 	public Lattice(Lattice lattice) {
@@ -36,7 +36,7 @@ public class Lattice implements IStructure {
 		for(String label : lattice.labelSet.labels) {
 			labelSet.addLabel(label);
 		}
-		clusterMap = lattice.clusterMap;
+		clusters = lattice.clusters;
 	}
 
 	public Lattice(List<Equation> equations, Blob blob) {
@@ -46,57 +46,23 @@ public class Lattice implements IStructure {
 		}
 		assert this.equations.size() == 2;
 		labelSet = new LabelSet();
-		clusterMap = new HashMap<>();
-		clusterMap.put("E1", new ArrayList<QuantSpan>());
-		clusterMap.put("E2", new ArrayList<QuantSpan>());
-		clusterMap.put("E3", new ArrayList<QuantSpan>());
+		clusters = new ArrayList<>();
+		for(int i=0; i<3; ++i) {
+			clusters.add(new ArrayList<QuantSpan>());
+		}
 		for(QuantSpan qs : blob.quantities) {
 			for(Equation eq : equations) {
-				for(Pair<Operation, Double> pair : eq.A1) {
-					if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
-						clusterMap.get("E1").add(qs);
-						break;
-					}
-				}
-				for(Pair<Operation, Double> pair : eq.A2) {
-					if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
-						clusterMap.get("E1").add(qs);
-						break;
-					}
-				}
-				for(Pair<Operation, Double> pair : eq.B1) {
-					if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
-						clusterMap.get("E2").add(qs);
-						break;
-					}
-				}
-				for(Pair<Operation, Double> pair : eq.B2) {
-					if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
-						clusterMap.get("E2").add(qs);
-						break;
-					}
-				}
-				for(Pair<Operation, Double> pair : eq.C) {
-					if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
-						clusterMap.get("E3").add(qs);
-						break;
+				for(int i=0; i<5; ++i) {
+					List<Pair<Operation, Double>> list = eq.terms.get(i);
+					for(Pair<Operation, Double> pair : list) {
+						if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
+							clusters.get(i/2).add(qs);
+							break;
+						}
 					}
 				}
 			}
 		}
-	}
-	
-	// We assume a canonical ordering of equations under lattice
-	public boolean equals(Object obj) {
-		if(obj == null || !(obj instanceof Lattice)) {
-			return false;
-		}
-		Lattice lattice = (Lattice) obj;
-		if(lattice.equations.get(0).equals(equations.get(0)) && 
-				lattice.equations.get(1).equals(equations.get(1))) {
-			return true;
-		}
-		return false;
 	}
 
 	@Override

@@ -43,29 +43,7 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 		for(int i=0; i<lattice.labelSet.labels.size(); ++i) {
 			features.addAll(getClusterFeatures(blob, lattice.labelSet, i));
 		}
-		for(int i=0; i<2; i++) {
-			Equation eq = lattice.equations.get(i);
-			for(int j=0; j<eq.A1.size(); ++j) {
-				features.addAll(getEquationFeatures(
-						blob, lattice, i, "A1", j, eq.A1.get(j).getSecond()));
-			}
-			for(int j=0; j<eq.A2.size(); ++j) {
-				features.addAll(getEquationFeatures(
-						blob, lattice, i, "A2", j, eq.A2.get(j).getSecond()));
-			}
-			for(int j=0; j<eq.B1.size(); ++j) {
-				features.addAll(getEquationFeatures(
-						blob, lattice, i, "B1", j, eq.B1.get(j).getSecond()));
-			}
-			for(int j=0; j<eq.B2.size(); ++j) {
-				features.addAll(getEquationFeatures(
-						blob, lattice, i, "B2", j, eq.B2.get(j).getSecond()));
-			}
-			for(int j=0; j<eq.C.size(); ++j) {
-				features.addAll(getEquationFeatures(
-						blob, lattice, i, "C", j, eq.C.get(j).getSecond()));
-			}
-		}
+		features.addAll(getEquationFeatures(blob, lattice));
 		return FeatureExtraction.getFeatureVectorFromList(features, lm);
 	}
 
@@ -89,22 +67,35 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 	
 	// Equation Features
 	public IFeatureVector getEquationFeatureVector(
-			Blob blob, Lattice lattice, int eqNo, String arrayName, int index, Double d) 
-					throws Exception {
-		List<String> feats = getEquationFeatures(blob, lattice, eqNo, arrayName, index, d);
+			Blob blob, Lattice lattice) throws Exception {
+		List<String> feats = getEquationFeatures(blob, lattice);
 		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
 	}
 	
-	public List<String> getEquationFeatures(
-			Blob blob, Lattice lattice, int eqNo, String arrayName, int index, Double d) {
-		System.out.println(Arrays.asList(lattice.clusterMap));
+	public List<String> getEquationFeatures(Blob blob, Lattice lattice)  {
 		List<String> features = new ArrayList<>();
-		if(d == null) return features;
+		for(int i=0; i<2; i++) {
+			Equation eq = lattice.equations.get(i);
+			for(int j=0; j<5; ++j) {
+				for(int k=0; k<eq.terms.get(j).size(); ++k) {
+					features.addAll(getEquationFeatures(
+						blob, lattice, i, j, k));
+				}
+			}
+		}
+		return features;
+	}
+	 
+	public List<String> getEquationFeatures(
+			Blob blob, Lattice lattice, int i, int j, int k) {
+		List<String> features = new ArrayList<>();
 		String prefix = "";
-		if(arrayName.endsWith("1")) prefix = "AB1";
-		if(arrayName.endsWith("2")) prefix = "AB2";
-		if(arrayName.equals("C")) prefix = "C";
-		for(String feature : singleFeatures(d, arrayName, blob, lattice)) {
+		if(j==0 || j==2) prefix = "AB1";
+		if(j==1 || j==3) prefix = "AB2";
+		if(j==4) prefix = "C";
+		for(String feature : singleFeatures(
+				lattice.equations.get(i).terms.get(j).get(k).getSecond(), 
+				j, blob, lattice)) {
 			features.add(prefix+"_"+feature);
 		}
 		return features;
@@ -113,74 +104,23 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 	// Utility functions
 	
 	public List<IntPair> getRelevantSpans(
-			Blob blob, String arrayName, Double d, Map<String, List<QuantSpan>> clusterMap) {
+			Blob blob, int index, Double d, List<List<QuantSpan>> clusters) {
+		System.out.println("Searching for "+d + " in "+index);
 		List<IntPair> relevantSpans = new ArrayList<IntPair>();
-		if(arrayName.equals("A1") || arrayName.equals("A2") 
-				|| arrayName.contains("E1")) {
-			for(QuantSpan qs : clusterMap.get("E1")) {
-				if(Tools.safeEquals(d, Tools.getValue(qs))) {
-					relevantSpans.add(new IntPair(qs.start, qs.end));
-				}
+		for(QuantSpan qs : clusters.get(index/2)) {
+			if(Tools.safeEquals(d, Tools.getValue(qs))) {
+				relevantSpans.add(new IntPair(qs.start, qs.end));
 			}
 		}
-		if(arrayName.equals("B1") || arrayName.equals("B2") 
-				|| arrayName.contains("E2")) {
-			for(QuantSpan qs : clusterMap.get("E2")) {
-				if(Tools.safeEquals(d, Tools.getValue(qs))) {
-					relevantSpans.add(new IntPair(qs.start, qs.end));
-				}
-			}
-		}
-		if(arrayName.equals("C") || arrayName.equals("E3")) {
-			for(QuantSpan qs : clusterMap.get("E3")) {
-				if(Tools.safeEquals(d, Tools.getValue(qs))) {
-					relevantSpans.add(new IntPair(qs.start, qs.end));
-				}
-			}
-		}
+		System.out.println("RelevantSpan size "+relevantSpans.size());
 		return relevantSpans;
 	}
 	
-	public static boolean isPresent(Double d, String entity, Equation eq) {
-		if(entity.equals("E1")) {
-			for(Pair<Operation, Double> pair : eq.A1) {
-				if(Tools.safeEquals(d, pair.getSecond())) {
-					return true;
-				}
-			}
-			for(Pair<Operation, Double> pair : eq.A2) {
-				if(Tools.safeEquals(d, pair.getSecond())) {
-					return true;
-				}
-			}
-		}
-		if(entity.equals("E2")) {
-			for(Pair<Operation, Double> pair : eq.B1) {
-				if(Tools.safeEquals(d, pair.getSecond())) {
-					return true;
-				}
-			}
-			for(Pair<Operation, Double> pair : eq.B2) {
-				if(Tools.safeEquals(d, pair.getSecond())) {
-					return true;
-				}
-			}
-		}
-		if(entity.equals("E3")) {
-			for(Pair<Operation, Double> pair : eq.C) {
-				if(Tools.safeEquals(d, pair.getSecond())) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
 	public List<String> pairwiseFeatures(
-			Double d1, String arrayName1, Double d2, String arrayName2, Blob blob, Lattice lattice) {
+			Double d1, int index1, Double d2, int index2, Blob blob, Lattice lattice) {
 		List<String> features = new ArrayList<>();
-		List<IntPair> spans1 = getRelevantSpans(blob, arrayName1, d1, lattice.clusterMap);
-		List<IntPair> spans2 = getRelevantSpans(blob, arrayName2, d2, lattice.clusterMap);
+		List<IntPair> spans1 = getRelevantSpans(blob, index1, d1, lattice.clusters);
+		List<IntPair> spans2 = getRelevantSpans(blob, index2, d2, lattice.clusters);
 		int pos1 = blob.ta.getTokenIdFromCharacterOffset(spans1.get(0).getFirst());
 		int pos2 = blob.ta.getTokenIdFromCharacterOffset(spans2.get(0).getFirst());
 		int sent1 = blob.ta.getSentenceFromToken(pos1).getSentenceId();
@@ -204,9 +144,9 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 		return features;	
 	}
 	
-	public List<String> singleFeatures(Double d, String arrayName, Blob blob, Lattice lattice) {
+	public List<String> singleFeatures(Double d, int index, Blob blob, Lattice lattice) {
 		// Ready the data structures
-		List<IntPair> spans = getRelevantSpans(blob, arrayName, d, lattice.clusterMap);
+		List<IntPair> spans = getRelevantSpans(blob, index, d, lattice.clusters);
 		if(spans.size() == 0) {
 			System.out.println("Number not found : "+d);
 			System.out.println(blob.simulProb.index+" :Text : "+blob.ta);

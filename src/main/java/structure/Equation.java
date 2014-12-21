@@ -14,15 +14,14 @@ import utils.Tools;
 
 public class Equation {
 	
-	public List<Pair<Operation, Double>> A1, A2, B1, B2, C;
+	public List<List<Pair<Operation, Double>>> terms;
 	public List<Operation> operations; 
 	
 	public Equation() {
-		this.A1 = new ArrayList<>();
-		this.A2 = new ArrayList<>();
-		this.B1 = new ArrayList<>();
-		this.B2 = new ArrayList<>();
-		this.C = new ArrayList<>();
+		terms = new ArrayList<>();
+		for(int i=0; i<5; ++i) {
+			terms.add(new ArrayList<Pair<Operation, Double>>());
+		}
 		this.operations = new ArrayList<>();
 		for(int i=0; i<4; i++) {
 			operations.add(Operation.NONE);
@@ -30,11 +29,9 @@ public class Equation {
 	}
 	
 	public Equation(Equation eq) {
-		this.A1 = new ArrayList<>(eq.A1);
-		this.A2 = new ArrayList<>(eq.A2);
-		this.B1 = new ArrayList<>(eq.B1);
-		this.B2 = new ArrayList<>(eq.B2);
-		this.C = new ArrayList<>(eq.C);
+		for(int i=0; i<5; ++i) {
+			terms.add(new ArrayList<Pair<Operation, Double>>(eq.terms.get(i)));
+		}
 		this.operations = new ArrayList<>();
 		for(int i=0; i<4; i++) {
 			operations.add(eq.operations.get(i));
@@ -61,21 +58,21 @@ public class Equation {
 					op = Operation.SUB;
 				}
 				if(term.contains("V1")) { 
-					addTerm(A1, term); 
+					addTerm(0, term); 
 					operations.set(0, op); 
 				} else if(term.contains("V2")) {
-					addTerm(B1, term);
+					addTerm(2, term);
 					operations.set(2, op);
 				} else if(sameSideOfEquation(eqString, "V2", "V1") && 
 						!sameSideOfEquation(eqString, term, "V1")) {
-					addTerm(C, term);
+					addTerm(4, term);
 				} else if(sameSideOfEquation(eqString, term, "V1") || 
 							diffSideOfEquation(eqString, term, "V2")) {
-					addTerm(A2, term);
+					addTerm(1, term);
 					operations.set(1, op);
 				} else if(sameSideOfEquation(eqString, term, "V2") || 
 						diffSideOfEquation(eqString, term, "V1")) {
-					addTerm(B2, term);
+					addTerm(3, term);
 					operations.set(3, op);
 				} else {
 					System.out.println("ISSUE HERE : "+index);
@@ -85,7 +82,7 @@ public class Equation {
 		}
 	}
 	
-	private void addTerm(List<Pair<Operation, Double>> list, String term) {
+	private void addTerm(int index, String term) {
 		int lastLoc = 0;
 		term = term + " ";
 		for(int i=0; i<term.length(); ++i) {
@@ -96,9 +93,11 @@ public class Equation {
 					Double d = Double.parseDouble(number);
 					System.out.println("Number : "+d);
 					if(lastLoc == 0 || term.charAt(lastLoc-1) == '*') {
-						list.add(new Pair<Operation, Double>(Operation.MUL, d));
+						terms.get(index).add(
+								new Pair<Operation, Double>(Operation.MUL, d));
 					} else {
-						list.add(new Pair<Operation, Double>(Operation.DIV, d));
+						terms.get(index).add(
+								new Pair<Operation, Double>(Operation.DIV, d));
 					}
 				} catch (NumberFormatException e) {
 					
@@ -140,33 +139,14 @@ public class Equation {
 	}
 	
 	public String toString() {
-		String str = "";
-		str+="A1 : ";
-		for(Pair<Operation, Double> pair : A1) {
-			str+="["+pair.getFirst()+" "+pair.getSecond()+"] ";
+		String str = "Equation : \n";
+		for(int i=0; i<5; ++i) {
+			List<Pair<Operation, Double>> list = terms.get(i);
+			for(Pair<Operation, Double> pair : list) {
+				str+="["+pair.getFirst()+" "+pair.getSecond()+"] ";
+			}
+			str+="\n";
 		}
-		str+="\n";
-		str+="A2 : ";
-		for(Pair<Operation, Double> pair : A2) {
-			str+="["+pair.getFirst()+" "+pair.getSecond()+"] ";
-		}
-		str+="\n";
-		str+="B1 : ";
-		for(Pair<Operation, Double> pair : B1) {
-			str+="["+pair.getFirst()+" "+pair.getSecond()+"] ";
-		}
-		str+="\n";
-		str+="B2 : ";
-		for(Pair<Operation, Double> pair : B2) {
-			str+="["+pair.getFirst()+" "+pair.getSecond()+"] ";
-		}
-		str+="\n";
-		str+="C : ";
-		for(Pair<Operation, Double> pair : C) {
-			str+="["+pair.getFirst()+" "+pair.getSecond()+"] ";
-		}
-		str+="\n";
-		str+="Operations : " + Arrays.asList(operations) + "\n";
 		return str;
 	}
 	

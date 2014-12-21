@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import latentsvm.Blob;
+import latentsvm.Lattice;
+
 import org.apache.commons.io.FileUtils;
 
 import com.google.gson.reflect.*;
@@ -60,6 +63,11 @@ public class DocReader {
 				}
 				simulProb.checkSolver();
 				simulProbList.add(simulProb);
+				Lattice lattice = new Lattice(simulProb.equations, new Blob(simulProb));
+				for(List<QuantSpan> list : lattice.clusters) {
+					System.out.println(Arrays.asList(list));
+				}
+				
 			}
 		}
 		List<SimulProb> newSimulProbList = new ArrayList<SimulProb>();
