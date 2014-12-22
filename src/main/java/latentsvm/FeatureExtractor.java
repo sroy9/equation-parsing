@@ -59,10 +59,10 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 		List<String> features = new ArrayList<>();
 		String prefix = labelSet.labels.get(index);
 		QuantSpan qs = blob.quantities.get(index);
-		System.out.println("Cluster Features");
+//		System.out.println("Cluster Features");
 		for(String feature : singleFeatures(new IntPair(qs.start, qs.end), blob)) {
 			features.add(prefix+"_"+feature);
-			System.out.println(prefix+"_"+feature);
+//			System.out.println(prefix+"_"+feature);
 		}
 		return features;
 	}
@@ -107,14 +107,12 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 	
 	public List<IntPair> getRelevantSpans(
 			Blob blob, int index, Double d, List<List<QuantSpan>> clusters) {
-		System.out.println("Searching for "+d + " in "+index);
 		List<IntPair> relevantSpans = new ArrayList<IntPair>();
 		for(QuantSpan qs : clusters.get(index/2)) {
 			if(Tools.safeEquals(d, Tools.getValue(qs))) {
 				relevantSpans.add(new IntPair(qs.start, qs.end));
 			}
 		}
-		System.out.println("RelevantSpan size "+relevantSpans.size());
 		return relevantSpans;
 	}
 	

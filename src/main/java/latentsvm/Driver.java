@@ -43,7 +43,7 @@ public class Driver {
 		SLProblem train = trainTest.getFirst();
 		SLProblem test = trainTest.getSecond();
 		trainModel("model.save", train);
-//		testModel("model.save", test);
+		testModel("model.save", test);
 	}
 
 	private static SLProblem getSP() throws Exception {
@@ -67,17 +67,18 @@ public class Driver {
 			Lattice gold = (Lattice) sp.goldStructureList.get(i);
 			Lattice prediction = (Lattice) model.infSolver.getBestStructure(
 					model.wv, sp.instanceList.get(i));
-			System.out.println(blob.simulProb.index+" : "+blob.simulProb.question);
-			System.out.println("Gold : \n" + gold);
-			System.out.println("Predicted : \n" + prediction);
+//			System.out.println(blob.simulProb.index+" : "+blob.simulProb.question);
+//			System.out.println("Gold : \n" + gold);
+//			System.out.println("Predicted : \n" + prediction);
 			if (hasSameSolution(prediction, gold)) {
 				acc += 1.0;
 			}
-		}System.out.println("Accuracy : " + acc + " / " + total + " = "
+		}
+		System.out.println("Accuracy : " + acc + " / " + total + " = "
 				+ (acc / total));
 	}
 	
-	private static boolean hasSameSolution(Lattice prediction, Lattice gold) {
+	public static boolean hasSameSolution(Lattice prediction, Lattice gold) {
 		List<Double> solutions1 = EquationSolver.solve(prediction);
 		List<Double> solutions2 = EquationSolver.solve(gold);
 		if(solutions1 == null || solutions2 == null) return false;

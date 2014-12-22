@@ -86,7 +86,19 @@ public class InfSolver extends AbstractInferenceSolver implements
 		
 	@Override
 	public float getLoss(IInstance arg0, IStructure arg1, IStructure arg2) {
-		return 0.0f;
+		Lattice l1 = (Lattice) arg1;
+		Lattice l2 = (Lattice) arg2;
+		float loss = 0.0f;
+		assert l1.labelSet.labels.size() == l2.labelSet.labels.size(); 
+		System.out.println(l1.labelSet.labels.size() + " " + l2.labelSet.labels.size());
+		int len = l1.labelSet.labels.size();
+		for(int i=0; i<len; ++i) {
+			if(!l1.labelSet.labels.get(i).equals(l2.labelSet.labels.get(i))) {
+				loss+=1.0;
+			}
+		}
+		if(!Driver.hasSameSolution(l1, l2)) loss += 10.0f; 
+		return loss;
 	}
 
 	@Override
@@ -131,6 +143,8 @@ public class InfSolver extends AbstractInferenceSolver implements
 			prediction.clusters = gold.clusters;
 			prediction.equations = gold.equations;
 			System.out.println("Inferred : "+prediction);
+			System.out.println("Score Predict : " + wv.dotProduct(featGen.getFeatureVector(blob, prediction)));
+			System.out.println("Score Gold : "+wv.dotProduct(featGen.getFeatureVector(blob, gold)));
 			return prediction;
 		}
 		
@@ -147,7 +161,7 @@ public class InfSolver extends AbstractInferenceSolver implements
 						1.0*wv.dotProduct(featGen.getEquationFeatureVector(blob, lattice))));
 			}
 		}
-		if(beam2.size() == 0) return new Lattice();
+		if(beam2.size() == 0) return prediction;
 		System.out.println("Inferred : "+beam2.element().getFirst());
 		return beam2.element().getFirst();
 	}
