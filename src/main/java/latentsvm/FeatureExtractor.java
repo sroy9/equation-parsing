@@ -59,8 +59,10 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 		List<String> features = new ArrayList<>();
 		String prefix = labelSet.labels.get(index);
 		QuantSpan qs = blob.quantities.get(index);
+		System.out.println("Cluster Features");
 		for(String feature : singleFeatures(new IntPair(qs.start, qs.end), blob)) {
 			features.add(prefix+"_"+feature);
+			System.out.println(prefix+"_"+feature);
 		}
 		return features;
 	}

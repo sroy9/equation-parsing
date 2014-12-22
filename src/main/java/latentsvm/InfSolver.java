@@ -122,17 +122,17 @@ public class InfSolver extends AbstractInferenceSolver implements
 			}
 			prediction.labelSet.addLabel(bestLabel);
 			if(goldStructure != null && 
-					prediction.labelSet.labels.get(i) != gold.labelSet.labels.get(i)) {
+					!prediction.labelSet.labels.get(i).equals(gold.labelSet.labels.get(i))) {
 				wrongClusterting = true;
 			}
 		}
-		
 		// Early update
-		if(wrongClusterting) prediction.labelSet = gold.labelSet;
-		
-		// Extract clusters from labelSet
-		prediction.clusters = Lattice.extractClustersFromLabelSet(
-				blob.quantities, prediction.labelSet);
+		if(wrongClusterting) {
+			prediction.clusters = gold.clusters;
+			prediction.equations = gold.equations;
+			System.out.println("Inferred : "+prediction);
+			return prediction;
+		}
 		
 		// Infer equations, respecting clustering
 		for(Lattice template : templates) {
@@ -148,6 +148,7 @@ public class InfSolver extends AbstractInferenceSolver implements
 			}
 		}
 		if(beam2.size() == 0) return new Lattice();
+		System.out.println("Inferred : "+beam2.element().getFirst());
 		return beam2.element().getFirst();
 	}
 	

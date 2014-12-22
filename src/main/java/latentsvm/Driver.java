@@ -43,7 +43,7 @@ public class Driver {
 		SLProblem train = trainTest.getFirst();
 		SLProblem test = trainTest.getSecond();
 		trainModel("model.save", train);
-		testModel("model.save", test);
+//		testModel("model.save", test);
 	}
 
 	private static SLProblem getSP() throws Exception {
