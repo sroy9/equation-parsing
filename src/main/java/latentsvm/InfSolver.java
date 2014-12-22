@@ -46,7 +46,30 @@ public class InfSolver extends AbstractInferenceSolver implements
 					}
 				}
 			}
-			if(!templates.contains(lattice)) templates.add(lattice);
+			boolean alreadyPresent = false;
+			for(Lattice l : templates) {
+				boolean diff = false;
+				for(int i=0; i<2; i++) {
+					Equation eq1 = l.equations.get(i);
+					Equation eq2 = lattice.equations.get(i);
+					for(int j=0; j<5; ++j) {
+						if(eq1.terms.get(j).size() != eq2.terms.get(j).size()) {
+							diff = true;
+						}
+						if(diff) break;
+ 						for(int k=0; k<eq1.terms.get(j).size(); k++) {
+ 							if(eq1.terms.get(j).get(k).getFirst() != 
+ 									eq2.terms.get(j).get(k).getFirst()) {
+								diff = true;
+							}
+						}
+						if(diff) break;
+					}
+					if(diff) break;
+				}
+				if(!diff) alreadyPresent = true;
+			}
+			if(!alreadyPresent) templates.add(lattice);
 		}
 		System.out.println("Number of templates : "+templates.size());
 		return templates;
@@ -56,16 +79,6 @@ public class InfSolver extends AbstractInferenceSolver implements
 	public IStructure getBestStructure(WeightVector wv, IInstance x)
 			throws Exception {
 		return getLossAugmentedBestStructure(wv, x, null);
-	}
-
-	public static float getOperationLoss(Equation eq1, Equation eq2) {
-		float loss = 0.0f;
-		for (int i = 0; i < 4; i++) {
-			if (eq1.operations.get(i) != eq2.operations.get(i)) {
-				loss += 1.0;
-			}
-		}
-		return loss;
 	}
 		
 	@Override
@@ -113,16 +126,9 @@ public class InfSolver extends AbstractInferenceSolver implements
 		// Early update
 		if(wrongClusterting) prediction.labelSet = gold.labelSet;
 		
-		// Create a cluster map
-		for(int i=0; i<blob.quantities.size(); ++i) {
-			String label = prediction.labelSet.labels.get(i);
-			if(label.equals("E1")) prediction.clusters.get(0).add(
-						blob.quantities.get(i));
-			if(label.equals("E2")) prediction.clusters.get(1).add(
-					blob.quantities.get(i));
-			if(label.equals("E3")) prediction.clusters.get(2).add(
-					blob.quantities.get(i));
-		}
+		// Extract clusters from labelSet
+		prediction.clusters = Lattice.extractClustersFromLabelSet(
+				blob.quantities, prediction.labelSet);
 		
 		// Infer equations, respecting clustering
 		for(Lattice template : templates) {

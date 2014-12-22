@@ -2,8 +2,10 @@ package latentsvm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import structure.Equation;
 import structure.Operation;
@@ -46,23 +48,54 @@ public class Lattice implements IStructure {
 		}
 		assert this.equations.size() == 2;
 		labelSet = new LabelSet();
-		clusters = new ArrayList<>();
-		for(int i=0; i<3; ++i) {
-			clusters.add(new ArrayList<QuantSpan>());
-		}
-		for(QuantSpan qs : blob.quantities) {
+		Set<Integer> candidates;
+		for(int quantNo = 0; quantNo < blob.quantities.size(); quantNo++) {
+			if(isSpecialCase(blob.simulProb.index, quantNo)) continue;
+			// Back to machines
+			QuantSpan qs = blob.quantities.get(quantNo);
+			candidates = new HashSet<>();
 			for(Equation eq : equations) {
 				for(int i=0; i<5; ++i) {
 					List<Pair<Operation, Double>> list = eq.terms.get(i);
 					for(Pair<Operation, Double> pair : list) {
 						if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
-							clusters.get(i/2).add(qs);
+							candidates.add(i/2);
 							break;
 						}
 					}
 				}
 			}
+			if(candidates.size() == 1) {
+				for(Integer i : candidates) {
+					if(i<2) labelSet.addLabel("E1");
+					else if(i<4) labelSet.addLabel("E2");
+					else labelSet.addLabel("E3");
+				}
+			} else if(candidates.size() == 0) {
+				labelSet.addLabel("NONE");
+			} else {
+				System.out.println("PROBLEM");
+				System.out.println(quantNo + " : " + qs);
+				System.out.println(blob.simulProb.index + " : " +blob.simulProb.question);
+			}
 		}
+		clusters = extractClustersFromLabelSet(blob.quantities, labelSet);
+	}
+
+	public static List<List<QuantSpan>> extractClustersFromLabelSet(
+			List<QuantSpan> quantities, LabelSet labelSet) {
+		// Create a cluster map
+		List<List<QuantSpan>> clusters = new ArrayList<>();
+		for(int i=0; i<3; ++i) {
+			clusters.add(new ArrayList<QuantSpan>());
+		}
+		for(int i=0; i<quantities.size(); ++i) {
+			String label = labelSet.labels.get(i);
+			if(label.equals("E1")) clusters.get(0).add(quantities.get(i));
+			if(label.equals("E2")) clusters.get(1).add(quantities.get(i));
+			if(label.equals("E3")) clusters.get(2).add(quantities.get(i));
+		}
+		return clusters;
 	}
 
 	@Override
@@ -72,6 +105,75 @@ public class Lattice implements IStructure {
 			str += eq + "\n";
 		}
 		return str;
+	}
+	
+	boolean isSpecialCase(int index, int quantNo) {
+		// Human annotation
+		if(index ==  1292 && quantNo == 0) {
+			labelSet.addLabel("E1");
+			return true;
+		}
+		if(index ==  1292 && quantNo == 4) {
+			labelSet.addLabel("E2");
+			return true;
+		}
+		if(index ==  1997 && quantNo == 1) {
+			labelSet.addLabel("E2");
+			return true;
+		}
+		if(index ==  1997 && quantNo == 3) {
+			labelSet.addLabel("E1");
+			return true;
+		}
+		if(index ==  2518 && quantNo == 0) {
+			labelSet.addLabel("E1");
+			return true;
+		}
+		if(index ==  2518 && quantNo == 4) {
+			labelSet.addLabel("E2");
+			return true;
+		}
+		if(index ==  3623 && quantNo == 0) {
+			labelSet.addLabel("E1");
+			return true;
+		}
+		if(index ==  3623 && quantNo == 4) {
+			labelSet.addLabel("E2");
+			return true;
+		}
+		if(index ==  5356 && quantNo == 0) {
+			labelSet.addLabel("E1");
+			return true;
+		}
+		if(index ==  5356 && quantNo == 4) {
+			labelSet.addLabel("E2");
+			return true;
+		}
+		if(index ==  5652 && quantNo == 1) {
+			labelSet.addLabel("E2");
+			return true;
+		}
+		if(index ==  5652 && quantNo == 2) {
+			labelSet.addLabel("E1");
+			return true;		
+		}
+		if(index ==  6254 && quantNo == 1) {
+			labelSet.addLabel("E2");
+			return true;
+		}
+		if(index ==  6254 && quantNo == 3) {
+			labelSet.addLabel("E1");
+			return true;
+		}
+		if(index ==  6448 && quantNo == 1) {
+			labelSet.addLabel("E2");
+			return true;
+		}
+		if(index ==  6448 && quantNo == 3) {
+			labelSet.addLabel("E1");
+			return true;
+		}
+		return false;
 	}
 	
 }
