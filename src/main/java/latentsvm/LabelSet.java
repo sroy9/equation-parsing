@@ -1,12 +1,17 @@
 package latentsvm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
-public class LabelSet implements IStructure{
+public class LabelSet implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2399969922362221136L;
 	public List<String> labels;
 	
 	public LabelSet() {

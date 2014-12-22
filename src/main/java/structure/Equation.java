@@ -1,5 +1,6 @@
 package structure;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,8 +13,12 @@ import utils.Tools;
 // where A = \product A_i, B = \product B_i and C = \product C_i
 // and A_i's, B_i's and C_i's are present in text
 
-public class Equation {
+public class Equation implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1593105262537880720L;
 	public List<List<Pair<Operation, Double>>> terms;
 	public List<Operation> operations; 
 	
@@ -29,8 +34,13 @@ public class Equation {
 	}
 	
 	public Equation(Equation eq) {
+		terms = new ArrayList<>();
 		for(int i=0; i<5; ++i) {
-			terms.add(new ArrayList<Pair<Operation, Double>>(eq.terms.get(i)));
+			terms.add(new ArrayList<Pair<Operation, Double>>());
+			for(Pair<Operation, Double> pair : eq.terms.get(i)) {
+				terms.get(i).add(new Pair<Operation, Double>(
+						pair.getFirst(), pair.getSecond()));
+			}
 		}
 		this.operations = new ArrayList<>();
 		for(int i=0; i<4; i++) {
@@ -139,7 +149,7 @@ public class Equation {
 	}
 	
 	public String toString() {
-		String str = "Equation : \n";
+		String str = "";
 		for(int i=0; i<5; ++i) {
 			List<Pair<Operation, Double>> list = terms.get(i);
 			for(Pair<Operation, Double> pair : list) {

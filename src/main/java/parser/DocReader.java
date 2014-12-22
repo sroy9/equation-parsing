@@ -57,17 +57,10 @@ public class DocReader {
 							qs.start, qs.end)+" : "+qs + " : "+Tools.getValue(qs));
 				}
 				simulProb.extractEquations();
-				System.out.println("Equations :");
-				for(Equation eq : simulProb.equations) {
-					System.out.println(eq.toString());
-				}
 				simulProb.checkSolver();
 				simulProbList.add(simulProb);
 				Lattice lattice = new Lattice(simulProb.equations, new Blob(simulProb));
-				for(List<QuantSpan> list : lattice.clusters) {
-					System.out.println(Arrays.asList(list));
-				}
-				
+				System.out.println("Lattice : \n"+lattice);
 			}
 		}
 		List<SimulProb> newSimulProbList = new ArrayList<SimulProb>();

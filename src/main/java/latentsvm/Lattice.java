@@ -1,6 +1,8 @@
 package latentsvm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,7 +16,11 @@ import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
-public class Lattice implements IStructure {
+public class Lattice implements IStructure, Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6115613027583328438L;
 	public List<Equation> equations;
 	public List<List<QuantSpan>> clusters;
 	public LabelSet labelSet;
@@ -59,7 +65,7 @@ public class Lattice implements IStructure {
 					List<Pair<Operation, Double>> list = eq.terms.get(i);
 					for(Pair<Operation, Double> pair : list) {
 						if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
-							candidates.add(i/2);
+							candidates.add(i);
 							break;
 						}
 					}
@@ -100,9 +106,15 @@ public class Lattice implements IStructure {
 
 	@Override
 	public String toString() {
-		String str = "";
+		String str = "LabelSet : \n";
+		str+=Arrays.asList(labelSet.labels)+"\n";
+		str+="Clusters : \n";
+		for(List<QuantSpan> list : clusters) {
+			str+=Arrays.asList(list)+"\n";
+		}
+		str += "Equations\n";
 		for(Equation eq : equations) {
-			str += eq + "\n";
+			str += "Equation\n" + eq + "\n";
 		}
 		return str;
 	}

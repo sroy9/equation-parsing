@@ -108,7 +108,7 @@ public class Driver {
 		model.lm = lm;
 		FeatureExtractor fg = new FeatureExtractor(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new InfSolver(fg, train);
+		model.infSolver = new InfSolver(fg, InfSolver.extractTemplates(train));
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);

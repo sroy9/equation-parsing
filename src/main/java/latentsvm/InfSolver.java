@@ -29,15 +29,17 @@ public class InfSolver extends AbstractInferenceSolver implements
 	private FeatureExtractor featGen;
 	private List<Lattice> templates;
 
-	public InfSolver(FeatureExtractor featGen, SLProblem slProb) {
+	public InfSolver(FeatureExtractor featGen, List<Lattice> templates) {
 		this.featGen = featGen;
-		this.templates = extractTemplates(slProb);
+		this.templates = templates;
 	}
 
-	private List<Lattice> extractTemplates(SLProblem slProb) {
+	public static List<Lattice> extractTemplates(SLProblem slProb) {
 		List<Lattice> templates = new ArrayList<>();
 		for(IStructure struct : slProb.goldStructureList) {
-			Lattice lattice = (Lattice) struct;
+			Lattice gold = (Lattice) struct;
+			System.out.println("Gold before : "+gold);
+ 			Lattice lattice = new Lattice(gold);
 			for(int i=0; i<2; ++i) {
 				Equation eq = lattice.equations.get(i);
 				for(int j=0; j<5; ++j) {
@@ -70,6 +72,7 @@ public class InfSolver extends AbstractInferenceSolver implements
 				if(!diff) alreadyPresent = true;
 			}
 			if(!alreadyPresent) templates.add(lattice);
+			System.out.println("Gold : "+gold );
 		}
 		System.out.println("Number of templates : "+templates.size());
 		return templates;
@@ -92,6 +95,7 @@ public class InfSolver extends AbstractInferenceSolver implements
 		Blob blob = (Blob) x;
 		Lattice gold = (Lattice) goldStructure;
 		Lattice prediction = new Lattice();
+		System.out.println("Gold structure\n"+gold);
 
 		PairComparator<Lattice> latticePairComparator = 
 				new PairComparator<Lattice>() {};
@@ -143,11 +147,14 @@ public class InfSolver extends AbstractInferenceSolver implements
 						1.0*wv.dotProduct(featGen.getEquationFeatureVector(blob, lattice))));
 			}
 		}
+		if(beam2.size() == 0) return new Lattice();
 		return beam2.element().getFirst();
 	}
 	
 	public List<Lattice> enumerateEquations(Lattice seed) {
-		List<Lattice> list1 = Arrays.asList(seed);
+		System.out.println("Seed : "+seed);
+		List<Lattice> list1 = new ArrayList<>();
+		list1.add(seed);
 		List<Lattice> list2 = new ArrayList<>();
 		for(int i=0; i<2; ++i) {
 			for(int j=0; j<5; ++j) {
@@ -165,6 +172,10 @@ public class InfSolver extends AbstractInferenceSolver implements
 					list2.clear();
 				}
 			}
+		}
+		System.out.println("Enumerated");
+		for(Lattice lattice : list1) {
+			System.out.println(lattice);
 		}
 		return list1;
 	}
