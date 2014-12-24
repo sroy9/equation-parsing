@@ -1,4 +1,4 @@
-package latentsvm;
+package semparse;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +19,7 @@ import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
-public class Driver {
+public class SemDriver {
 	
 	public static void crossVal() throws Exception {
 		SLProblem problem = getSP();
@@ -51,7 +51,7 @@ public class Driver {
 		List<SimulProb> simulProbList = dr.readSimulProbFromBratDir(Params.annotationDir);
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			Blob blob = new Blob(simulProb);
+			SemX blob = new SemX(simulProb);
 			problem.addExample(blob, blob.getGold());
 		}
 		return problem;
@@ -63,7 +63,7 @@ public class Driver {
 		double acc = 0.0;
 		double total = sp.instanceList.size();
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			Blob blob = (Blob) sp.instanceList.get(i);
+			SemX blob = (SemX) sp.instanceList.get(i);
 			Lattice gold = (Lattice) sp.goldStructureList.get(i);
 			Lattice prediction = (Lattice) model.infSolver.getBestStructure(
 					model.wv, sp.instanceList.get(i));
@@ -107,9 +107,9 @@ public class Driver {
 		Lexiconer lm = new Lexiconer();
 		lm.setAllowNewFeatures(true);
 		model.lm = lm;
-		FeatureExtractor fg = new FeatureExtractor(lm);
+		SemFeatGen fg = new SemFeatGen(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new InfSolver(fg, InfSolver.extractTemplates(train));
+		model.infSolver = new SemInfSolver(fg, SemInfSolver.extractTemplates(train));
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
@@ -119,6 +119,6 @@ public class Driver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		Driver.doTrainTest();
+		SemDriver.doTrainTest();
 	}
 }

@@ -3,15 +3,14 @@ package structure;
 import java.util.ArrayList;
 import java.util.List;
 
-import latentsvm.Lattice;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 
 public class EquationSolver {
 
-	public static List<Double> solve (Lattice lattice) {
+	public static List<Double> solve (List<Equation> equations) {
 		boolean isOneVar = true;
-		for(Operation op : lattice.equations.get(1).operations) {
+		for(Operation op : equations.get(1).operations) {
 			if(op != Operation.NONE) {
 				isOneVar = false;
 				break;
@@ -22,8 +21,8 @@ public class EquationSolver {
 		List<Double> B1 = new ArrayList<>();
 		List<Double> B2 = new ArrayList<>();
 		List<Double> C = new ArrayList<>();
-		for(int i=0; i<lattice.equations.size(); ++i) {
-			Equation eq = lattice.equations.get(i);
+		for(int i=0; i<equations.size(); ++i) {
+			Equation eq = equations.get(i);
 			if(eq.operations.get(0) == Operation.NONE) {
 				A1.add(0.0);
 			} else {

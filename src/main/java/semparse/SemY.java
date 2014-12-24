@@ -1,4 +1,4 @@
-package latentsvm;
+package semparse;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.List;
 
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
-public class LabelSet implements Serializable {
+public class SemY implements Serializable {
 	
 	/**
 	 * 
@@ -14,7 +14,7 @@ public class LabelSet implements Serializable {
 	private static final long serialVersionUID = 2399969922362221136L;
 	public List<String> labels;
 	
-	public LabelSet() {
+	public SemY() {
 		this.labels = new ArrayList<String>();
 	}
 	
@@ -28,7 +28,7 @@ public class LabelSet implements Serializable {
 		}
 	}
 	
-	public LabelSet(LabelSet other) {
+	public SemY(SemY other) {
 		this.labels = new ArrayList<String>();
 		for(String label : other.labels) {
 			this.labels.add(label);

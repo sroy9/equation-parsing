@@ -1,4 +1,4 @@
-package latentsvm;
+package semparse;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +11,7 @@ import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 
-public class Blob implements IInstance {
+public class SemX implements IInstance {
 
 	public SimulProb simulProb;
 	public TextAnnotation ta;
@@ -20,7 +20,7 @@ public class Blob implements IInstance {
 	public List<Constituent> dependencyParse;
 	public List<QuantSpan> quantities;
 
-	public Blob(SimulProb simulProb) throws Exception {
+	public SemX(SimulProb simulProb) throws Exception {
 		this.simulProb = simulProb;
 		this.quantities = simulProb.quantities;
 		ta = new TextAnnotation("", "", simulProb.question);

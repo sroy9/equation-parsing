@@ -1,4 +1,4 @@
-package latentsvm;
+package semparse;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,14 +22,14 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
-public class InfSolver extends AbstractInferenceSolver implements
+public class SemInfSolver extends AbstractInferenceSolver implements
 		Serializable {
 
 	private static final long serialVersionUID = 5253748728743334706L;
-	private FeatureExtractor featGen;
-	private List<Lattice> templates;
+	private SemFeatGen featGen;
+	private List<Equation> templates;
 
-	public InfSolver(FeatureExtractor featGen, List<Lattice> templates) {
+	public SemInfSolver(SemFeatGen featGen, List<Lattice> templates) {
 		this.featGen = featGen;
 		this.templates = templates;
 	}
@@ -97,14 +97,14 @@ public class InfSolver extends AbstractInferenceSolver implements
 				loss+=1.0;
 			}
 		}
-		if(!Driver.hasSameSolution(l1, l2)) loss += 10.0f; 
+		if(!SemDriver.hasSameSolution(l1, l2)) loss += 10.0f; 
 		return loss;
 	}
 
 	@Override
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
-		Blob blob = (Blob) x;
+		SemX blob = (SemX) x;
 		Lattice gold = (Lattice) goldStructure;
 		Lattice prediction = new Lattice();
 		System.out.println("Gold structure\n"+gold);

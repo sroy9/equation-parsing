@@ -11,12 +11,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import latentsvm.Blob;
-import latentsvm.Lattice;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import relation.RelationX;
 import utils.Params;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
@@ -36,13 +34,15 @@ public class SimulProb {
 	public String question;
 	public List<Equation> equations;
 	public List<Double> solutions;
-	public List<QuantSpan> quantities; 	
+	public List<QuantSpan> quantities;
+	public List<String> relations;
 	
 	public SimulProb(int index) {
 		this.index = index;
 		equations = new ArrayList<Equation>();
 		solutions = new ArrayList<Double>();
 		quantities = new ArrayList<QuantSpan>();
+		relations = new ArrayList<String>();
 	}
 	
 	public void extractQuantities(Quantifier quantifier) throws IOException {
@@ -127,7 +127,7 @@ public class SimulProb {
 	}
 	
 	public void checkSolver() throws Exception {
-		List<Double> solns = EquationSolver.solve(new Lattice(equations, new Blob(this)));
+		List<Double> solns = EquationSolver.solve(equations);
 		System.out.println("Gold solutions : "+Arrays.asList(solutions));
 		System.out.println("Predicted solutions : "+Arrays.asList(solns));
 		if(solns == null) System.out.println("Error : No solutions : "+index);
@@ -143,6 +143,106 @@ public class SimulProb {
 				System.out.println("Error : Solutions not matching : "+index);
 			}
 		}
+	}
+	
+	public void extractRelations() {
+		Set<Integer> candidates;
+		for(int quantNo = 0; quantNo < quantities.size(); quantNo++) {
+			if(isSpecialCase(index, quantNo)) continue;
+			// Back to machines
+			QuantSpan qs = quantities.get(quantNo);
+			candidates = new HashSet<>();
+			for(int j=0; j<2; ++j) {
+				Equation eq = equations.get(j);
+				for(int i=0; i<5; ++i) {
+					List<Pair<Operation, Double>> list = eq.terms.get(i);
+					for(Pair<Operation, Double> pair : list) {
+						if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
+							candidates.add(j);
+							break;
+						}
+					}
+				}
+			}
+			if(candidates.size() == 1) {
+				for(Integer i : candidates) {
+					relations.add("R"+(i+1));
+				}
+			} else if(candidates.size() == 0) {
+				relations.add("NONE");
+			} else {
+				relations.add("BOTH");
+			}
+		}
+	}
+	
+	boolean isSpecialCase(int index, int quantNo) {
+		// Human annotation
+		if(index ==  1292 && quantNo == 0) {
+			relations.add("R1");
+			return true;
+		}
+		if(index ==  1292 && quantNo == 4) {
+			relations.add("R2");
+			return true;
+		}
+		if(index ==  1997 && quantNo == 1) {
+			relations.add("R1");
+			return true;
+		}
+		if(index ==  1997 && quantNo == 3) {
+			relations.add("R2");
+			return true;
+		}
+		if(index ==  2518 && quantNo == 0) {
+			relations.add("R1");
+			return true;
+		}
+		if(index ==  2518 && quantNo == 4) {
+			relations.add("R2");
+			return true;
+		}
+		if(index ==  3623 && quantNo == 0) {
+			relations.add("R1");
+			return true;
+		}
+		if(index ==  3623 && quantNo == 4) {
+			relations.add("R2");
+			return true;
+		}
+		if(index ==  5356 && quantNo == 0) {
+			relations.add("R1");
+			return true;
+		}
+		if(index ==  5356 && quantNo == 4) {
+			relations.add("R2");
+			return true;
+		}
+		if(index ==  5652 && quantNo == 1) {
+			relations.add("R1");
+			return true;
+		}
+		if(index ==  5652 && quantNo == 2) {
+			relations.add("R2");
+			return true;		
+		}
+		if(index ==  6254 && quantNo == 1) {
+			relations.add("R1");
+			return true;
+		}
+		if(index ==  6254 && quantNo == 3) {
+			relations.add("R2");
+			return true;
+		}
+		if(index ==  6448 && quantNo == 1) {
+			relations.add("R1");
+			return true;
+		}
+		if(index ==  6448 && quantNo == 3) {
+			relations.add("R2");
+			return true;
+		}
+		return false;
 	}
 	
 	

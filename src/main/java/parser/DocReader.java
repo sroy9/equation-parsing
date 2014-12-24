@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import latentsvm.Blob;
-import latentsvm.Lattice;
-
 import org.apache.commons.io.FileUtils;
 
 import com.google.gson.reflect.*;
@@ -57,10 +54,9 @@ public class DocReader {
 							qs.start, qs.end)+" : "+qs + " : "+Tools.getValue(qs));
 				}
 				simulProb.extractEquations();
+				simulProb.extractRelations();
 				simulProb.checkSolver();
 				simulProbList.add(simulProb);
-				Lattice lattice = new Lattice(simulProb.equations, new Blob(simulProb));
-				System.out.println("Lattice : \n"+lattice);
 			}
 		}
 		List<SimulProb> newSimulProbList = new ArrayList<SimulProb>();

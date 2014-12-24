@@ -15,9 +15,6 @@ import utils.Tools;
 
 public class Equation implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1593105262537880720L;
 	public List<List<Pair<Operation, Double>>> terms;
 	public List<Operation> operations; 

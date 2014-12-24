@@ -1,4 +1,4 @@
-package latentsvm;
+package semparse;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,18 +26,18 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.util.IFeatureVector;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
-public class FeatureExtractor extends AbstractFeatureGenerator implements
+public class SemFeatGen extends AbstractFeatureGenerator implements
 		Serializable {
 	private static final long serialVersionUID = 1810851154558168679L;
 	public Lexiconer lm = null;
 
-	public FeatureExtractor(Lexiconer lm) {
+	public SemFeatGen(Lexiconer lm) {
 		this.lm = lm;
 	}
 	
 	@Override
 	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
-		Blob blob = (Blob) arg0;
+		SemX blob = (SemX) arg0;
 		Lattice lattice = (Lattice) arg1;
 		List<String> features = new ArrayList<>();
 		for(int i=0; i<lattice.labelSet.labels.size(); ++i) {
@@ -49,13 +49,13 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 
 	// Cluster Features
 	public IFeatureVector getClusterFeatureVector(
-			Blob blob, LabelSet labelSet, int index) {
+			SemX blob, SemY labelSet, int index) {
 		List<String> feats = getClusterFeatures(blob, labelSet, index);
 		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
 	}
 	
 	public List<String> getClusterFeatures(
-			Blob blob, LabelSet labelSet, int index) {
+			SemX blob, SemY labelSet, int index) {
 		List<String> features = new ArrayList<>();
 		String prefix = labelSet.labels.get(index);
 		QuantSpan qs = blob.quantities.get(index);
@@ -69,12 +69,12 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 	
 	// Equation Features
 	public IFeatureVector getEquationFeatureVector(
-			Blob blob, Lattice lattice) throws Exception {
+			SemX blob, Lattice lattice) throws Exception {
 		List<String> feats = getEquationFeatures(blob, lattice);
 		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
 	}
 	
-	public List<String> getEquationFeatures(Blob blob, Lattice lattice)  {
+	public List<String> getEquationFeatures(SemX blob, Lattice lattice)  {
 		List<String> features = new ArrayList<>();
 		for(int i=0; i<2; i++) {
 			Equation eq = lattice.equations.get(i);
@@ -89,7 +89,7 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 	}
 	 
 	public List<String> getEquationFeatures(
-			Blob blob, Lattice lattice, int i, int j, int k) {
+			SemX blob, Lattice lattice, int i, int j, int k) {
 		List<String> features = new ArrayList<>();
 		String prefix = "";
 		if(j==0 || j==2) prefix = "AB1";
@@ -106,7 +106,7 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 	// Utility functions
 	
 	public List<IntPair> getRelevantSpans(
-			Blob blob, int index, Double d, List<List<QuantSpan>> clusters) {
+			SemX blob, int index, Double d, List<List<QuantSpan>> clusters) {
 		List<IntPair> relevantSpans = new ArrayList<IntPair>();
 		for(QuantSpan qs : clusters.get(index/2)) {
 			if(Tools.safeEquals(d, Tools.getValue(qs))) {
@@ -117,7 +117,7 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 	}
 	
 	public List<String> pairwiseFeatures(
-			Double d1, int index1, Double d2, int index2, Blob blob, Lattice lattice) {
+			Double d1, int index1, Double d2, int index2, SemX blob, Lattice lattice) {
 		List<String> features = new ArrayList<>();
 		List<IntPair> spans1 = getRelevantSpans(blob, index1, d1, lattice.clusters);
 		List<IntPair> spans2 = getRelevantSpans(blob, index2, d2, lattice.clusters);
@@ -139,12 +139,12 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 		return features;
 	}
 	
-	public List<String> globalFeatures(Blob blob) {
+	public List<String> globalFeatures(SemX blob) {
 		List<String> features = new ArrayList<>();
 		return features;	
 	}
 	
-	public List<String> singleFeatures(Double d, int index, Blob blob, Lattice lattice) {
+	public List<String> singleFeatures(Double d, int index, SemX blob, Lattice lattice) {
 		// Ready the data structures
 		List<IntPair> spans = getRelevantSpans(blob, index, d, lattice.clusters);
 		if(spans.size() == 0) {
@@ -155,7 +155,7 @@ public class FeatureExtractor extends AbstractFeatureGenerator implements
 		return singleFeatures(spans.get(0), blob);
 	}
 	
-	public List<String> singleFeatures(IntPair span, Blob blob) {
+	public List<String> singleFeatures(IntPair span, SemX blob) {
 		List<String> features = new ArrayList<>();
 		int pos = blob.ta.getTokenIdFromCharacterOffset(span.getFirst());
 		Sentence sent = blob.ta.getSentenceFromToken(pos);
