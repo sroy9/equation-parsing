@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import semparse.SemX;
 import structure.Operation;
 import curator.NewCachingCurator;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
@@ -101,5 +102,15 @@ public class Tools {
 			if(allow) uniqueNos.add(Tools.getValue(qs));
 		}
 		return uniqueNos;
+	}
+	
+	public List<IntPair> getRelevantSpans(Double d, List<QuantSpan> quantSpans) {
+		List<IntPair> relevantSpans = new ArrayList<IntPair>();
+		for(QuantSpan qs : quantSpans) {
+			if(Tools.safeEquals(d, Tools.getValue(qs))) {
+				relevantSpans.add(new IntPair(qs.start, qs.end));
+			}
+		}
+		return relevantSpans;
 	}
 }

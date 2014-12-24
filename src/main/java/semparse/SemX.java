@@ -15,7 +15,7 @@ import edu.illinois.cs.cogcomp.sl.core.IInstance;
 public class SemX implements IInstance {
 
 	public TextAnnotation ta;
-	public List<Integer> quantIndices;
+	public List<QuantSpan> relationQuantities;
 	public List<Constituent> posTags;
 	public List<Constituent> lemmas;
 	public List<Constituent> dependencyParse;
@@ -23,11 +23,10 @@ public class SemX implements IInstance {
 
 	public SemX(SimulProb simulProb, String relation) throws Exception {
 		quantities = simulProb.quantities;
-		quantIndices = new ArrayList<>();
 		for(int i=0; i<simulProb.relations.size(); ++i) {
 			String str = simulProb.relations.get(i);
 			if(str.equals(relation) || str.equals("BOTH")) {
-				quantIndices.add(i);
+				relationQuantities.add(quantities.get(i));
 			}
 		}
 		ta = new TextAnnotation("", "", simulProb.question);
