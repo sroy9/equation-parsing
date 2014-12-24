@@ -4,34 +4,48 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import structure.Equation;
+import structure.Operation;
+import utils.Tools;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
-public class SemY implements Serializable {
+public class SemY extends Equation implements IStructure, Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2399969922362221136L;
-	public List<String> labels;
+	List<IntPair> emptySlots;
 	
 	public SemY() {
-		this.labels = new ArrayList<String>();
+		super();
+		emptySlots = new ArrayList<IntPair>();
 	}
 	
-	public void addLabel(String label) {
-		labels.add(label);
-	}
-	
-	public void removeLast() {
-		if(labels.size()>0) {
-			labels.remove(labels.size()-1);
-		}
+	public SemY(Equation eq) {
+		super(eq);
+		emptySlots = new ArrayList<IntPair>();
 	}
 	
 	public SemY(SemY other) {
-		this.labels = new ArrayList<String>();
-		for(String label : other.labels) {
-			this.labels.add(label);
+		super(other);
+		emptySlots = new ArrayList<IntPair>();
+		for(IntPair slot : emptySlots) {
+			emptySlots.add(slot);
 		}
+	}
+	
+	public static float getLoss(SemY y1, SemY y2) {
+		float loss = 0.0f;
+		for(int i=0; i<y1.terms.size(); i++) {
+			List<Pair<Operation, Double>> pairList = y1.terms.get(i);
+			for(int j=0; j<pairList.size(); ++j) {
+				Pair<Operation, Double> pair1 = pairList.get(j);
+				Pair<Operation, Double> pair2 = y2.terms.get(i).get(j);
+				if(!Tools.safeEquals(pair1.getSecond(), pair2.getSecond())) {
+					loss += 1;
+				}
+			}
+		}
+		return loss;
 	}
 }

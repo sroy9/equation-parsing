@@ -1,5 +1,6 @@
 package semparse;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,16 +14,22 @@ import edu.illinois.cs.cogcomp.sl.core.IInstance;
 
 public class SemX implements IInstance {
 
-	public SimulProb simulProb;
 	public TextAnnotation ta;
+	public List<Integer> quantIndices;
 	public List<Constituent> posTags;
 	public List<Constituent> lemmas;
 	public List<Constituent> dependencyParse;
 	public List<QuantSpan> quantities;
 
-	public SemX(SimulProb simulProb) throws Exception {
-		this.simulProb = simulProb;
-		this.quantities = simulProb.quantities;
+	public SemX(SimulProb simulProb, String relation) throws Exception {
+		quantities = simulProb.quantities;
+		quantIndices = new ArrayList<>();
+		for(int i=0; i<simulProb.relations.size(); ++i) {
+			String str = simulProb.relations.get(i);
+			if(str.equals(relation) || str.equals("BOTH")) {
+				quantIndices.add(i);
+			}
+		}
 		ta = new TextAnnotation("", "", simulProb.question);
 		posTags = Tools.curator.getTextAnnotationWithSingleView(
 				simulProb.question, ViewNames.POS, false)
@@ -33,9 +40,5 @@ public class SemX implements IInstance {
 //		dependencyParse = Tools.curator.getTextAnnotationWithSingleView(
 //				simulProb.question, ViewNames.DEPENDENCY, false)
 //				.getView(ViewNames.DEPENDENCY).getConstituents();
-	}
-	
-	public Lattice getGold() {
-		return new Lattice(simulProb.equations, this);
 	}
 }

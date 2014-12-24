@@ -4,9 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import structure.Equation;
 import structure.EquationSolver;
@@ -14,6 +16,7 @@ import structure.Operation;
 import structure.PairComparator;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.BoundedPriorityQueue;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
@@ -27,52 +30,52 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private SemFeatGen featGen;
-	private List<Equation> templates;
+	private List<SemY> templates;
 
-	public SemInfSolver(SemFeatGen featGen, List<Lattice> templates) {
+	public SemInfSolver(SemFeatGen featGen, List<SemY> templates) {
 		this.featGen = featGen;
 		this.templates = templates;
 	}
 
-	public static List<Lattice> extractTemplates(SLProblem slProb) {
-		List<Lattice> templates = new ArrayList<>();
+	public static List<SemY> extractTemplates(SLProblem slProb) {
+		List<SemY> templates = new ArrayList<>();
 		for(IStructure struct : slProb.goldStructureList) {
-			Lattice gold = (Lattice) struct;
-			System.out.println("Gold before : "+gold);
- 			Lattice lattice = new Lattice(gold);
-			for(int i=0; i<2; ++i) {
-				Equation eq = lattice.equations.get(i);
-				for(int j=0; j<5; ++j) {
-					for(int k=0; k<eq.terms.get(j).size(); ++k) {
-						eq.terms.get(j).get(k).setSecond(null);
-					}
+			SemY gold = (SemY) struct;
+			SemY eq1 = new SemY(gold);
+			for(int j=0; j<5; ++j) {
+				for(int k=0; k<eq1.terms.get(j).size(); ++k) {
+					eq1.terms.get(j).get(k).setSecond(null);
+					eq1.emptySlots.add(new IntPair(j, k));
 				}
 			}
 			boolean alreadyPresent = false;
-			for(Lattice l : templates) {
+			for(SemY eq2 : templates) {
 				boolean diff = false;
-				for(int i=0; i<2; i++) {
-					Equation eq1 = l.equations.get(i);
-					Equation eq2 = lattice.equations.get(i);
-					for(int j=0; j<5; ++j) {
-						if(eq1.terms.get(j).size() != eq2.terms.get(j).size()) {
-							diff = true;
+				for(int j=0; j<5; ++j) {
+					if(eq1.terms.get(j).size() != eq2.terms.get(j).size()) {
+						diff = true; break;
+					}
+					if(diff) break;
+					for(int k=0; k<eq1.terms.get(j).size(); k++) {
+						if(eq1.terms.get(j).get(k).getFirst() != 
+								eq2.terms.get(j).get(k).getFirst()) {
+							diff = true; break;
 						}
-						if(diff) break;
- 						for(int k=0; k<eq1.terms.get(j).size(); k++) {
- 							if(eq1.terms.get(j).get(k).getFirst() != 
- 									eq2.terms.get(j).get(k).getFirst()) {
-								diff = true;
-							}
+					}
+					if(diff) break;
+					for(int k=0; k<4; k++) {
+						if(eq1.operations.get(k) != eq2.operations.get(k)) {
+							diff = true; break;
 						}
-						if(diff) break;
 					}
 					if(diff) break;
 				}
-				if(!diff) alreadyPresent = true;
+				if(!diff) {
+					alreadyPresent = true;
+					break;
+				}
 			}
-			if(!alreadyPresent) templates.add(lattice);
-			System.out.println("Gold : "+gold );
+			if(!alreadyPresent) templates.add(eq1);
 		}
 		System.out.println("Number of templates : "+templates.size());
 		return templates;
@@ -86,37 +89,41 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		
 	@Override
 	public float getLoss(IInstance arg0, IStructure arg1, IStructure arg2) {
-		Lattice l1 = (Lattice) arg1;
-		Lattice l2 = (Lattice) arg2;
-		float loss = 0.0f;
-		assert l1.labelSet.labels.size() == l2.labelSet.labels.size(); 
-		System.out.println(l1.labelSet.labels.size() + " " + l2.labelSet.labels.size());
-		int len = l1.labelSet.labels.size();
-		for(int i=0; i<len; ++i) {
-			if(!l1.labelSet.labels.get(i).equals(l2.labelSet.labels.get(i))) {
-				loss+=1.0;
-			}
-		}
-		if(!SemDriver.hasSameSolution(l1, l2)) loss += 10.0f; 
-		return loss;
+		SemY y1 = (SemY) arg1;
+		SemY y2 = (SemY) arg2;
+		return SemY.getLoss(y1, y2);
 	}
 
 	@Override
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
 		SemX blob = (SemX) x;
-		Lattice gold = (Lattice) goldStructure;
-		Lattice prediction = new Lattice();
+		SemY gold = (SemY) goldStructure;
+		SemY pred = new SemY();
 		System.out.println("Gold structure\n"+gold);
 
-		PairComparator<Lattice> latticePairComparator = 
-				new PairComparator<Lattice>() {};
-		BoundedPriorityQueue<Pair<Lattice, Double>> beam1 = 
-				new BoundedPriorityQueue<Pair<Lattice, Double>>(50, latticePairComparator);
-		BoundedPriorityQueue<Pair<Lattice, Double>> beam2 = 
-				new BoundedPriorityQueue<Pair<Lattice, Double>>(50, latticePairComparator);
+		PairComparator<SemY> semPairComparator = 
+				new PairComparator<SemY>() {};
+		BoundedPriorityQueue<Pair<SemY, Double>> beam1 = 
+				new BoundedPriorityQueue<Pair<SemY, Double>>(50, semPairComparator);
+		BoundedPriorityQueue<Pair<SemY, Double>> beam2 = 
+				new BoundedPriorityQueue<Pair<SemY, Double>>(50, semPairComparator);
+		Set<Double> availableNumbers = new HashSet<>();
+		for(Integer i : blob.quantIndices) {
+			Double d = Tools.getValue(blob.quantities.get(i));
+			boolean alreadyThere = false;
+			for(Double d1 : availableNumbers) {
+				if(Tools.safeEquals(d, d1)) {
+					alreadyThere = true;
+				}
+			}
+			if(!alreadyThere) {
+				availableNumbers.add(d);
+			}
+		}
 		
-		// Infer clustering
+		
+		
 		boolean wrongClusterting = false; 
 		List<String> labels = Arrays.asList("E1", "E2", "E3", "NONE");
 		for(int i=0; i<blob.quantities.size(); ++i) {

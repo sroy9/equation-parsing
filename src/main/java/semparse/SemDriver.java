@@ -51,8 +51,12 @@ public class SemDriver {
 		List<SimulProb> simulProbList = dr.readSimulProbFromBratDir(Params.annotationDir);
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			SemX blob = new SemX(simulProb);
-			problem.addExample(blob, blob.getGold());
+			SemX semX = new SemX(simulProb, "R1");
+			SemY semY = new SemY(simulProb.equations.get(0));
+			problem.addExample(semX, semY);
+			semX = new SemX(simulProb, "R2");
+			semY = new SemY(simulProb.equations.get(1));
+			problem.addExample(semX, semY);
 		}
 		return problem;
 	}
@@ -64,41 +68,15 @@ public class SemDriver {
 		double total = sp.instanceList.size();
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			SemX blob = (SemX) sp.instanceList.get(i);
-			Lattice gold = (Lattice) sp.goldStructureList.get(i);
-			Lattice prediction = (Lattice) model.infSolver.getBestStructure(
+			SemY gold = (SemY) sp.goldStructureList.get(i);
+			SemY pred = (SemY) model.infSolver.getBestStructure(
 					model.wv, sp.instanceList.get(i));
-//			System.out.println(blob.simulProb.index+" : "+blob.simulProb.question);
-//			System.out.println("Gold : \n" + gold);
-//			System.out.println("Predicted : \n" + prediction);
-			if (hasSameSolution(prediction, gold)) {
+			if (SemY.getLoss(gold, pred) < 0.00001) {
 				acc += 1.0;
 			}
 		}
 		System.out.println("Accuracy : " + acc + " / " + total + " = "
 				+ (acc / total));
-	}
-	
-	public static boolean hasSameSolution(Lattice prediction, Lattice gold) {
-		List<Double> solutions1 = EquationSolver.solve(prediction);
-		List<Double> solutions2 = EquationSolver.solve(gold);
-		if(solutions1 == null || solutions2 == null) return false;
-		if(solutions1.size() != solutions2.size()) return false;		
-		if(solutions1.size() == 1) {
-			if(Tools.safeEquals(solutions1.get(0), solutions2.get(0))) {
-				return true; 
-			}
-		}	
-		if(solutions1.size() == 2) {
-			if(Tools.safeEquals(solutions1.get(0), solutions2.get(0)) &&
-					Tools.safeEquals(solutions1.get(1), solutions2.get(1)) ) {
-				return true; 
-			}
-			if(Tools.safeEquals(solutions1.get(0), solutions2.get(1)) &&
-					Tools.safeEquals(solutions1.get(1), solutions2.get(0)) ) {
-				return true; 
-			}
-		}
-		return false;
 	}
 	
 	private static void trainModel(String modelPath, SLProblem train)

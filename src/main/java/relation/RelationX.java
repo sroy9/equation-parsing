@@ -13,7 +13,6 @@ import edu.illinois.cs.cogcomp.sl.core.IInstance;
 
 public class RelationX implements IInstance {
 
-	public SimulProb simulProb;
 	public TextAnnotation ta;
 	public List<Constituent> posTags;
 	public List<Constituent> lemmas;
