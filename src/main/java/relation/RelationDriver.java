@@ -60,8 +60,9 @@ public class RelationDriver {
 	private static void testModel(String modelPath, SLProblem sp)
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
+		double loss = 0.0;
+		double total = 0.0;
 		double acc = 0.0;
-		double total = sp.instanceList.size();
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			RelationY gold = (RelationY) sp.goldStructureList.get(i);
 			RelationY pred = (RelationY) model.infSolver.getBestStructure(
@@ -69,9 +70,11 @@ public class RelationDriver {
 			if(RelationY.getLoss(gold, pred) < 0.000001) {
 				acc += 1;
 			}
+			loss += RelationY.getLoss(gold, pred);
+			total += gold.relations.size();
 		}
-		System.out.println("Accuracy : " + acc + " / " + total + " = "
-				+ (acc / total));
+		System.out.println("Structural Accuracy : = " + (1.0-(loss/total)));
+		System.out.println("Accuracy : = " + (acc/sp.instanceList.size()));
 	}
 	
 	private static void trainModel(String modelPath, SLProblem train)

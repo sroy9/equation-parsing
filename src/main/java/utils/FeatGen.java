@@ -17,7 +17,7 @@ import edu.illinois.cs.cogcomp.sl.util.FeatureVectorBuffer;
 import edu.illinois.cs.cogcomp.sl.util.IFeatureVector;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
-public class FeatureExtraction {
+public class FeatGen {
 	
 	public static IFeatureVector getFeatureVectorFromList(
 			List<String> features, Lexiconer lm) {
@@ -89,7 +89,8 @@ public class FeatureExtraction {
 		return closest;
 	}
 	
-	public static IntPair getSpanBetweenClosestMention(Set<IntPair> ipSet1, Set<IntPair> ipSet2) {
+	public static IntPair getSpanBetweenClosestMention(
+			Set<IntPair> ipSet1, Set<IntPair> ipSet2) {
 		int minDist = 1000; 
 		IntPair closest1 = null;
 		IntPair closest2 = null;
@@ -133,5 +134,19 @@ public class FeatureExtraction {
 			path.add(leaf);
 		}
 		return path;
+	}
+	
+	public static List<String> neighboringTokens(
+			List<Constituent> lemmas, int pos, int window) {
+		List<String> features = new ArrayList<String>();
+		List<String> unigrams = getLemmatizedUnigrams(lemmas, 0, lemmas.size()-1);
+		int start = Math.max(0, pos-window);
+		int end = Math.min(pos+window, lemmas.size()-1);
+		for(int ngram = 0; ngram <= 2; ngram++) {
+			for(int i=start; i<=end-ngram; i++) {
+				features.add(i+"_"+(i+ngram)+"_"+unigrams.get(i)+"_"+unigrams.get(i+ngram));
+			}
+		}	
+		return features;
 	}
 }

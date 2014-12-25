@@ -114,6 +114,9 @@ public class SimulProb {
 			}
 			equations.add(new Equation(index, equationStrings.get(i)));
 		}
+		if(equations.size() == 1) {
+			equations.add(new Equation());
+		}
 	}
 
 	public QuantSpan getRelevantQuantSpans(IntPair ip) {

@@ -73,7 +73,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			beam1.addAll(beam2);
 			beam2.clear();
 		}
-		System.out.println("Inferred : "+beam2.element().getFirst());
-		return beam2.element().getFirst();
+//		System.out.println("Inferred : "+beam1.element().getFirst());
+		return beam1.element().getFirst();
 	}
 }

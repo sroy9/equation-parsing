@@ -12,7 +12,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import structure.Equation;
 import structure.EquationSolver;
 import structure.Operation;
-import utils.FeatureExtraction;
+import utils.FeatGen;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
@@ -41,25 +41,18 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		SemY y = (SemY) arg1;
 		List<String> features = new ArrayList<>();
 		features.addAll(getFeatures(x, y));
-		return FeatureExtraction.getFeatureVectorFromList(features, lm);
+		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 
 	// Cluster Features
 	public IFeatureVector getFeatureVector(SemX x, SemY y) {
 		List<String> feats = getFeatures(x, y);
-		return FeatureExtraction.getFeatureVectorFromList(feats, lm);
+		return FeatGen.getFeatureVectorFromList(feats, lm);
 	}
 	
 	public List<String> getFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
 		return features;
-	}
-	// Utility functions
-	
-		
-	public List<String> globalFeatures(SemX blob) {
-		List<String> features = new ArrayList<>();
-		return features;	
 	}
 	
 }
