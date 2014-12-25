@@ -18,9 +18,11 @@ public class RelationX implements IInstance {
 	public List<Constituent> lemmas;
 	public List<Constituent> dependencyParse;
 	public List<QuantSpan> quantities;
+	public int index;
 
-	public RelationX(SimulProb simulProb) throws Exception {
+	public RelationX(SimulProb simulProb, int index) throws Exception {
 		quantities = simulProb.quantities;
+		this.index = index;
 		ta = new TextAnnotation("", "", simulProb.question);
 		posTags = Tools.curator.getTextAnnotationWithSingleView(
 				simulProb.question, ViewNames.POS, false)

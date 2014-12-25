@@ -50,9 +50,11 @@ public class RelationDriver {
 		List<SimulProb> simulProbList = dr.readSimulProbFromBratDir(Params.annotationDir);
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			RelationX relationX = new RelationX(simulProb);
-			RelationY relationY = new RelationY(simulProb);
-			problem.addExample(relationX, relationY);
+			for(int i=0; i<simulProb.quantities.size(); ++i) {
+				RelationX relationX = new RelationX(simulProb, i);
+				RelationY relationY = new RelationY(simulProb, i);
+				problem.addExample(relationX, relationY);
+			}
 		}
 		return problem;
 	}
@@ -64,14 +66,16 @@ public class RelationDriver {
 		double total = 0.0;
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
+			RelationX x = (RelationX) sp.instanceList.get(i);
 			RelationY gold = (RelationY) sp.goldStructureList.get(i);
 			RelationY pred = (RelationY) model.infSolver.getBestStructure(
-					model.wv, sp.instanceList.get(i));
+					model.wv, x);
 			if(RelationY.getLoss(gold, pred) < 0.000001) {
 				acc += 1;
 			}
 			loss += RelationY.getLoss(gold, pred);
 			total += gold.relations.size();
+			printPrediction(x, gold, pred);
 		}
 		System.out.println("Structural Accuracy : = " + (1.0-(loss/total)));
 		System.out.println("Accuracy : = " + (acc/sp.instanceList.size()));
@@ -92,6 +96,14 @@ public class RelationDriver {
 		model.wv = learner.train(train);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
+	}
+	
+	public static void printPrediction(RelationX x, RelationY gold, RelationY pred) {
+		System.out.println("***************************");
+		System.out.println("Text : " + x.ta.getText());
+		System.out.println("Quantities : " + Arrays.asList(x.quantities));
+		System.out.println("Gold : " + Arrays.asList(gold.relations));
+		System.out.println("Pred : " + Arrays.asList(pred.relations));
 	}
 	
 	public static void main(String args[]) throws Exception {

@@ -57,10 +57,32 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 			RelationX blob, RelationY labelSet, int index) {
 		List<String> features = new ArrayList<>();
 		String prefix = labelSet.relations.get(index);
+		if(prefix.endsWith("1") || prefix.endsWith("2")) {
+			prefix = "R";
+		}
+		// Neighborhood tokens
 		QuantSpan qs = blob.quantities.get(index);
-		int pos = blob.ta.getTokenIdFromCharacterOffset(qs.start);
-		for(String feature : FeatGen.neighboringTokens(blob.lemmas, pos, 3)) {
-			features.add(prefix + "_" + feature);
+		int tokenId = blob.ta.getTokenIdFromCharacterOffset(qs.start);
+		if(!prefix.startsWith("R")) {
+			for(String feature : FeatGen.neighboringTokens(blob.lemmas, tokenId, 2)) {
+				features.add(prefix + "_" + feature);
+			}
+		}
+		// If its the first token of R nature
+		boolean Rbefore = false;
+		for(int i=0; i<index; i++) {
+			if(labelSet.relations.get(i).startsWith("R")) {
+				Rbefore = true;
+			}
+		}
+		features.add(prefix+"_Rbefore_"+Rbefore);
+		Sentence sent = blob.ta.getSentenceFromToken(tokenId);
+		for(int i=0; i<index; i++) {
+			QuantSpan quant = blob.quantities.get(i);
+			if(Tools.doesIntersect(new IntPair(quant.start, quant.end), 
+					new IntPair(sent.getStartSpan(), sent.getEndSpan()))) {
+				features.add(prefix+"_SameSentence_"+labelSet.relations.get(i));
+			}
 		}
 		return features;
 	}
