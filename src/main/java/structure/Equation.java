@@ -56,7 +56,6 @@ public class Equation implements Serializable {
 			if(ch == '=' || ch =='+' || (ch == '-' && !isSymbol(prevCh)) ||
 					i == eqString.length()-1) {
 				String term = eqString.substring(lastLoc, i);
-				System.out.println("Term : "+term);
 				Operation op = Operation.NONE;
 				if(lastLoc == 0 || eqString.charAt(lastLoc-1) == '+' 
 						|| eqString.charAt(lastLoc-1) == '=') {
@@ -98,7 +97,6 @@ public class Equation implements Serializable {
 				String number = term.substring(lastLoc, i);
 				try {
 					Double d = Double.parseDouble(number);
-					System.out.println("Number : "+d);
 					if(lastLoc == 0 || term.charAt(lastLoc-1) == '*') {
 						terms.get(index).add(
 								new Pair<Operation, Double>(Operation.MUL, d));

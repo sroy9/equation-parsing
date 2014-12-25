@@ -47,12 +47,12 @@ public class DocReader {
 				simulProb.extractQuestionsAndSolutions();
 				KnowledgeBase.appendWorldKnowledge(simulProb);
 				simulProb.extractQuantities(quantifier);
-				System.out.println(simulProb.index+" : "+simulProb.question);
-				System.out.println("Quantities :");
-				for(QuantSpan qs : simulProb.quantities) {
-					System.out.println(simulProb.question.substring(
-							qs.start, qs.end)+" : "+qs + " : "+Tools.getValue(qs));
-				}
+//				System.out.println(simulProb.index+" : "+simulProb.question);
+//				System.out.println("Quantities :");
+//				for(QuantSpan qs : simulProb.quantities) {
+//					System.out.println(simulProb.question.substring(
+//							qs.start, qs.end)+" : "+qs + " : "+Tools.getValue(qs));
+//				}
 				simulProb.extractEquations();
 				simulProb.extractRelations();
 				simulProb.checkSolver();

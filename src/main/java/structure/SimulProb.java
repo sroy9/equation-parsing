@@ -92,8 +92,8 @@ public class SimulProb {
 				}
 			}
 		}
-		System.out.println("Variable Names : "+Arrays.asList(variableNames));
-		if(variableNames.size() > 2) System.out.println("ISSUE HERE : "+index);
+//		System.out.println("Variable Names : "+Arrays.asList(variableNames));
+//		if(variableNames.size() > 2) System.out.println("ISSUE HERE : "+index);
 		
 		for(String var : variableNames.keySet()) {
 			variableNamesSorted.add(var);
@@ -131,9 +131,9 @@ public class SimulProb {
 	
 	public void checkSolver() throws Exception {
 		List<Double> solns = EquationSolver.solve(equations);
-		System.out.println("Gold solutions : "+Arrays.asList(solutions));
-		System.out.println("Predicted solutions : "+Arrays.asList(solns));
-		if(solns == null) System.out.println("Error : No solutions : "+index);
+//		System.out.println("Gold solutions : "+Arrays.asList(solutions));
+//		System.out.println("Predicted solutions : "+Arrays.asList(solns));
+//		if(solns == null) System.out.println("Error : No solutions : "+index);
 		for(Double d1 : solutions) {
 			boolean present = false;
 			for(Double d2 : solns) {
@@ -143,7 +143,7 @@ public class SimulProb {
 				}
 			}
 			if(!present) {
-				System.out.println("Error : Solutions not matching : "+index);
+//				System.out.println("Error : Solutions not matching : "+index);
 			}
 		}
 	}
