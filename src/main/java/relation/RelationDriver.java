@@ -52,7 +52,7 @@ public class RelationDriver {
 		for (SimulProb simulProb : simulProbList) {
 			for(int i=0; i<simulProb.quantities.size(); ++i) {
 				RelationX relationX = new RelationX(simulProb, i);
-				RelationY relationY = new RelationY(simulProb, i);
+				RelationY relationY = new RelationY(simulProb.relations.get(i));
 				problem.addExample(relationX, relationY);
 			}
 		}
@@ -62,8 +62,6 @@ public class RelationDriver {
 	private static void testModel(String modelPath, SLProblem sp)
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
-		double loss = 0.0;
-		double total = 0.0;
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			RelationX x = (RelationX) sp.instanceList.get(i);
@@ -73,11 +71,7 @@ public class RelationDriver {
 			if(RelationY.getLoss(gold, pred) < 0.000001) {
 				acc += 1;
 			}
-			loss += RelationY.getLoss(gold, pred);
-			total += gold.relations.size();
-			printPrediction(x, gold, pred);
 		}
-		System.out.println("Structural Accuracy : = " + (1.0-(loss/total)));
 		System.out.println("Accuracy : = " + (acc/sp.instanceList.size()));
 	}
 	
@@ -96,14 +90,6 @@ public class RelationDriver {
 		model.wv = learner.train(train);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
-	}
-	
-	public static void printPrediction(RelationX x, RelationY gold, RelationY pred) {
-		System.out.println("***************************");
-		System.out.println("Text : " + x.ta.getText());
-		System.out.println("Quantities : " + Arrays.asList(x.quantities));
-		System.out.println("Gold : " + Arrays.asList(gold.relations));
-		System.out.println("Pred : " + Arrays.asList(pred.relations));
 	}
 	
 	public static void main(String args[]) throws Exception {

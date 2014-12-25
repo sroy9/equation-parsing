@@ -50,30 +50,20 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			IInstance x, IStructure goldStructure) throws Exception {
 		RelationX prob = (RelationX) x;
 		RelationY gold = (RelationY) goldStructure;
-		
-		PairComparator<RelationY> latticePairComparator = 
-				new PairComparator<RelationY>() {};
-		BoundedPriorityQueue<Pair<RelationY, Double>> beam1 = 
-				new BoundedPriorityQueue<Pair<RelationY, Double>>(50, latticePairComparator);
-		BoundedPriorityQueue<Pair<RelationY, Double>> beam2 = 
-				new BoundedPriorityQueue<Pair<RelationY, Double>>(50, latticePairComparator);
-		
+		RelationY pred = new RelationY();
 		List<String> relations = Arrays.asList("R1", "R2", "BOTH", "NONE");
-		beam1.add(new Pair<RelationY, Double>(new RelationY(), 0.0));
-		for(int i=0; i<prob.quantities.size(); ++i) {
-			for(String relation : relations) {
-				for(Pair<RelationY, Double> pair : beam1) {
-					RelationY relationY = new RelationY(pair.getFirst());
-					relationY.addRelation(relation);
-					beam2.add(new Pair<RelationY, Double>(relationY, pair.getSecond()+
-							wv.dotProduct(featGen.getFeatureVector(prob, relationY, i))));
-				}
+		double maxScore = -Double.MAX_VALUE, score;
+		String bestRelation = null;
+		for(String relation : relations) {
+			pred = new RelationY(relation);
+			score = wv.dotProduct(featGen.getFeatureVector(prob, pred)) + 
+					(goldStructure == null ? 0 : RelationY.getLoss(gold, pred));
+			if(score > maxScore) {
+				maxScore = score;
+				bestRelation = relation;
 			}
-			beam1.clear();
-			beam1.addAll(beam2);
-			beam2.clear();
 		}
-//		System.out.println("Inferred : "+beam1.element().getFirst());
-		return beam1.element().getFirst();
+		pred = new RelationY(bestRelation);
+		return pred;
 	}
 }

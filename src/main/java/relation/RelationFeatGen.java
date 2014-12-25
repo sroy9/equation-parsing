@@ -40,48 +40,40 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		RelationX blob = (RelationX) arg0;
 		RelationY relationY= (RelationY) arg1;
 		List<String> features = new ArrayList<>();
-		for(int i=0; i<relationY.relations.size(); ++i) {
-			features.addAll(getFeatures(blob, relationY, i));
-		}
+		features.addAll(getFeatures(blob, relationY));
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 
 	// Cluster Features
 	public IFeatureVector getFeatureVector(
-			RelationX blob, RelationY labelSet, int index) {
-		List<String> feats = getFeatures(blob, labelSet, index);
+			RelationX blob, RelationY labelSet) {
+		List<String> feats = getFeatures(blob, labelSet);
 		return FeatGen.getFeatureVectorFromList(feats, lm);
 	}
 	
 	public List<String> getFeatures(
-			RelationX blob, RelationY labelSet, int index) {
+			RelationX blob, RelationY labelSet) {
 		List<String> features = new ArrayList<>();
-		String prefix = labelSet.relations.get(index);
-		if(prefix.endsWith("1") || prefix.endsWith("2")) {
-			prefix = "R";
-		}
 		// Neighborhood tokens
-		QuantSpan qs = blob.quantities.get(index);
+		QuantSpan qs = blob.quantities.get(blob.index);
 		int tokenId = blob.ta.getTokenIdFromCharacterOffset(qs.start);
-		if(!prefix.startsWith("R")) {
-			for(String feature : FeatGen.neighboringTokens(blob.lemmas, tokenId, 2)) {
-				features.add(prefix + "_" + feature);
-			}
+		for(String feature : FeatGen.neighboringTokens(blob.lemmas, tokenId, 2)) {
+			features.add(feature);
 		}
 		// If its the first token of R nature
 		boolean Rbefore = false;
-		for(int i=0; i<index; i++) {
-			if(labelSet.relations.get(i).startsWith("R")) {
+		for(int i=0; i<blob.index; i++) {
+			if(blob.relations.get(i).startsWith("R")) {
 				Rbefore = true;
 			}
 		}
-		features.add(prefix+"_Rbefore_"+Rbefore);
+		features.add("Rbefore_"+Rbefore);
 		Sentence sent = blob.ta.getSentenceFromToken(tokenId);
-		for(int i=0; i<index; i++) {
+		for(int i=0; i<blob.index; i++) {
 			QuantSpan quant = blob.quantities.get(i);
 			if(Tools.doesIntersect(new IntPair(quant.start, quant.end), 
 					new IntPair(sent.getStartSpan(), sent.getEndSpan()))) {
-				features.add(prefix+"_SameSentence_"+labelSet.relations.get(i));
+				features.add("SameSentence_"+blob.relations.get(i));
 			}
 		}
 		return features;
