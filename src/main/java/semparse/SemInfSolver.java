@@ -39,13 +39,13 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 
 	public static List<SemY> extractTemplates(SLProblem slProb) {
 		List<SemY> templates = new ArrayList<>();
+		Map<Integer, Integer> stats = new HashMap<Integer, Integer>();
 		for(IStructure struct : slProb.goldStructureList) {
 			SemY gold = (SemY) struct;
 			SemY eq1 = new SemY(gold);
 			for(int j=0; j<5; ++j) {
 				for(int k=0; k<eq1.terms.get(j).size(); ++k) {
 					eq1.terms.get(j).get(k).setSecond(null);
-					eq1.emptySlots.add(new IntPair(j, k));
 				}
 			}
 			boolean alreadyPresent = false;
@@ -55,7 +55,6 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 					if(eq1.terms.get(j).size() != eq2.terms.get(j).size()) {
 						diff = true; break;
 					}
-					if(diff) break;
 					for(int k=0; k<eq1.terms.get(j).size(); k++) {
 						if(eq1.terms.get(j).get(k).getFirst() != 
 								eq2.terms.get(j).get(k).getFirst()) {
@@ -63,12 +62,12 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 						}
 					}
 					if(diff) break;
-					for(int k=0; k<4; k++) {
-						if(eq1.operations.get(k) != eq2.operations.get(k)) {
-							diff = true; break;
-						}
+				}
+				for(int j=0; j<4; j++) {
+					if(eq1.operations.get(j) != eq2.operations.get(j)) {
+						diff = true; 
+						break;
 					}
-					if(diff) break;
 				}
 				if(!diff) {
 					alreadyPresent = true;
@@ -77,11 +76,16 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 			}
 			if(!alreadyPresent) {
 				eq1.templateNo = templates.size();
+				if(!stats.containsKey(eq1.emptySlots.size())) {
+					stats.put(eq1.emptySlots.size(), 0);
+				}
+				stats.put(eq1.emptySlots.size(), stats.get(eq1.emptySlots.size())+1);
 				templates.add(eq1);
 //				System.out.println("Template : "+eq1);
 			}
 		}
 		System.out.println("Number of templates : "+templates.size());
+		System.out.println("Stats : "+Arrays.asList(stats));
 		return templates;
 	}
 
@@ -107,21 +111,21 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		PairComparator<SemY> semPairComparator = 
 				new PairComparator<SemY>() {};
 		BoundedPriorityQueue<Pair<SemY, Double>> beam1 = 
-				new BoundedPriorityQueue<Pair<SemY, Double>>(50, semPairComparator);
+				new BoundedPriorityQueue<Pair<SemY, Double>>(200, semPairComparator);
 		BoundedPriorityQueue<Pair<SemY, Double>> beam2 = 
-				new BoundedPriorityQueue<Pair<SemY, Double>>(50, semPairComparator);
+				new BoundedPriorityQueue<Pair<SemY, Double>>(200, semPairComparator);
 		
 		Set<Double> availableNumbers = new HashSet<Double>();
 		for(Double d : Tools.uniqueNumbers(blob.relationQuantities)) {
 			availableNumbers.add(d);
 		}
-		System.out.println("Available numbers : "+availableNumbers.size());
+//		System.out.println("Available numbers : "+availableNumbers.size());
 		for(SemY template : templates) {
-			if(availableNumbers.size() >= template.emptySlots.size()) {
+			if(availableNumbers.size() == template.emptySlots.size()) {
 				beam1.add(new Pair<SemY, Double>(template, 0.0));
 			}
 		}
-		System.out.println("Beam1 : "+beam1.size());
+//		System.out.println("Beam1 : "+beam1.size());
 		for(Pair<SemY, Double> pair : beam1) {
 			for(SemY y : enumerateSemYs(availableNumbers, pair.getFirst())) {
 				beam2.add(new Pair<SemY, Double>(y, pair.getSecond() + 
@@ -133,6 +137,8 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	}
 	
 	public List<SemY> enumerateSemYs(Set<Double> availableNumbers, SemY seed) {
+//		System.out.println("Avail numbers : "+Arrays.asList(availableNumbers));
+//		System.out.println("Seed : "+seed);
 		List<SemY> list1 = new ArrayList<>();
 		list1.add(seed);
 		List<SemY> list2 = new ArrayList<>();
@@ -164,6 +170,8 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				}
 				if(!allow) break;
 			}
+//			System.out.println("Val : "+allow);
+//			System.out.println(y);
 			if(allow) list2.add(y);
 		}
 //		System.out.println("Enumerate : "+list2.size());

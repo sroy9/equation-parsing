@@ -77,7 +77,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		} else {
 			prefix = ""+y.operations.get(slot.getFirst())+"_AB1";
 		}
-		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3)) {
+		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 1)) {
 			features.add(prefix+"_"+feature);
 		}
 		for(String feature : FeatGen.neighboringTokens(sentLemmas, tokenId, 3)) {
