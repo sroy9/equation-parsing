@@ -162,7 +162,6 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				if(!allow) break;
 			}
 			if(allow) continue;
-			y.emptySlots.clear();
 			list2.add(y);
 		}
 		return list2;

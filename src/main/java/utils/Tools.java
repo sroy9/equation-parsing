@@ -105,7 +105,7 @@ public class Tools {
 		return uniqueNos;
 	}
 	
-	public List<IntPair> getRelevantSpans(Double d, List<QuantSpan> quantSpans) {
+	public static List<IntPair> getRelevantSpans(Double d, List<QuantSpan> quantSpans) {
 		List<IntPair> relevantSpans = new ArrayList<IntPair>();
 		for(QuantSpan qs : quantSpans) {
 			if(Tools.safeEquals(d, Tools.getValue(qs))) {

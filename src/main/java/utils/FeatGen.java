@@ -137,7 +137,7 @@ public class FeatGen {
 		return path;
 	}
 	
-	public List<Constituent> partialLemmas(
+	public static List<Constituent> partialLemmas(
 			List<Constituent> lemmas, int startPos, int endPos) {
 		List<Constituent> partialLemmas = new ArrayList<>();
 		for(Constituent cons : lemmas) {

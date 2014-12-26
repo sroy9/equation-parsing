@@ -6,6 +6,8 @@ import java.util.Map;
 
 import structure.SimulProb;
 import utils.Tools;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
@@ -19,25 +21,21 @@ public class SemX implements IInstance {
 	public List<Constituent> posTags;
 	public List<Constituent> lemmas;
 	public List<Constituent> dependencyParse;
+	public List<Pair<String, IntPair>> skeleton;
 	public List<QuantSpan> quantities;
 
 	public SemX(SimulProb simulProb, String relation) throws Exception {
 		quantities = simulProb.quantities;
+		relationQuantities = new ArrayList<>();
 		for(int i=0; i<simulProb.relations.size(); ++i) {
 			String str = simulProb.relations.get(i);
 			if(str.equals(relation) || str.equals("BOTH")) {
 				relationQuantities.add(quantities.get(i));
 			}
 		}
-		ta = new TextAnnotation("", "", simulProb.question);
-		posTags = Tools.curator.getTextAnnotationWithSingleView(
-				simulProb.question, ViewNames.POS, false)
-				.getView(ViewNames.POS).getConstituents();
-		lemmas = Tools.curator.getTextAnnotationWithSingleView(
-				simulProb.question, ViewNames.LEMMA, false)
-				.getView(ViewNames.LEMMA).getConstituents();
-//		dependencyParse = Tools.curator.getTextAnnotationWithSingleView(
-//				simulProb.question, ViewNames.DEPENDENCY, false)
-//				.getView(ViewNames.DEPENDENCY).getConstituents();
+		ta = simulProb.ta;
+		posTags = simulProb.posTags;
+		lemmas = simulProb.lemmas;
+		skeleton = simulProb.skeleton;
 	}
 }
