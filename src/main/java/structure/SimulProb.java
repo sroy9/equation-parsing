@@ -20,8 +20,10 @@ import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree;
+import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.Sentence;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
+import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
 import edu.illinois.cs.cogcomp.quant.standardize.Quantity;
@@ -36,7 +38,14 @@ public class SimulProb {
 	public List<Double> solutions;
 	public List<QuantSpan> quantities;
 	public List<String> relations;
-	
+	public TextAnnotation ta;
+	public List<Constituent> posTags;
+	public List<Constituent> lemmas;
+	public List<Constituent> chunks;
+	public List<Constituent> parse;
+	public List<Pair<String, IntPair>> skeleton;
+
+  	
 	public SimulProb(int index) {
 		this.index = index;
 		equations = new ArrayList<Equation>();
@@ -55,7 +64,7 @@ public class SimulProb {
 		}
 	}
 	
-	public void extractQuestionsAndSolutions() throws IOException {
+	public void extractQuestionsAndSolutions() throws Exception {
 		String fileName = Params.annotationDir + index + ".txt";
 		List<String> lines = FileUtils.readLines(new File(fileName));
 		question = lines.get(0);
@@ -179,6 +188,23 @@ public class SimulProb {
 		}
 	}
 	
+	public void extractAnnotations() throws Exception {
+		ta = new TextAnnotation("", "", question);
+		posTags = Tools.curator.getTextAnnotationWithSingleView(
+				question, ViewNames.POS, false)
+				.getView(ViewNames.POS).getConstituents();
+		lemmas = Tools.curator.getTextAnnotationWithSingleView(
+				question, ViewNames.LEMMA, false)
+				.getView(ViewNames.LEMMA).getConstituents();
+		chunks = Tools.curator.getTextAnnotationWithSingleView(
+				question, ViewNames.SHALLOW_PARSE, false)
+				.getView(ViewNames.SHALLOW_PARSE).getConstituents();
+		parse = Tools.curator.getTextAnnotationWithSingleView(
+				question, ViewNames.PARSE_STANFORD, false)
+				.getView(ViewNames.PARSE_STANFORD).getConstituents();
+		skeleton = Tools.getSkeleton(ta, posTags, parse, quantities);
+	}
+	
 	boolean isSpecialCase(int index, int quantNo) {
 		// Human annotation
 		if(index ==  1292 && quantNo == 0) {
@@ -247,6 +273,4 @@ public class SimulProb {
 		}
 		return false;
 	}
-	
-	
 }

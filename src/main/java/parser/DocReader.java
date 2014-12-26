@@ -13,6 +13,9 @@ import org.apache.commons.io.FileUtils;
 import com.google.gson.reflect.*;
 import com.google.gson.*;
 
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
 import structure.Equation;
@@ -47,7 +50,18 @@ public class DocReader {
 				simulProb.extractQuestionsAndSolutions();
 				KnowledgeBase.appendWorldKnowledge(simulProb);
 				simulProb.extractQuantities(quantifier);
-//				System.out.println(simulProb.index+" : "+simulProb.question);
+				simulProb.extractAnnotations();
+				System.out.println(simulProb.index+" : "+simulProb.question);
+				System.err.println(simulProb.index+" : "+simulProb.question); 
+				System.err.println("Parse : ");
+				for(Constituent cons : simulProb.parse) {
+					System.err.println(cons.getLabel()+" : "+cons.getSurfaceString());
+				}
+				System.out.println("Skeleton : ");
+				for(Pair<String, IntPair> pair : simulProb.skeleton) {
+					System.out.print(pair.getFirst()+" ");
+				}
+				System.out.println();
 //				System.out.println("Quantities :");
 //				for(QuantSpan qs : simulProb.quantities) {
 //					System.out.println(simulProb.question.substring(

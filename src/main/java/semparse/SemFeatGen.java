@@ -44,7 +44,6 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 
-	// Cluster Features
 	public IFeatureVector getFeatureVector(SemX x, SemY y) {
 		List<String> feats = getFeatures(x, y);
 		return FeatGen.getFeatureVectorFromList(feats, lm);
@@ -55,4 +54,9 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 	
+	public List<String> templateFeatures(SemX x, SemY y) {
+		List<String> features = new ArrayList<>();
+		
+		return features;
+	}
 }

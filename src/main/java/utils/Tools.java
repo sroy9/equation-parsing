@@ -9,6 +9,7 @@ import semparse.SemX;
 import structure.Operation;
 import curator.NewCachingCurator;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
@@ -113,4 +114,45 @@ public class Tools {
 		}
 		return relevantSpans;
 	}
+	
+	public static List<Pair<String, IntPair>> getSkeleton(
+			TextAnnotation ta, List<Constituent> posTags, List<Constituent> parse, 
+			List<QuantSpan> quantities) {
+		List<Pair<String, IntPair>> skeleton = new ArrayList<>();
+		int i=0;
+		while(i<ta.size()) {
+			Constituent npChunk = null;
+			int chunkWidth = 0; 
+			for(Constituent cons : parse) {
+				if(cons.getStartSpan() == i && cons.getLabel().equals("NP")) {
+					boolean allow = true;
+					for(QuantSpan qs : quantities) {
+						int tokenId = ta.getTokenIdFromCharacterOffset(qs.start);
+						if(tokenId >= cons.getStartSpan() && tokenId < cons.getEndSpan()) {
+							allow = false;
+							break;
+						}
+					}
+					if(allow && cons.getEndSpan() - cons.getStartSpan() > chunkWidth) {
+						npChunk = cons;
+						chunkWidth = cons.getEndSpan() - cons.getStartSpan();
+					}
+				}
+			}
+			if(npChunk != null) {
+				skeleton.add(new Pair<String, IntPair>("NP", new IntPair(
+						npChunk.getStartSpan(), npChunk.getEndSpan())));
+				i = npChunk.getEndSpan();
+				continue;
+			}
+//			if(posTags.get(i).getLabel().startsWith("NN")) {
+//				skeleton.add(new Pair<String, IntPair>("NN", new IntPair(i, i+1)));
+//			} else {
+				skeleton.add(new Pair<String, IntPair>(ta.getToken(i), new IntPair(i, i+1)));
+//			}
+			i++;
+		}
+		return skeleton;
+	}
+	
 }

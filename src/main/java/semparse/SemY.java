@@ -15,6 +15,7 @@ public class SemY extends Equation implements IStructure, Serializable {
 	
 	private static final long serialVersionUID = 2399969922362221136L;
 	List<IntPair> emptySlots;
+	int templateNo;
 	
 	public SemY() {
 		super();
@@ -29,12 +30,14 @@ public class SemY extends Equation implements IStructure, Serializable {
 	public SemY(SemY other) {
 		super(other);
 		emptySlots = new ArrayList<IntPair>();
+		templateNo = other.templateNo;
 		for(IntPair slot : emptySlots) {
 			emptySlots.add(slot);
 		}
 	}
 	
 	public static float getLoss(SemY y1, SemY y2) {
+		assert y1.templateNo == y2.templateNo;
 		float loss = 0.0f;
 		for(int i=0; i<y1.terms.size(); i++) {
 			List<Pair<Operation, Double>> pairList = y1.terms.get(i);
