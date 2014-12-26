@@ -44,7 +44,6 @@ public class SimulProb {
 	public List<Constituent> chunks;
 	public List<Constituent> parse;
 	public List<Pair<String, IntPair>> skeleton;
-
   	
 	public SimulProb(int index) {
 		this.index = index;
@@ -202,7 +201,7 @@ public class SimulProb {
 		parse = Tools.curator.getTextAnnotationWithSingleView(
 				question, ViewNames.PARSE_STANFORD, false)
 				.getView(ViewNames.PARSE_STANFORD).getConstituents();
-		skeleton = Tools.getSkeleton(ta, posTags, parse, quantities);
+		skeleton = Tools.getSkeleton(ta, lemmas, parse, quantities);
 	}
 	
 	boolean isSpecialCase(int index, int quantNo) {

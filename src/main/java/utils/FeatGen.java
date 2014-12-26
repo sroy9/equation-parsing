@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.commons.lang.math.NumberUtils;
 
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.Sentence;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
@@ -136,15 +137,70 @@ public class FeatGen {
 		return path;
 	}
 	
+	public List<Constituent> partialLemmas(
+			List<Constituent> lemmas, int startPos, int endPos) {
+		List<Constituent> partialLemmas = new ArrayList<>();
+		for(Constituent cons : lemmas) {
+			if(cons.getStartSpan()>=startPos && cons.getEndSpan()<=endPos) {
+				partialLemmas.add(cons);
+			}
+		}
+		return partialLemmas;
+	}
+	
 	public static List<String> neighboringTokens(
 			List<Constituent> lemmas, int pos, int window) {
 		List<String> features = new ArrayList<String>();
 		List<String> unigrams = getLemmatizedUnigrams(lemmas, 0, lemmas.size()-1);
-		int start = Math.max(0, pos-window);
-		int end = Math.min(pos+window, lemmas.size()-1);
+		int index = -1;
+		for(int i=0; i<lemmas.size(); i++) {
+			Constituent cons = lemmas.get(i);
+			if(pos >= cons.getStartSpan() && pos < cons.getEndSpan()) {
+				index = i;
+				break;
+			}
+		}
+		int start = Math.max(0, index-window);
+		int end = Math.min(index+window, lemmas.size()-1);
 		for(int ngram = 0; ngram <= 2; ngram++) {
 			for(int i=start; i<=end-ngram; i++) {
 				features.add(i+"_"+(i+ngram)+"_"+unigrams.get(i)+"_"+unigrams.get(i+ngram));
+				features.add(unigrams.get(i)+"_"+unigrams.get(i+ngram));
+			}
+		}	
+		return features;
+	}
+	
+	public static List<Pair<String, IntPair>> getPartialSkeleton(
+			List<Pair<String, IntPair>> skeleton, int startPos, int endPos) {
+		List<Pair<String, IntPair>> partialSkeleton = new ArrayList<>();
+		for(Pair<String, IntPair> pair : skeleton) {
+			if(pair.getSecond().getFirst()>=startPos && pair.getSecond().getSecond()<=endPos) {
+				partialSkeleton.add(pair);
+			}
+		}
+		return partialSkeleton;
+	}
+	
+ 	public static List<String> neighboringSkeletonTokens(
+			List<Pair<String, IntPair>> skeleton, int pos, int window) {
+		List<String> features = new ArrayList<>();
+		int index = -1;
+		for(int i=0; i<skeleton.size(); i++) {
+			Pair<String, IntPair> pair = skeleton.get(i);
+			if(pos >= pair.getSecond().getFirst() && pos < pair.getSecond().getSecond()) {
+				index = i;
+				break;
+			}
+		}
+		int start = Math.max(0, index-window);
+		int end = Math.min(index+window, skeleton.size()-1);
+		for(int ngram = 0; ngram <= 2; ngram++) {
+			for(int i=start; i<=end-ngram; i++) {
+				features.add(i+"_"+(i+ngram)+"_"+skeleton.get(i).getFirst()+"_"+
+						skeleton.get(i+ngram).getFirst());
+				features.add(skeleton.get(i).getFirst()+"_"+
+						skeleton.get(i+ngram).getFirst());
 			}
 		}	
 		return features;

@@ -51,17 +51,17 @@ public class DocReader {
 				KnowledgeBase.appendWorldKnowledge(simulProb);
 				simulProb.extractQuantities(quantifier);
 				simulProb.extractAnnotations();
-				System.out.println(simulProb.index+" : "+simulProb.question);
-				System.err.println(simulProb.index+" : "+simulProb.question); 
-				System.err.println("Parse : ");
-				for(Constituent cons : simulProb.parse) {
-					System.err.println(cons.getLabel()+" : "+cons.getSurfaceString());
-				}
-				System.out.println("Skeleton : ");
-				for(Pair<String, IntPair> pair : simulProb.skeleton) {
-					System.out.print(pair.getFirst()+" ");
-				}
-				System.out.println();
+//				System.out.println(simulProb.index+" : "+simulProb.question);
+//				System.err.println(simulProb.index+" : "+simulProb.question); 
+//				System.err.println("Parse : ");
+//				for(Constituent cons : simulProb.parse) {
+//					System.err.println(cons.getLabel()+" : "+cons.getSurfaceString());
+//				}
+//				System.out.println("Skeleton : ");
+//				for(Pair<String, IntPair> pair : simulProb.skeleton) {
+//					System.out.print(pair.getFirst()+" ");
+//				}
+//				System.out.println();
 //				System.out.println("Quantities :");
 //				for(QuantSpan qs : simulProb.quantities) {
 //					System.out.println(simulProb.question.substring(

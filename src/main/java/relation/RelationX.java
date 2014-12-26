@@ -6,6 +6,8 @@ import java.util.Map;
 
 import structure.SimulProb;
 import utils.Tools;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
@@ -19,6 +21,7 @@ public class RelationX implements IInstance {
 	public List<Constituent> lemmas;
 	public List<QuantSpan> quantities;
 	public List<String> relations;
+	public List<Pair<String, IntPair>> skeleton;
 	public int index;
 
 	public RelationX(SimulProb simulProb, int index) throws Exception {
@@ -27,6 +30,7 @@ public class RelationX implements IInstance {
 		ta = simulProb.ta;
 		posTags = simulProb.posTags;
 		lemmas = simulProb.lemmas;
+		skeleton = simulProb.skeleton;
 		relations = new ArrayList<>();
 		for(int i=0; i<index; i++) {
 			relations.add(simulProb.relations.get(i));

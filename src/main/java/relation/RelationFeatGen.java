@@ -61,6 +61,9 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		for(String feature : FeatGen.neighboringTokens(blob.lemmas, tokenId, 3)) {
 			features.add(prefix+"_"+feature);
 		}
+		for(String feature : FeatGen.neighboringSkeletonTokens(blob.skeleton, tokenId, 3)) {
+			features.add(prefix+"_"+feature);
+		}
 		// If its the first token of R nature
 		boolean Rbefore = false;
 		for(int i=0; i<blob.index; i++) {
