@@ -53,7 +53,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	
 	public List<String> getFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
-		features.addAll(templateFeatures(x, y));
+//		features.addAll(templateFeatures(x, y));
 		for(IntPair slot : y.emptySlots) {
 			features.addAll(alignmentFeatures(x, y, slot));
 		}
@@ -64,17 +64,23 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = new ArrayList<>();
 		Double d = y.terms.get(slot.getFirst()).get(slot.getSecond()).getSecond();
 		List<IntPair> quantSpans = Tools.getRelevantSpans(d, x.relationQuantities);
-		int tokenId = x.ta.getTokenIdFromCharacterOffset(
-				quantSpans.get(0).getFirst());
+		int tokenId = x.ta.getTokenIdFromCharacterOffset(quantSpans.get(0).getFirst());
 		Sentence sent = x.ta.getSentenceFromToken(tokenId);
+		List<Constituent> sentLemmas = FeatGen.partialLemmas(
+				x.lemmas, sent.getStartSpan(), sent.getEndSpan());
 		List<Pair<String, IntPair>> sentSkeleton = FeatGen.getPartialSkeleton(
 				x.skeleton, sent.getStartSpan(), sent.getEndSpan());
 		String prefix;
 		if(slot.getFirst() == 4) prefix = ""+slot.getFirst();
-		else {
-			prefix = ""+slot.getFirst()+"_"+y.operations.get(slot.getFirst());
+		else if(slot.getFirst() == 1 || slot.getFirst() == 3){
+			prefix = ""+y.operations.get(slot.getFirst())+"_AB2";
+		} else {
+			prefix = ""+y.operations.get(slot.getFirst())+"_AB1";
 		}
 		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3)) {
+			features.add(prefix+"_"+feature);
+		}
+		for(String feature : FeatGen.neighboringTokens(sentLemmas, tokenId, 3)) {
 			features.add(prefix+"_"+feature);
 		}
 		return features;

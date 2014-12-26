@@ -53,10 +53,14 @@ public class SemDriver {
 		for (SimulProb simulProb : simulProbList) {
 			SemX semX = new SemX(simulProb, "R1");
 			SemY semY = new SemY(simulProb.equations.get(0));
-			problem.addExample(semX, semY);
+			if(semY.emptySlots.size() > 0) {
+				problem.addExample(semX, semY);	
+			}
 			semX = new SemX(simulProb, "R2");
 			semY = new SemY(simulProb.equations.get(1));
-			problem.addExample(semX, semY);
+			if(semY.emptySlots.size() > 0) {
+				problem.addExample(semX, semY);	
+			}
 		}
 		return problem;
 	}
@@ -67,10 +71,17 @@ public class SemDriver {
 		double acc = 0.0;
 		double total = sp.instanceList.size();
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			SemX blob = (SemX) sp.instanceList.get(i);
+			SemX prob = (SemX) sp.instanceList.get(i);
 			SemY gold = (SemY) sp.goldStructureList.get(i);
 			SemY pred = (SemY) model.infSolver.getBestStructure(
 					model.wv, sp.instanceList.get(i));
+			System.out.println("Text : "+prob.ta.getText());
+			System.out.println("Skeleton : "+Tools.skeletonString(prob.skeleton));
+			System.out.println("Gold : \n"+gold);
+			System.out.println("Gold weight : "+model.wv.dotProduct(model.featureGenerator.getFeatureVector(prob, gold)));
+			System.out.println("Pred : \n"+pred);
+			System.out.println("Pred weight : "+model.wv.dotProduct(model.featureGenerator.getFeatureVector(prob, pred)));
+			System.out.println("Loss : "+SemY.getLoss(gold, pred));
 			if (SemY.getLoss(gold, pred) < 0.00001) {
 				acc += 1.0;
 			}

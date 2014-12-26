@@ -78,6 +78,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 			if(!alreadyPresent) {
 				eq1.templateNo = templates.size();
 				templates.add(eq1);
+//				System.out.println("Template : "+eq1);
 			}
 		}
 		System.out.println("Number of templates : "+templates.size());
@@ -102,7 +103,6 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 			IInstance x, IStructure goldStructure) throws Exception {
 		SemX blob = (SemX) x;
 		SemY gold = (SemY) goldStructure;
-		SemY pred = new SemY();
 
 		PairComparator<SemY> semPairComparator = 
 				new PairComparator<SemY>() {};
@@ -115,17 +115,18 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		for(Double d : Tools.uniqueNumbers(blob.relationQuantities)) {
 			availableNumbers.add(d);
 		}
-		
+		System.out.println("Available numbers : "+availableNumbers.size());
 		for(SemY template : templates) {
 			if(availableNumbers.size() >= template.emptySlots.size()) {
 				beam1.add(new Pair<SemY, Double>(template, 0.0));
 			}
 		}
-		
+		System.out.println("Beam1 : "+beam1.size());
 		for(Pair<SemY, Double> pair : beam1) {
 			for(SemY y : enumerateSemYs(availableNumbers, pair.getFirst())) {
 				beam2.add(new Pair<SemY, Double>(y, pair.getSecond() + 
-						wv.dotProduct(featGen.getFeatureVector(blob, y))));		
+						wv.dotProduct(featGen.getFeatureVector(blob, y)) + 
+						(goldStructure == null ? 0.0 : SemY.getLoss(y, gold))));		
 			}
 		}
 		return beam2.element().getFirst();
@@ -136,10 +137,12 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		list1.add(seed);
 		List<SemY> list2 = new ArrayList<>();
 		for(IntPair slot : seed.emptySlots) {
-			for(Double d : availableNumbers) {
-				SemY y = new SemY(seed);
-				y.terms.get(slot.getFirst()).get(slot.getSecond()).setSecond(d);
-				list2.add(y);
+			for(SemY y1 : list1) {
+				for(Double d : availableNumbers) {
+					SemY y = new SemY(y1);
+					y.terms.get(slot.getFirst()).get(slot.getSecond()).setSecond(d);
+					list2.add(y);
+				}
 			}
 			list1.clear();
 			list1.addAll(list2);
@@ -161,9 +164,9 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				}
 				if(!allow) break;
 			}
-			if(allow) continue;
-			list2.add(y);
+			if(allow) list2.add(y);
 		}
+//		System.out.println("Enumerate : "+list2.size());
 		return list2;
 	}
 		

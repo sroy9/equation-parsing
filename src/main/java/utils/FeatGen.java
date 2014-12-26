@@ -164,7 +164,7 @@ public class FeatGen {
 		int end = Math.min(index+window, lemmas.size()-1);
 		for(int ngram = 0; ngram <= 2; ngram++) {
 			for(int i=start; i<=end-ngram; i++) {
-				features.add(i+"_"+(i+ngram)+"_"+unigrams.get(i)+"_"+unigrams.get(i+ngram));
+				features.add((index-i)+"_"+(index-i+ngram)+"_"+unigrams.get(i)+"_"+unigrams.get(i+ngram));
 				features.add(unigrams.get(i)+"_"+unigrams.get(i+ngram));
 			}
 		}	

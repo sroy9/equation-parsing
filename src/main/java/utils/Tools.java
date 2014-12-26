@@ -152,4 +152,11 @@ public class Tools {
 		return skeleton;
 	}
 	
+	public static String skeletonString(List<Pair<String, IntPair>> skeleton) {
+		String str = "";
+		for(Pair<String, IntPair> pair : skeleton) {
+			str += pair.getFirst()+" ";
+		}
+		return str.trim();
+	}
 }

@@ -148,10 +148,11 @@ public class Equation implements Serializable {
 		for(int i=0; i<5; ++i) {
 			List<Pair<Operation, Double>> list = terms.get(i);
 			for(Pair<Operation, Double> pair : list) {
-				str+="["+pair.getFirst()+" "+pair.getSecond()+"] ";
+				str+=i+" : ["+pair.getFirst()+" "+pair.getSecond()+"] ";
 			}
-			str+="\n";
+			str+="\n";	
 		}
+		str+="Op : "+Arrays.asList(operations)+"\n";
 		return str;
 	}
 	
