@@ -75,7 +75,10 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 					break;
 				}
 			}
-			if(!alreadyPresent) templates.add(eq1);
+			if(!alreadyPresent) {
+				eq1.templateNo = templates.size();
+				templates.add(eq1);
+			}
 		}
 		System.out.println("Number of templates : "+templates.size());
 		return templates;
