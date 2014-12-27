@@ -54,7 +54,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	
 	public List<String> getFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
-//		features.addAll(templateFeatures(x, y));
+		features.addAll(templateFeatures(x, y));
 		for(IntPair slot : y.emptySlots) {
 			features.addAll(alignmentFeatures(x, y, slot));
 		}
@@ -157,16 +157,18 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		for(int i=0; i<4; ++i) {
 			for(Integer j : relevantSentenceIds) {
 				Sentence sent = x.ta.getSentence(j);
-//				List<Pair<String, IntPair>> skeleton = Tools.getSkeleton(
-//						x.ta, x.lemmas, x.posTags, x.parse, x.quantities);
 				String prefix = i+"_"+y.operations.get(i);
-				for(String feature : FeatGen.getLemmatizedUnigrams(
-						x.lemmas, sent.getStartSpan(), sent.getEndSpan()-1)) {
-					features.add(prefix+"_SentUnigram_"+feature);
+				if(sent.getText().contains("difference")) {
+					features.add(prefix+"_DIFFERENCE MENTIONED");
 				}
-				for(String feature : FeatGen.getLemmatizedBigrams(
-						x.lemmas, sent.getStartSpan(), sent.getEndSpan()-1)) {
-					features.add(prefix+"_SentBigram_"+feature);
+				if(sent.getText().contains("sum") || sent.getText().contains("total")) {
+					features.add(prefix+"_SUM_MENTIONED");
+				}
+				if(sent.getText().contains("more than") || sent.getText().contains("greater than")) {
+					features.add(prefix+"_GREATER_MENTIONED");
+				}
+				if(sent.getText().contains("less than")) {
+					features.add(prefix+"_LESS_MENTIONED");
 				}
 			}
 		}
