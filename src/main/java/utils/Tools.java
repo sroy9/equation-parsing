@@ -118,6 +118,13 @@ public class Tools {
 	public static List<Pair<String, IntPair>> getSkeleton(
 			TextAnnotation ta, List<Constituent> lemmas, List<Constituent> parse, 
 			List<QuantSpan> quantities) {
+		return getSkeleton(ta, lemmas, null, parse, quantities);
+	}
+	
+	public static List<Pair<String, IntPair>> getSkeleton(
+			TextAnnotation ta, List<Constituent> lemmas, List<Constituent> posTags,
+			List<Constituent> parse, 
+			List<QuantSpan> quantities) {
 		List<Pair<String, IntPair>> skeleton = new ArrayList<>();
 		List<String> unigrams = FeatGen.getLemmatizedUnigrams(lemmas, 0, ta.size()-1);
 		int i=0;
@@ -146,7 +153,13 @@ public class Tools {
 				i = npChunk.getEndSpan();
 				continue;
 			}
-			skeleton.add(new Pair<String, IntPair>(unigrams.get(i), new IntPair(i, i+1)));
+			if(posTags == null || (!posTags.get(i).getLabel().startsWith("NN") && 
+					!posTags.get(i).getLabel().startsWith("VB"))) {
+				skeleton.add(new Pair<String, IntPair>(unigrams.get(i), new IntPair(i, i+1)));
+			} else {
+				skeleton.add(new Pair<String, IntPair>(posTags.get(i).getLabel().substring(0, 2), 
+						new IntPair(i, i+1)));
+			}
 			i++;
 		}
 		return skeleton;

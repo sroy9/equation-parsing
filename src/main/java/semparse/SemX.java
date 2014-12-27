@@ -20,6 +20,7 @@ public class SemX implements IInstance {
 	public List<QuantSpan> relationQuantities;
 	public List<Constituent> posTags;
 	public List<Constituent> lemmas;
+	public List<Constituent> parse;
 	public List<Constituent> dependencyParse;
 	public List<Pair<String, IntPair>> skeleton;
 	public List<QuantSpan> quantities;
@@ -36,6 +37,7 @@ public class SemX implements IInstance {
 		ta = simulProb.ta;
 		posTags = simulProb.posTags;
 		lemmas = simulProb.lemmas;
+		parse = simulProb.parse;
 		skeleton = simulProb.skeleton;
 	}
 }

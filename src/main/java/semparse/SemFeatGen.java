@@ -53,6 +53,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	
 	public List<String> getFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
+		features.addAll(templateFeatures(x, y));
 		for(IntPair slot : y.emptySlots) {
 			features.addAll(alignmentFeatures(x, y, slot));
 		}
@@ -121,15 +122,54 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		if(sent1.getSentenceId() == sent2.getSentenceId()) {
 			List<Pair<String, IntPair>> skeleton = FeatGen.getPartialSkeleton(
 					x.skeleton, Math.min(tokenId1, tokenId2), Math.max(tokenId1, tokenId2)+1);
-			for(int i=0; i<skeleton.size(); ++i) {
-				features.add(prefix+"_MidUnigram_"+skeleton.get(i).getFirst());
+			boolean numberInBetween = false;
+			for(int i=2; i<skeleton.size()-2; ++i) {
+				if(skeleton.get(i).getFirst().equals("NUMBER")) {
+					numberInBetween = true;
+					features.add(prefix+"_NUMBER_IN_BETWEEN");
+					break;
+				}
 			}
-			for(int i=0; i<skeleton.size()-1; ++i) {
-				features.add(prefix+"_MidBigram_"+skeleton.get(i).getFirst()
-						+"_"+skeleton.get(i+1).getFirst());
+			if(!numberInBetween) {
+				for(int i=0; i<skeleton.size(); ++i) {
+					features.add(prefix+"_MidUnigram_"+skeleton.get(i).getFirst());
+				}
+				for(int i=0; i<skeleton.size()-1; ++i) {
+					features.add(prefix+"_MidBigram_"+skeleton.get(i).getFirst()
+							+"_"+skeleton.get(i+1).getFirst());
+				}
 			}
 		}
-		
+		return features;
+	}
+	
+	public List<String> templateFeatures(SemX x, SemY y) {
+		List<String> features = new ArrayList<>();
+		Set<Integer> relevantSentenceIds = new HashSet<>();
+		for(IntPair slot : y.emptySlots) {
+			Double d = y.terms.get(slot.getFirst()).get(slot.getSecond()).getSecond();
+			List<IntPair> quantSpans = Tools.getRelevantSpans(d, x.relationQuantities);
+			int tokenId = x.ta.getTokenIdFromCharacterOffset(quantSpans.get(0).getFirst());
+			Sentence sent = x.ta.getSentenceFromToken(tokenId);
+			relevantSentenceIds.add(sent.getSentenceId());
+		}
+		for(int i=0; i<4; ++i) {
+			for(Integer j : relevantSentenceIds) {
+				Sentence sent = x.ta.getSentence(j);
+//				List<Pair<String, IntPair>> skeleton = Tools.getSkeleton(
+//						x.ta, x.lemmas, x.posTags, x.parse, x.quantities);
+				List<Pair<String, IntPair>> sentSkeleton = FeatGen.getPartialSkeleton(
+						x.skeleton, sent.getStartSpan(), sent.getEndSpan());
+				String prefix = i+"_"+y.operations.get(i);
+				for(int k=0; k<sentSkeleton.size(); ++k) {
+					features.add(prefix+"_SentUnigram_"+sentSkeleton.get(k).getFirst());
+				}
+				for(int k=0; k<sentSkeleton.size()-1; ++k) {
+					features.add(prefix+"_SentBigram_"+sentSkeleton.get(k).getFirst()
+							+"_"+sentSkeleton.get(k+1).getFirst());
+				}
+			}
+		}
 		return features;
 	}
 }
