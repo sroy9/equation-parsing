@@ -68,16 +68,7 @@ public class SemY extends Equation implements IStructure, Serializable {
 			List<Pair<Operation, Double>> pairList2 = y2.terms.get(i);
 			if(pairList1.size() != pairList2.size()) loss += 4.0;
 			else {
-				for(int j=0; j<pairList1.size(); ++j) {
-					Pair<Operation, Double> pair1 = pairList1.get(j);
-					Pair<Operation, Double> pair2 = pairList2.get(j);
-					if(!Tools.safeEquals(pair1.getSecond(), pair2.getSecond())) {
-						loss += 1;
-					}
-					if(pair1.getFirst() != pair2.getFirst()) {
-						loss += 1;
-					}
-				}
+				loss += getLossPairLists(pairList1, pairList2);
 			}
 		}
 		for(int i=0; i<4; ++i) {
@@ -86,5 +77,41 @@ public class SemY extends Equation implements IStructure, Serializable {
 			}
 		}
 		return loss;
+	}
+	
+	public static float getLossPairLists(List<Pair<Operation, Double>> pairList1,
+			List<Pair<Operation, Double>> pairList2) {
+		if(pairList1.size() == 0) {
+			return 0.0f;
+		}
+		if(pairList1.size() == 1) {
+			float loss = 0.0f;
+			Pair<Operation, Double> pair1 = pairList1.get(0);
+			Pair<Operation, Double> pair2 = pairList2.get(0);
+			if(pair1.getFirst() != pair2.getFirst()) loss += 1.0;
+			if(!Tools.safeEquals(pair1.getSecond(), pair2.getSecond())) loss += 1.0;
+			return loss;
+		} 
+		if(pairList2.size() == 2) {
+			float loss1 = 0.0f, loss2 = 0.0f;
+			Pair<Operation, Double> pair1 = pairList1.get(0);
+			Pair<Operation, Double> pair2 = pairList2.get(0);
+			if(pair1.getFirst() != pair2.getFirst()) loss1 += 1.0;
+			if(!Tools.safeEquals(pair1.getSecond(), pair2.getSecond())) loss1 += 1.0;
+			pair1 = pairList1.get(1);
+			pair2 = pairList2.get(1);
+			if(pair1.getFirst() != pair2.getFirst()) loss1 += 1.0;
+			if(!Tools.safeEquals(pair1.getSecond(), pair2.getSecond())) loss1 += 1.0;
+			pair1 = pairList1.get(0);
+			pair2 = pairList2.get(1);
+			if(pair1.getFirst() != pair2.getFirst()) loss2 += 1.0;
+			if(!Tools.safeEquals(pair1.getSecond(), pair2.getSecond())) loss2 += 1.0;
+			pair1 = pairList1.get(1);
+			pair2 = pairList2.get(0);
+			if(pair1.getFirst() != pair2.getFirst()) loss2 += 1.0;
+			if(!Tools.safeEquals(pair1.getSecond(), pair2.getSecond())) loss2 += 1.0;
+			return Math.min(loss1, loss2);
+		}
+		return 0.0f;
 	}
 }

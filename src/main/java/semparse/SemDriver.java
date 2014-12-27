@@ -75,17 +75,18 @@ public class SemDriver {
 			SemY gold = (SemY) sp.goldStructureList.get(i);
 			SemY pred = (SemY) model.infSolver.getBestStructure(
 					model.wv, sp.instanceList.get(i));
-			System.out.println("Text : "+prob.ta.getText());
-			System.out.println("Skeleton : "+Tools.skeletonString(prob.skeleton));
-			System.out.println("Gold : \n"+gold);
-			System.out.println("Gold weight : "+model.wv.dotProduct(
-					model.featureGenerator.getFeatureVector(prob, gold)));
-			System.out.println("Pred : \n"+pred);
-			System.out.println("Pred weight : "+model.wv.dotProduct(
-					model.featureGenerator.getFeatureVector(prob, pred)));
-			System.out.println("Loss : "+SemY.getLoss(gold, pred));
 			if (SemY.getLoss(gold, pred) < 0.00001) {
 				acc += 1.0;
+			} else {
+				System.out.println("Text : "+prob.ta.getText());
+				System.out.println("Skeleton : "+Tools.skeletonString(prob.skeleton));
+				System.out.println("Gold : \n"+gold);
+				System.out.println("Gold weight : "+model.wv.dotProduct(
+						model.featureGenerator.getFeatureVector(prob, gold)));
+				System.out.println("Pred : \n"+pred);
+				System.out.println("Pred weight : "+model.wv.dotProduct(
+						model.featureGenerator.getFeatureVector(prob, pred)));
+				System.out.println("Loss : "+SemY.getLoss(gold, pred));
 			}
 		}
 		System.out.println("Accuracy : " + acc + " / " + total + " = "
