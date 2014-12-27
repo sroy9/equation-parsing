@@ -39,8 +39,7 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
 		RelationX blob = (RelationX) arg0;
 		RelationY relationY= (RelationY) arg1;
-		List<String> features = new ArrayList<>();
-		features.addAll(getFeatures(blob, relationY));
+		List<String> features = getFeatures(blob, relationY);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 
@@ -50,36 +49,60 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(feats, lm);
 	}
 	
-	public List<String> getFeatures(
-			RelationX blob, RelationY labelSet) {
+	public List<String> getFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
-		String prefix = labelSet.relation;
-		// Neighborhood tokens
-		QuantSpan qs = blob.quantities.get(blob.index);
-		int tokenId = blob.ta.getTokenIdFromCharacterOffset(qs.start);
-		for(String feature : FeatGen.neighboringTokens(blob.lemmas, tokenId, 3)) {
-			features.add(prefix+"_"+feature);
-		}
-		for(String feature : FeatGen.neighboringSkeletonTokens(blob.skeleton, tokenId, 3)) {
-			features.add(prefix+"_"+feature);
-		}
-		// If its the first token of R nature
-		boolean Rbefore = false;
-		for(int i=0; i<blob.index; i++) {
-			if(blob.relations.get(i).startsWith("R")) {
-				Rbefore = true;
-			}
-		}
-		features.add(prefix+"_"+"Rbefore_"+Rbefore);
-		Sentence sent = blob.ta.getSentenceFromToken(tokenId);
-		if(sent.getSentenceId() == 0) features.add(prefix+"_"+"First_Sentence");
-		for(int i=0; i<blob.index; i++) {
-			QuantSpan quant = blob.quantities.get(i);
-			if(Tools.doesIntersect(new IntPair(quant.start, quant.end), 
-					new IntPair(sent.getStartSpan(), sent.getEndSpan()))) {
-				features.add(prefix+"_"+"SameSentence_"+blob.relations.get(i));
-			}
+		features.addAll(singleFeatures(x, y));
+		for(int i=0; i<x.index; i++) {
+			features.addAll(pairwiseFeatures(x, y, i));
 		}
 		return features;
 	}
+	
+	public List<String> singleFeatures(RelationX x, RelationY labelSet) {
+		List<String> features = new ArrayList<>();
+		String prefix = labelSet.relation.substring(0,1);
+		QuantSpan qs = x.quantities.get(x.index);
+		int tokenId = x.ta.getTokenIdFromCharacterOffset(qs.start);
+		Sentence sent = x.ta.getSentenceFromToken(tokenId);
+		List<Pair<String, IntPair>> sentSkeleton = FeatGen.getPartialSkeleton(
+				x.skeleton, sent.getStartSpan(), sent.getEndSpan());
+		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3)) {
+			features.add(prefix+"_"+feature);
+		}
+		for(int i=0; i<sentSkeleton.size(); ++i) {
+			features.add(prefix+"_SentUnigram_"+sentSkeleton.get(i).getFirst());
+		}
+		for(int i=0; i<sentSkeleton.size()-1; ++i) {
+			features.add(prefix+"_SentBigram_"+sentSkeleton.get(i).getFirst()
+					+"_"+sentSkeleton.get(i+1).getFirst());
+		}
+		boolean Rbefore = false;
+		for(int i=0; i<x.index; i++) {
+			if(x.relations.get(i).startsWith("R")) {
+				Rbefore = true;
+			}
+		}
+		features.add(labelSet.relation+"_"+"Rbefore_"+Rbefore);
+		return features;
+	}
+	
+	public List<String> pairwiseFeatures(RelationX x, RelationY y, int index) {
+		List<String> features = new ArrayList<>();
+		String prefix = "";
+		if(y.relation.equals("R1") && x.relations.get(index).equals("R1")) {
+			prefix = "SAME";
+		} else if(y.relation.equals("R2") && x.relations.get(index).equals("R2")) {
+			prefix = "SAME";
+		} else if(y.relation.equals("R1") && x.relations.get(index).equals("R2")) {
+			prefix = "DIFF";
+		} else if(y.relation.equals("R2") && x.relations.get(index).equals("R1")) {
+			prefix = "DIFF";
+		} else {
+			return features;
+		}
+		return features;
+	}
+	
+	
+	
 }

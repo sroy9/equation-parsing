@@ -27,4 +27,9 @@ public class RelationY implements IStructure, Serializable {
 		}
 		return loss;
 	}
+	
+	@Override
+	public String toString() {
+		return relation;
+	}
 }

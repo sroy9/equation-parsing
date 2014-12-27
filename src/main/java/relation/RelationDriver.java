@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import parser.DocReader;
+import semparse.SemY;
 import structure.Equation;
 import structure.EquationSolver;
 import structure.Operation;
@@ -64,12 +65,24 @@ public class RelationDriver {
 		SLModel model = SLModel.loadModel(modelPath);
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			RelationX x = (RelationX) sp.instanceList.get(i);
+			RelationX prob = (RelationX) sp.instanceList.get(i);
 			RelationY gold = (RelationY) sp.goldStructureList.get(i);
 			RelationY pred = (RelationY) model.infSolver.getBestStructure(
-					model.wv, x);
+					model.wv, prob);
 			if(RelationY.getLoss(gold, pred) < 0.000001) {
 				acc += 1;
+			} else {
+				System.out.println("Text : "+prob.ta.getText());
+				System.out.println("Skeleton : "+Tools.skeletonString(prob.skeleton));
+				System.out.println("Quantity : "+prob.quantities.get(prob.index));
+				System.out.println("Gold : \n"+gold);
+				System.out.println("Gold weight : "+model.wv.dotProduct(
+						model.featureGenerator.getFeatureVector(prob, gold)));
+				System.out.println("Pred : \n"+pred);
+				System.out.println("Pred weight : "+model.wv.dotProduct(
+						model.featureGenerator.getFeatureVector(prob, pred)));
+				System.out.println("Loss : "+RelationY.getLoss(gold, pred));
+				
 			}
 		}
 		System.out.println("Accuracy : = " + (acc/sp.instanceList.size()));
