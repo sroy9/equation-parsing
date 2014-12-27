@@ -22,6 +22,7 @@ import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.Sentence;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
+import edu.illinois.cs.cogcomp.quant.standardize.Ratio;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -53,7 +54,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	
 	public List<String> getFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
-		features.addAll(templateFeatures(x, y));
+//		features.addAll(templateFeatures(x, y));
 		for(IntPair slot : y.emptySlots) {
 			features.addAll(alignmentFeatures(x, y, slot));
 		}
@@ -69,8 +70,8 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	public List<String> alignmentFeatures(SemX x, SemY y, IntPair slot) {
 		List<String> features = new ArrayList<>();
 		Double d = y.terms.get(slot.getFirst()).get(slot.getSecond()).getSecond();
-		List<IntPair> quantSpans = Tools.getRelevantSpans(d, x.relationQuantities);
-		int tokenId = x.ta.getTokenIdFromCharacterOffset(quantSpans.get(0).getFirst());
+		List<QuantSpan> quantSpans = Tools.getRelevantQuantSpans(d, x.relationQuantities);
+		int tokenId = x.ta.getTokenIdFromCharacterOffset(quantSpans.get(0).start);
 		Sentence sent = x.ta.getSentenceFromToken(tokenId);
 		List<Constituent> sentLemmas = FeatGen.partialLemmas(
 				x.lemmas, sent.getStartSpan(), sent.getEndSpan());
@@ -99,12 +100,12 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	public List<String> pairwiseFeatures(SemX x, SemY y, IntPair slot1, IntPair slot2) {
 		List<String> features = new ArrayList<>();
 		Double d1 = y.terms.get(slot1.getFirst()).get(slot1.getSecond()).getSecond();
-		List<IntPair> quantSpans1 = Tools.getRelevantSpans(d1, x.relationQuantities);
-		int tokenId1 = x.ta.getTokenIdFromCharacterOffset(quantSpans1.get(0).getFirst());
+		List<QuantSpan> quantSpans1 = Tools.getRelevantQuantSpans(d1, x.relationQuantities);
+		int tokenId1 = x.ta.getTokenIdFromCharacterOffset(quantSpans1.get(0).start);
 		Sentence sent1 = x.ta.getSentenceFromToken(tokenId1);
 		Double d2 = y.terms.get(slot2.getFirst()).get(slot2.getSecond()).getSecond();
-		List<IntPair> quantSpans2 = Tools.getRelevantSpans(d2, x.relationQuantities);
-		int tokenId2 = x.ta.getTokenIdFromCharacterOffset(quantSpans2.get(0).getFirst());
+		List<QuantSpan> quantSpans2 = Tools.getRelevantQuantSpans(d2, x.relationQuantities);
+		int tokenId2 = x.ta.getTokenIdFromCharacterOffset(quantSpans2.get(0).start);
 		Sentence sent2 = x.ta.getSentenceFromToken(tokenId2);
 		String prefix = "";
 		if((slot1.getFirst() == 0 && slot2.getSecond() == 1) || 
@@ -148,8 +149,8 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		Set<Integer> relevantSentenceIds = new HashSet<>();
 		for(IntPair slot : y.emptySlots) {
 			Double d = y.terms.get(slot.getFirst()).get(slot.getSecond()).getSecond();
-			List<IntPair> quantSpans = Tools.getRelevantSpans(d, x.relationQuantities);
-			int tokenId = x.ta.getTokenIdFromCharacterOffset(quantSpans.get(0).getFirst());
+			List<QuantSpan> quantSpans = Tools.getRelevantQuantSpans(d, x.relationQuantities);
+			int tokenId = x.ta.getTokenIdFromCharacterOffset(quantSpans.get(0).start);
 			Sentence sent = x.ta.getSentenceFromToken(tokenId);
 			relevantSentenceIds.add(sent.getSentenceId());
 		}
@@ -158,15 +159,14 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 				Sentence sent = x.ta.getSentence(j);
 //				List<Pair<String, IntPair>> skeleton = Tools.getSkeleton(
 //						x.ta, x.lemmas, x.posTags, x.parse, x.quantities);
-				List<Pair<String, IntPair>> sentSkeleton = FeatGen.getPartialSkeleton(
-						x.skeleton, sent.getStartSpan(), sent.getEndSpan());
 				String prefix = i+"_"+y.operations.get(i);
-				for(int k=0; k<sentSkeleton.size(); ++k) {
-					features.add(prefix+"_SentUnigram_"+sentSkeleton.get(k).getFirst());
+				for(String feature : FeatGen.getLemmatizedUnigrams(
+						x.lemmas, sent.getStartSpan(), sent.getEndSpan()-1)) {
+					features.add(prefix+"_SentUnigram_"+feature);
 				}
-				for(int k=0; k<sentSkeleton.size()-1; ++k) {
-					features.add(prefix+"_SentBigram_"+sentSkeleton.get(k).getFirst()
-							+"_"+sentSkeleton.get(k+1).getFirst());
+				for(String feature : FeatGen.getLemmatizedBigrams(
+						x.lemmas, sent.getStartSpan(), sent.getEndSpan()-1)) {
+					features.add(prefix+"_SentBigram_"+feature);
 				}
 			}
 		}

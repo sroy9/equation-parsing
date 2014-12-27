@@ -88,6 +88,15 @@ public class Tools {
 		}
 		return null;
 	}
+	
+	public static String getBound(QuantSpan qs) {
+		if (qs.object instanceof Quantity) {
+			return ((Quantity)qs.object).bound;
+		} else if (qs.object instanceof Ratio) {
+			return ((Ratio)qs.object).denominator.bound;
+		}
+		return null;
+	}
 
 	public static List<Double> uniqueNumbers(List<QuantSpan> quantSpans) {
 		List<Double> uniqueNos = new ArrayList<>();
@@ -105,11 +114,11 @@ public class Tools {
 		return uniqueNos;
 	}
 	
-	public static List<IntPair> getRelevantSpans(Double d, List<QuantSpan> quantSpans) {
-		List<IntPair> relevantSpans = new ArrayList<IntPair>();
+	public static List<QuantSpan> getRelevantQuantSpans(Double d, List<QuantSpan> quantSpans) {
+		List<QuantSpan> relevantSpans = new ArrayList<QuantSpan>();
 		for(QuantSpan qs : quantSpans) {
 			if(Tools.safeEquals(d, Tools.getValue(qs))) {
-				relevantSpans.add(new IntPair(qs.start, qs.end));
+				relevantSpans.add(qs);
 			}
 		}
 		return relevantSpans;

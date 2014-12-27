@@ -80,6 +80,7 @@ public class SemDriver {
 			} else {
 				System.out.println("Text : "+prob.ta.getText());
 				System.out.println("Skeleton : "+Tools.skeletonString(prob.skeleton));
+				System.out.println("Quantities : "+prob.quantities);
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
