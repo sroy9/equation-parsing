@@ -197,7 +197,7 @@ public class FeatGen {
 		int end = Math.min(index+window, skeleton.size()-1);
 		for(int ngram = 0; ngram <= 2; ngram++) {
 			for(int i=start; i<=end-ngram; i++) {
-				features.add(i+"_"+(i+ngram)+"_"+skeleton.get(i).getFirst()+"_"+
+				features.add((index-i)+"_"+(index-i+ngram)+"_"+skeleton.get(i).getFirst()+"_"+
 						skeleton.get(i+ngram).getFirst());
 				features.add(skeleton.get(i).getFirst()+"_"+
 						skeleton.get(i+ngram).getFirst());

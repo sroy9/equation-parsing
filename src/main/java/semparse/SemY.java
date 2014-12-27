@@ -9,6 +9,7 @@ import structure.Operation;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
 public class SemY extends Equation implements IStructure, Serializable {
@@ -42,6 +43,25 @@ public class SemY extends Equation implements IStructure, Serializable {
 	}
 	
 	public static float getLoss(SemY y1, SemY y2) {
+		float loss1 = SemY.getLossOrderFixed(y1, y2);
+		// copy made to compute the alternate loss
+		SemY y11 = new SemY(y1);
+		exchange(y11.terms);
+		exchange(y11.operations);
+		float loss2 = SemY.getLossOrderFixed(y11, y2);
+		return Math.min(loss1, loss2);
+	}
+	
+	public static <A> void exchange(List<A> l) {
+		A tmp = l.get(0);
+		l.set(0, l.get(2));
+		l.set(2, tmp);
+		tmp = l.get(1);
+		l.set(1, l.get(3));
+		l.set(3, tmp);
+	}
+	
+	public static float getLossOrderFixed(SemY y1, SemY y2) {
 		float loss = 0.0f;
 		for(int i=0; i<5; i++) {
 			List<Pair<Operation, Double>> pairList1 = y1.terms.get(i);

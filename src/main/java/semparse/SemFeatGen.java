@@ -53,7 +53,6 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	
 	public List<String> getFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
-//		features.addAll(templateFeatures(x, y));
 		for(IntPair slot : y.emptySlots) {
 			features.addAll(alignmentFeatures(x, y, slot));
 		}
@@ -77,39 +76,16 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		} else {
 			prefix = ""+y.operations.get(slot.getFirst())+"_AB1";
 		}
-		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 1)) {
+		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3)) {
 			features.add(prefix+"_"+feature);
 		}
-		for(String feature : FeatGen.neighboringTokens(sentLemmas, tokenId, 3)) {
-			features.add(prefix+"_"+feature);
+		for(int i=0; i<sentSkeleton.size(); ++i) {
+			features.add(prefix+"_SentUnigram_"+sentSkeleton.get(i).getFirst());
 		}
-		return features;
-	}
-
-	public List<String> templateFeatures(SemX x, SemY y) {
-		List<String> features = new ArrayList<>();
-		Set<Integer> sentIds = new HashSet<>();
-		String prefix = "Template_"+y.templateNo;
-		for(IntPair slot : y.emptySlots) {
-			Double d = y.terms.get(slot.getFirst()).get(slot.getSecond()).getSecond();
-			List<IntPair> quantSpans = Tools.getRelevantSpans(d, x.relationQuantities);
-			int sentId = x.ta.getSentenceFromToken(x.ta.getTokenIdFromCharacterOffset(
-					quantSpans.get(0).getFirst())).getSentenceId();
-			sentIds.add(sentId);
+		for(int i=0; i<sentSkeleton.size()-1; ++i) {
+			features.add(prefix+"_SentBigram_"+sentSkeleton.get(i).getFirst()
+					+"_"+sentSkeleton.get(i+1).getFirst());
 		}
-		for(Integer sentId : sentIds) {
-			Sentence sent = x.ta.getSentence(sentId);
-			List<Pair<String, IntPair>> sentSkeleton = FeatGen.getPartialSkeleton(
-					x.skeleton, sent.getStartSpan(), sent.getEndSpan());
-			for(int i=0; i<sentSkeleton.size(); ++i) {
-				features.add(prefix+"_SentUnigram_"+sentSkeleton.get(i).getFirst());
-			}
-			for(int i=0; i<sentSkeleton.size()-1; ++i) {
-				features.add(prefix+"_SentBigram_"+sentSkeleton.get(i).getFirst()
-						+"_"+sentSkeleton.get(i+1).getFirst());
-			}
-		}
-		
 		return features;
 	}
 }
