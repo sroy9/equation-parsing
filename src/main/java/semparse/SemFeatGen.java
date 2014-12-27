@@ -139,6 +139,16 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 					features.add(prefix+"_MidBigram_"+skeleton.get(i).getFirst()
 							+"_"+skeleton.get(i+1).getFirst());
 				}
+				for(String feature : FeatGen.getLemmatizedUnigrams(x.lemmas, 
+						Math.min(tokenId1, tokenId2), 
+						Math.max(tokenId1, tokenId2))) {
+					features.add(prefix+"_MidUnigram_"+feature);
+				}
+				for(String feature : FeatGen.getLemmatizedBigrams(x.lemmas, 
+						Math.min(tokenId1, tokenId2), 
+						Math.max(tokenId1, tokenId2))) {
+					features.add(prefix+"_MidBigram_"+feature);
+				}
 			}
 		}
 		return features;

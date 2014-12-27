@@ -164,7 +164,7 @@ public class FeatGen {
 		int end = Math.min(index+window, lemmas.size()-1);
 		for(int ngram = 0; ngram <= 2; ngram++) {
 			for(int i=start; i<=end-ngram; i++) {
-				features.add((index-i)+"_"+(index-i+ngram)+"_"+unigrams.get(i)+"_"+unigrams.get(i+ngram));
+				features.add((i-index)+"_"+(i+ngram-index)+"_"+unigrams.get(i)+"_"+unigrams.get(i+ngram));
 				features.add(unigrams.get(i)+"_"+unigrams.get(i+ngram));
 			}
 		}	
@@ -197,10 +197,9 @@ public class FeatGen {
 		int end = Math.min(index+window, skeleton.size()-1);
 		for(int ngram = 0; ngram <= 2; ngram++) {
 			for(int i=start; i<=end-ngram; i++) {
-				features.add((index-i)+"_"+(index-i+ngram)+"_"+skeleton.get(i).getFirst()+"_"+
+				features.add((i-index)+"_"+(i+ngram-index)+"_"+skeleton.get(i).getFirst()+"_"+
 						skeleton.get(i+ngram).getFirst());
-				features.add(skeleton.get(i).getFirst()+"_"+
-						skeleton.get(i+ngram).getFirst());
+				features.add(skeleton.get(i).getFirst()+"_"+skeleton.get(i+ngram).getFirst());
 			}
 		}	
 		return features;
