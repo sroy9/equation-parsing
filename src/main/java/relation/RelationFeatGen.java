@@ -45,8 +45,7 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 	}
 
 	// Cluster Features
-	public IFeatureVector getFeatureVector(
-			RelationX blob, RelationY labelSet) {
+	public IFeatureVector getFeatureVector(RelationX blob, RelationY labelSet) {
 		List<String> feats = getFeatures(blob, labelSet);
 		return FeatGen.getFeatureVectorFromList(feats, lm);
 	}
