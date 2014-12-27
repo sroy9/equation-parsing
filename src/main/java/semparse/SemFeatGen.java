@@ -164,8 +164,8 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 				if(sent.getText().contains("sum") || sent.getText().contains("total")) {
 					features.add(prefix+"_SUM_MENTIONED");
 				}
-				if(sent.getText().contains("more than") || sent.getText().contains("greater than")) {
-					features.add(prefix+"_GREATER_MENTIONED");
+				if(sent.getText().contains("more than")) {
+					features.add(prefix+"_MORE_MENTIONED");
 				}
 				if(sent.getText().contains("less than")) {
 					features.add(prefix+"_LESS_MENTIONED");
