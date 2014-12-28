@@ -56,7 +56,7 @@ public class SimulProb {
 	public void extractQuantities(Quantifier quantifier) throws IOException {
 		List<QuantSpan> spanArray = quantifier.getSpans(question, true);
 		quantities = new ArrayList<QuantSpan>();
-		for(QuantSpan span:spanArray){
+		for(QuantSpan span : spanArray){
 			if(span.object instanceof Quantity || span.object instanceof Ratio) {
 				quantities.add(span);
 			}
@@ -176,6 +176,15 @@ public class SimulProb {
 				}
 			}
 			if(candidates.size() == 1) {
+				for(int i=0; i<quantities.size(); ++i) {
+					if(i!=quantNo && Tools.safeEquals(Tools.getValue(quantities.get(i)), 
+							Tools.getValue(qs))) {
+						System.out.println(index + " : "+question);
+						System.out.println("Quantities : "+quantities);
+						System.out.println("Confusion : "+quantNo+" : "+qs);
+						System.out.println();
+					}
+				}
 				for(Integer i : candidates) {
 					relations.add("R"+(i+1));
 				}
@@ -184,6 +193,25 @@ public class SimulProb {
 			} else {
 				relations.add("BOTH");
 			}
+		}
+		// Ensuring R1 comes before R2
+		boolean needsSwap = false;
+		for(String relation : relations) {
+			if(relation.equals("R2")) needsSwap = true;
+			if(relation.equals("R1")) break; 
+		}
+		// This ensures R1 always appears before R2
+		if(needsSwap) {
+			for(int i=0; i<relations.size(); ++i) {
+				if(relations.get(i).equals("R1")) {
+					relations.set(i, "R2");
+				} else if(relations.get(i).equals("R2")) {
+					relations.set(i, "R1");
+				}
+			}
+			Equation tmp = equations.get(0);
+			equations.set(0, equations.get(1));
+			equations.set(1, tmp);
 		}
 	}
 	
@@ -268,6 +296,135 @@ public class SimulProb {
 		}
 		if(index ==  6448 && quantNo == 3) {
 			relations.add("R2");
+			return true;
+		}
+		// 2nd  phase
+		if(index ==  1292 && quantNo == 6) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  1292 && quantNo == 7) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  155 && quantNo == 1) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  155 && quantNo == 3) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  1658 && quantNo == 1) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  1658 && quantNo == 7) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  2075 && quantNo == 0) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  222 && quantNo == 2) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  2681 && quantNo == 0) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  2824 && quantNo == 2) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  3289 && quantNo == 0) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  3394 && quantNo == 0) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  5007 && quantNo == 0) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  5425 && quantNo == 0) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  5701 && quantNo == 0) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index ==  5710 && quantNo == 0) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 5843 && quantNo == 2) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 6208 && quantNo == 1) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 6290 && quantNo == 4) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 6376 && quantNo == 0) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 6376 && quantNo == 3) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 6376 && quantNo == 5) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 6505 && quantNo == 1) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 6666 && quantNo == 3) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 6878 && quantNo == 0) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 6878 && quantNo == 4) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 6945 && quantNo == 3) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 6952 && quantNo == 1) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 6957 && quantNo == 1) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 6957 && quantNo == 4) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 7126 && quantNo == 0) {
+			relations.add("NONE");
+			return true;
+		}
+		if(index == 767 && quantNo == 0) {
+			relations.add("NONE");
 			return true;
 		}
 		return false;

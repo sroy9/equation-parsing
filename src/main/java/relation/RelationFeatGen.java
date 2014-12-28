@@ -66,6 +66,15 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		Sentence sent = x.ta.getSentenceFromToken(tokenId);
 		List<Pair<String, IntPair>> sentSkeleton = FeatGen.getPartialSkeleton(
 				x.skeleton, sent.getStartSpan(), sent.getEndSpan());
+		
+//		for(int i=0; i<x.skeleton.size(); ++i) {
+//			features.add(prefix+"_ProbUnigram_"+x.skeleton.get(i).getFirst());
+//		}
+//		for(int i=0; i<x.skeleton.size()-1; ++i) {
+//			features.add(prefix+"_ProbBigram_"+x.skeleton.get(i).getFirst()
+//					+"_"+x.skeleton.get(i+1).getFirst());
+//		}
+		
 		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3)) {
 			features.add(prefix+"_"+feature);
 		}
@@ -100,6 +109,26 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		} else {
 			return features;
 		}
+		QuantSpan qs1 = x.quantities.get(index);
+		int tokenId1 = x.ta.getTokenIdFromCharacterOffset(qs1.start);
+		Sentence sent1 = x.ta.getSentenceFromToken(tokenId1);
+		QuantSpan qs2 = x.quantities.get(x.index);
+		int tokenId2 = x.ta.getTokenIdFromCharacterOffset(qs2.start);
+		Sentence sent2 = x.ta.getSentenceFromToken(tokenId2);
+		if(Tools.safeEquals(Tools.getValue(qs1), Tools.getValue(qs2))) {
+			features.add(prefix+"_SAME_NUMBER");
+		}
+		if(Tools.getUnit(qs1).contains(Tools.getUnit(qs2)) || 
+				Tools.getUnit(qs2).contains(Tools.getUnit(qs1))) {
+			features.add(prefix+"_SAME_UNIT");
+		}
+		if(sent1.getSentenceId() == sent2.getSentenceId()) {
+			features.add(prefix+"_SAME_SENTENCE");			
+		} else {
+			features.add(prefix+"_DIFF_SENTENCE");
+		}
+		
+		
 		return features;
 	}
 	

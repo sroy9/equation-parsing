@@ -1,8 +1,10 @@
 package relation;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import parser.DocReader;
 import semparse.SemY;
@@ -63,17 +65,22 @@ public class RelationDriver {
 	private static void testModel(String modelPath, SLProblem sp)
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
+		Set<Integer> incorrect = new HashSet<>();
+		Set<Integer> total = new HashSet<>();
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			RelationX prob = (RelationX) sp.instanceList.get(i);
 			RelationY gold = (RelationY) sp.goldStructureList.get(i);
 			RelationY pred = (RelationY) model.infSolver.getBestStructure(
 					model.wv, prob);
+			total.add(prob.problemIndex);
 			if(RelationY.getLoss(gold, pred) < 0.000001) {
 				acc += 1;
 			} else {
+				incorrect.add(prob.problemIndex);
 				System.out.println("Text : "+prob.ta.getText());
 				System.out.println("Skeleton : "+Tools.skeletonString(prob.skeleton));
+				System.out.println("Quantities : "+prob.quantities);
 				System.out.println("Quantity : "+prob.quantities.get(prob.index));
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Gold weight : "+model.wv.dotProduct(
@@ -85,7 +92,11 @@ public class RelationDriver {
 				
 			}
 		}
-		System.out.println("Accuracy : = " + (acc/sp.instanceList.size()));
+		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
+				+ " = " + (acc/sp.instanceList.size()));
+		System.out.println("Problem Accuracy : = 1 - " + incorrect.size() + "/" 
+				+ total.size() 
+				+ " = " + (1-(incorrect.size()*1.0/total.size())));
 	}
 	
 	private static void trainModel(String modelPath, SLProblem train)

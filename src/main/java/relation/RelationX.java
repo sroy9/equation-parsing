@@ -16,6 +16,7 @@ import edu.illinois.cs.cogcomp.sl.core.IInstance;
 
 public class RelationX implements IInstance {
 
+	public int problemIndex;
 	public TextAnnotation ta;
 	public List<Constituent> posTags;
 	public List<Constituent> lemmas;
@@ -26,6 +27,7 @@ public class RelationX implements IInstance {
 
 	public RelationX(SimulProb simulProb, int index) throws Exception {
 		quantities = simulProb.quantities;
+		problemIndex = simulProb.index;
 		this.index = index;
 		ta = simulProb.ta;
 		posTags = simulProb.posTags;
@@ -34,21 +36,6 @@ public class RelationX implements IInstance {
 		relations = new ArrayList<>();
 		for(int i=0; i<index; i++) {
 			relations.add(simulProb.relations.get(i));
-		}
-		boolean needsSwap = false;
-		for(String relation : relations) {
-			if(relation.equals("R2")) needsSwap = true;
-			if(relation.equals("R1")) break; 
-		}
-		// This ensures R1 always appears before R2
-		if(needsSwap) {
-			for(int i=0; i<relations.size(); ++i) {
-				if(relations.get(i).equals("R1")) {
-					relations.set(i, "R2");
-				} else if(relations.get(i).equals("R2")) {
-					relations.set(i, "R1");
-				}
-			}
 		}
 	}
 }
