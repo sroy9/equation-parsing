@@ -176,15 +176,15 @@ public class SimulProb {
 				}
 			}
 			if(candidates.size() == 1) {
-				for(int i=0; i<quantities.size(); ++i) {
-					if(i!=quantNo && Tools.safeEquals(Tools.getValue(quantities.get(i)), 
-							Tools.getValue(qs))) {
-						System.out.println(index + " : "+question);
-						System.out.println("Quantities : "+quantities);
-						System.out.println("Confusion : "+quantNo+" : "+qs);
-						System.out.println();
-					}
-				}
+//				for(int i=0; i<quantities.size(); ++i) {
+//					if(i!=quantNo && Tools.safeEquals(Tools.getValue(quantities.get(i)), 
+//							Tools.getValue(qs))) {
+//						System.out.println(index + " : "+question);
+//						System.out.println("Quantities : "+quantities);
+//						System.out.println("Confusion : "+quantNo+" : "+qs);
+//						System.out.println();
+//					}
+//				}
 				for(Integer i : candidates) {
 					relations.add("R"+(i+1));
 				}
