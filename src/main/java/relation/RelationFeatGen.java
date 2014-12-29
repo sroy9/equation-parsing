@@ -132,13 +132,13 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton1, tokenId1, 3)) {
 			features.add(prefix+"_Other_Neighbor_"+feature);
 		}
-		for(int i=0; i<sentSkeleton1.size(); ++i) {
-			features.add(prefix+"_Other_SentUnigram_"+sentSkeleton1.get(i).getFirst());
-		}
-		for(int i=0; i<sentSkeleton1.size()-1; ++i) {
-			features.add(prefix+"_Other_SentBigram_"+sentSkeleton1.get(i).getFirst()
-					+"_"+sentSkeleton1.get(i+1).getFirst());
-		}
+//		for(int i=0; i<sentSkeleton1.size(); ++i) {
+//			features.add(prefix+"_Other_SentUnigram_"+sentSkeleton1.get(i).getFirst());
+//		}
+//		for(int i=0; i<sentSkeleton1.size()-1; ++i) {
+//			features.add(prefix+"_Other_SentBigram_"+sentSkeleton1.get(i).getFirst()
+//					+"_"+sentSkeleton1.get(i+1).getFirst());
+//		}
 		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton2, tokenId2, 3)) {
 			features.add(prefix+"_Mine_Neighbor_"+feature);
 		}
