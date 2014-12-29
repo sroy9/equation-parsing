@@ -124,11 +124,11 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		if(sent2.getText().contains("?")) features.add(prefix+"_QuestionSentence");
 		features.addAll(FeatGen.getConjunctions(features));
 		
-		if(sent1.getSentenceId() == sent2.getSentenceId()) {
-			features.add(prefix+"_SAME_SENTENCE");
-		} else {
-			features.add(prefix+"_DIFF_SENTENCE");
-		}
+//		if(sent1.getSentenceId() == sent2.getSentenceId()) {
+//			features.add(prefix+"_SAME_SENTENCE");
+//		} else {
+//			features.add(prefix+"_DIFF_SENTENCE");
+//		}
 		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton1, tokenId1, 3)) {
 			features.add(prefix+"_Other_Neighbor_"+feature);
 		}

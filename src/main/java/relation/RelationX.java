@@ -25,7 +25,7 @@ public class RelationX implements IInstance {
 	public List<Pair<String, IntPair>> skeleton;
 	public int index;
 
-	public RelationX(SimulProb simulProb, int index) throws Exception {
+	public RelationX(SimulProb simulProb, int index) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
 		this.index = index;
