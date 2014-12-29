@@ -49,8 +49,13 @@ public class RelationDriver {
 	}
 
 	private static SLProblem getSP() throws Exception {
-		DocReader dr = new DocReader();
-		List<SimulProb> simulProbList = dr.readSimulProbFromBratDir(Params.annotationDir);
+		return getSP(null);
+	}
+	
+	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {
+		if(simulProbList == null) {
+			simulProbList = DocReader.readSimulProbFromBratDir(Params.annotationDir);
+		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
 			for(int i=0; i<simulProb.quantities.size(); ++i) {
@@ -99,7 +104,7 @@ public class RelationDriver {
 				+ " = " + (1-(incorrect.size()*1.0/total.size())));
 	}
 	
-	private static void trainModel(String modelPath, SLProblem train)
+	public static void trainModel(String modelPath, SLProblem train)
 			throws Exception {
 		SLModel model = new SLModel();
 		Lexiconer lm = new Lexiconer();

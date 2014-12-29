@@ -133,7 +133,8 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 						(goldStructure == null ? 0.0 : SemY.getLoss(y, gold))));		
 			}
 		}
-		return beam2.element().getFirst();
+		if(beam2.size() > 0) return beam2.element().getFirst();
+		return null;
 	}
 	
 	public List<SemY> enumerateSemYs(Set<Double> availableNumbers, SemY seed) {

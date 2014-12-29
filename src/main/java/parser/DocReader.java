@@ -27,7 +27,7 @@ import utils.Tools;
 public class DocReader {
 	
 	// Reads list of files from brat folder
-	public List<SimulProb> readSimulProbFromBratDir(String bratDir) throws Exception {
+	public static List<SimulProb> readSimulProbFromBratDir(String bratDir) throws Exception {
 		return readSimulProbFromBratDir(bratDir, 0.0, 1.0);
 	}
 	

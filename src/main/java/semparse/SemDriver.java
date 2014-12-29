@@ -45,10 +45,15 @@ public class SemDriver {
 		trainModel("model.save", train);
 		testModel("model.save", test);
 	}
-
+	
 	private static SLProblem getSP() throws Exception {
-		DocReader dr = new DocReader();
-		List<SimulProb> simulProbList = dr.readSimulProbFromBratDir(Params.annotationDir);
+		return getSP(null);
+	}
+	
+	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {
+		if(simulProbList == null) {
+			simulProbList = DocReader.readSimulProbFromBratDir(Params.annotationDir);
+		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
 			SemX semX = new SemX(simulProb, "R1");
@@ -94,7 +99,7 @@ public class SemDriver {
 				+ (acc / total));
 	}
 	
-	private static void trainModel(String modelPath, SLProblem train)
+	public static void trainModel(String modelPath, SLProblem train)
 			throws Exception {
 		SLModel model = new SLModel();
 		Lexiconer lm = new Lexiconer();
