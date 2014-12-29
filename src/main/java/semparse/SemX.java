@@ -16,6 +16,7 @@ import edu.illinois.cs.cogcomp.sl.core.IInstance;
 
 public class SemX implements IInstance {
 
+	public int problemIndex;
 	public TextAnnotation ta;
 	public List<QuantSpan> relationQuantities;
 	public List<Constituent> posTags;
@@ -26,6 +27,7 @@ public class SemX implements IInstance {
 	public List<QuantSpan> quantities;
 
 	public SemX(SimulProb simulProb, String relation) throws Exception {
+		problemIndex = simulProb.index;
 		quantities = simulProb.quantities;
 		relationQuantities = new ArrayList<>();
 		for(int i=0; i<simulProb.relations.size(); ++i) {

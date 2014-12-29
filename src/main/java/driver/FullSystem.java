@@ -83,6 +83,7 @@ public class FullSystem {
 			test.parse = simulProb.parse;
 			test.posTags = simulProb.posTags;
 			test.skeleton = simulProb.skeleton;
+//			test.relations = simulProb.relations;
 			test.ta = simulProb.ta;
 			
 			List<Double> solutions1 = EquationSolver.solve(simulProb.equations);
