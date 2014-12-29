@@ -50,16 +50,19 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 	
 	public List<String> getFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
-		features.addAll(singleFeatures(x, y));
-		for(int i=Math.max(0, x.index-3); i<x.index; i++) {
-			features.addAll(pairwiseFeatures(x, y, i));
+		if(!y.relation.startsWith("R")) {
+			features.addAll(singleFeatures(x, y));
+		} else {
+			for(int i=Math.max(0, x.index-3); i<x.index; i++) {
+				features.addAll(pairwiseFeatures(x, y, i));
+			}
 		}
 		return features;
 	}
 	
-	public List<String> singleFeatures(RelationX x, RelationY labelSet) {
+	public List<String> singleFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
-		String prefix = labelSet.relation.substring(0,1);
+		String prefix = y.relation.substring(0,1);
 		QuantSpan qs = x.quantities.get(x.index);
 		int tokenId = x.ta.getTokenIdFromCharacterOffset(qs.start);
 		Sentence sent = x.ta.getSentenceFromToken(tokenId);
@@ -78,13 +81,7 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 			features.add(prefix+"_SentBigram_"+sentSkeleton.get(i).getFirst()
 					+"_"+sentSkeleton.get(i+1).getFirst());
 		}
-		boolean Rbefore = false;
-		for(int i=0; i<x.index; i++) {
-			if(x.relations.get(i).startsWith("R")) {
-				Rbefore = true;
-			}
-		}
-		features.add(labelSet.relation+"_Rbefore_"+Rbefore);
+		if(sent.getText().contains("?")) features.add(prefix+"_QuestionSentence");
 		return features;
 	}
 	
@@ -119,40 +116,38 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 				Tools.getUnit(qs2).contains(Tools.getUnit(qs1))) {
 			features.add(prefix+"_SAME_UNIT");
 		}
+		if(Tools.safeEquals(Tools.getValue(qs1), Tools.getValue(qs2)) &&
+				(Tools.getUnit(qs1).contains(Tools.getUnit(qs2)) || 
+				Tools.getUnit(qs2).contains(Tools.getUnit(qs1)))) {
+			features.add(prefix+"_SAME_NUMBER_UNIT");
+		}
+		if(sent2.getText().contains("?")) features.add(prefix+"_QuestionSentence");
+		features.addAll(FeatGen.getConjunctions(features));
+		
 		if(sent1.getSentenceId() == sent2.getSentenceId()) {
 			features.add(prefix+"_SAME_SENTENCE");
-			List<Pair<String, IntPair>> skeleton = FeatGen.getPartialSkeleton(
-					x.skeleton, Math.min(tokenId1, tokenId2), Math.max(tokenId1, tokenId2)+1);
-			for(int i=0; i<skeleton.size(); ++i) {
-				features.add(prefix+"_MidUnigram_"+skeleton.get(i).getFirst());
-			}
-			for(int i=0; i<skeleton.size()-1; ++i) {
-				features.add(prefix+"_MidBigram_"+skeleton.get(i).getFirst()
-						+"_"+skeleton.get(i+1).getFirst());
-			}
 		} else {
-
-//			for(int i=0; i<sentSkeleton1.size(); ++i) {
-//				features.add(prefix+"_Other_SentUnigram_"+sentSkeleton1.get(i).getFirst());
-//			}
-//			for(int i=0; i<sentSkeleton1.size()-1; ++i) {
-//				features.add(prefix+"_Other_SentBigram_"+sentSkeleton1.get(i).getFirst()
-//						+"_"+sentSkeleton1.get(i+1).getFirst());
-//			}
-//			
-//			for(int i=0; i<sentSkeleton2.size(); ++i) {
-//				features.add(prefix+"_Mine_SentUnigram_"+sentSkeleton2.get(i).getFirst());
-//			}
-//			for(int i=0; i<sentSkeleton2.size()-1; ++i) {
-//				features.add(prefix+"_Mine_SentBigram_"+sentSkeleton2.get(i).getFirst()
-//						+"_"+sentSkeleton2.get(i+1).getFirst());
-//			}
+			features.add(prefix+"_DIFF_SENTENCE");
 		}
 		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton1, tokenId1, 3)) {
 			features.add(prefix+"_Other_Neighbor_"+feature);
 		}
+		for(int i=0; i<sentSkeleton1.size(); ++i) {
+			features.add(prefix+"_Other_SentUnigram_"+sentSkeleton1.get(i).getFirst());
+		}
+		for(int i=0; i<sentSkeleton1.size()-1; ++i) {
+			features.add(prefix+"_Other_SentBigram_"+sentSkeleton1.get(i).getFirst()
+					+"_"+sentSkeleton1.get(i+1).getFirst());
+		}
 		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton2, tokenId2, 3)) {
 			features.add(prefix+"_Mine_Neighbor_"+feature);
+		}
+		for(int i=0; i<sentSkeleton2.size(); ++i) {
+			features.add(prefix+"_Mine_SentUnigram_"+sentSkeleton2.get(i).getFirst());
+		}
+		for(int i=0; i<sentSkeleton2.size()-1; ++i) {
+			features.add(prefix+"_Mine_SentBigram_"+sentSkeleton2.get(i).getFirst()
+					+"_"+sentSkeleton2.get(i+1).getFirst());
 		}
 		return features;
 	}

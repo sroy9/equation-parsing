@@ -51,7 +51,18 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		RelationX prob = (RelationX) x;
 		RelationY gold = (RelationY) goldStructure;
 		RelationY pred = new RelationY();
-		List<String> relations = Arrays.asList("R1", "R2", "BOTH", "NONE");
+		boolean noR = true;
+		for(int i=0; i<prob.index; ++i) {
+			if(prob.relations.get(i).startsWith("R")) {
+				noR = false;
+				break;
+			}
+		}
+		
+		List<String> relations = null;
+		if(noR) relations = Arrays.asList("R1", "BOTH", "NONE");
+		else relations = Arrays.asList("R1", "R2", "BOTH", "NONE");
+		
 		double maxScore = -Double.MAX_VALUE, score;
 		String bestRelation = null;
 		for(String relation : relations) {
@@ -64,6 +75,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			}
 		}
 		pred = new RelationY(bestRelation);
+		
 		return pred;
 	}
 }
