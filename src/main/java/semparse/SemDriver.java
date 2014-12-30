@@ -1,5 +1,6 @@
 package semparse;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -24,32 +25,27 @@ import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 public class SemDriver {
 	
 	public static void crossVal() throws Exception {
-		SLProblem problem = getSP();
-		List<Pair<SLProblem, SLProblem>> folds = problem.splitDataToNFolds(
-				5, new Random());
-		for(int i=0;i<folds.size();i++) {
-			Pair<SLProblem, SLProblem> fold = folds.get(i);
-			SLProblem train = fold.getFirst();
-			SLProblem test = fold.getSecond();
-			trainModel("cvFold"+i+".model",train);
-			testModel("cvFold"+i+".model", test);
+		for(int i=0;i<5;i++) {
+			doTrainTest(i);
 		}
 	}
 	
-	public static void doTrainTest() throws Exception
-	{
-		SLProblem problem=getSP();
-		double trainFrac = 0.8;
-		Pair<SLProblem, SLProblem> trainTest = problem
-				.splitTrainTest((int) (trainFrac * problem.size()));
-		SLProblem train = trainTest.getFirst();
-		SLProblem test = trainTest.getSecond();
-		trainModel("model.save", train);
-		testModel("model.save", test);
-	}
-	
-	private static SLProblem getSP() throws Exception {
-		return getSP(null);
+	public static void doTrainTest(int testFold) throws Exception {
+		List<List<Integer>> folds = DocReader.extractFolds();
+		List<SimulProb> simulProbList = DocReader.readSimulProbFromBratDir(Params.annotationDir);
+		List<SimulProb> trainProbs = new ArrayList<>();
+		List<SimulProb> testProbs = new ArrayList<>();
+		for(SimulProb simulProb : simulProbList) {
+			if(folds.get(testFold).contains(simulProb.index)) {
+				testProbs.add(simulProb);
+			} else {
+				trainProbs.add(simulProb);
+			}
+		}
+		SLProblem train = getSP(trainProbs);
+		SLProblem test = getSP(testProbs);
+		trainModel("sem"+testFold+".save", train);
+		testModel("sem"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {
@@ -126,6 +122,6 @@ public class SemDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		SemDriver.doTrainTest();
+		SemDriver.crossVal();
 	}
 }
