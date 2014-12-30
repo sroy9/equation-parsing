@@ -156,5 +156,13 @@ public class Equation implements Serializable {
 		return str;
 	}
 	
+	public boolean isOneVar() {
+		if(operations.get(0) == Operation.NONE || 
+				operations.get(2) == Operation.NONE) {
+			return true;
+		}
+		return false;
+	}
+	
 
 }

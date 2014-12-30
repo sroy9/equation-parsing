@@ -110,6 +110,8 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 			for(int l=0; l<quantSpans2.size(); ++l) {
 				int tokenId1 = x.ta.getTokenIdFromCharacterOffset(quantSpans1.get(k).start);
 				Sentence sent1 = x.ta.getSentenceFromToken(tokenId1);
+				QuantSpan qs1 = quantSpans1.get(k);
+				QuantSpan qs2 = quantSpans2.get(l);
 				int tokenId2 = x.ta.getTokenIdFromCharacterOffset(quantSpans2.get(l).start);
 				Sentence sent2 = x.ta.getSentenceFromToken(tokenId2);
 				String prefix = "";
@@ -125,6 +127,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 				} else {
 					prefix = slot1.getFirst()+"_"+slot2.getFirst();
 				}
+				
 				if(sent1.getSentenceId() == sent2.getSentenceId()) {
 					List<Pair<String, IntPair>> skeleton = FeatGen.getPartialSkeleton(
 							x.skeleton, Math.min(tokenId1, tokenId2), Math.max(tokenId1, tokenId2)+1);
@@ -183,10 +186,10 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 					features.add(prefix+"_SUM_MENTIONED");
 				}
 				if(sent.getText().contains("more than")) {
-					features.add(prefix+"_MORE_MENTIONED");
+					features.add(prefix+"_MORE_THAN_MENTIONED");
 				}
 				if(sent.getText().contains("less than")) {
-					features.add(prefix+"_LESS_MENTIONED");
+					features.add(prefix+"_LESS_THAN_MENTIONED");
 				}
 			}
 		}

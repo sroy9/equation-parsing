@@ -34,8 +34,8 @@ public class SemDriver {
 			trainModel("cvFold"+i+".model",train);
 			testModel("cvFold"+i+".model", test);
 		}
-		
 	}
+	
 	public static void doTrainTest() throws Exception
 	{
 		SLProblem problem=getSP();
@@ -44,7 +44,7 @@ public class SemDriver {
 				.splitTrainTest((int) (trainFrac * problem.size()));
 		SLProblem train = trainTest.getFirst();
 		SLProblem test = trainTest.getSecond();
-		trainModel("model.save", train);
+//		trainModel("model.save", train);
 		testModel("model.save", test);
 	}
 	
