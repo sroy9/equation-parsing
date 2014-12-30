@@ -44,7 +44,7 @@ public class SemDriver {
 				.splitTrainTest((int) (trainFrac * problem.size()));
 		SLProblem train = trainTest.getFirst();
 		SLProblem test = trainTest.getSecond();
-//		trainModel("model.save", train);
+		trainModel("model.save", train);
 		testModel("model.save", test);
 	}
 	

@@ -82,6 +82,20 @@ public class DocReader {
 		return newSimulProbList;
 	}
 	
+	public static List<List<Integer>> extractFolds() throws IOException {
+		List<List<Integer>> folds = new ArrayList<>();
+		for(int i=0; i<5; ++i) {
+			String foldNumbers = FileUtils.readFileToString(
+					new File(Params.foldsFile+i+".txt"));
+			List<Integer> foldIndices = new ArrayList<>();
+			for(String str : foldNumbers.split("\n")) {
+				foldIndices.add(Integer.parseInt(str));
+			}
+			folds.add(foldIndices);
+		}
+		return folds;
+	}
+	
 	public static void main(String args[]) throws Exception {
 		DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
 	}

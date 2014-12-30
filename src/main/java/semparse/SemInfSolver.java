@@ -128,13 +128,19 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 //		System.out.println("Beam1 : "+beam1.size());
 		for(Pair<SemY, Double> pair : beam1) {
 			for(SemY y : enumerateSemYs(availableNumbers, pair.getFirst())) {
-				if(y.isOneVar() != blob.isOneVar) continue;
+				if(!y.isOneVar() && blob.isOneVar) continue;
 				beam2.add(new Pair<SemY, Double>(y, pair.getSecond() + 
 						wv.dotProduct(featGen.getFeatureVector(blob, y)) + 
 						(goldStructure == null ? 0.0 : SemY.getLoss(y, gold))));		
 			}
 		}
 		if(beam2.size() > 0) return beam2.element().getFirst();
+		else {
+			System.out.println(blob.problemIndex+" : "+blob.ta.getText());
+			System.out.println("Quantities : "+blob.quantities);
+			System.out.println("Relations : "+blob.relationQuantities);
+			System.out.println("One Var : "+blob.isOneVar);
+		}
 		return null;
 	}
 	

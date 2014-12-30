@@ -8,5 +8,6 @@ public class Params {
 //			"/shared/trollope/sroy9/math_word_problems/cache/";
 			"/Users/subhroroy/cache/";
 	public static String spConfigFile = "config/DCD.config";
+	public static String foldsFile = "data/indexes-1-fold-";
 
 }

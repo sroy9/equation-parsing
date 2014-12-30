@@ -25,12 +25,13 @@ public class SemX implements IInstance {
 	public List<Constituent> dependencyParse;
 	public List<Pair<String, IntPair>> skeleton;
 	public List<QuantSpan> quantities;
-	public boolean isOneVar = true;
+	public boolean isOneVar;
 
 	public SemX(SimulProb simulProb, String relation) throws Exception {
 		problemIndex = simulProb.index;
 		quantities = simulProb.quantities;
 		relationQuantities = new ArrayList<>();
+		isOneVar = true;
 		for(int i=0; i<simulProb.relations.size(); ++i) {
 			String str = simulProb.relations.get(i);
 			if(str.equals(relation) || str.equals("BOTH")) {
