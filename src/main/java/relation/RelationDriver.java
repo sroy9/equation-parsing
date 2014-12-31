@@ -45,8 +45,8 @@ public class RelationDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("sem"+testFold+".save", train);
-		testModel("sem"+testFold+".save", test);
+		trainModel("rel"+testFold+".save", train);
+		testModel("rel"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {
@@ -56,8 +56,8 @@ public class RelationDriver {
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
 			for(int i=0; i<simulProb.quantities.size(); ++i) {
-				RelationX relationX = new RelationX(simulProb, i);
-				RelationY relationY = new RelationY(simulProb.relations.get(i));
+				RelationX relationX = new RelationX(simulProb);
+				RelationY relationY = new RelationY(simulProb);
 				problem.addExample(relationX, relationY);
 			}
 		}
@@ -76,18 +76,19 @@ public class RelationDriver {
 			RelationY pred = (RelationY) model.infSolver.getBestStructure(
 					model.wv, prob);
 			total.add(prob.problemIndex);
-			if(RelationY.getLoss(gold, pred) < 0.000001) {
+			if(RelationY.getLoss(gold, pred) < 9.0) {
 				acc += 1;
 			} else {
 				incorrect.add(prob.problemIndex);
 				System.out.println("Text : "+prob.ta.getText());
 				System.out.println("Skeleton : "+Tools.skeletonString(prob.skeleton));
 				System.out.println("Quantities : "+prob.quantities);
-				System.out.println("Quantity : "+prob.quantities.get(prob.index));
 				System.out.println("Gold : \n"+gold);
+				System.out.println(Arrays.asList(gold.equations));
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
 				System.out.println("Pred : \n"+pred);
+				System.out.println(Arrays.asList(pred.equations));
 				System.out.println("Pred weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, pred)));
 				System.out.println("Loss : "+RelationY.getLoss(gold, pred));
@@ -96,9 +97,6 @@ public class RelationDriver {
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
-		System.out.println("Problem Accuracy : = 1 - " + incorrect.size() + "/" 
-				+ total.size() 
-				+ " = " + (1-(incorrect.size()*1.0/total.size())));
 	}
 	
 	public static void trainModel(String modelPath, SLProblem train)
@@ -109,7 +107,8 @@ public class RelationDriver {
 		model.lm = lm;
 		RelationFeatGen fg = new RelationFeatGen(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new RelationInfSolver(fg);
+		model.infSolver = new RelationInfSolver(
+				fg, RelationInfSolver.extractClusterTemplates(train));
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);

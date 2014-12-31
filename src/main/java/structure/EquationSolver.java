@@ -9,13 +9,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 public class EquationSolver {
 
 	public static List<Double> solve (List<Equation> equations) {
-		boolean isOneVar = true;
-		for(Operation op : equations.get(1).operations) {
-			if(op != Operation.NONE) {
-				isOneVar = false;
-				break;
-			}
-		}
+		boolean isOneVar = equations.get(0).isOneVar;
 		List<Double> A1 = new ArrayList<>();
 		List<Double> A2 = new ArrayList<>();
 		List<Double> B1 = new ArrayList<>();

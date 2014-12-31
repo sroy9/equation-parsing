@@ -18,8 +18,10 @@ public class Equation implements Serializable {
 	private static final long serialVersionUID = -1593105262537880720L;
 	public List<List<Pair<Operation, Double>>> terms;
 	public List<Operation> operations; 
+	public boolean isOneVar;
 	
 	public Equation() {
+		isOneVar = false;
 		terms = new ArrayList<>();
 		for(int i=0; i<5; ++i) {
 			terms.add(new ArrayList<Pair<Operation, Double>>());
@@ -32,6 +34,7 @@ public class Equation implements Serializable {
 	
 	public Equation(Equation eq) {
 		terms = new ArrayList<>();
+		isOneVar = eq.isOneVar;
 		for(int i=0; i<5; ++i) {
 			terms.add(new ArrayList<Pair<Operation, Double>>());
 			for(Pair<Operation, Double> pair : eq.terms.get(i)) {
@@ -144,7 +147,7 @@ public class Equation implements Serializable {
 	}
 	
 	public String toString() {
-		String str = "";
+		String str = "Variables : "+(isOneVar ? "1" : "2")+"\n";
 		for(int i=0; i<5; ++i) {
 			List<Pair<Operation, Double>> list = terms.get(i);
 			for(Pair<Operation, Double> pair : list) {

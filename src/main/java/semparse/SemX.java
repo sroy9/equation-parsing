@@ -31,14 +31,11 @@ public class SemX implements IInstance {
 		problemIndex = simulProb.index;
 		quantities = simulProb.quantities;
 		relationQuantities = new ArrayList<>();
-		isOneVar = true;
+		isOneVar = simulProb.isOneVar;
 		for(int i=0; i<simulProb.relations.size(); ++i) {
 			String str = simulProb.relations.get(i);
 			if(str.equals(relation) || str.equals("BOTH")) {
 				relationQuantities.add(quantities.get(i));
-			}
-			if(str.equals("R2") || str.equals("BOTH")) {
-				isOneVar = false;
 			}
 		}
 		ta = simulProb.ta;

@@ -61,6 +61,7 @@ public class Tools {
 	}
 	
 	public static boolean safeEquals(Double d1, Double d2) {
+		if(d1 == null && d2 == null) return true;
 		if(d1 == null || d2 == null) {
 			return false;
 		}

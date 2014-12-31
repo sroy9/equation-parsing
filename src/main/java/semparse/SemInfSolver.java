@@ -31,10 +31,12 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	private static final long serialVersionUID = 5253748728743334706L;
 	private SemFeatGen featGen;
 	private List<SemY> templates;
+	public List<Pair<SemY, Double>> beam;
 
 	public SemInfSolver(SemFeatGen featGen, List<SemY> templates) {
 		this.featGen = featGen;
 		this.templates = templates;
+		beam = new ArrayList<Pair<SemY, Double>>();
 	}
 
 	public static List<SemY> extractTemplates(SLProblem slProb) {
@@ -50,29 +52,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 			}
 			boolean alreadyPresent = false;
 			for(SemY eq2 : templates) {
-				boolean diff = false;
-				for(int j=0; j<5; ++j) {
-					if(eq1.terms.get(j).size() != eq2.terms.get(j).size()) {
-						diff = true; break;
-					}
-					for(int k=0; k<eq1.terms.get(j).size(); k++) {
-						if(eq1.terms.get(j).get(k).getFirst() != 
-								eq2.terms.get(j).get(k).getFirst()) {
-							diff = true; break;
-						}
-					}
-					if(diff) break;
-				}
-				for(int j=0; j<4; j++) {
-					if(eq1.operations.get(j) != eq2.operations.get(j)) {
-						diff = true; 
-						break;
-					}
-				}
-				if(!diff) {
-					alreadyPresent = true;
-					break;
-				}
+				if(SemY.getLoss(eq1, eq2) < 0.0001) alreadyPresent = true; 
 			}
 			if(!alreadyPresent) {
 				eq1.templateNo = templates.size();
@@ -107,13 +87,15 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 			IInstance x, IStructure goldStructure) throws Exception {
 		SemX blob = (SemX) x;
 		SemY gold = (SemY) goldStructure;
-
+		SemY pred = null;
+		
 		PairComparator<SemY> semPairComparator = 
 				new PairComparator<SemY>() {};
 		BoundedPriorityQueue<Pair<SemY, Double>> beam1 = 
 				new BoundedPriorityQueue<Pair<SemY, Double>>(200, semPairComparator);
 		BoundedPriorityQueue<Pair<SemY, Double>> beam2 = 
 				new BoundedPriorityQueue<Pair<SemY, Double>>(200, semPairComparator);
+		beam = new ArrayList<Pair<SemY, Double>>();
 		
 		Set<Double> availableNumbers = new HashSet<Double>();
 		for(Double d : Tools.uniqueNumbers(blob.relationQuantities)) {
@@ -128,19 +110,28 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 //		System.out.println("Beam1 : "+beam1.size());
 		for(Pair<SemY, Double> pair : beam1) {
 			for(SemY y : enumerateSemYs(availableNumbers, pair.getFirst())) {
+				if(goldStructure == null && y.isOneVar != blob.isOneVar) continue;
 				beam2.add(new Pair<SemY, Double>(y, pair.getSecond() + 
 						wv.dotProduct(featGen.getFeatureVector(blob, y)) + 
 						(goldStructure == null ? 0.0 : SemY.getLoss(y, gold))));		
 			}
 		}
-		if(beam2.size() > 0) return beam2.element().getFirst();
+		
+		if(beam2.size() > 0) pred = beam2.element().getFirst();
 		else {
 			System.out.println(blob.problemIndex+" : "+blob.ta.getText());
 			System.out.println("Quantities : "+blob.quantities);
 			System.out.println("Relations : "+blob.relationQuantities);
 			System.out.println("One Var : "+blob.isOneVar);
 		}
-		return null;
+		
+		int size = 5, i=0;
+		while(beam2.size()>0 && i<size) {
+			++i;
+			beam.add(beam2.poll());
+		}
+		
+		return pred;
 	}
 	
 	public List<SemY> enumerateSemYs(Set<Double> availableNumbers, SemY seed) {

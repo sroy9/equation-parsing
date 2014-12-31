@@ -34,6 +34,7 @@ public class SimulProb {
 	
 	public int index;
 	public String question;
+	public boolean isOneVar;
 	public List<Equation> equations;
 	public List<Double> solutions;
 	public List<QuantSpan> quantities;
@@ -123,10 +124,36 @@ public class SimulProb {
 			equations.add(new Equation(index, equationStrings.get(i)));
 		}
 		if(equations.size() == 1) {
-			equations.add(new Equation());
+			equations.get(0).isOneVar = true;
+		} else {
+			boolean oneVar = true;
+			Equation eq = equations.get(1);
+			for(int i=0; i<5; ++i) {
+				if(eq.terms.get(i).size() > 0) {
+					oneVar = false;
+					break;
+				}
+			}
+			for(int i=0; i<4; ++i) {
+				if(eq.operations.get(i) != Operation.ADD && i%2 == 0) {
+					oneVar = false;
+					break;
+				}
+				if(eq.operations.get(i) != Operation.NONE && i%2 == 1) {
+					oneVar = false;
+					break;
+				}
+			}
+			if(oneVar) {
+				equations.get(0).isOneVar = true;
+				equations.remove(1);
+			}
 		}
+		isOneVar = equations.size() == 1 ? true : false;
 	}
 
+	
+	
 	public QuantSpan getRelevantQuantSpans(IntPair ip) {
 		for(QuantSpan qs : quantities) {
 			if((qs.start <= ip.getFirst() && ip.getFirst() < qs.end) 
@@ -163,7 +190,7 @@ public class SimulProb {
 			// Back to machines
 			QuantSpan qs = quantities.get(quantNo);
 			candidates = new HashSet<>();
-			for(int j=0; j<2; ++j) {
+			for(int j=0; j<equations.size(); ++j) {
 				Equation eq = equations.get(j);
 				for(int i=0; i<5; ++i) {
 					List<Pair<Operation, Double>> list = eq.terms.get(i);

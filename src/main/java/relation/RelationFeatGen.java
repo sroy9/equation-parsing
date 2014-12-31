@@ -50,88 +50,81 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 	
 	public List<String> getFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
-		if(!y.relation.startsWith("R")) {
-			features.addAll(singleFeatures(x, y));
-		} else {
-			for(int i=Math.max(0, x.index-3); i<x.index; i++) {
-				features.addAll(pairwiseFeatures(x, y, i));
-			}
-		}
 		return features;
 	}
 	
 	public List<String> singleFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
-		String prefix = y.relation.substring(0,1);
-		QuantSpan qs = x.quantities.get(x.index);
-		int tokenId = x.ta.getTokenIdFromCharacterOffset(qs.start);
-		Sentence sent = x.ta.getSentenceFromToken(tokenId);
-		List<Pair<String, IntPair>> sentSkeleton = FeatGen.getPartialSkeleton(
-				x.skeleton, sent.getStartSpan(), sent.getEndSpan());
-		if(Tools.safeEquals(Tools.getValue(qs), 1.0) || Tools.safeEquals(Tools.getValue(qs), 2.0)) {
-			features.add(prefix+"_1_OR_2");
-		}
-		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3)) {
-			features.add(prefix+"_Neighbor_"+feature);
-		}
-		for(int i=0; i<sentSkeleton.size(); ++i) {
-			features.add(prefix+"_SentUnigram_"+sentSkeleton.get(i).getFirst());
-		}
-		for(int i=0; i<sentSkeleton.size()-1; ++i) {
-			features.add(prefix+"_SentBigram_"+sentSkeleton.get(i).getFirst()
-					+"_"+sentSkeleton.get(i+1).getFirst());
-		}
-		if(sent.getText().contains("?")) features.add(prefix+"_QuestionSentence");
+//		String prefix = y.relation.substring(0,1);
+//		QuantSpan qs = x.quantities.get(x.index);
+//		int tokenId = x.ta.getTokenIdFromCharacterOffset(qs.start);
+//		Sentence sent = x.ta.getSentenceFromToken(tokenId);
+//		List<Pair<String, IntPair>> sentSkeleton = FeatGen.getPartialSkeleton(
+//				x.skeleton, sent.getStartSpan(), sent.getEndSpan());
+//		if(Tools.safeEquals(Tools.getValue(qs), 1.0) || Tools.safeEquals(Tools.getValue(qs), 2.0)) {
+//			features.add(prefix+"_1_OR_2");
+//		}
+//		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3)) {
+//			features.add(prefix+"_Neighbor_"+feature);
+//		}
+//		for(int i=0; i<sentSkeleton.size(); ++i) {
+//			features.add(prefix+"_SentUnigram_"+sentSkeleton.get(i).getFirst());
+//		}
+//		for(int i=0; i<sentSkeleton.size()-1; ++i) {
+//			features.add(prefix+"_SentBigram_"+sentSkeleton.get(i).getFirst()
+//					+"_"+sentSkeleton.get(i+1).getFirst());
+//		}
+//		if(sent.getText().contains("?")) features.add(prefix+"_QuestionSentence");
 		return features;
 	}
 	
 	public List<String> pairwiseFeatures(RelationX x, RelationY y, int index) {
 		List<String> features = new ArrayList<>();
-		String prefix = "";
-		if(y.relation.equals("R1") && x.relations.get(index).equals("R1")) {
-			prefix = "SAME";
-		} else if(y.relation.equals("R2") && x.relations.get(index).equals("R2")) {
-			prefix = "SAME";
-		} else if(y.relation.equals("R1") && x.relations.get(index).equals("R2")) {
-			prefix = "DIFF";
-		} else if(y.relation.equals("R2") && x.relations.get(index).equals("R1")) {
-			prefix = "DIFF";
-		} else {
-			return features;
-		}
-		QuantSpan qs1 = x.quantities.get(index);
-		int tokenId1 = x.ta.getTokenIdFromCharacterOffset(qs1.start);
-		Sentence sent1 = x.ta.getSentenceFromToken(tokenId1);
-		List<Pair<String, IntPair>> sentSkeleton1 = FeatGen.getPartialSkeleton(
-				x.skeleton, sent1.getStartSpan(), sent1.getEndSpan());
-		QuantSpan qs2 = x.quantities.get(x.index);
-		int tokenId2 = x.ta.getTokenIdFromCharacterOffset(qs2.start);
-		Sentence sent2 = x.ta.getSentenceFromToken(tokenId2);
-		List<Pair<String, IntPair>> sentSkeleton2 = FeatGen.getPartialSkeleton(
-				x.skeleton, sent2.getStartSpan(), sent2.getEndSpan());
-		if(Tools.safeEquals(Tools.getValue(qs1), Tools.getValue(qs2))) {
-			features.add(prefix+"_SAME_NUMBER");
-		}
-		if(Tools.getUnit(qs1).contains(Tools.getUnit(qs2)) || 
-				Tools.getUnit(qs2).contains(Tools.getUnit(qs1))) {
-			features.add(prefix+"_SAME_UNIT");
-		}
-		if(Tools.safeEquals(Tools.getValue(qs1), Tools.getValue(qs2)) &&
-				(Tools.getUnit(qs1).contains(Tools.getUnit(qs2)) || 
-				Tools.getUnit(qs2).contains(Tools.getUnit(qs1)))) {
-			features.add(prefix+"_SAME_NUMBER_UNIT");
-		}
-		if(sent2.getText().contains("?")) features.add(prefix+"_QuestionSentence");
-		features.addAll(FeatGen.getConjunctions(features));
-		
+//		String prefix = "";
+//		if(y.relation.equals("R1") && x.relations.get(index).equals("R1")) {
+//			prefix = "SAME";
+//		} else if(y.relation.equals("R2") && x.relations.get(index).equals("R2")) {
+//			prefix = "SAME";
+//		} else if(y.relation.equals("R1") && x.relations.get(index).equals("R2")) {
+//			prefix = "DIFF";
+//		} else if(y.relation.equals("R2") && x.relations.get(index).equals("R1")) {
+//			prefix = "DIFF";
+//		} else {
+//			return features;
+//		}
+//		QuantSpan qs1 = x.quantities.get(index);
+//		int tokenId1 = x.ta.getTokenIdFromCharacterOffset(qs1.start);
+//		Sentence sent1 = x.ta.getSentenceFromToken(tokenId1);
+//		List<Pair<String, IntPair>> sentSkeleton1 = FeatGen.getPartialSkeleton(
+//				x.skeleton, sent1.getStartSpan(), sent1.getEndSpan());
+//		QuantSpan qs2 = x.quantities.get(x.index);
+//		int tokenId2 = x.ta.getTokenIdFromCharacterOffset(qs2.start);
+//		Sentence sent2 = x.ta.getSentenceFromToken(tokenId2);
+//		List<Pair<String, IntPair>> sentSkeleton2 = FeatGen.getPartialSkeleton(
+//				x.skeleton, sent2.getStartSpan(), sent2.getEndSpan());
+//		if(Tools.safeEquals(Tools.getValue(qs1), Tools.getValue(qs2))) {
+//			features.add(prefix+"_SAME_NUMBER");
+//		}
+//		if(Tools.getUnit(qs1).contains(Tools.getUnit(qs2)) || 
+//				Tools.getUnit(qs2).contains(Tools.getUnit(qs1))) {
+//			features.add(prefix+"_SAME_UNIT");
+//		}
+//		if(Tools.safeEquals(Tools.getValue(qs1), Tools.getValue(qs2)) &&
+//				(Tools.getUnit(qs1).contains(Tools.getUnit(qs2)) || 
+//				Tools.getUnit(qs2).contains(Tools.getUnit(qs1)))) {
+//			features.add(prefix+"_SAME_NUMBER_UNIT");
+//		}
+//		if(sent2.getText().contains("?")) features.add(prefix+"_QuestionSentence");
+//		features.addAll(FeatGen.getConjunctions(features));
+//		
 //		if(sent1.getSentenceId() == sent2.getSentenceId()) {
 //			features.add(prefix+"_SAME_SENTENCE");
 //		} else {
 //			features.add(prefix+"_DIFF_SENTENCE");
 //		}
-		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton1, tokenId1, 3)) {
-			features.add(prefix+"_Other_Neighbor_"+feature);
-		}
+//		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton1, tokenId1, 3)) {
+//			features.add(prefix+"_Other_Neighbor_"+feature);
+//		}
 //		for(int i=0; i<sentSkeleton1.size(); ++i) {
 //			features.add(prefix+"_Other_SentUnigram_"+sentSkeleton1.get(i).getFirst());
 //		}
@@ -139,16 +132,16 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 //			features.add(prefix+"_Other_SentBigram_"+sentSkeleton1.get(i).getFirst()
 //					+"_"+sentSkeleton1.get(i+1).getFirst());
 //		}
-		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton2, tokenId2, 3)) {
-			features.add(prefix+"_Mine_Neighbor_"+feature);
-		}
-		for(int i=0; i<sentSkeleton2.size(); ++i) {
-			features.add(prefix+"_Mine_SentUnigram_"+sentSkeleton2.get(i).getFirst());
-		}
-		for(int i=0; i<sentSkeleton2.size()-1; ++i) {
-			features.add(prefix+"_Mine_SentBigram_"+sentSkeleton2.get(i).getFirst()
-					+"_"+sentSkeleton2.get(i+1).getFirst());
-		}
+//		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton2, tokenId2, 3)) {
+//			features.add(prefix+"_Mine_Neighbor_"+feature);
+//		}
+//		for(int i=0; i<sentSkeleton2.size(); ++i) {
+//			features.add(prefix+"_Mine_SentUnigram_"+sentSkeleton2.get(i).getFirst());
+//		}
+//		for(int i=0; i<sentSkeleton2.size()-1; ++i) {
+//			features.add(prefix+"_Mine_SentBigram_"+sentSkeleton2.get(i).getFirst()
+//					+"_"+sentSkeleton2.get(i+1).getFirst());
+//		}
 		return features;
 	}
 	

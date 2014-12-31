@@ -25,12 +25,12 @@ public class FullSystem {
 			SLModel relationModel, SLModel equationModel) throws Exception {
 		List<Double> solutions = new ArrayList<>();
 		simulProb.relations.clear();
-		for(int i=0; i<simulProb.quantities.size(); ++i) {
-			RelationX relationX = new RelationX(simulProb, i);
-			simulProb.relations.add(
-					((RelationY) relationModel.infSolver.getBestStructure(
-					relationModel.wv, relationX)).relation);
-		}
+//		for(int i=0; i<simulProb.quantities.size(); ++i) {
+//			RelationX relationX = new RelationX(simulProb, i);
+//			simulProb.relations.add(
+//					((RelationY) relationModel.infSolver.getBestStructure(
+//					relationModel.wv, relationX)).relation);
+//		}
 		SemX semX1 = new SemX(simulProb, "R1");
 		SemY semY1 = (SemY) equationModel.infSolver.getBestStructure(
 				equationModel.wv, semX1);

@@ -23,19 +23,14 @@ public class RelationX implements IInstance {
 	public List<QuantSpan> quantities;
 	public List<String> relations;
 	public List<Pair<String, IntPair>> skeleton;
-	public int index;
 
-	public RelationX(SimulProb simulProb, int index) {
+	public RelationX(SimulProb simulProb) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
-		this.index = index;
 		ta = simulProb.ta;
 		posTags = simulProb.posTags;
 		lemmas = simulProb.lemmas;
 		skeleton = simulProb.skeleton;
 		relations = new ArrayList<>();
-		for(int i=0; i<index; i++) {
-			relations.add(simulProb.relations.get(i));
-		}
 	}
 }

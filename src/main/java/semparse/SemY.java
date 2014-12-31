@@ -63,6 +63,7 @@ public class SemY extends Equation implements IStructure, Serializable {
 	
 	public static float getLossOrderFixed(SemY y1, SemY y2) {
 		float loss = 0.0f;
+		if(y1.isOneVar != y2.isOneVar) loss += 10.0;
 		for(int i=0; i<5; i++) {
 			List<Pair<Operation, Double>> pairList1 = y1.terms.get(i);
 			List<Pair<Operation, Double>> pairList2 = y2.terms.get(i);

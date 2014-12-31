@@ -25,12 +25,14 @@ import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 public class SemDriver {
 	
 	public static void crossVal() throws Exception {
+		double crossValAcc = 0.0;
 		for(int i=0;i<5;i++) {
-			doTrainTest(i);
+			crossValAcc += doTrainTest(i);
 		}
+		System.out.println("5-fold CV : "+(crossValAcc/5));
 	}
 	
-	public static void doTrainTest(int testFold) throws Exception {
+	public static double doTrainTest(int testFold) throws Exception {
 		List<List<Integer>> folds = DocReader.extractFolds();
 		List<SimulProb> simulProbList = DocReader.readSimulProbFromBratDir(Params.annotationDir);
 		List<SimulProb> trainProbs = new ArrayList<>();
@@ -44,8 +46,8 @@ public class SemDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("sem"+testFold+".save", train);
-		testModel("sem"+testFold+".save", test);
+//		trainModel("sem"+testFold+".save", train);
+		return testModel("sem"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {
@@ -54,24 +56,22 @@ public class SemDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			SemX semX = new SemX(simulProb, "R1");
-			SemY semY = new SemY(simulProb.equations.get(0));
-			if(semY.emptySlots.size() > 0) {
-				problem.addExample(semX, semY);	
-			}
-			semX = new SemX(simulProb, "R2");
-			semY = new SemY(simulProb.equations.get(1));
-			if(semY.emptySlots.size() > 0) {
-				problem.addExample(semX, semY);	
+			for(int i=0; i<simulProb.equations.size(); ++i) {
+				SemX semX = new SemX(simulProb, "R"+(i+1));
+				SemY semY = new SemY(simulProb.equations.get(i));
+				if(semY.emptySlots.size() > 0) {
+					problem.addExample(semX, semY);	
+				}
 			}
 		}
 		return problem;
 	}
 
-	private static void testModel(String modelPath, SLProblem sp)
+	private static double testModel(String modelPath, SLProblem sp)
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
 		double acc = 0.0;
+		double beamAcc = 0.0;
 		double total = sp.instanceList.size();
 		Set<Integer> incorrect = new HashSet<>();
 		Set<Integer> tot = new HashSet<>();  
@@ -81,6 +81,12 @@ public class SemDriver {
 			SemY pred = (SemY) model.infSolver.getBestStructure(
 					model.wv, sp.instanceList.get(i));
 			tot.add(prob.problemIndex);
+			for(Pair<SemY, Double> pair : ((SemInfSolver) model.infSolver).beam) {
+				if (SemY.getLoss(gold, pair.getFirst()) < 0.00001) {
+					beamAcc += 1.0;
+					break;
+				}
+			}
 			if (SemY.getLoss(gold, pred) < 0.00001) {
 				acc += 1.0;
 			} else {
@@ -97,11 +103,13 @@ public class SemDriver {
 				System.out.println("Loss : "+SemY.getLoss(gold, pred));
 			}
 		}
+		System.out.println("Beam Accuracy : = " + (beamAcc / total));
 		System.out.println("Accuracy : " + acc + " / " + total + " = "
 				+ (acc / total));
 		System.out.println("Problem Accuracy : = 1 - " + incorrect.size() + "/" 
 				+ tot.size() 
 				+ " = " + (1-(incorrect.size()*1.0/tot.size())));
+		return 1-(incorrect.size()*1.0/tot.size());
 	}
 	
 	public static void trainModel(String modelPath, SLProblem train)

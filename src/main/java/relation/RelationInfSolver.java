@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import semparse.SemY;
 import structure.Equation;
 import structure.EquationSolver;
 import structure.Operation;
@@ -27,9 +28,12 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private RelationFeatGen featGen;
+	public List<Map<String, Integer>> clusterTemplates;
 
-	public RelationInfSolver(RelationFeatGen featGen) {
+	public RelationInfSolver(RelationFeatGen featGen, 
+			List<Map<String, Integer>> templates) {
 		this.featGen = featGen;
+		this.clusterTemplates = templates;
 	}
 
 	@Override
@@ -51,31 +55,43 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		RelationX prob = (RelationX) x;
 		RelationY gold = (RelationY) goldStructure;
 		RelationY pred = new RelationY();
-		boolean noR = true;
-		for(int i=0; i<prob.index; ++i) {
-			if(prob.relations.get(i).startsWith("R")) {
-				noR = false;
-				break;
-			}
-		}
-		
 		List<String> relations = null;
-		if(noR) relations = Arrays.asList("R1", "BOTH", "NONE");
-		else relations = Arrays.asList("R1", "R2", "BOTH", "NONE");
-		
-		double maxScore = -Double.MAX_VALUE, score;
-		String bestRelation = null;
-		for(String relation : relations) {
-			pred = new RelationY(relation);
-			score = wv.dotProduct(featGen.getFeatureVector(prob, pred)) + 
-					(goldStructure == null ? 0 : RelationY.getLoss(gold, pred));
-			if(score > maxScore) {
-				maxScore = score;
-				bestRelation = relation;
+		return null;
+	}
+	
+	public static List<Map<String, Integer>> extractClusterTemplates(SLProblem slProb) {
+		List<Map<String, Integer>> clusterTemplates = new ArrayList<>();
+		for(IStructure struct : slProb.goldStructureList) {
+			RelationY gold = (RelationY) struct;
+			Map<String, Integer> stats = new HashMap<>();
+			stats.put("R1", 0);
+			stats.put("R2", 0);
+			stats.put("BOTH", 0);
+			for(String relation : gold.relations) {
+				if(!relation.equals("NONE")) {
+					stats.put(relation, stats.get(relation)+1);
+				}
 			}
+			boolean allow = true;
+			for(Map<String, Integer> map : clusterTemplates) {
+				if(stats.get("R1") == map.get("R1") && stats.get("R2") == map.get("R2") && 
+						stats.get("BOTH") == map.get("BOTH")) {
+					allow = false;
+					break;
+				}
+				if(stats.get("R1") == map.get("R2") && stats.get("R2") == map.get("R1") && 
+						stats.get("BOTH") == map.get("BOTH")) {
+					allow = false;
+					break;
+				}
+			}
+			if(allow) clusterTemplates.add(stats);
 		}
-		pred = new RelationY(bestRelation);
-		
-		return pred;
+		return clusterTemplates;
+	}
+	
+	public List<RelationY> enumerateClustersRespectingTemplates(RelationX x) {
+		List<RelationY> candidates = new ArrayList<>();
+		return candidates;
 	}
 }
