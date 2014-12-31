@@ -55,6 +55,7 @@ public class SemX implements IInstance {
 			RelationX x, RelationY y) {
 		List<SemX> list = new ArrayList<>();
 		list.add(new SemX());
+		list.add(new SemX());
 		for(int i=0; i<y.relations.size(); ++i) {
 			String relation = y.relations.get(i);
 			if(relation.equals("R1") || relation.equals("BOTH")) {

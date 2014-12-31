@@ -76,7 +76,9 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			List<SemX> semXs = SemX.extractEquationProbFromRelations(prob, pair1.getFirst());
 			if(semXs.size() == 1) {
 				equationModel.infSolver.getBestStructure(equationModel.wv, semXs.get(0));
-				for(Pair<SemY, Double> pair2 : ((SemInfSolver) equationModel.infSolver).beam) {
+				List<Pair<SemY, Double>> list = ((SemInfSolver) equationModel.infSolver).beam;
+				list = list.subList(0, Math.min(10, list.size()));
+				for(Pair<SemY, Double> pair2 : list) {
 					RelationY y = new RelationY(pair1.getFirst());
 					y.equations.add(pair2.getFirst());
 					beam2.add(new Pair<RelationY, Double>(y, pair1.getSecond() + 
@@ -86,8 +88,10 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			if(semXs.size() == 2) {
 				equationModel.infSolver.getBestStructure(equationModel.wv, semXs.get(0));
 				List<Pair<SemY, Double>> list1 = ((SemInfSolver) equationModel.infSolver).beam;
+				list1 = list1.subList(0, Math.min(5, list1.size()));
 				equationModel.infSolver.getBestStructure(equationModel.wv, semXs.get(1));
 				List<Pair<SemY, Double>> list2 = ((SemInfSolver) equationModel.infSolver).beam;
+				list2 = list2.subList(0, Math.min(5, list2.size()));
  				for(Pair<SemY, Double> pair2 : list1) {				
 					for(Pair<SemY, Double> pair3 : list2) {
 						RelationY y = new RelationY(pair1.getFirst());
