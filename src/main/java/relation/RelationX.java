@@ -20,6 +20,7 @@ public class RelationX implements IInstance {
 	public TextAnnotation ta;
 	public List<Constituent> posTags;
 	public List<Constituent> lemmas;
+	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
 	public List<String> relations;
 	public List<Pair<String, IntPair>> skeleton;
@@ -29,6 +30,7 @@ public class RelationX implements IInstance {
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;
 		posTags = simulProb.posTags;
+		parse = simulProb.parse;
 		lemmas = simulProb.lemmas;
 		skeleton = simulProb.skeleton;
 		relations = new ArrayList<>();

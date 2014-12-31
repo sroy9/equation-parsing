@@ -45,7 +45,7 @@ public class RelationDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("rel"+testFold+".save", train);
+		trainModel("rel"+testFold+".save", train, testFold);
 		testModel("rel"+testFold+".save", test);
 	}
 	
@@ -99,7 +99,7 @@ public class RelationDriver {
 				+ " = " + (acc/sp.instanceList.size()));
 	}
 	
-	public static void trainModel(String modelPath, SLProblem train)
+	public static void trainModel(String modelPath, SLProblem train, int testFold)
 			throws Exception {
 		SLModel model = new SLModel();
 		Lexiconer lm = new Lexiconer();
@@ -108,7 +108,7 @@ public class RelationDriver {
 		RelationFeatGen fg = new RelationFeatGen(lm);
 		model.featureGenerator = fg;
 		model.infSolver = new RelationInfSolver(
-				fg, RelationInfSolver.extractClusterTemplates(train));
+				fg, RelationInfSolver.extractClusterTemplates(train), testFold);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);

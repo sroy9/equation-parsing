@@ -37,18 +37,35 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 	
 	@Override
 	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
-		RelationX blob = (RelationX) arg0;
-		RelationY relationY= (RelationY) arg1;
-		List<String> features = getFeatures(blob, relationY);
+		RelationX x = (RelationX) arg0;
+		RelationY y = (RelationY) arg1;
+		List<String> features = getFeatures(x, y);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
-
-	public IFeatureVector getFeatureVector(RelationX blob, RelationY labelSet) {
-		List<String> feats = getFeatures(blob, labelSet);
+	
+	public IFeatureVector getRelationFeatureVector(RelationX x, RelationY y) {
+		List<String> feats = getRelationFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(feats, lm);
+	}
+	
+	public IFeatureVector getEquationFeatureVector(RelationX x, RelationY y) {
+		List<String> feats = getEquationFeatures(x, y);
 		return FeatGen.getFeatureVectorFromList(feats, lm);
 	}
 	
 	public List<String> getFeatures(RelationX x, RelationY y) {
+		List<String> features = new ArrayList<>();
+		features.addAll(getRelationFeatures(x, y));
+		features.addAll(getEquationFeatures(x, y));
+		return features;
+	}
+	
+	public List<String> getRelationFeatures(RelationX x, RelationY y) {
+		List<String> features = new ArrayList<>();
+		return features;
+	}
+	
+	public List<String> getEquationFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
 		return features;
 	}

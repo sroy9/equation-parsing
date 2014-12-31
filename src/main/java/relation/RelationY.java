@@ -16,6 +16,7 @@ public class RelationY implements IStructure, Serializable {
 	private static final long serialVersionUID = 2399969922362221136L;
 	public List<String> relations;
 	public List<Equation> equations;
+	public boolean isOneVar;
 	
 	public RelationY() {
 		relations = new ArrayList<>();
@@ -31,6 +32,7 @@ public class RelationY implements IStructure, Serializable {
 		for(Equation eq : other.equations) {
 			equations.add(new Equation(eq));
 		}
+		isOneVar = other.isOneVar;
 	}
 	
 	public RelationY(SimulProb prob) {
@@ -42,6 +44,7 @@ public class RelationY implements IStructure, Serializable {
 		for(Equation eq : prob.equations) {
 			equations.add(new Equation(eq));
 		}
+		isOneVar = prob.isOneVar;
 	}
 	
 	public static float getLoss(RelationY r1, RelationY r2) {
