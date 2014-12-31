@@ -46,7 +46,7 @@ public class SemDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-//		trainModel("sem"+testFold+".save", train);
+		trainModel("sem"+testFold+".save", train);
 		return testModel("sem"+testFold+".save", test);
 	}
 	

@@ -50,11 +50,6 @@ public class RelationY implements IStructure, Serializable {
 	public static float getLoss(RelationY r1, RelationY r2) {
 		assert r1.relations.size() == r2.relations.size();
 		float loss = 0.0f;
-		for(int i=0; i<r1.relations.size(); ++i) {
-			if(!r1.relations.get(i).equals(r2.relations.get(i))) {
-				loss+=1.0;
-			}
-		}
 		List<Double> soln1 = EquationSolver.solve(r1.equations);
 		List<Double> soln2 = EquationSolver.solve(r2.equations);
 		if(!FullSystem.hasSameSolution(soln1, soln2)) loss += 10.0;

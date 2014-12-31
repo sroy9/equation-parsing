@@ -119,10 +119,11 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		
 		if(beam2.size() > 0) pred = beam2.element().getFirst();
 		else {
-			System.out.println(blob.problemIndex+" : "+blob.ta.getText());
-			System.out.println("Quantities : "+blob.quantities);
-			System.out.println("Relations : "+blob.relationQuantities);
-			System.out.println("One Var : "+blob.isOneVar);
+			System.out.println("Beam empty in SemInfSolver");
+//			System.out.println(blob.problemIndex+" : "+blob.ta.getText());
+//			System.out.println("Quantities : "+blob.quantities);
+//			System.out.println("Relations : "+blob.relationQuantities);
+//			System.out.println("One Var : "+blob.isOneVar);
 		}
 		
 		int size = 5, i=0;

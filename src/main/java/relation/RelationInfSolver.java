@@ -142,6 +142,21 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		return stats;
 	}
 	
+	public static boolean isPossibleTemplate(
+			List<Map<String, Integer>> templates, Map<String, Integer> stats) {
+		for(Map<String, Integer> map : templates) {
+			if(stats.get("R1") <= map.get("R1") && stats.get("R2") <= map.get("R2") && 
+					stats.get("BOTH") <= map.get("BOTH")) {
+				return true;
+			}
+			if(stats.get("R1") <= map.get("R2") && stats.get("R2") <= map.get("R1") && 
+					stats.get("BOTH") <= map.get("BOTH")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static boolean isTemplatePresent(
 			List<Map<String, Integer>> templates, Map<String, Integer> stats) {
 		for(Map<String, Integer> map : templates) {
@@ -162,30 +177,30 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		List<RelationY> list1 = new ArrayList<>();
 		list1.add(new RelationY());
 		List<RelationY> list2 = new ArrayList<>();
+		System.out.println("NumQuant : "+x.quantities.size());
 		for(int i=0; i<x.quantities.size(); ++i) {
 			for(RelationY y : list1) {
 				for(String relation : relations) {
 					RelationY yNew = new RelationY(y);
 					yNew.relations.add(relation);
-					list2.add(yNew);
+					if(isPossibleTemplate(clusterTemplates, getStats(x, yNew))) {
+						list2.add(yNew);
+					}
 				}
 			}
 			list1.clear();
 			list1.addAll(list2);
 			list2.clear();
 		}
+		System.out.println("Enumeration : "+list1.size());
 		for(RelationY y : list1) {
-			y.isOneVar = true;
 			Map<String, Integer> stats = getStats(x, y);
 			if(isTemplatePresent(clusterTemplates, stats)) {
-				for(String relation : y.relations) {
-					if(relation.equals("R2") || relation.equals("BOTH")) {
-						y.isOneVar = false;
-					}
-				}
+				y.isOneVar = Tools.isOneVar(y.relations);
 				list2.add(y);
 			}
 		}
+		System.out.println("After some pruning : "+list2.size());
 		return list2;
 	}
 }

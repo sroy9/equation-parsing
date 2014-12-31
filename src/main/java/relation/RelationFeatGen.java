@@ -62,36 +62,42 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 	
 	public List<String> getRelationFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
+		features.addAll(documentFeatures(x, y));
 		return features;
 	}
 	
 	public List<String> getEquationFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
+		features.addAll(solutionFeatures(x, y));
 		return features;
 	}
 	
-	public List<String> singleFeatures(RelationX x, RelationY y) {
+	public List<String> documentFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
-//		String prefix = y.relation.substring(0,1);
-//		QuantSpan qs = x.quantities.get(x.index);
-//		int tokenId = x.ta.getTokenIdFromCharacterOffset(qs.start);
-//		Sentence sent = x.ta.getSentenceFromToken(tokenId);
-//		List<Pair<String, IntPair>> sentSkeleton = FeatGen.getPartialSkeleton(
-//				x.skeleton, sent.getStartSpan(), sent.getEndSpan());
-//		if(Tools.safeEquals(Tools.getValue(qs), 1.0) || Tools.safeEquals(Tools.getValue(qs), 2.0)) {
-//			features.add(prefix+"_1_OR_2");
-//		}
-//		for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3)) {
-//			features.add(prefix+"_Neighbor_"+feature);
-//		}
-//		for(int i=0; i<sentSkeleton.size(); ++i) {
-//			features.add(prefix+"_SentUnigram_"+sentSkeleton.get(i).getFirst());
-//		}
-//		for(int i=0; i<sentSkeleton.size()-1; ++i) {
-//			features.add(prefix+"_SentBigram_"+sentSkeleton.get(i).getFirst()
-//					+"_"+sentSkeleton.get(i+1).getFirst());
-//		}
-//		if(sent.getText().contains("?")) features.add(prefix+"_QuestionSentence");
+		for(String feature : FeatGen.getLemmatizedUnigrams(
+				x.lemmas, 0, x.lemmas.size()-1)) {
+			features.add("Unigram_"+feature);
+		}
+		for(String feature : FeatGen.getLemmatizedBigrams(
+				x.lemmas, 0, x.lemmas.size()-1)) {
+			features.add("Bigram_"+feature);
+		}
+		return features;
+	}
+	
+	public List<String> solutionFeatures(RelationX x, RelationY y) {
+		List<String> features = new ArrayList<>();
+		List<Double> solns = EquationSolver.solve(y.equations); 
+		if(solns == null) {
+			features.add("Not_Solvable");
+			return features;
+		}
+		for(Double d : solns) {
+			if(d-d.intValue() < 0.0001) {
+				features.add("Integer_Solution");
+			}
+			if(d>0) features.add("Positive solution");
+		}
 		return features;
 	}
 	

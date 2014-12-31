@@ -182,4 +182,14 @@ public class Tools {
 		}
 		return str.trim();
 	}
+	
+	public static boolean isOneVar(List<String> relations) {
+		boolean r1 = false, r2 = false;
+		for(String relation : relations) {
+			if(relation.equals("R1") || relation.equals("BOTH")) r1 = true;
+			if(relation.equals("R2") || relation.equals("BOTH")) r2 = true;
+		}
+		if(r1 && r2) return false;
+		return true;
+	}
 }

@@ -221,25 +221,25 @@ public class SimulProb {
 				relations.add("BOTH");
 			}
 		}
-		// Ensuring R1 comes before R2
-		boolean needsSwap = false;
-		for(String relation : relations) {
-			if(relation.equals("R2")) needsSwap = true;
-			if(relation.equals("R1")) break; 
-		}
-		// This ensures R1 always appears before R2
-		if(needsSwap) {
-			for(int i=0; i<relations.size(); ++i) {
-				if(relations.get(i).equals("R1")) {
-					relations.set(i, "R2");
-				} else if(relations.get(i).equals("R2")) {
-					relations.set(i, "R1");
-				}
-			}
-			Equation tmp = equations.get(0);
-			equations.set(0, equations.get(1));
-			equations.set(1, tmp);
-		}
+//		// Ensuring R1 comes before R2
+//		boolean needsSwap = false;
+//		for(String relation : relations) {
+//			if(relation.equals("R2")) needsSwap = true;
+//			if(relation.equals("R1")) break; 
+//		}
+//		// This ensures R1 always appears before R2
+//		if(needsSwap) {
+//			for(int i=0; i<relations.size(); ++i) {
+//				if(relations.get(i).equals("R1")) {
+//					relations.set(i, "R2");
+//				} else if(relations.get(i).equals("R2")) {
+//					relations.set(i, "R1");
+//				}
+//			}
+//			Equation tmp = equations.get(0);
+//			equations.set(0, equations.get(1));
+//			equations.set(1, tmp);
+//		}
 	}
 	
 	public void extractAnnotations() throws Exception {
