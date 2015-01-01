@@ -18,13 +18,18 @@ public class LatentSVM {
 		SLParameters params = new SLParameters();
 		params.loadConfigFile(Params.spConfigFile);
 		params.MAX_NUM_ITER = numInnerIters;
+		System.err.println("Running LatentSVM with "+numInnerIters+" inner and "+numOuterIters+" outer iterations");
 		Learner learner = LearnerFactory.getLearner(infSolver, fg, params);
-		WeightVector w = null;// = learner.train(problem);
+		WeightVector w = new WeightVector(8000);
+		w.setExtendable(true);
 		for (int outerIter = 0; outerIter < numOuterIters; outerIter++) {
+			System.err.println("Iteration Outer : "+outerIter);
 			problem = runLatentStructureInference(problem, w, infSolver);
+			System.err.println("Gold extracted for latent");
 			learner = LearnerFactory.getLearner(infSolver, fg, params);
 			w = learner.train(problem);
 		}
+		System.out.println("LatentSVM learning complete");
 		return w;
 	}
 

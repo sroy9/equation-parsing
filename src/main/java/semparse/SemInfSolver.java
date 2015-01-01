@@ -101,13 +101,13 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		for(Double d : Tools.uniqueNumbers(blob.relationQuantities)) {
 			availableNumbers.add(d);
 		}
-//		System.out.println("Available numbers : "+availableNumbers.size());
+		System.out.println("Available numbers : "+availableNumbers.size());
 		for(SemY template : templates) {
 			if(availableNumbers.size() == template.emptySlots.size()) {
 				beam1.add(new Pair<SemY, Double>(template, 0.0));
 			}
 		}
-//		System.out.println("Beam1 : "+beam1.size());
+		System.out.println("Beam1 : "+beam1.size());
 		for(Pair<SemY, Double> pair : beam1) {
 			for(SemY y : enumerateSemYs(availableNumbers, pair.getFirst())) {
 				if(goldStructure == null && y.isOneVar != blob.isOneVar) continue;

@@ -111,7 +111,7 @@ public class RelationDriver {
 				fg, RelationInfSolver.extractClusterTemplates(train), testFold);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
-		model.wv = LatentSVM.learn(train, model.infSolver, fg, 100, 100);
+		model.wv = LatentSVM.learn(train, model.infSolver, fg, 100, 10);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}

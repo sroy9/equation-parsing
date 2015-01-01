@@ -56,6 +56,7 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 	
 	public List<String> getFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
+//		System.out.println("GetFeatures : "+y.equations.size());
 		features.addAll(getRelationFeatures(x, y));
 		features.addAll(getEquationFeatures(x, y));
 		return features;

@@ -38,9 +38,9 @@ public class RelationY implements IStructure, Serializable {
 	
 	public RelationY(SimulProb prob) {
 		relations = new ArrayList<>();
-//		for(String relation : prob.relations) {
-//			relations.add(relation);
-//		}
+		for(String relation : prob.relations) {
+			relations.add(relation);
+		}
 		equations = new ArrayList<>();
 		for(Equation eq : prob.equations) {
 			equations.add(new SemY(eq));

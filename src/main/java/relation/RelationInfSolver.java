@@ -60,6 +60,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 	// argmax_h_i w^T \phi(x, h_i, y)
 	public RelationY getBestLatentVariable(
 			WeightVector wv, RelationX x, RelationY y) {
+		y.relations.clear();
 		Map<String, List<Double>> eqNumbers = new HashMap<String, List<Double>>();
 		eqNumbers.put("R1", new ArrayList<Double>());
 		eqNumbers.put("R2", new ArrayList<Double>());
@@ -73,13 +74,14 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		}
 		RelationY best = null;
 		float bestScore = -Float.MAX_VALUE;
-		for(RelationY ry : enumerateClustersRespectingEquations(x, eqNumbers)) {
+		for(RelationY ry : enumerateClustersRespectingEquations(x, y, eqNumbers)) {
 			float score = wv.dotProduct(featGen.getFeatureVector(x, ry));
 			if(score > bestScore) {
 				bestScore = score;
 				best = ry;
 			}
 		}
+//		System.out.println("BestLatentVar : "+best.equations.size());
 		return best;
 	}
 
@@ -96,13 +98,17 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 				new BoundedPriorityQueue<Pair<RelationY, Double>>(200, relationPairComparator);
 		BoundedPriorityQueue<Pair<RelationY, Double>> beam2 = 
 				new BoundedPriorityQueue<Pair<RelationY, Double>>(200, relationPairComparator);
+		System.out.println(prob.problemIndex+" : "+prob.ta.getText());
+		System.out.println(prob.quantities);
 		for(RelationY y : enumerateClustersRespectingTemplates(prob)) {
 			beam1.add(new Pair<RelationY, Double>(y, 0.0 + 
 					wv.dotProduct(featGen.getRelationFeatureVector(prob, y))+
 					(goldStructure == null?0:RelationY.getRelationLoss(y, gold))));
 		}
 		for(Pair<RelationY, Double> pair1 : beam1) {
+			System.out.println("Relation : "+pair1.getFirst());
 			List<SemX> semXs = SemX.extractEquationProbFromRelations(prob, pair1.getFirst());
+			System.out.println("SemXs : " + semXs.size());
 			if(semXs.size() == 1) {
 				equationModel.infSolver.getBestStructure(equationModel.wv, semXs.get(0));
 				List<Pair<SemY, Double>> list = ((SemInfSolver) equationModel.infSolver).beam;
@@ -136,6 +142,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		}
 //		System.out.println(new Date()+" : inference done");
 		if(beam1.size() > 0) pred = beam1.element().getFirst();
+		System.out.println("BestLossAugmented : "+pred.equations.size());
 		return pred;
 	}
 	
@@ -147,8 +154,13 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			Map<String, Integer> stats = getStats(prob, gold);
 			if(!isTemplatePresent(clusterTemplates, stats)) {
 				clusterTemplates.add(stats);
+//				System.out.println("Template : "+stats);
+//				System.out.println("Contributed by : "+prob.problemIndex + " : "+prob.ta.getText());
+//				System.out.println(prob.quantities);
+//				System.out.println("Gold"+gold);
 			}
 		}
+		System.out.println("Number of templates : " + clusterTemplates.size());
 		return clusterTemplates;
 	}
 	
@@ -226,7 +238,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			list1.addAll(list2);
 			list2.clear();
 		}
-//		System.out.println("Enumeration : "+list1.size());
+		System.out.println("Enumeration : "+list1.size());
 		for(RelationY y : list1) {
 			Map<String, Integer> stats = getStats(x, y);
 //			System.out.println(Arrays.asList(stats));
@@ -239,15 +251,15 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 //		for(Map<String, Integer> template : clusterTemplates) {
 //			System.out.println(Arrays.asList(template));
 //		}
-//		System.out.println("After some pruning : "+list2.size());
+		System.out.println("After some pruning : "+list2.size());
 		return list2;
 	}
 	
 	public List<RelationY> enumerateClustersRespectingEquations(
-			RelationX x, Map<String, List<Double>> eqNumbers) {
+			RelationX x, RelationY seed, Map<String, List<Double>> eqNumbers) {
 		List<String> relations = Arrays.asList("R1", "R2", "BOTH", "NONE");
 		List<RelationY> list1 = new ArrayList<>();
-		list1.add(new RelationY());
+		list1.add(seed);
 		List<RelationY> list2 = new ArrayList<>();
 		for(int i=0; i<x.quantities.size(); ++i) {
 			for(RelationY y : list1) {
