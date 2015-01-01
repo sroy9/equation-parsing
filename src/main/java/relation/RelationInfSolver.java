@@ -56,7 +56,34 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		RelationY r2 = (RelationY) arg2;
 		return RelationY.getLoss(r1, r2);
 	}
+	
+	// argmax_h_i w^T \phi(x, h_i, y)
+	public RelationY getBestLatentVariable(
+			WeightVector wv, RelationX x, RelationY y) {
+		Map<String, List<Double>> eqNumbers = new HashMap<String, List<Double>>();
+		eqNumbers.put("R1", new ArrayList<Double>());
+		eqNumbers.put("R2", new ArrayList<Double>());
+		for(int i=0; i<y.equations.size(); ++i) {
+			Equation eq = y.equations.get(i);
+			for(List<Pair<Operation, Double>> pairList : eq.terms) {
+				for(Pair<Operation, Double> pair : pairList) {
+					eqNumbers.get("R"+(i+1)).add(pair.getSecond());
+				}
+			}
+		}
+		RelationY best = null;
+		float bestScore = -Float.MAX_VALUE;
+		for(RelationY ry : enumerateClustersRespectingEquations(x, eqNumbers)) {
+			float score = wv.dotProduct(featGen.getFeatureVector(x, ry));
+			if(score > bestScore) {
+				bestScore = score;
+				best = ry;
+			}
+		}
+		return best;
+	}
 
+	// argmax _ {y_i, h_i} w^T \phi(x, y_i, h_i)
 	@Override
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
@@ -213,6 +240,56 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 //			System.out.println(Arrays.asList(template));
 //		}
 //		System.out.println("After some pruning : "+list2.size());
+		return list2;
+	}
+	
+	public List<RelationY> enumerateClustersRespectingEquations(
+			RelationX x, Map<String, List<Double>> eqNumbers) {
+		List<String> relations = Arrays.asList("R1", "R2", "BOTH", "NONE");
+		List<RelationY> list1 = new ArrayList<>();
+		list1.add(new RelationY());
+		List<RelationY> list2 = new ArrayList<>();
+		for(int i=0; i<x.quantities.size(); ++i) {
+			for(RelationY y : list1) {
+				for(String relation : relations) {
+					if((relation.equals("R1") || relation.equals("BOTH")) && Tools.contains(
+							eqNumbers.get("R1"), Tools.getValue(x.quantities.get(i)))) {
+						RelationY yNew = new RelationY(y);
+						yNew.relations.add(relation);
+						list2.add(yNew);
+					} else if((relation.equals("R2") || relation.equals("BOTH")) && Tools.contains(
+							eqNumbers.get("R2"), Tools.getValue(x.quantities.get(i)))) {
+						RelationY yNew = new RelationY(y);
+						yNew.relations.add(relation);
+						list2.add(yNew);
+					} else if(relation.equals("NONE")) {
+						RelationY yNew = new RelationY(y);
+						yNew.relations.add(relation);
+						list2.add(yNew);
+					}
+				}
+			}
+			list1.clear();
+			list1.addAll(list2);
+			list2.clear();
+		}
+		for(RelationY y : list1) {
+			List<QuantSpan> quantR1 = new ArrayList<>();
+			List<QuantSpan> quantR2 = new ArrayList<>();
+			for(int j=0; j<y.relations.size(); ++j) {
+				String relation = y.relations.get(j);
+				if(relation.equals("R1") || relation.equals("BOTH")) {
+					quantR1.add(x.quantities.get(j));
+				}
+				if(relation.equals("R2") || relation.equals("BOTH")) {
+					quantR2.add(x.quantities.get(j));
+				}
+			}
+			if(Tools.equals(Tools.uniqueNumbers(quantR1), eqNumbers.get("R1")) && 
+					Tools.equals(Tools.uniqueNumbers(quantR2), eqNumbers.get("R2"))) {
+				list2.add(y);
+			}
+		}
 		return list2;
 	}
 }

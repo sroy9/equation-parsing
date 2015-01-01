@@ -21,7 +21,9 @@ import edu.illinois.cs.cogcomp.sl.core.SLParameters;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
+import edu.illinois.cs.cogcomp.sl.learner.l2_loss_svm.L2LossSSVMDCDSolver;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
+import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
 public class RelationDriver {
 	
@@ -109,8 +111,7 @@ public class RelationDriver {
 				fg, RelationInfSolver.extractClusterTemplates(train), testFold);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
-		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
-		model.wv = learner.train(train);
+		model.wv = LatentSVM.learn(train, model.infSolver, fg, 100, 100);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}

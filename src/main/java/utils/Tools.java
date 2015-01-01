@@ -115,7 +115,8 @@ public class Tools {
 		return uniqueNos;
 	}
 	
-	public static List<QuantSpan> getRelevantQuantSpans(Double d, List<QuantSpan> quantSpans) {
+	public static List<QuantSpan> getRelevantQuantSpans(
+			Double d, List<QuantSpan> quantSpans) {
 		List<QuantSpan> relevantSpans = new ArrayList<QuantSpan>();
 		for(QuantSpan qs : quantSpans) {
 			if(Tools.safeEquals(d, Tools.getValue(qs))) {
@@ -190,6 +191,29 @@ public class Tools {
 			if(relation.equals("R2") || relation.equals("BOTH")) r2 = true;
 		}
 		if(r1 && r2) return false;
+		return true;
+	}
+	
+	public static boolean contains(List<Double> arr, Double key) {
+		for(Double d : arr) {
+			if(Tools.safeEquals(d, key)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean equals(List<Double> arr1, List<Double> arr2) {
+		if(arr1.size() != arr2.size()) return false;
+		for(Double d1 : arr1) {
+			boolean found = false;
+			for(Double d2 : arr2) {
+				if(Tools.safeEquals(d1, d2)) {
+					found = true;
+				}
+			}
+			if(!found) return false;
+		}
 		return true;
 	}
 }

@@ -25,12 +25,13 @@ import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.util.IFeatureVector;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
+import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
 public class RelationFeatGen extends AbstractFeatureGenerator implements
 		Serializable {
 	private static final long serialVersionUID = 1810851154558168679L;
 	public Lexiconer lm = null;
-
+	
 	public RelationFeatGen(Lexiconer lm) {
 		this.lm = lm;
 	}
