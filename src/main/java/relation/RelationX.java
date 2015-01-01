@@ -22,7 +22,6 @@ public class RelationX implements IInstance {
 	public List<Constituent> lemmas;
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
-	public List<String> relations;
 	public List<Pair<String, IntPair>> skeleton;
 
 	public RelationX(SimulProb simulProb) {
@@ -33,6 +32,5 @@ public class RelationX implements IInstance {
 		parse = simulProb.parse;
 		lemmas = simulProb.lemmas;
 		skeleton = simulProb.skeleton;
-		relations = new ArrayList<>();
 	}
 }

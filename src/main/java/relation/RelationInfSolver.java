@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -61,7 +62,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			IInstance x, IStructure goldStructure) throws Exception {
 		RelationX prob = (RelationX) x;
 		RelationY gold = (RelationY) goldStructure;
-		RelationY pred = new RelationY();
+		RelationY pred = null;
 		PairComparator<RelationY> relationPairComparator = 
 				new PairComparator<RelationY>() {};
 		BoundedPriorityQueue<Pair<RelationY, Double>> beam1 = 
@@ -70,7 +71,8 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 				new BoundedPriorityQueue<Pair<RelationY, Double>>(200, relationPairComparator);
 		for(RelationY y : enumerateClustersRespectingTemplates(prob)) {
 			beam1.add(new Pair<RelationY, Double>(y, 0.0 + 
-					wv.dotProduct(featGen.getRelationFeatureVector(prob, y))));
+					wv.dotProduct(featGen.getRelationFeatureVector(prob, y))+
+					(goldStructure == null?0:RelationY.getRelationLoss(y, gold))));
 		}
 		for(Pair<RelationY, Double> pair1 : beam1) {
 			List<SemX> semXs = SemX.extractEquationProbFromRelations(prob, pair1.getFirst());
@@ -82,7 +84,8 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 					RelationY y = new RelationY(pair1.getFirst());
 					y.equations.add(pair2.getFirst());
 					beam2.add(new Pair<RelationY, Double>(y, pair1.getSecond() + 
-							wv.dotProduct(featGen.getEquationFeatureVector(prob, y))));
+							wv.dotProduct(featGen.getEquationFeatureVector(prob, y)) +
+							RelationY.getLoss(y, gold)));
 				}
 			}
 			if(semXs.size() == 2) {
@@ -98,12 +101,15 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 						y.equations.add(pair2.getFirst());
 						y.equations.add(pair3.getFirst());
 						beam2.add(new Pair<RelationY, Double>(y, pair1.getSecond() + 
-								wv.dotProduct(featGen.getEquationFeatureVector(prob, y))));
+								wv.dotProduct(featGen.getEquationFeatureVector(prob, y)) +
+								RelationY.getLoss(y, gold)));
 					}
 				}
 			}
 		}
-		return beam2.element().getFirst();
+//		System.out.println(new Date()+" : inference done");
+		if(beam1.size() > 0) pred = beam1.element().getFirst();
+		return pred;
 	}
 	
 	public static List<Map<String, Integer>> extractClusterTemplates(SLProblem slProb) {
@@ -160,12 +166,13 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 	public static boolean isTemplatePresent(
 			List<Map<String, Integer>> templates, Map<String, Integer> stats) {
 		for(Map<String, Integer> map : templates) {
-			if(stats.get("R1") == map.get("R1") && stats.get("R2") == map.get("R2") && 
-					stats.get("BOTH") == map.get("BOTH")) {
+			if(stats.get("R1").equals(map.get("R1")) && 
+					stats.get("R2").equals(map.get("R2")) && 
+					stats.get("BOTH").equals(map.get("BOTH"))) {
 				return true;
 			}
-			if(stats.get("R1") == map.get("R2") && stats.get("R2") == map.get("R1") && 
-					stats.get("BOTH") == map.get("BOTH")) {
+			if(stats.get("R1").equals(map.get("R2")) && stats.get("R2").equals(map.get("R1")) && 
+					stats.get("BOTH").equals(map.get("BOTH"))) {
 				return true;
 			}
 		}
@@ -177,7 +184,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		List<RelationY> list1 = new ArrayList<>();
 		list1.add(new RelationY());
 		List<RelationY> list2 = new ArrayList<>();
-		System.out.println("NumQuant : "+x.quantities.size());
+//		System.out.println("NumQuant : "+x.quantities.size());
 		for(int i=0; i<x.quantities.size(); ++i) {
 			for(RelationY y : list1) {
 				for(String relation : relations) {
@@ -192,15 +199,20 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			list1.addAll(list2);
 			list2.clear();
 		}
-		System.out.println("Enumeration : "+list1.size());
+//		System.out.println("Enumeration : "+list1.size());
 		for(RelationY y : list1) {
 			Map<String, Integer> stats = getStats(x, y);
+//			System.out.println(Arrays.asList(stats));
 			if(isTemplatePresent(clusterTemplates, stats)) {
 				y.isOneVar = Tools.isOneVar(y.relations);
 				list2.add(y);
 			}
 		}
-		System.out.println("After some pruning : "+list2.size());
+//		System.out.println("Cluster Templates : "+clusterTemplates.size());
+//		for(Map<String, Integer> template : clusterTemplates) {
+//			System.out.println(Arrays.asList(template));
+//		}
+//		System.out.println("After some pruning : "+list2.size());
 		return list2;
 	}
 }
