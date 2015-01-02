@@ -32,8 +32,8 @@ public class LatentSVM {
 			System.err.println("Gold extracted for latent");
 			learner = LearnerFactory.getLearner(model.infSolver, model.featureGenerator, params);
 			model.wv = learner.train(train);
-//			model.saveModel("tempModel");
-//			RelationDriver.testModel("tempModel", test);
+			model.saveModel("tempModel");
+			RelationDriver.testModel("tempModel", test);
 		}
 		System.out.println("LatentSVM learning complete");
 		return model.wv;
