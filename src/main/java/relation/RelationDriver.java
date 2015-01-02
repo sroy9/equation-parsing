@@ -108,10 +108,10 @@ public class RelationDriver {
 		RelationFeatGen fg = new RelationFeatGen(lm);
 		model.featureGenerator = fg;
 		model.infSolver = new RelationInfSolver(
-				fg, RelationInfSolver.extractClusterTemplates(train), testFold);
+				fg, RelationInfSolver.extractSegTemplates(train), testFold);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
-		model.wv = LatentSVM.learn(train, model.infSolver, fg, 100, 10);
+		model.wv = LatentSVM.learn(train, model.infSolver, fg, 10, 10);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}

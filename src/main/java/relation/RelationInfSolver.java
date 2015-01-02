@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import semparse.SemInfSolver;
 import semparse.SemX;
@@ -34,14 +35,18 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private RelationFeatGen featGen;
-	public List<Map<String, Integer>> clusterTemplates;
+//	public Map<Integer, Set<Integer>> templateStats;
+	public List<Map<String, Integer>> segTemplates;
 	public SLModel equationModel;
 
-	public RelationInfSolver(RelationFeatGen featGen, 
-			List<Map<String, Integer>> templates, int testFold) throws Exception {
+	public RelationInfSolver(RelationFeatGen featGen, List<Map<String, Integer>> segTemplates, 
+			int testFold) throws Exception {
 		this.featGen = featGen;
-		this.clusterTemplates = templates;
 		equationModel = SLModel.loadModel("sem"+testFold+".save");
+//		templateStats = SemInfSolver.extractTemplateStats(
+//				((SemInfSolver)equationModel.infSolver).templates);
+		this.segTemplates = segTemplates;
+		System.out.println("Segmentation Templates : " +Arrays.asList(segTemplates));
 	}
 
 	@Override
@@ -81,7 +86,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 				best = ry;
 			}
 		}
-//		System.out.println("BestLatentVar : "+best.equations.size());
+		System.out.println("BestLatentVar : "+best.equations.size());
 		return best;
 	}
 
@@ -95,16 +100,18 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		PairComparator<RelationY> relationPairComparator = 
 				new PairComparator<RelationY>() {};
 		BoundedPriorityQueue<Pair<RelationY, Double>> beam1 = 
-				new BoundedPriorityQueue<Pair<RelationY, Double>>(200, relationPairComparator);
+				new BoundedPriorityQueue<Pair<RelationY, Double>>(50, relationPairComparator);
 		BoundedPriorityQueue<Pair<RelationY, Double>> beam2 = 
-				new BoundedPriorityQueue<Pair<RelationY, Double>>(200, relationPairComparator);
+				new BoundedPriorityQueue<Pair<RelationY, Double>>(50, relationPairComparator);
+		System.out.println("LossAugmentedBestStructure called");
 		System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 		System.out.println(prob.quantities);
-		for(RelationY y : enumerateClustersRespectingTemplates(prob)) {
+		for(RelationY y : enumerateClustersRespectingTemplates(prob, segTemplates)) {
 			beam1.add(new Pair<RelationY, Double>(y, 0.0 + 
 					wv.dotProduct(featGen.getRelationFeatureVector(prob, y))+
 					(goldStructure == null?0:RelationY.getRelationLoss(y, gold))));
 		}
+		
 		for(Pair<RelationY, Double> pair1 : beam1) {
 			System.out.println("Relation : "+pair1.getFirst());
 			List<SemX> semXs = SemX.extractEquationProbFromRelations(prob, pair1.getFirst());
@@ -123,10 +130,12 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			}
 			if(semXs.size() == 2) {
 				equationModel.infSolver.getBestStructure(equationModel.wv, semXs.get(0));
-				List<Pair<SemY, Double>> list1 = ((SemInfSolver) equationModel.infSolver).beam;
+				List<Pair<SemY, Double>> list1 = new ArrayList<>();
+				list1.addAll(((SemInfSolver) equationModel.infSolver).beam);
 				list1 = list1.subList(0, Math.min(5, list1.size()));
 				equationModel.infSolver.getBestStructure(equationModel.wv, semXs.get(1));
-				List<Pair<SemY, Double>> list2 = ((SemInfSolver) equationModel.infSolver).beam;
+				List<Pair<SemY, Double>> list2 = new ArrayList<>();
+				list2.addAll(((SemInfSolver) equationModel.infSolver).beam);
 				list2 = list2.subList(0, Math.min(5, list2.size()));
  				for(Pair<SemY, Double> pair2 : list1) {				
 					for(Pair<SemY, Double> pair3 : list2) {
@@ -141,12 +150,34 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			}
 		}
 //		System.out.println(new Date()+" : inference done");
-		if(beam1.size() > 0) pred = beam1.element().getFirst();
+		if(beam2.size() > 0) pred = beam2.element().getFirst();
 		System.out.println("BestLossAugmented : "+pred.equations.size());
 		return pred;
 	}
 	
-	public static List<Map<String, Integer>> extractClusterTemplates(SLProblem slProb) {
+	public static Map<String, List<Double>> clusterMap(RelationX x, RelationY y) {
+		List<QuantSpan> quantR1 = new ArrayList<>();
+		List<QuantSpan> quantR2 = new ArrayList<>();
+		for(int j=0; j<y.relations.size(); ++j) {
+			String relation = y.relations.get(j);
+			if(relation.equals("R1")) {
+				quantR1.add(x.quantities.get(j));
+			}
+			if(relation.equals("R2")) {
+				quantR2.add(x.quantities.get(j));
+			}
+			if(relation.equals("BOTH")) {
+				quantR1.add(x.quantities.get(j));
+				quantR2.add(x.quantities.get(j));
+			}
+		}
+		Map<String, List<Double>> stats = new HashMap<>();
+		stats.put("R1", Tools.uniqueNumbers(quantR1));
+		stats.put("R2", Tools.uniqueNumbers(quantR2));
+		return stats;
+	}
+	
+	public static List<Map<String, Integer>> extractSegTemplates(SLProblem slProb) {
 		List<Map<String, Integer>> clusterTemplates = new ArrayList<>();
 		for(int i=0; i<slProb.goldStructureList.size(); ++i) {
 			RelationX prob = (RelationX) slProb.instanceList.get(i);
@@ -154,10 +185,6 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			Map<String, Integer> stats = getStats(prob, gold);
 			if(!isTemplatePresent(clusterTemplates, stats)) {
 				clusterTemplates.add(stats);
-//				System.out.println("Template : "+stats);
-//				System.out.println("Contributed by : "+prob.problemIndex + " : "+prob.ta.getText());
-//				System.out.println(prob.quantities);
-//				System.out.println("Gold"+gold);
 			}
 		}
 		System.out.println("Number of templates : " + clusterTemplates.size());
@@ -210,7 +237,8 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 					stats.get("BOTH").equals(map.get("BOTH"))) {
 				return true;
 			}
-			if(stats.get("R1").equals(map.get("R2")) && stats.get("R2").equals(map.get("R1")) && 
+			if(stats.get("R1").equals(map.get("R2")) && 
+					stats.get("R2").equals(map.get("R1")) && 
 					stats.get("BOTH").equals(map.get("BOTH"))) {
 				return true;
 			}
@@ -218,7 +246,8 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		return false;
 	}
 	
-	public List<RelationY> enumerateClustersRespectingTemplates(RelationX x) {
+	public List<RelationY> enumerateClustersRespectingTemplates(
+			RelationX x, List<Map<String, Integer>> segTemplates) {
 		List<String> relations = Arrays.asList("R1", "R2", "BOTH", "NONE");
 		List<RelationY> list1 = new ArrayList<>();
 		list1.add(new RelationY());
@@ -229,7 +258,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 				for(String relation : relations) {
 					RelationY yNew = new RelationY(y);
 					yNew.relations.add(relation);
-					if(isPossibleTemplate(clusterTemplates, getStats(x, yNew))) {
+					if(isPossibleTemplate(segTemplates, getStats(x, yNew))) {
 						list2.add(yNew);
 					}
 				}
@@ -242,7 +271,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		for(RelationY y : list1) {
 			Map<String, Integer> stats = getStats(x, y);
 //			System.out.println(Arrays.asList(stats));
-			if(isTemplatePresent(clusterTemplates, stats)) {
+			if(isTemplatePresent(segTemplates, stats)) {
 				y.isOneVar = Tools.isOneVar(y.relations);
 				list2.add(y);
 			}
@@ -257,6 +286,11 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 	
 	public List<RelationY> enumerateClustersRespectingEquations(
 			RelationX x, RelationY seed, Map<String, List<Double>> eqNumbers) {
+//		System.out.println("Enumerating clusters respecting equations :");
+//		System.out.println(x.problemIndex+" : "+x.ta.getText());
+//		System.out.println(x.quantities);
+//		System.out.println("EqNumbers : "+Arrays.asList(eqNumbers));
+		seed.relations.clear();
 		List<String> relations = Arrays.asList("R1", "R2", "BOTH", "NONE");
 		List<RelationY> list1 = new ArrayList<>();
 		list1.add(seed);
@@ -264,13 +298,19 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		for(int i=0; i<x.quantities.size(); ++i) {
 			for(RelationY y : list1) {
 				for(String relation : relations) {
-					if((relation.equals("R1") || relation.equals("BOTH")) && Tools.contains(
+					if(relation.equals("R1") && Tools.contains(
 							eqNumbers.get("R1"), Tools.getValue(x.quantities.get(i)))) {
 						RelationY yNew = new RelationY(y);
 						yNew.relations.add(relation);
 						list2.add(yNew);
-					} else if((relation.equals("R2") || relation.equals("BOTH")) && Tools.contains(
+					} else if(relation.equals("R2") && Tools.contains(
 							eqNumbers.get("R2"), Tools.getValue(x.quantities.get(i)))) {
+						RelationY yNew = new RelationY(y);
+						yNew.relations.add(relation);
+						list2.add(yNew);
+					} else if(relation.equals("BOTH") && 
+							Tools.contains(eqNumbers.get("R1"), Tools.getValue(x.quantities.get(i))) && 
+							Tools.contains(eqNumbers.get("R2"), Tools.getValue(x.quantities.get(i)))) {
 						RelationY yNew = new RelationY(y);
 						yNew.relations.add(relation);
 						list2.add(yNew);
@@ -285,23 +325,19 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			list1.addAll(list2);
 			list2.clear();
 		}
+//		System.out.println("Enumeration : "+list1.size());
 		for(RelationY y : list1) {
-			List<QuantSpan> quantR1 = new ArrayList<>();
-			List<QuantSpan> quantR2 = new ArrayList<>();
-			for(int j=0; j<y.relations.size(); ++j) {
-				String relation = y.relations.get(j);
-				if(relation.equals("R1") || relation.equals("BOTH")) {
-					quantR1.add(x.quantities.get(j));
-				}
-				if(relation.equals("R2") || relation.equals("BOTH")) {
-					quantR2.add(x.quantities.get(j));
-				}
-			}
-			if(Tools.equals(Tools.uniqueNumbers(quantR1), eqNumbers.get("R1")) && 
-					Tools.equals(Tools.uniqueNumbers(quantR2), eqNumbers.get("R2"))) {
+			Map<String, List<Double>> stats = clusterMap(x, y);
+//			System.out.println("Candidate : "+Arrays.asList(stats));
+			if(Tools.equals(stats.get("R1"), eqNumbers.get("R1")) && 
+					Tools.equals(stats.get("R2"), eqNumbers.get("R2"))) {
+				list2.add(y);
+			} else if(Tools.equals(stats.get("R1"), eqNumbers.get("R2")) && 
+					Tools.equals(stats.get("R2"), eqNumbers.get("R1"))) {
 				list2.add(y);
 			}
 		}
+//		System.out.println("After some pruning : "+list2.size());
 		return list2;
 	}
 }

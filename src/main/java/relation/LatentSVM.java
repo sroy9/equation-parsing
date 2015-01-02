@@ -18,6 +18,7 @@ public class LatentSVM {
 		SLParameters params = new SLParameters();
 		params.loadConfigFile(Params.spConfigFile);
 		params.MAX_NUM_ITER = numInnerIters;
+		params.PROGRESS_REPORT_ITER = 1;
 		System.err.println("Running LatentSVM with "+numInnerIters+" inner and "+numOuterIters+" outer iterations");
 		Learner learner = LearnerFactory.getLearner(infSolver, fg, params);
 		WeightVector w = new WeightVector(8000);

@@ -30,7 +30,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private SemFeatGen featGen;
-	private List<SemY> templates;
+	public List<SemY> templates;
 	public List<Pair<SemY, Double>> beam;
 
 	public SemInfSolver(SemFeatGen featGen, List<SemY> templates) {
@@ -69,7 +69,18 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		return templates;
 	}
 
-	@Override
+	public static Map<Integer, Set<Integer>> extractTemplateStats(List<SemY> templates) {
+		Map<Integer, Set<Integer>> stats = new HashMap<>();
+		stats.put(1, new HashSet<Integer>());
+		stats.put(2, new HashSet<Integer>());
+		for(SemY y : templates) {
+			if(y.isOneVar) stats.get(1).add(y.emptySlots.size());
+			else stats.get(2).add(y.emptySlots.size());
+		}
+		return stats;
+	}
+	
+ 	@Override
 	public IStructure getBestStructure(WeightVector wv, IInstance x)
 			throws Exception {
 		return getLossAugmentedBestStructure(wv, x, null);
@@ -88,7 +99,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		SemX blob = (SemX) x;
 		SemY gold = (SemY) goldStructure;
 		SemY pred = null;
-		
+//		System.out.println("LossAugmentedSem called");
 		PairComparator<SemY> semPairComparator = 
 				new PairComparator<SemY>() {};
 		BoundedPriorityQueue<Pair<SemY, Double>> beam1 = 
@@ -101,13 +112,13 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		for(Double d : Tools.uniqueNumbers(blob.relationQuantities)) {
 			availableNumbers.add(d);
 		}
-		System.out.println("Available numbers : "+availableNumbers.size());
+//		System.out.println("Available numbers : "+availableNumbers.size());
 		for(SemY template : templates) {
 			if(availableNumbers.size() == template.emptySlots.size()) {
 				beam1.add(new Pair<SemY, Double>(template, 0.0));
 			}
 		}
-		System.out.println("Beam1 : "+beam1.size());
+//		System.out.println("Beam1 : "+beam1.size());
 		for(Pair<SemY, Double> pair : beam1) {
 			for(SemY y : enumerateSemYs(availableNumbers, pair.getFirst())) {
 				if(goldStructure == null && y.isOneVar != blob.isOneVar) continue;
@@ -131,7 +142,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 			++i;
 			beam.add(beam2.poll());
 		}
-		
+//		System.out.println("LossAugmentedSem :" + beam.size());
 		return pred;
 	}
 	

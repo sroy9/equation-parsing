@@ -194,6 +194,26 @@ public class Tools {
 		return true;
 	}
 	
+	public static int getBOTHcount(List<String> relations) {
+		int count = 0;
+		for(String relation : relations) {
+			if(relation.equals("BOTH")) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	public static int getNONEcount(List<String> relations) {
+		int count = 0;
+		for(String relation : relations) {
+			if(relation.equals("NONE")) {
+				count++;
+			}
+		}
+		return count;
+	}
+	
 	public static boolean contains(List<Double> arr, Double key) {
 		for(Double d : arr) {
 			if(Tools.safeEquals(d, key)) {

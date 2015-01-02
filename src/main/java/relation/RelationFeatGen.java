@@ -132,16 +132,16 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 					x.lemmas, sent.getStartSpan(), sent.getEndSpan());
 			List<Pair<String, IntPair>> sentSkeleton = FeatGen.getPartialSkeleton(
 					x.skeleton, sent.getStartSpan(), sent.getEndSpan());
-			for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3)) {
-				features.add(prefix+"_"+feature);
-			}
-			for(int i=0; i<sentSkeleton.size(); ++i) {
-				features.add(prefix+"_SentUnigram_"+sentSkeleton.get(i).getFirst());
-			}
-			for(int i=0; i<sentSkeleton.size()-1; ++i) {
-				features.add(prefix+"_SentBigram_"+sentSkeleton.get(i).getFirst()
-						+"_"+sentSkeleton.get(i+1).getFirst());
-			}
+//			for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3)) {
+//				features.add(prefix+"_"+feature);
+//			}
+//			for(int i=0; i<sentSkeleton.size(); ++i) {
+//				features.add(prefix+"_SentUnigram_"+sentSkeleton.get(i).getFirst());
+//			}
+//			for(int i=0; i<sentSkeleton.size()-1; ++i) {
+//				features.add(prefix+"_SentBigram_"+sentSkeleton.get(i).getFirst()
+//						+"_"+sentSkeleton.get(i+1).getFirst());
+//			}
 		}
 		return features;
 	}
