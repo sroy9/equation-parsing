@@ -5,6 +5,7 @@ import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
+import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLParameters;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.learner.Learner;
@@ -13,25 +14,29 @@ import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
 public class LatentSVM {
 
-	public static WeightVector learn(SLProblem problem, AbstractInferenceSolver infSolver, 
-			AbstractFeatureGenerator fg, int numInnerIters, int numOuterIters) throws Exception {
+	public static WeightVector learn(SLProblem train, SLProblem test, SLModel model, 
+			int numInnerIters, int numOuterIters) throws Exception {
 		SLParameters params = new SLParameters();
 		params.loadConfigFile(Params.spConfigFile);
 		params.MAX_NUM_ITER = numInnerIters;
 		params.PROGRESS_REPORT_ITER = 1;
-		System.err.println("Running LatentSVM with "+numInnerIters+" inner and "+numOuterIters+" outer iterations");
-		Learner learner = LearnerFactory.getLearner(infSolver, fg, params);
-		WeightVector w = new WeightVector(8000);
-		w.setExtendable(true);
+		System.err.println("Running LatentSVM with "+numInnerIters+" inner and "+
+		numOuterIters+" outer iterations");
+		model.wv = new WeightVector(8000);
+		model.wv.setExtendable(true);
+		Learner learner = LearnerFactory.getLearner(
+				model.infSolver, model.featureGenerator, params);
 		for (int outerIter = 0; outerIter < numOuterIters; outerIter++) {
 			System.err.println("Iteration Outer : "+outerIter);
-			problem = runLatentStructureInference(problem, w, infSolver);
+			train = runLatentStructureInference(train, model.wv, model.infSolver);
 			System.err.println("Gold extracted for latent");
-			learner = LearnerFactory.getLearner(infSolver, fg, params);
-			w = learner.train(problem);
+			learner = LearnerFactory.getLearner(model.infSolver, model.featureGenerator, params);
+			model.wv = learner.train(train);
+//			model.saveModel("tempModel");
+//			RelationDriver.testModel("tempModel", test);
 		}
 		System.out.println("LatentSVM learning complete");
-		return w;
+		return model.wv;
 	}
 
 	private static SLProblem runLatentStructureInference(

@@ -49,7 +49,7 @@ public class RelationDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("rel"+testFold+".save", train, testFold);
+		trainModel("rel"+testFold+".save", train, test, testFold);
 		return testModel("rel"+testFold+".save", test);
 	}
 	
@@ -66,7 +66,7 @@ public class RelationDriver {
 		return problem;
 	}
 
-	private static double testModel(String modelPath, SLProblem sp)
+	public static double testModel(String modelPath, SLProblem sp)
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
 		Set<Integer> incorrect = new HashSet<>();
@@ -78,6 +78,7 @@ public class RelationDriver {
 			RelationY pred = (RelationY) model.infSolver.getBestStructure(
 					model.wv, prob);
 			total.add(prob.problemIndex);
+			
 			if(RelationY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else {
@@ -99,8 +100,8 @@ public class RelationDriver {
 		return (acc/sp.instanceList.size());
 	}
 	
-	public static void trainModel(String modelPath, SLProblem train, int testFold)
-			throws Exception {
+	public static void trainModel(String modelPath, SLProblem train, 
+			SLProblem test, int testFold) throws Exception {
 		SLModel model = new SLModel();
 		Lexiconer lm = new Lexiconer();
 		lm.setAllowNewFeatures(true);
@@ -111,7 +112,7 @@ public class RelationDriver {
 				fg, RelationInfSolver.extractSegTemplates(train), testFold);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
-		model.wv = LatentSVM.learn(train, model.infSolver, fg, 10, 10);
+		model.wv = LatentSVM.learn(train, test, model, 10, 10);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}

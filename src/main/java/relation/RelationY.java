@@ -90,6 +90,7 @@ public class RelationY implements IStructure, Serializable {
 	}
 	
 	public static float getLoss(RelationY r1, RelationY r2) {
+		if(r1 == null || r2 == null) return 10.0f;
 		assert r1.relations.size() == r2.relations.size();
 		return getRelationLoss(r1, r2) + getEquationLoss(r1, r2);
 	}

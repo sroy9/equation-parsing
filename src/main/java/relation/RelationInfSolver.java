@@ -86,7 +86,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 				best = ry;
 			}
 		}
-		System.out.println("BestLatentVar : "+best.equations.size());
+//		System.out.println("BestLatentVar : "+best.equations.size());
 		return best;
 	}
 
@@ -103,9 +103,9 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 				new BoundedPriorityQueue<Pair<RelationY, Double>>(50, relationPairComparator);
 		BoundedPriorityQueue<Pair<RelationY, Double>> beam2 = 
 				new BoundedPriorityQueue<Pair<RelationY, Double>>(50, relationPairComparator);
-		System.out.println("LossAugmentedBestStructure called");
-		System.out.println(prob.problemIndex+" : "+prob.ta.getText());
-		System.out.println(prob.quantities);
+//		System.out.println("LossAugmentedBestStructure called");
+//		System.out.println(prob.problemIndex+" : "+prob.ta.getText());
+//		System.out.println(prob.quantities);
 		for(RelationY y : enumerateClustersRespectingTemplates(prob, segTemplates)) {
 			beam1.add(new Pair<RelationY, Double>(y, 0.0 + 
 					wv.dotProduct(featGen.getRelationFeatureVector(prob, y))+
@@ -113,9 +113,9 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		}
 		
 		for(Pair<RelationY, Double> pair1 : beam1) {
-			System.out.println("Relation : "+pair1.getFirst());
+//			System.out.println("Relation : "+pair1.getFirst());
 			List<SemX> semXs = SemX.extractEquationProbFromRelations(prob, pair1.getFirst());
-			System.out.println("SemXs : " + semXs.size());
+//			System.out.println("SemXs : " + semXs.size());
 			if(semXs.size() == 1) {
 				equationModel.infSolver.getBestStructure(equationModel.wv, semXs.get(0));
 				List<Pair<SemY, Double>> list = ((SemInfSolver) equationModel.infSolver).beam;
@@ -151,7 +151,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		}
 //		System.out.println(new Date()+" : inference done");
 		if(beam2.size() > 0) pred = beam2.element().getFirst();
-		System.out.println("BestLossAugmented : "+pred.equations.size());
+//		System.out.println("BestLossAugmented : "+pred.equations.size());
 		return pred;
 	}
 	
@@ -267,10 +267,9 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			list1.addAll(list2);
 			list2.clear();
 		}
-		System.out.println("Enumeration : "+list1.size());
+//		System.out.println("Enumeration : "+list1.size());
 		for(RelationY y : list1) {
 			Map<String, Integer> stats = getStats(x, y);
-//			System.out.println(Arrays.asList(stats));
 			if(isTemplatePresent(segTemplates, stats)) {
 				y.isOneVar = Tools.isOneVar(y.relations);
 				list2.add(y);
@@ -280,7 +279,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 //		for(Map<String, Integer> template : clusterTemplates) {
 //			System.out.println(Arrays.asList(template));
 //		}
-		System.out.println("After some pruning : "+list2.size());
+//		System.out.println("After some pruning : "+list2.size());
 		return list2;
 	}
 	
