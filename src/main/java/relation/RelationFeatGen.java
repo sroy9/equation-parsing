@@ -44,38 +44,14 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = getFeatures(x, y);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
-	
-	public IFeatureVector getRelationFeatureVector(RelationX x, RelationY y) {
-		List<String> feats = getRelationFeatures(x, y);
-		return FeatGen.getFeatureVectorFromList(feats, lm);
-	}
-	
-//	public IFeatureVector getEquationFeatureVector(RelationX x, RelationY y) {
-//		List<String> feats = getEquationFeatures(x, y);
-//		return FeatGen.getFeatureVectorFromList(feats, lm);
-//	}
-	
+		
 	public List<String> getFeatures(RelationX x, RelationY y) {
-		List<String> features = new ArrayList<>();
-//		System.out.println("GetFeatures : "+y.equations.size());
-		features.addAll(getRelationFeatures(x, y));
-//		features.addAll(getEquationFeatures(x, y));
-		return features;
-	}
-	
-	public List<String> getRelationFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
 		for(int i=0; i<y.relations.size(); ++i) {
 			features.addAll(relationFeatures(x, y, i));
 		}
 		return features;
 	}
-	
-//	public List<String> getEquationFeatures(RelationX x, RelationY y) {
-//		List<String> features = new ArrayList<>();
-//		features.addAll(solutionFeatures(x, y));
-//		return features;
-//	}
 	
 	public List<String> relationFeatures(RelationX x, RelationY y, int index) {
 		List<String> features = new ArrayList<>();
@@ -93,8 +69,6 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 					Sentence sent2 = x.ta.getSentenceFromToken(tokenId2);
 					if(sent1.getSentenceId() == sent2.getSentenceId()) {
 						features.add(prefix+"_SameSentence");
-					} else {
-						features.add(prefix+"_DiffSentence");
 					}
 					if(Tools.safeEquals(Tools.getValue(qs1), Tools.getValue(qs2))) {
 						features.add(prefix+"_SameNumber");
@@ -116,27 +90,11 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 			for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3)) {
 				features.add(prefix+"_"+feature);
 			}
+			for(String feature : FeatGen.neighboringTokens(x.lemmas, tokenId, 3)) {
+				features.add(prefix+"_"+feature);
+			}
 		}
 		return features;
-	}
-	
-//	public List<String> solutionFeatures(RelationX x, RelationY y) {
-//		List<String> features = new ArrayList<>();
-//		List<Double> solns = EquationSolver.solveSemYs(y.equations); 
-//		if(solns == null) {
-//			features.add("Not_Solvable");
-//			return features;
-//		}
-//		for(Double d : solns) {
-//			if(d-d.intValue() < 0.0001) {
-//				features.add("Integer_Solution");
-//			}
-//			if(d>0) features.add("Positive solution");
-//		}
-//		return features;
-//	}
-	
-	
-	
+	}	
 	
 }

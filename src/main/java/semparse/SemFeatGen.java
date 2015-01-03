@@ -42,19 +42,13 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
 		SemX x = (SemX) arg0;
 		SemY y = (SemY) arg1;
-		List<String> features = new ArrayList<>();
-		features.addAll(getFeatures(x, y));
+		List<String> features = getFeatures(x, y);
 		return FeatGen.getFeatureVectorFromList(features, lm);
-	}
-
-	public IFeatureVector getFeatureVector(SemX x, SemY y) {
-		List<String> feats = getFeatures(x, y);
-		return FeatGen.getFeatureVectorFromList(feats, lm);
 	}
 	
 	public List<String> getFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
-		features.addAll(templateFeatures(x, y));
+//		features.addAll(templateFeatures(x, y));
 		for(IntPair slot : y.emptySlots) {
 			features.addAll(alignmentFeatures(x, y, slot));
 		}
@@ -115,14 +109,14 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 				int tokenId2 = x.ta.getTokenIdFromCharacterOffset(quantSpans2.get(l).start);
 				Sentence sent2 = x.ta.getSentenceFromToken(tokenId2);
 				String prefix = "";
-				if((slot1.getFirst() == 0 && slot2.getSecond() == 1) || 
-						(slot1.getFirst() == 2 && slot2.getSecond() == 3)) {
+				if((slot1.getFirst() == 0 && slot2.getFirst() == 1) || 
+						(slot1.getFirst() == 2 && slot2.getFirst() == 3)) {
 					prefix = "A1A2";
-				} else if((slot1.getFirst() == 0 && slot2.getSecond() == 3) || 
-						(slot1.getFirst() == 1 && slot2.getSecond() == 2)) {
+				} else if((slot1.getFirst() == 0 && slot2.getFirst() == 3) || 
+						(slot1.getFirst() == 1 && slot2.getFirst() == 2)) {
 					prefix = "A1B2";
-				} else if((slot1.getFirst() == 1 && slot2.getSecond() == 1) || 
-						(slot1.getFirst() == 3 && slot2.getSecond() == 3)) {
+				} else if((slot1.getFirst() == 1 && slot2.getFirst() == 1) || 
+						(slot1.getFirst() == 3 && slot2.getFirst() == 3)) {
 					prefix = "A2A2";
 				} else {
 					prefix = slot1.getFirst()+"_"+slot2.getFirst();

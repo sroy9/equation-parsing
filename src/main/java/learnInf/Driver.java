@@ -1,4 +1,4 @@
-package driver;
+package learnInf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +26,7 @@ import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
 
-public class FullSystem {
+public class Driver {
 
 	public static boolean hasSameSolution (List<Double> soln1, List<Double> soln2) {
 		if(soln1 == null || soln2 == null) return false;

@@ -63,7 +63,6 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				}
 				stats.put(eq1.emptySlots.size(), stats.get(eq1.emptySlots.size())+1);
 				templates.add(eq1);
-//				System.out.println("Template : "+eq1);
 			}
 		}
 		System.out.println("Number of templates : "+templates.size());
@@ -101,7 +100,6 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		SemX blob = (SemX) x;
 		SemY gold = (SemY) goldStructure;
 		SemY pred = null;
-//		System.out.println("LossAugmentedSem called");
 		PairComparator<SemY> semPairComparator = 
 				new PairComparator<SemY>() {};
 		MinMaxPriorityQueue<Pair<SemY, Double>> beam1 = 
@@ -114,43 +112,32 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		for(Double d : Tools.uniqueNumbers(blob.relationQuantities)) {
 			availableNumbers.add(d);
 		}
-//		System.out.println("Available numbers : "+availableNumbers.size());
 		for(SemY template : templates) {
-			if(availableNumbers.size() == template.emptySlots.size()) {
+			if(availableNumbers.size() == template.emptySlots.size() && 
+					template.isOneVar == blob.isOneVar) {
 				beam1.add(new Pair<SemY, Double>(template, 0.0));
 			}
 		}
-//		System.out.println("Beam1 : "+beam1.size());
 		for(Pair<SemY, Double> pair : beam1) {
 			for(SemY y : enumerateSemYs(availableNumbers, pair.getFirst())) {
-				if(/*goldStructure == null && */y.isOneVar != blob.isOneVar) continue;
-				beam2.add(new Pair<SemY, Double>(y, pair.getSecond() + 
+				Double score = pair.getSecond() + 
 						wv.dotProduct(featGen.getFeatureVector(blob, y)) + 
-						(goldStructure == null ? 0.0 : SemY.getLoss(y, gold))));		
+						(goldStructure == null ? 0.0 : SemY.getLoss(y, gold));
+				beam2.add(new Pair<SemY, Double>(y, score));		
 			}
 		}
-		
-		if(beam2.size() > 0) pred = beam2.element().getFirst();
-		else {
-//			System.out.println("Beam empty in SemInfSolver");
-//			System.out.println(blob.problemIndex+" : "+blob.ta.getText());
-//			System.out.println("Quantities : "+blob.quantities);
-//			System.out.println("Relations : "+blob.relationQuantities);
-//			System.out.println("One Var : "+blob.isOneVar);
-		}
+		// If beam2 is empty, you are doing something wrong
+		pred = beam2.element().getFirst();
 		
 		int size = 5, i=0;
 		while(beam2.size()>0 && i<size) {
 			++i;
 			beam.add(beam2.poll());
 		}
-//		System.out.println("LossAugmentedSem :" + beam.size());
 		return pred;
 	}
 	
 	public List<SemY> enumerateSemYs(Set<Double> availableNumbers, SemY seed) {
-//		System.out.println("Avail numbers : "+Arrays.asList(availableNumbers));
-//		System.out.println("Seed : "+seed);
 		List<SemY> list1 = new ArrayList<>();
 		list1.add(seed);
 		List<SemY> list2 = new ArrayList<>();
@@ -182,11 +169,8 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				}
 				if(!allow) break;
 			}
-//			System.out.println("Val : "+allow);
-//			System.out.println(y);
 			if(allow) list2.add(y);
 		}
-//		System.out.println("Enumerate : "+list2.size());
 		return list2;
 	}
 		

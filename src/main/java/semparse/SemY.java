@@ -113,6 +113,7 @@ public class SemY extends Equation implements IStructure, Serializable {
 			if(!Tools.safeEquals(pair1.getSecond(), pair2.getSecond())) loss2 += 1.0;
 			return Math.min(loss1, loss2);
 		}
+		System.err.println("Issue in getLossPairLists");
 		return 0.0f;
 	}
 }

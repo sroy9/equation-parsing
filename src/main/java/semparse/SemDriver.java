@@ -81,6 +81,13 @@ public class SemDriver {
 			SemY pred = (SemY) model.infSolver.getBestStructure(
 					model.wv, sp.instanceList.get(i));
 			tot.add(prob.problemIndex);
+			double goldWt = model.wv.dotProduct(
+					model.featureGenerator.getFeatureVector(prob, gold));
+			double predWt = model.wv.dotProduct(
+					model.featureGenerator.getFeatureVector(prob, pred));
+			if(goldWt > predWt) {
+				System.out.println("PROBLEM HERE");
+			}
 			for(Pair<SemY, Double> pair : ((SemInfSolver) model.infSolver).beam) {
 				if (SemY.getLoss(gold, pair.getFirst()) < 0.00001) {
 					beamAcc += 1.0;
@@ -95,11 +102,9 @@ public class SemDriver {
 				System.out.println("Skeleton : "+Tools.skeletonString(prob.skeleton));
 				System.out.println("Quantities : "+prob.quantities);
 				System.out.println("Gold : \n"+gold);
-				System.out.println("Gold weight : "+model.wv.dotProduct(
-						model.featureGenerator.getFeatureVector(prob, gold)));
+				System.out.println("Gold weight : "+goldWt);
 				System.out.println("Pred : \n"+pred);
-				System.out.println("Pred weight : "+model.wv.dotProduct(
-						model.featureGenerator.getFeatureVector(prob, pred)));
+				System.out.println("Pred weight : "+predWt);
 				System.out.println("Loss : "+SemY.getLoss(gold, pred));
 			}
 		}

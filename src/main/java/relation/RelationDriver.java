@@ -78,11 +78,16 @@ public class RelationDriver {
 			RelationY gold = (RelationY) sp.goldStructureList.get(i);
 			RelationY pred = (RelationY) model.infSolver.getBestStructure(
 					model.wv, prob);
-			System.out.println(gold.relations.size()+" : "+pred.relations.size());
 			total.add(prob.problemIndex);
+			double goldWt = model.wv.dotProduct(
+					model.featureGenerator.getFeatureVector(prob, gold));
+			double predWt = model.wv.dotProduct(
+					model.featureGenerator.getFeatureVector(prob, pred));
+			if(goldWt > predWt) {
+				System.out.println("PROBLEM HERE");
+			}
 			for(Pair<RelationY, Double> pair : ((RelationInfSolver) model.infSolver).beam) {
-				System.out.println(pair.getSecond()+" : "+pair.getFirst());
-				if (RelationY.getLoss(gold, pair.getFirst()) < 0.00001) {
+				if (RelationY.getLoss(gold, pair.getFirst()) < 0.0001) {
 					beamAcc += 1.0;
 					break;
 				}
@@ -128,6 +133,6 @@ public class RelationDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		RelationDriver.doTrainTest(0);
+		RelationDriver.crossVal();
 	}
 }

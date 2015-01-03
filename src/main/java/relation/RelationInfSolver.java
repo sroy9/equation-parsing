@@ -108,81 +108,18 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		MinMaxPriorityQueue<Pair<RelationY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(relationPairComparator).maximumSize(200).create();
 		for(RelationY y : enumerateClustersRespectingTemplates(prob, segTemplates)) {
-			Double score = 0.0 + wv.dotProduct(featGen.getRelationFeatureVector(prob, y))+
-					(goldStructure == null?0:RelationY.getRelationLoss(y, gold));
+			Double score = 0.0 + wv.dotProduct(featGen.getFeatureVector(prob, y))+
+					(goldStructure == null?0:RelationY.getLoss(y, gold));
 			beam1.add(new Pair<RelationY, Double>(y, score));
-		}
-		
-//		for(Pair<RelationY, Double> pair1 : beam1) {
-////			System.out.println("Relation : "+pair1.getFirst());
-//			List<SemX> semXs = SemX.extractEquationProbFromRelations(prob, pair1.getFirst());
-////			System.out.println("SemXs : " + semXs.size());
-//			if(semXs.size() == 1) {
-//				equationModel.infSolver.getBestStructure(equationModel.wv, semXs.get(0));
-//				List<Pair<SemY, Double>> list = ((SemInfSolver) equationModel.infSolver).beam;
-//				list = list.subList(0, Math.min(10, list.size()));
-//				for(Pair<SemY, Double> pair2 : list) {
-//					RelationY y = new RelationY(pair1.getFirst());
-//					y.equations.add(pair2.getFirst());
-//					beam2.add(new Pair<RelationY, Double>(y, pair1.getSecond() + 
-//							wv.dotProduct(featGen.getEquationFeatureVector(prob, y)) +
-//							RelationY.getLoss(y, gold)));
-//				}
-//			}
-//			if(semXs.size() == 2) {
-//				equationModel.infSolver.getBestStructure(equationModel.wv, semXs.get(0));
-//				List<Pair<SemY, Double>> list1 = new ArrayList<>();
-//				list1.addAll(((SemInfSolver) equationModel.infSolver).beam);
-//				list1 = list1.subList(0, Math.min(5, list1.size()));
-//				equationModel.infSolver.getBestStructure(equationModel.wv, semXs.get(1));
-//				List<Pair<SemY, Double>> list2 = new ArrayList<>();
-//				list2.addAll(((SemInfSolver) equationModel.infSolver).beam);
-//				list2 = list2.subList(0, Math.min(5, list2.size()));
-// 				for(Pair<SemY, Double> pair2 : list1) {				
-//					for(Pair<SemY, Double> pair3 : list2) {
-//						RelationY y = new RelationY(pair1.getFirst());
-//						y.equations.add(pair2.getFirst());
-//						y.equations.add(pair3.getFirst());
-//						beam2.add(new Pair<RelationY, Double>(y, pair1.getSecond() + 
-//								wv.dotProduct(featGen.getEquationFeatureVector(prob, y)) +
-//								RelationY.getLoss(y, gold)));
-//					}
-//				}
-//			}
-//		}
-//		System.out.println(new Date()+" : inference done");
-		if(beam1.size() > 0) pred = beam1.element().getFirst();
+		}if(beam1.size() > 0) pred = beam1.element().getFirst();
 		int size = 5, i=0;
 		beam.clear();
 		while(beam1.size()>0 && i<size) {
 			++i;
 			beam.add(beam1.poll());
 		}
-//		System.out.println("LossAugmentedSem :" + beam.size());
 		return pred;
 	}
-	
-//	public static Map<String, List<Double>> clusterMap(RelationX x, RelationY y) {
-//		List<QuantSpan> quantR1 = new ArrayList<>();
-//		List<QuantSpan> quantR2 = new ArrayList<>();
-//		for(int j=0; j<y.relations.size(); ++j) {
-//			String relation = y.relations.get(j);
-//			if(relation.equals("R1")) {
-//				quantR1.add(x.quantities.get(j));
-//			}
-//			if(relation.equals("R2")) {
-//				quantR2.add(x.quantities.get(j));
-//			}
-//			if(relation.equals("BOTH")) {
-//				quantR1.add(x.quantities.get(j));
-//				quantR2.add(x.quantities.get(j));
-//			}
-//		}
-//		Map<String, List<Double>> stats = new HashMap<>();
-//		stats.put("R1", Tools.uniqueNumbers(quantR1));
-//		stats.put("R2", Tools.uniqueNumbers(quantR2));
-//		return stats;
-//	}
 	
 	public static List<Map<String, Integer>> extractSegTemplates(SLProblem slProb) {
 		List<Map<String, Integer>> clusterTemplates = new ArrayList<>();
@@ -257,12 +194,10 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 	
 	public List<RelationY> enumerateClustersRespectingTemplates(
 			RelationX x, List<Map<String, Integer>> segTemplates) {
-//		System.out.println("Enumerating clusters respecting templates ...");
 		List<String> relations = Arrays.asList("R1", "R2", "BOTH", "NONE");
 		List<RelationY> list1 = new ArrayList<>();
 		list1.add(new RelationY());
 		List<RelationY> list2 = new ArrayList<>();
-//		System.out.println("NumQuant : "+x.quantities.size());
 		for(int i=0; i<x.quantities.size(); ++i) {
 			for(RelationY y : list1) {
 				for(String relation : relations) {
@@ -278,74 +213,13 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			list1.addAll(list2);
 			list2.clear();
 		}
-//		System.out.println("Enumeration : "+list1.size());
 		for(RelationY y : list1) {
-//			System.out.println(y);
 			Map<String, Integer> stats = getStats(x, y);
 			if(isTemplatePresent(segTemplates, stats)) {
-//				System.out.println("Allowed");
 				y.isOneVar = Tools.isOneVar(y.relations);
 				list2.add(y);
 			}
 		}
-//		System.out.println("After some pruning : "+list2.size());
 		return list2;
 	}
-	
-//	public List<RelationY> enumerateClustersRespectingEquations(
-//			RelationX x, RelationY seed, Map<String, List<Double>> eqNumbers) {
-////		System.out.println("Enumerating clusters respecting equations :");
-////		System.out.println(x.problemIndex+" : "+x.ta.getText());
-////		System.out.println(x.quantities);
-////		System.out.println("EqNumbers : "+Arrays.asList(eqNumbers));
-//		seed.relations.clear();
-//		List<String> relations = Arrays.asList("R1", "R2", "BOTH", "NONE");
-//		List<RelationY> list1 = new ArrayList<>();
-//		list1.add(seed);
-//		List<RelationY> list2 = new ArrayList<>();
-//		for(int i=0; i<x.quantities.size(); ++i) {
-//			for(RelationY y : list1) {
-//				for(String relation : relations) {
-//					if(relation.equals("R1") && Tools.contains(
-//							eqNumbers.get("R1"), Tools.getValue(x.quantities.get(i)))) {
-//						RelationY yNew = new RelationY(y);
-//						yNew.relations.add(relation);
-//						list2.add(yNew);
-//					} else if(relation.equals("R2") && Tools.contains(
-//							eqNumbers.get("R2"), Tools.getValue(x.quantities.get(i)))) {
-//						RelationY yNew = new RelationY(y);
-//						yNew.relations.add(relation);
-//						list2.add(yNew);
-//					} else if(relation.equals("BOTH") && 
-//							Tools.contains(eqNumbers.get("R1"), Tools.getValue(x.quantities.get(i))) && 
-//							Tools.contains(eqNumbers.get("R2"), Tools.getValue(x.quantities.get(i)))) {
-//						RelationY yNew = new RelationY(y);
-//						yNew.relations.add(relation);
-//						list2.add(yNew);
-//					} else if(relation.equals("NONE")) {
-//						RelationY yNew = new RelationY(y);
-//						yNew.relations.add(relation);
-//						list2.add(yNew);
-//					}
-//				}
-//			}
-//			list1.clear();
-//			list1.addAll(list2);
-//			list2.clear();
-//		}
-////		System.out.println("Enumeration : "+list1.size());
-//		for(RelationY y : list1) {
-//			Map<String, List<Double>> stats = clusterMap(x, y);
-////			System.out.println("Candidate : "+Arrays.asList(stats));
-//			if(Tools.equals(stats.get("R1"), eqNumbers.get("R1")) && 
-//					Tools.equals(stats.get("R2"), eqNumbers.get("R2"))) {
-//				list2.add(y);
-//			} else if(Tools.equals(stats.get("R1"), eqNumbers.get("R2")) && 
-//					Tools.equals(stats.get("R2"), eqNumbers.get("R1"))) {
-//				list2.add(y);
-//			}
-//		}
-////		System.out.println("After some pruning : "+list2.size());
-//		return list2;
-//	}
 }
