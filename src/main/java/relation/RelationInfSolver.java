@@ -45,9 +45,6 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 	public RelationInfSolver(RelationFeatGen featGen, List<Map<String, Integer>> segTemplates, 
 			int testFold) throws Exception {
 		this.featGen = featGen;
-//		equationModel = SLModel.loadModel("sem"+testFold+".save");
-//		templateStats = SemInfSolver.extractTemplateStats(
-//				((SemInfSolver)equationModel.infSolver).templates);
 		this.segTemplates = segTemplates;
 		beam = new ArrayList<>();
 		System.out.println("Segmentation Templates : " +Arrays.asList(segTemplates));

@@ -51,7 +51,7 @@ public class RelationDriver {
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
 		trainModel("rel"+testFold+".save", train, testFold);
-		return testModel("rel"+testFold+".save", test);
+		return testModel("rel"+testFold+".save", train);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {
@@ -96,7 +96,7 @@ public class RelationDriver {
 				acc += 1;
 			} else {
 				incorrect.add(prob.problemIndex);
-				System.out.println("Text : "+prob.ta.getText());
+				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Skeleton : "+Tools.skeletonString(prob.skeleton));
 				System.out.println("Quantities : "+prob.quantities);
 				System.out.println("Gold : \n"+gold);
@@ -133,6 +133,6 @@ public class RelationDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		RelationDriver.crossVal();
+		RelationDriver.doTrainTest(0);
 	}
 }

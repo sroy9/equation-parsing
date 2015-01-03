@@ -47,9 +47,25 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		
 	public List<String> getFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
+		features.addAll(globalFeatures(x, y));
 		for(int i=0; i<y.relations.size(); ++i) {
 			features.addAll(relationFeatures(x, y, i));
 		}
+		return features;
+	}
+	
+	public List<String> globalFeatures(RelationX x, RelationY y) {
+		List<String> features = new ArrayList<>();
+		if(Tools.getNONEcount(y.relations) > 1) features.add("NONE>1");
+		else if(Tools.getNONEcount(y.relations) > 2) features.add("NONE>2");
+		else if(Tools.getNONEcount(y.relations) > 3) features.add("NONE>3");
+		features.add("BOTH_"+Tools.getBOTHcount(y.relations));
+		if(x.quantities.size()>2) features.add("NumQuant>2");
+		else if(x.quantities.size()>4) features.add("NumQuant>4");
+		else if(x.quantities.size()>6) features.add("NumQuant>6");
+		else if(x.quantities.size()>8) features.add("NumQuant>8");
+		features.add("IsOneVar_"+Tools.isOneVar(y.relations));
+		features.add("NumQuestionSentences_"+FeatGen.getQuestionSentences(x.ta).size());
 		return features;
 	}
 	
@@ -61,40 +77,65 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 				if(y.relations.get(i).startsWith("R")) {
 					prefix = (y.relations.get(index).equals(
 							y.relations.get(i)) ? "SAME" : "DIFF");
-					QuantSpan qs1 = x.quantities.get(i);
-					QuantSpan qs2 = x.quantities.get(index);
-					int tokenId1 = x.ta.getTokenIdFromCharacterOffset(qs1.start);
-					Sentence sent1 = x.ta.getSentenceFromToken(tokenId1);
-					int tokenId2 = x.ta.getTokenIdFromCharacterOffset(qs2.start);
-					Sentence sent2 = x.ta.getSentenceFromToken(tokenId2);
-					if(sent1.getSentenceId() == sent2.getSentenceId()) {
-						features.add(prefix+"_SameSentence");
-					}
-					if(Tools.safeEquals(Tools.getValue(qs1), Tools.getValue(qs2))) {
-						features.add(prefix+"_SameNumber");
-					}
-					if(Tools.getUnit(qs1).contains(Tools.getUnit(qs2)) ||
-							Tools.getUnit(qs2).contains(Tools.getUnit(qs1))) {
-						features.add(prefix+"_SameUnit");
+					for(String feature : pairWise(x, y, i, index)) {
+						features.add(prefix+"_"+feature);
 					}
 				}
 			}
 		} else {
 			prefix = y.relations.get(index);
-			int tokenId = x.ta.getTokenIdFromCharacterOffset(x.quantities.get(index).start);
-			Sentence sent = x.ta.getSentenceFromToken(tokenId);
-			List<Constituent> sentLemmas = FeatGen.partialLemmas(
-					x.lemmas, sent.getStartSpan(), sent.getEndSpan());
-			List<Pair<String, IntPair>> sentSkeleton = FeatGen.getPartialSkeleton(
-					x.skeleton, sent.getStartSpan(), sent.getEndSpan());
-			for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3)) {
-				features.add(prefix+"_"+feature);
-			}
-			for(String feature : FeatGen.neighboringTokens(x.lemmas, tokenId, 3)) {
+			for(String feature : single(x, y, index)) {
 				features.add(prefix+"_"+feature);
 			}
 		}
 		return features;
-	}	
+	}
+	
+	public List<String> pairWise(RelationX x, RelationY y, int index1, int index2) {
+		List<String> features = new ArrayList<>();
+		QuantSpan qs1 = x.quantities.get(index1);
+		QuantSpan qs2 = x.quantities.get(index2);
+		int tokenId1 = x.ta.getTokenIdFromCharacterOffset(qs1.start);
+		Sentence sent1 = x.ta.getSentenceFromToken(tokenId1);
+		int tokenId2 = x.ta.getTokenIdFromCharacterOffset(qs2.start);
+		Sentence sent2 = x.ta.getSentenceFromToken(tokenId2);
+		if(sent1.getSentenceId() == sent2.getSentenceId()) {
+			features.add("SameSentence");
+			List<Pair<String, IntPair>> skeleton = FeatGen.getPartialSkeleton(
+					x.skeleton, tokenId1+1, tokenId2);
+			for(int i=0; i<skeleton.size(); ++i) {
+				features.add("MidUnigram_"+skeleton.get(i).getFirst());
+			}
+			for(int i=0; i<skeleton.size()-1; ++i) {
+				features.add("MidBigram_"+skeleton.get(i).getFirst()
+						+"_"+skeleton.get(i+1).getFirst());
+			}
+		}
+		if(Tools.safeEquals(Tools.getValue(qs1), Tools.getValue(qs2))) {
+			features.add("SameNumber");
+		}
+		if(Tools.getUnit(qs1).contains(Tools.getUnit(qs2)) ||
+				Tools.getUnit(qs2).contains(Tools.getUnit(qs1))) {
+			features.add("SameUnit");
+		}
+		return features;
+	}
+	
+	public List<String> single(RelationX x, RelationY y, int index) {
+		List<String> features = new ArrayList<>();
+		QuantSpan qs = x.quantities.get(index);
+		int tokenId = x.ta.getTokenIdFromCharacterOffset(x.quantities.get(index).start);
+		Sentence sent = x.ta.getSentenceFromToken(tokenId);
+		List<Constituent> sentLemmas = FeatGen.partialLemmas(
+				x.lemmas, sent.getStartSpan(), sent.getEndSpan());
+		List<Pair<String, IntPair>> sentSkeleton = FeatGen.getPartialSkeleton(
+				x.skeleton, sent.getStartSpan(), sent.getEndSpan());
+		features.addAll(FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3));
+		features.add("UNIT_"+Tools.getUnit(qs));
+		if(Tools.safeEquals(1.0, Tools.getValue(qs)) || Tools.safeEquals(2.0, Tools.getValue(qs))) {
+			features.add("ONE_OR_TWO");
+		}
+		return features;
+	}
 	
 }

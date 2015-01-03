@@ -68,7 +68,11 @@ public class DocReader {
 //							qs.start, qs.end)+" : "+qs + " : "+Tools.getValue(qs));
 //				}
 				simulProb.extractEquations();
+//				for(Equation eq : simulProb.equations) {
+//					System.out.println("Equation :\n"+eq);
+//				}
 				simulProb.extractRelations();
+//				System.out.println("Relation : "+Arrays.asList(simulProb.relations));
 				simulProb.checkSolver();
 				simulProbList.add(simulProb);
 			}
