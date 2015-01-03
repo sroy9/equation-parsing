@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.MinMaxPriorityQueue;
+
 import structure.Equation;
 import structure.EquationSolver;
 import structure.Operation;
@@ -102,10 +104,10 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 //		System.out.println("LossAugmentedSem called");
 		PairComparator<SemY> semPairComparator = 
 				new PairComparator<SemY>() {};
-		BoundedPriorityQueue<Pair<SemY, Double>> beam1 = 
-				new BoundedPriorityQueue<Pair<SemY, Double>>(200, semPairComparator);
-		BoundedPriorityQueue<Pair<SemY, Double>> beam2 = 
-				new BoundedPriorityQueue<Pair<SemY, Double>>(200, semPairComparator);
+		MinMaxPriorityQueue<Pair<SemY, Double>> beam1 = 
+				MinMaxPriorityQueue.orderedBy(semPairComparator).maximumSize(200).create();
+		MinMaxPriorityQueue<Pair<SemY, Double>> beam2 = 
+				MinMaxPriorityQueue.orderedBy(semPairComparator).maximumSize(200).create();
 		beam = new ArrayList<Pair<SemY, Double>>();
 		
 		Set<Double> availableNumbers = new HashSet<Double>();
@@ -121,7 +123,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 //		System.out.println("Beam1 : "+beam1.size());
 		for(Pair<SemY, Double> pair : beam1) {
 			for(SemY y : enumerateSemYs(availableNumbers, pair.getFirst())) {
-				if(goldStructure == null && y.isOneVar != blob.isOneVar) continue;
+				if(/*goldStructure == null && */y.isOneVar != blob.isOneVar) continue;
 				beam2.add(new Pair<SemY, Double>(y, pair.getSecond() + 
 						wv.dotProduct(featGen.getFeatureVector(blob, y)) + 
 						(goldStructure == null ? 0.0 : SemY.getLoss(y, gold))));		

@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.Set;
 
 import parser.DocReader;
+import semparse.SemInfSolver;
 import semparse.SemY;
 import structure.Equation;
 import structure.EquationSolver;
@@ -49,7 +50,7 @@ public class RelationDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("rel"+testFold+".save", train, test, testFold);
+		trainModel("rel"+testFold+".save", train, testFold);
 		return testModel("rel"+testFold+".save", test);
 	}
 	
@@ -71,14 +72,21 @@ public class RelationDriver {
 		SLModel model = SLModel.loadModel(modelPath);
 		Set<Integer> incorrect = new HashSet<>();
 		Set<Integer> total = new HashSet<>();
-		double acc = 0.0;
+		double acc = 0.0, beamAcc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			RelationX prob = (RelationX) sp.instanceList.get(i);
 			RelationY gold = (RelationY) sp.goldStructureList.get(i);
 			RelationY pred = (RelationY) model.infSolver.getBestStructure(
 					model.wv, prob);
+			System.out.println(gold.relations.size()+" : "+pred.relations.size());
 			total.add(prob.problemIndex);
-			
+			for(Pair<RelationY, Double> pair : ((RelationInfSolver) model.infSolver).beam) {
+				System.out.println(pair.getSecond()+" : "+pair.getFirst());
+				if (RelationY.getLoss(gold, pair.getFirst()) < 0.00001) {
+					beamAcc += 1.0;
+					break;
+				}
+			}
 			if(RelationY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else {
@@ -95,13 +103,14 @@ public class RelationDriver {
 				System.out.println("Loss : "+RelationY.getLoss(gold, pred));
 			}
 		}
+		System.out.println("Beam Accuracy : = " + (beamAcc / sp.instanceList.size()));
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
 		return (acc/sp.instanceList.size());
 	}
 	
-	public static void trainModel(String modelPath, SLProblem train, 
-			SLProblem test, int testFold) throws Exception {
+	public static void trainModel(String modelPath, SLProblem train, int testFold) 
+			throws Exception {
 		SLModel model = new SLModel();
 		Lexiconer lm = new Lexiconer();
 		lm.setAllowNewFeatures(true);
@@ -112,7 +121,8 @@ public class RelationDriver {
 				fg, RelationInfSolver.extractSegTemplates(train), testFold);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
-		model.wv = LatentSVM.learn(train, test, model, 10, 10);
+		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
+		model.wv = learner.train(train);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}

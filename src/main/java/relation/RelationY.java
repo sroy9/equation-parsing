@@ -16,12 +16,12 @@ public class RelationY implements IStructure, Serializable {
 	
 	private static final long serialVersionUID = 2399969922362221136L;
 	public List<String> relations;
-	public List<SemY> equations;
+//	public List<SemY> equations;
 	public boolean isOneVar;
 	
 	public RelationY() {
 		relations = new ArrayList<>();
-		equations = new ArrayList<>();
+//		equations = new ArrayList<>();
 	}
 	
 	public RelationY(RelationY other) {
@@ -29,10 +29,10 @@ public class RelationY implements IStructure, Serializable {
 		for(String relation : other.relations) {
 			relations.add(relation);
 		}
-		equations = new ArrayList<>();
-		for(SemY eq : other.equations) {
-			equations.add(new SemY(eq));
-		}
+//		equations = new ArrayList<>();
+//		for(SemY eq : other.equations) {
+//			equations.add(new SemY(eq));
+//		}
 		isOneVar = other.isOneVar;
 	}
 	
@@ -41,10 +41,10 @@ public class RelationY implements IStructure, Serializable {
 		for(String relation : prob.relations) {
 			relations.add(relation);
 		}
-		equations = new ArrayList<>();
-		for(Equation eq : prob.equations) {
-			equations.add(new SemY(eq));
-		}
+//		equations = new ArrayList<>();
+//		for(Equation eq : prob.equations) {
+//			equations.add(new SemY(eq));
+//		}
 		isOneVar = prob.isOneVar;
 	}
 	
@@ -70,29 +70,29 @@ public class RelationY implements IStructure, Serializable {
 		return Math.min(loss1, loss2);
 	}
 	
-	public static float getEquationLoss(RelationY r1, RelationY r2) {
-		if(r1.equations.size() != r2.equations.size()) return 10.0f;
-		float loss = 0.0f;
-		if(r1.equations.size() == 1) {
-			loss += SemY.getLoss(r1.equations.get(0), r2.equations.get(0));
-		}
-		if(r1.equations.size() == 2) {
-			loss += Math.min(
-					SemY.getLoss(r1.equations.get(0), r2.equations.get(0)) + 
-					SemY.getLoss(r1.equations.get(1), r2.equations.get(1)),
-					SemY.getLoss(r1.equations.get(0), r2.equations.get(1)) + 
-					SemY.getLoss(r1.equations.get(1), r2.equations.get(0)));
-		}
-		List<Double> soln1 = EquationSolver.solveSemYs(r1.equations);
-		List<Double> soln2 = EquationSolver.solveSemYs(r2.equations);
-		if(!FullSystem.hasSameSolution(soln1, soln2)) loss += 4.0f;
-		return loss;
-	}
+//	public static float getEquationLoss(RelationY r1, RelationY r2) {
+//		if(r1.equations.size() != r2.equations.size()) return 10.0f;
+//		float loss = 0.0f;
+//		if(r1.equations.size() == 1) {
+//			loss += SemY.getLoss(r1.equations.get(0), r2.equations.get(0));
+//		}
+//		if(r1.equations.size() == 2) {
+//			loss += Math.min(
+//					SemY.getLoss(r1.equations.get(0), r2.equations.get(0)) + 
+//					SemY.getLoss(r1.equations.get(1), r2.equations.get(1)),
+//					SemY.getLoss(r1.equations.get(0), r2.equations.get(1)) + 
+//					SemY.getLoss(r1.equations.get(1), r2.equations.get(0)));
+//		}
+//		List<Double> soln1 = EquationSolver.solveSemYs(r1.equations);
+//		List<Double> soln2 = EquationSolver.solveSemYs(r2.equations);
+//		if(!FullSystem.hasSameSolution(soln1, soln2)) loss += 4.0f;
+//		return loss;
+//	}
 	
 	public static float getLoss(RelationY r1, RelationY r2) {
 		if(r1 == null || r2 == null) return 10.0f;
 		assert r1.relations.size() == r2.relations.size();
-		return getRelationLoss(r1, r2) + getEquationLoss(r1, r2);
+		return getRelationLoss(r1, r2);// + getEquationLoss(r1, r2);
 	}
 	
 	@Override
