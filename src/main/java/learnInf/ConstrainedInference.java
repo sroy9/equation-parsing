@@ -19,17 +19,17 @@ import structure.SimulProb;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 
-public class JointInference {
+public class ConstrainedInference {
 	
 	public static Double getSolutionScore(List<Double> solutions) {
 		Double score = 0.0;
 		if(solutions == null) return 0.0;
 		for(Double d : solutions) {
-			if(d>0) {
-				score += 10.0;
-				if(d-d.intValue() < 0.001 || d-d.intValue() > 0.99){
-					score += 10.0;
-				}
+			if(d>1) {
+				score += 100.0;
+//				if(d-d.intValue() < 0.001 || d-d.intValue() > 0.999){
+//					score += 100.0;
+//				}
 			}
 		}
 		return score;
@@ -44,6 +44,7 @@ public class JointInference {
 		RelationX relationX = new RelationX(simulProb);
 		relationModel.infSolver.getBestStructure(relationModel.wv, relationX);
 		for(Pair<RelationY, Double> pair1 : ((RelationInfSolver)relationModel.infSolver).beam) {
+//			System.out.println("Relation : "+pair1.getFirst());
 			List<SemX> clusters = SemX.extractEquationProbFromRelations(relationX, pair1.getFirst());
 			if(clusters.size() == 1) {
 				equationModel.infSolver.getBestStructure(equationModel.wv, clusters.get(0));
@@ -52,7 +53,9 @@ public class JointInference {
 					equations.add(pair2.getFirst());
 					List<Double> solns = EquationSolver.solveSemYs(equations);
 					beam.add(new Pair<List<Double>, Double>(solns, 
-							getSolutionScore(solns) + pair1.getSecond() + pair2.getSecond()));
+							pair1.getSecond() + pair2.getSecond() //+ 
+//							getSolutionScore(solns)
+							));
 				}
 			} 
 			if(clusters.size() == 2) {
@@ -69,8 +72,9 @@ public class JointInference {
 						equations.add(pair3.getFirst());
 						List<Double> solns = EquationSolver.solveSemYs(equations);
 						beam.add(new Pair<List<Double>, Double>(solns, 
-								getSolutionScore(solns) + pair1.getSecond() + pair2.getSecond() + 
-								pair3.getSecond()));
+								pair1.getSecond() + pair2.getSecond() + pair3.getSecond() //+
+//								getSolutionScore(solns)
+								));
 						
 					}
 				}

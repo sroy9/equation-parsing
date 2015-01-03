@@ -68,6 +68,9 @@ public class SemX implements IInstance {
 		if(list.get(1).relationQuantities.size() == 0) {
 			list.remove(1);
 		}
+		if(list.get(0).relationQuantities.size() == 0) {
+			list.remove(0);
+		}
 		for(SemX sx : list) {
 			sx.isOneVar = y.isOneVar;
 			sx.lemmas = x.lemmas;

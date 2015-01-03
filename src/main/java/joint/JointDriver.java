@@ -1,16 +1,16 @@
-package semparse;
+package joint;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import parser.DocReader;
-import structure.Equation;
-import structure.EquationSolver;
-import structure.Operation;
+import relation.RelationDriver;
+import relation.RelationFeatGen;
+import relation.RelationInfSolver;
+import relation.RelationX;
+import relation.RelationY;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
@@ -22,14 +22,14 @@ import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
-public class SemDriver {
-	
+public class JointDriver {
+
 	public static void crossVal() throws Exception {
-		double crossValAcc = 0.0;
+		double acc = 0.0;
 		for(int i=0;i<5;i++) {
-			crossValAcc += doTrainTest(i);
+			acc += doTrainTest(i);
 		}
-		System.out.println("5-fold CV : "+(crossValAcc/5));
+		System.out.println("5-fold CV : " + (acc/5));
 	}
 	
 	public static double doTrainTest(int testFold) throws Exception {
@@ -46,8 +46,8 @@ public class SemDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("sem"+testFold+".save", train);
-		return testModel("sem"+testFold+".save", test);
+		trainModel("rel"+testFold+".save", train, testFold);
+		return testModel("rel"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {
@@ -56,31 +56,25 @@ public class SemDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			for(int i=0; i<simulProb.equations.size(); ++i) {
-				SemX semX = new SemX(simulProb, "R"+(i+1));
-				SemY semY = new SemY(simulProb.equations.get(i));
-				if(semY.emptySlots.size() > 0) {
-					problem.addExample(semX, semY);	
-				}
-			}
+			JointX jointX = new JointX(simulProb);
+			JointY jointY = new JointY(simulProb);
+			problem.addExample(jointX, jointY);
 		}
 		return problem;
 	}
 
-	private static double testModel(String modelPath, SLProblem sp)
+	public static double testModel(String modelPath, SLProblem sp)
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
-		double acc = 0.0;
-		double beamAcc = 0.0;
-		double total = sp.instanceList.size();
 		Set<Integer> incorrect = new HashSet<>();
-		Set<Integer> tot = new HashSet<>();  
+		Set<Integer> total = new HashSet<>();
+		double acc = 0.0, beamAcc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			SemX prob = (SemX) sp.instanceList.get(i);
-			SemY gold = (SemY) sp.goldStructureList.get(i);
-			SemY pred = (SemY) model.infSolver.getBestStructure(
-					model.wv, sp.instanceList.get(i));
-			tot.add(prob.problemIndex);
+			RelationX prob = (RelationX) sp.instanceList.get(i);
+			RelationY gold = (RelationY) sp.goldStructureList.get(i);
+			RelationY pred = (RelationY) model.infSolver.getBestStructure(
+					model.wv, prob);
+			total.add(prob.problemIndex);
 			double goldWt = model.wv.dotProduct(
 					model.featureGenerator.getFeatureVector(prob, gold));
 			double predWt = model.wv.dotProduct(
@@ -88,44 +82,44 @@ public class SemDriver {
 			if(goldWt > predWt) {
 				System.out.println("PROBLEM HERE");
 			}
-			for(Pair<SemY, Double> pair : ((SemInfSolver) model.infSolver).beam) {
-				if (SemY.getLoss(gold, pair.getFirst()) < 0.00001) {
+			for(Pair<RelationY, Double> pair : ((RelationInfSolver) model.infSolver).beam) {
+				if (RelationY.getLoss(gold, pair.getFirst()) < 0.0001) {
 					beamAcc += 1.0;
 					break;
 				}
 			}
-			if (SemY.getLoss(gold, pred) < 0.00001) {
-				acc += 1.0;
+			if(RelationY.getLoss(gold, pred) < 0.0001) {
+				acc += 1;
 			} else {
 				incorrect.add(prob.problemIndex);
-				System.out.println("Text : "+prob.ta.getText());
+				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Skeleton : "+Tools.skeletonString(prob.skeleton));
 				System.out.println("Quantities : "+prob.quantities);
 				System.out.println("Gold : \n"+gold);
-				System.out.println("Gold weight : "+goldWt);
+				System.out.println("Gold weight : "+model.wv.dotProduct(
+						model.featureGenerator.getFeatureVector(prob, gold)));
 				System.out.println("Pred : \n"+pred);
-				System.out.println("Pred weight : "+predWt);
-				System.out.println("Loss : "+SemY.getLoss(gold, pred));
+				System.out.println("Pred weight : "+model.wv.dotProduct(
+						model.featureGenerator.getFeatureVector(prob, pred)));
+				System.out.println("Loss : "+RelationY.getLoss(gold, pred));
 			}
 		}
-		System.out.println("Beam Accuracy : = " + (beamAcc / total));
-		System.out.println("Accuracy : " + acc + " / " + total + " = "
-				+ (acc / total));
-		System.out.println("Problem Accuracy : = 1 - " + incorrect.size() + "/" 
-				+ tot.size() 
-				+ " = " + (1-(incorrect.size()*1.0/tot.size())));
-		return 1-(incorrect.size()*1.0/tot.size());
+		System.out.println("Beam Accuracy : = " + (beamAcc / sp.instanceList.size()));
+		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
+				+ " = " + (acc/sp.instanceList.size()));
+		return (acc/sp.instanceList.size());
 	}
 	
-	public static void trainModel(String modelPath, SLProblem train)
+	public static void trainModel(String modelPath, SLProblem train, int testFold) 
 			throws Exception {
 		SLModel model = new SLModel();
 		Lexiconer lm = new Lexiconer();
 		lm.setAllowNewFeatures(true);
 		model.lm = lm;
-		SemFeatGen fg = new SemFeatGen(lm);
+		RelationFeatGen fg = new RelationFeatGen(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new SemInfSolver(fg, SemInfSolver.extractTemplates(train));
+		model.infSolver = new RelationInfSolver(
+				fg, RelationInfSolver.extractSegTemplates(train), testFold);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
@@ -135,7 +129,8 @@ public class SemDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		SemDriver.crossVal();
-//		SemDriver.doTrainTest(0);
+//		RelationDriver.doTrainTest(0);
+		RelationDriver.crossVal();
 	}
+
 }

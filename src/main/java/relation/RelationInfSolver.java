@@ -37,10 +37,8 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private RelationFeatGen featGen;
-//	public Map<Integer, Set<Integer>> templateStats;
 	public List<Map<String, Integer>> segTemplates;
 	public List<Pair<RelationY, Double>> beam;
-//	public SLModel equationModel;
 
 	public RelationInfSolver(RelationFeatGen featGen, List<Map<String, Integer>> segTemplates, 
 			int testFold) throws Exception {
@@ -62,36 +60,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		RelationY r2 = (RelationY) arg2;
 		return RelationY.getLoss(r1, r2);
 	}
-	
-	// argmax_h_i w^T \phi(x, h_i, y)
-//	public RelationY getBestLatentVariable(
-//			WeightVector wv, RelationX x, RelationY y) {
-//		y.relations.clear();
-//		Map<String, List<Double>> eqNumbers = new HashMap<String, List<Double>>();
-//		eqNumbers.put("R1", new ArrayList<Double>());
-//		eqNumbers.put("R2", new ArrayList<Double>());
-//		for(int i=0; i<y.equations.size(); ++i) {
-//			Equation eq = y.equations.get(i);
-//			for(List<Pair<Operation, Double>> pairList : eq.terms) {
-//				for(Pair<Operation, Double> pair : pairList) {
-//					eqNumbers.get("R"+(i+1)).add(pair.getSecond());
-//				}
-//			}
-//		}
-//		RelationY best = null;
-//		float bestScore = -Float.MAX_VALUE;
-//		for(RelationY ry : enumerateClustersRespectingEquations(x, y, eqNumbers)) {
-//			float score = wv.dotProduct(featGen.getFeatureVector(x, ry));
-//			if(score > bestScore) {
-//				bestScore = score;
-//				best = ry;
-//			}
-//		}
-////		System.out.println("BestLatentVar : "+best.equations.size());
-//		return best;
-//	}
 
-	// argmax _ {y_i, h_i} w^T \phi(x, y_i, h_i)
 	@Override
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
@@ -205,7 +174,6 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 					}
 				}
 			}
-			
 			list1.clear();
 			list1.addAll(list2);
 			list2.clear();

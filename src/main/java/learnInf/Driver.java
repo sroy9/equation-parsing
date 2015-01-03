@@ -59,7 +59,7 @@ public class Driver {
 			test.ta = simulProb.ta;
 			
 			List<Double> solutions1 = EquationSolver.solve(simulProb.equations);
-			List<Double> solutions2 = JointInference.constrainedInference(
+			List<Double> solutions2 = ConstrainedInference.constrainedInference(
 					test, relationModel, equationModel);
 			if(hasSameSolution(solutions1, solutions2)) {
 				acc += 1.0;

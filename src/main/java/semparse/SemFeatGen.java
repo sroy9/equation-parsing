@@ -85,6 +85,9 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 			for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3)) {
 				features.add(prefix+"_"+feature);
 			}
+			if(Tools.getUnit(qs).contains("percent")) {
+				features.add(prefix+"_percent");
+			}
 		}
 		return features;
 	}
@@ -152,6 +155,13 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 			Sentence sent = x.ta.getSentenceFromToken(tokenId);
 			relevantSentenceIds.add(sent.getSentenceId());
 		}
+		features.add("Operation_AB1_"+y.operations.get(0));
+		features.add("Operation_AB2_"+y.operations.get(1));
+		features.add("Operation_AB_"+y.operations.get(0)+"_"+y.operations.get(1));
+		features.add("Operation_AB1_"+y.operations.get(2));
+		features.add("Operation_AB2_"+y.operations.get(3));
+		features.add("Operation_AB_"+y.operations.get(2)+"_"+y.operations.get(3));
+		features.add("IsOneVar_"+y.isOneVar);
 		for(int i=0; i<4; ++i) {
 			String prefix = "";
 			if(i==0 || i==2) prefix = "AB1_"+y.operations.get(i);
