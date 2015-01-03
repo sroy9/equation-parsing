@@ -51,7 +51,7 @@ public class RelationDriver {
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
 		trainModel("rel"+testFold+".save", train, testFold);
-		return testModel("rel"+testFold+".save", train);
+		return testModel("rel"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {
@@ -133,6 +133,7 @@ public class RelationDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		RelationDriver.doTrainTest(0);
+//		RelationDriver.doTrainTest(0);
+		RelationDriver.crossVal();
 	}
 }

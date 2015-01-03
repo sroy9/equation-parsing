@@ -48,7 +48,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	
 	public List<String> getFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
-//		features.addAll(templateFeatures(x, y));
+		features.addAll(templateFeatures(x, y));
 		for(IntPair slot : y.emptySlots) {
 			features.addAll(alignmentFeatures(x, y, slot));
 		}
@@ -63,32 +63,27 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 
 	public List<String> alignmentFeatures(SemX x, SemY y, IntPair slot) {
 		List<String> features = new ArrayList<>();
+		String prefix = "";
+		if(slot.getFirst() == 4) prefix = "C";
+		if(slot.getFirst() == 1 || slot.getFirst() == 3){
+			prefix = ""+y.operations.get(slot.getFirst())+"_AB2";
+		} 
+		if(slot.getFirst() == 0 || slot.getFirst() == 2){
+			prefix = ""+y.operations.get(slot.getFirst())+"_AB1";
+		}
 		Double d = y.terms.get(slot.getFirst()).get(slot.getSecond()).getSecond();
 		List<QuantSpan> quantSpans = Tools.getRelevantQuantSpans(d, x.relationQuantities);
-		
 		for(int j=0; j<quantSpans.size(); ++j) {
-			int tokenId = x.ta.getTokenIdFromCharacterOffset(quantSpans.get(j).start);
+			QuantSpan qs = quantSpans.get(j);
+			int tokenId = x.ta.getTokenIdFromCharacterOffset(qs.start);
 			Sentence sent = x.ta.getSentenceFromToken(tokenId);
 			List<Constituent> sentLemmas = FeatGen.partialLemmas(
 					x.lemmas, sent.getStartSpan(), sent.getEndSpan());
 			List<Pair<String, IntPair>> sentSkeleton = FeatGen.getPartialSkeleton(
 					x.skeleton, sent.getStartSpan(), sent.getEndSpan());
-			String prefix;
-			if(slot.getFirst() == 4) prefix = ""+slot.getFirst();
-			else if(slot.getFirst() == 1 || slot.getFirst() == 3){
-				prefix = ""+y.operations.get(slot.getFirst())+"_AB2";
-			} else {
-				prefix = ""+y.operations.get(slot.getFirst())+"_AB1";
-			}
+			features.add(prefix+"_Unit_"+Tools.getUnit(qs));
 			for(String feature : FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3)) {
 				features.add(prefix+"_"+feature);
-			}
-			for(int i=0; i<sentSkeleton.size(); ++i) {
-				features.add(prefix+"_SentUnigram_"+sentSkeleton.get(i).getFirst());
-			}
-			for(int i=0; i<sentSkeleton.size()-1; ++i) {
-				features.add(prefix+"_SentBigram_"+sentSkeleton.get(i).getFirst()
-						+"_"+sentSkeleton.get(i+1).getFirst());
 			}
 		}
 		return features;
@@ -100,6 +95,18 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		Double d2 = y.terms.get(slot2.getFirst()).get(slot2.getSecond()).getSecond();
 		List<QuantSpan> quantSpans1 = Tools.getRelevantQuantSpans(d1, x.relationQuantities);
 		List<QuantSpan> quantSpans2 = Tools.getRelevantQuantSpans(d2, x.relationQuantities);
+		String prefix = "";
+		if((slot1.getFirst() == 0 && slot2.getFirst() == 3) || 
+				(slot1.getFirst() == 1 && slot2.getFirst() == 2)) {
+			prefix = "A1B2";
+		} else {
+			if(slot1.getFirst() == 0 || slot1.getFirst() == 2) prefix += "A1";
+			if(slot1.getFirst() == 1 || slot1.getFirst() == 3) prefix += "A2";
+			if(slot1.getFirst() == 4) prefix += "C";
+			if(slot2.getFirst() == 0 || slot2.getFirst() == 2) prefix += "A1";
+			if(slot2.getFirst() == 1 || slot2.getFirst() == 3) prefix += "A2";
+			if(slot2.getFirst() == 4) prefix += "C";
+		}
 		for(int k=0; k<quantSpans1.size(); ++k) {
 			for(int l=0; l<quantSpans2.size(); ++l) {
 				int tokenId1 = x.ta.getTokenIdFromCharacterOffset(quantSpans1.get(k).start);
@@ -108,20 +115,6 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 				QuantSpan qs2 = quantSpans2.get(l);
 				int tokenId2 = x.ta.getTokenIdFromCharacterOffset(quantSpans2.get(l).start);
 				Sentence sent2 = x.ta.getSentenceFromToken(tokenId2);
-				String prefix = "";
-				if((slot1.getFirst() == 0 && slot2.getFirst() == 1) || 
-						(slot1.getFirst() == 2 && slot2.getFirst() == 3)) {
-					prefix = "A1A2";
-				} else if((slot1.getFirst() == 0 && slot2.getFirst() == 3) || 
-						(slot1.getFirst() == 1 && slot2.getFirst() == 2)) {
-					prefix = "A1B2";
-				} else if((slot1.getFirst() == 1 && slot2.getFirst() == 1) || 
-						(slot1.getFirst() == 3 && slot2.getFirst() == 3)) {
-					prefix = "A2A2";
-				} else {
-					prefix = slot1.getFirst()+"_"+slot2.getFirst();
-				}
-				
 				if(sent1.getSentenceId() == sent2.getSentenceId()) {
 					List<Pair<String, IntPair>> skeleton = FeatGen.getPartialSkeleton(
 							x.skeleton, Math.min(tokenId1, tokenId2), Math.max(tokenId1, tokenId2)+1);
@@ -140,16 +133,6 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 						for(int i=0; i<skeleton.size()-1; ++i) {
 							features.add(prefix+"_MidBigram_"+skeleton.get(i).getFirst()
 									+"_"+skeleton.get(i+1).getFirst());
-						}
-						for(String feature : FeatGen.getLemmatizedUnigrams(x.lemmas, 
-								Math.min(tokenId1, tokenId2), 
-								Math.max(tokenId1, tokenId2))) {
-							features.add(prefix+"_MidUnigram_"+feature);
-						}
-						for(String feature : FeatGen.getLemmatizedBigrams(x.lemmas, 
-								Math.min(tokenId1, tokenId2), 
-								Math.max(tokenId1, tokenId2))) {
-							features.add(prefix+"_MidBigram_"+feature);
 						}
 					}
 				}
@@ -170,9 +153,12 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 			relevantSentenceIds.add(sent.getSentenceId());
 		}
 		for(int i=0; i<4; ++i) {
+			String prefix = "";
+			if(i==0 || i==2) prefix = "AB1_"+y.operations.get(i);
+			if(i==1 || i==3) prefix = "AB2_"+y.operations.get(i);
+			if(i==4) prefix = "C";
 			for(Integer j : relevantSentenceIds) {
 				Sentence sent = x.ta.getSentence(j);
-				String prefix = i+"_"+y.operations.get(i);
 				if(sent.getText().contains("difference")) {
 					features.add(prefix+"_DIFFERENCE MENTIONED");
 				}

@@ -135,6 +135,7 @@ public class SemDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		SemDriver.crossVal();
+//		SemDriver.crossVal();
+		SemDriver.doTrainTest(0);
 	}
 }

@@ -153,6 +153,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 			list1.addAll(list2);
 			list2.clear();
 		}
+		// Ensure that same number not used twice
 		for(SemY y : list1) {
 			boolean allow = true;
 			for(int i=0; i<seed.emptySlots.size(); ++i) {
