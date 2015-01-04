@@ -32,12 +32,12 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private SemFeatGen featGen;
-	public List<SemY> templates;
+	public List<SemY> equationTemplates;
 	public List<Pair<SemY, Double>> beam;
 
 	public SemInfSolver(SemFeatGen featGen, List<SemY> templates) {
 		this.featGen = featGen;
-		this.templates = templates;
+		this.equationTemplates = templates;
 		beam = new ArrayList<Pair<SemY, Double>>();
 	}
 
@@ -112,7 +112,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		for(Double d : Tools.uniqueNumbers(blob.relationQuantities)) {
 			availableNumbers.add(d);
 		}
-		for(SemY template : templates) {
+		for(SemY template : equationTemplates) {
 			if(availableNumbers.size() == template.emptySlots.size() && 
 					template.isOneVar == blob.isOneVar) {
 				beam1.add(new Pair<SemY, Double>(template, 0.0));
@@ -129,7 +129,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		// If beam2 is empty, you are doing something wrong
 		pred = beam2.element().getFirst();
 		
-		int size = 5, i=0;
+		int size = 10, i=0;
 		while(beam2.size()>0 && i<size) {
 			++i;
 			beam.add(beam2.poll());

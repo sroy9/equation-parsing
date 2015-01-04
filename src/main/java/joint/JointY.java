@@ -18,7 +18,6 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 public class JointY implements IStructure{
 	
 	public RelationY relationY;
-	public List<SemX> semXs;
 	public List<SemY> semYs;
 	public List<Double> solns;
 	public boolean isOneVar;
@@ -34,6 +33,17 @@ public class JointY implements IStructure{
 		}
 		isOneVar = prob.isOneVar;
 		solns = EquationSolver.solveSemYs(semYs);
+	}
+	
+	public JointY(JointY other) {
+		relationY = new RelationY();
+		relationY.relations.addAll(other.relationY.relations);
+		semYs = new ArrayList<>();
+		for(Equation eq : other.semYs) {
+			semYs.add(new SemY(eq));
+		}
+		isOneVar = other.isOneVar;
+		solns = other.solns;
 	}
 	
 	public JointY(RelationY relationY, List<SemY> semYs) {

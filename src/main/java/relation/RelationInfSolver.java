@@ -79,7 +79,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			beam1.add(new Pair<RelationY, Double>(y, score));
 		}
 		if(beam1.size() > 0) pred = beam1.element().getFirst();
-		int size = 20, i=0;
+		int size = 30, i=0;
 		beam.clear();
 		while(beam1.size()>0 && i<size) {
 			++i;

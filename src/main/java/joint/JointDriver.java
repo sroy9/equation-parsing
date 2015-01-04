@@ -107,7 +107,8 @@ public class JointDriver {
 		JointFeatGen fg = new JointFeatGen(lm);
 		model.featureGenerator = fg;
 		model.infSolver = new JointInfSolver(
-				fg, "rel"+testFold+".save", "sem"+testFold+".save");
+				fg, "rel"+testFold+".save", "sem"+testFold+".save",
+				JointInfSolver.extractTemplates(train));
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
