@@ -1,6 +1,7 @@
 package joint;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import learnInf.Driver;
@@ -51,5 +52,16 @@ public class JointY implements IStructure{
 			return 1.0f;
 		}
 	}
-
+	
+	@Override
+	public String toString() {
+		String str = "JointY\n";
+		str += "Relations : "+Arrays.asList(relationY.relations)+"\n";
+		str += "IsOneVar : "+isOneVar+"\n";
+		for(SemY y : semYs) {
+			str += "Equation : \n"+y+"\n";
+		}
+		str+="\n";
+		return str;
+	}
 }

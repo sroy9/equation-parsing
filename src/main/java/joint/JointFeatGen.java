@@ -36,7 +36,6 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 	public List<String> getFeatures(JointX x, JointY y) {
 		List<String> features = new ArrayList<>();
 		features.add("IsOneVar_"+y.isOneVar);
-//		features.addAll(RelationFeatGen.getFeatures(x.relationX, y.relationY));
 		List<SemX> semXs = SemX.extractEquationProbFromRelations(x.relationX, y.relationY);
 		assert semXs.size() == y.semYs.size();
 		for(int i=0; i<semXs.size(); ++i) {
