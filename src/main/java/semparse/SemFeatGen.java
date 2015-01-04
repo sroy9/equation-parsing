@@ -46,7 +46,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public List<String> getFeatures(SemX x, SemY y) {
+	public static List<String> getFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
 		features.addAll(templateFeatures(x, y));
 		for(IntPair slot : y.emptySlots) {
@@ -61,7 +61,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 
-	public List<String> alignmentFeatures(SemX x, SemY y, IntPair slot) {
+	public static List<String> alignmentFeatures(SemX x, SemY y, IntPair slot) {
 		List<String> features = new ArrayList<>();
 		String prefix = "";
 		if(slot.getFirst() == 4) prefix = "C";
@@ -92,7 +92,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 	
-	public List<String> pairwiseFeatures(SemX x, SemY y, IntPair slot1, IntPair slot2) {
+	public static List<String> pairwiseFeatures(SemX x, SemY y, IntPair slot1, IntPair slot2) {
 		List<String> features = new ArrayList<>();
 		Double d1 = y.terms.get(slot1.getFirst()).get(slot1.getSecond()).getSecond();
 		Double d2 = y.terms.get(slot2.getFirst()).get(slot2.getSecond()).getSecond();
@@ -145,7 +145,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 	
-	public List<String> templateFeatures(SemX x, SemY y) {
+	public static List<String> templateFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
 		Set<Integer> relevantSentenceIds = new HashSet<>();
 		for(IntPair slot : y.emptySlots) {

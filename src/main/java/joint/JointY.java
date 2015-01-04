@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import learnInf.Driver;
+import relation.RelationX;
 import relation.RelationY;
+import semparse.SemX;
 import semparse.SemY;
 import structure.Equation;
 import structure.EquationSolver;
@@ -15,6 +17,7 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 public class JointY implements IStructure{
 	
 	public RelationY relationY;
+	public List<SemX> semXs;
 	public List<SemY> semYs;
 	public List<Double> solns;
 	public boolean isOneVar;

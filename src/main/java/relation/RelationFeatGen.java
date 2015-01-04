@@ -45,7 +45,7 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 		
-	public List<String> getFeatures(RelationX x, RelationY y) {
+	public static List<String> getFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
 		features.addAll(globalFeatures(x, y));
 		for(int i=0; i<y.relations.size(); ++i) {
@@ -54,7 +54,7 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 	
-	public List<String> globalFeatures(RelationX x, RelationY y) {
+	public static List<String> globalFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
 		if(Tools.getNONEcount(y.relations) > 1) features.add("NONE>1");
 		else if(Tools.getNONEcount(y.relations) > 2) features.add("NONE>2");
@@ -69,7 +69,7 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 	
-	public List<String> relationFeatures(RelationX x, RelationY y, int index) {
+	public static List<String> relationFeatures(RelationX x, RelationY y, int index) {
 		List<String> features = new ArrayList<>();
 		String prefix = "";
 		if(y.relations.get(index).startsWith("R")) {
@@ -91,7 +91,7 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 	
-	public List<String> pairWise(RelationX x, RelationY y, int index1, int index2) {
+	public static List<String> pairWise(RelationX x, RelationY y, int index1, int index2) {
 		List<String> features = new ArrayList<>();
 		QuantSpan qs1 = x.quantities.get(index1);
 		QuantSpan qs2 = x.quantities.get(index2);
@@ -121,7 +121,7 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 	
-	public List<String> single(RelationX x, RelationY y, int index) {
+	public static List<String> single(RelationX x, RelationY y, int index) {
 		List<String> features = new ArrayList<>();
 		QuantSpan qs = x.quantities.get(index);
 		int tokenId = x.ta.getTokenIdFromCharacterOffset(x.quantities.get(index).start);

@@ -7,9 +7,11 @@ import edu.illinois.cs.cogcomp.sl.core.IInstance;
 
 public class JointX implements IInstance{
 	
-	RelationX relationX;
+	public RelationX relationX;
+	public int problemIndex;
 	
 	public JointX(SimulProb simulProb) {
 		relationX = new RelationX(simulProb);
+		problemIndex = simulProb.index;
 	}
 }

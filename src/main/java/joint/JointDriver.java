@@ -46,8 +46,8 @@ public class JointDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("rel"+testFold+".save", train, testFold);
-		return testModel("rel"+testFold+".save", test);
+		trainModel("joint"+testFold+".save", train, testFold);
+		return testModel("joint"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {
@@ -66,15 +66,12 @@ public class JointDriver {
 	public static double testModel(String modelPath, SLProblem sp)
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
-		Set<Integer> incorrect = new HashSet<>();
-		Set<Integer> total = new HashSet<>();
-		double acc = 0.0, beamAcc = 0.0;
+		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			RelationX prob = (RelationX) sp.instanceList.get(i);
-			RelationY gold = (RelationY) sp.goldStructureList.get(i);
-			RelationY pred = (RelationY) model.infSolver.getBestStructure(
+			JointX prob = (JointX) sp.instanceList.get(i);
+			JointY gold = (JointY) sp.goldStructureList.get(i);
+			JointY pred = (JointY) model.infSolver.getBestStructure(
 					model.wv, prob);
-			total.add(prob.problemIndex);
 			double goldWt = model.wv.dotProduct(
 					model.featureGenerator.getFeatureVector(prob, gold));
 			double predWt = model.wv.dotProduct(
@@ -82,30 +79,21 @@ public class JointDriver {
 			if(goldWt > predWt) {
 				System.out.println("PROBLEM HERE");
 			}
-			for(Pair<RelationY, Double> pair : ((RelationInfSolver) model.infSolver).beam) {
-				if (RelationY.getLoss(gold, pair.getFirst()) < 0.0001) {
-					beamAcc += 1.0;
-					break;
-				}
-			}
-			if(RelationY.getLoss(gold, pred) < 0.0001) {
+			if(JointY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else {
-				incorrect.add(prob.problemIndex);
-				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
-				System.out.println("Skeleton : "+Tools.skeletonString(prob.skeleton));
-				System.out.println("Quantities : "+prob.quantities);
+				System.out.println(prob.problemIndex+" : "+prob.relationX.ta.getText());
+				System.out.println("Skeleton : "+Tools.skeletonString(prob.relationX.skeleton));
+				System.out.println("Quantities : "+prob.relationX.quantities);
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
 				System.out.println("Pred : \n"+pred);
 				System.out.println("Pred weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, pred)));
-				System.out.println("Loss : "+RelationY.getLoss(gold, pred));
+				System.out.println("Loss : "+JointY.getLoss(gold, pred));
 			}
-		}
-		System.out.println("Beam Accuracy : = " + (beamAcc / sp.instanceList.size()));
-		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
+		}System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
 		return (acc/sp.instanceList.size());
 	}
@@ -116,10 +104,10 @@ public class JointDriver {
 		Lexiconer lm = new Lexiconer();
 		lm.setAllowNewFeatures(true);
 		model.lm = lm;
-		RelationFeatGen fg = new RelationFeatGen(lm);
+		JointFeatGen fg = new JointFeatGen(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new RelationInfSolver(
-				fg, RelationInfSolver.extractSegTemplates(train), testFold);
+		model.infSolver = new JointInfSolver(
+				fg, "rel"+testFold+".save", "sem"+testFold+".save");
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
@@ -129,8 +117,8 @@ public class JointDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-//		RelationDriver.doTrainTest(0);
-		RelationDriver.crossVal();
+		JointDriver.doTrainTest(0);
+//		JointDriver.crossVal();
 	}
 
 }
