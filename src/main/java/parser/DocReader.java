@@ -9,13 +9,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 
 import com.google.gson.reflect.*;
 import com.google.gson.*;
 
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.core.utilities.ArrayUtilities;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
+import edu.illinois.cs.cogcomp.edison.sentences.Sentence;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
 import structure.Equation;
@@ -52,10 +55,9 @@ public class DocReader {
 				simulProb.extractQuantities(quantifier);
 				simulProb.extractAnnotations();
 //				System.out.println(simulProb.index+" : "+simulProb.question);
-//				System.err.println(simulProb.index+" : "+simulProb.question); 
-//				System.err.println("Parse : ");
+//				System.out.println("Parse : ");
 //				for(Constituent cons : simulProb.parse) {
-//					System.err.println(cons.getLabel()+" : "+cons.getSurfaceString());
+//					System.out.println(cons.getLabel()+" : "+cons.getSurfaceString());
 //				}
 //				System.out.println("Skeleton : ");
 //				for(Pair<String, IntPair> pair : simulProb.skeleton) {
@@ -100,7 +102,41 @@ public class DocReader {
 		return folds;
 	}
 	
+	public static List<String> getCompositionSentences(
+			List<SimulProb> simulProbList) {
+		List<String> sentenceList = new ArrayList<>();
+		for(SimulProb prob : simulProbList) {
+			List<Integer> tokenIdsR1 = Tools.getTokenIdsForRelation(
+					prob.ta, prob.quantities, prob.relations, "R1");
+			List<Integer> tokenIdsR2 = Tools.getTokenIdsForRelation(
+					prob.ta, prob.quantities, prob.relations, "R2");
+			if(tokenIdsR1.size() > 0 && 
+					Tools.areAllTokensInSameSentence(prob.ta, tokenIdsR1)) {
+				if(tokenIdsR2.size() == 0 || Tools.max(tokenIdsR1) < Tools.min(tokenIdsR2)
+						|| Tools.max(tokenIdsR2) < Tools.min(tokenIdsR1)) {
+					sentenceList.add(Tools.getSententialForm(
+							prob.ta, Tools.min(tokenIdsR1), Tools.max(tokenIdsR1)));
+				}
+			}
+			if(tokenIdsR2.size() > 0 && 
+					Tools.areAllTokensInSameSentence(prob.ta, tokenIdsR2)) {
+				if(tokenIdsR1.size() == 0 || Tools.max(tokenIdsR2) < Tools.min(tokenIdsR1)
+						|| Tools.max(tokenIdsR1) < Tools.min(tokenIdsR2)) {
+					sentenceList.add(Tools.getSententialForm(
+							prob.ta, Tools.min(tokenIdsR2), Tools.max(tokenIdsR2)));
+				}
+			}	
+		}
+		return sentenceList;
+	}
+	
 	public static void main(String args[]) throws Exception {
-		DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
+		List<SimulProb> simulProbList = 
+				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
+		List<String> compSentences = getCompositionSentences(simulProbList);
+		for(String sent : compSentences) {
+			System.out.println(sent);
+		}
+		
 	}
 }

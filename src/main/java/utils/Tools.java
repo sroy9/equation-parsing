@@ -3,7 +3,9 @@ package utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import semparse.SemX;
 import structure.Operation;
@@ -237,4 +239,75 @@ public class Tools {
 		return true;
 	}
 	
+	// Can be called for R1 and R2, not applicable for NONE
+	public static List<Integer> getTokenIdsForRelation(
+			TextAnnotation ta, List<QuantSpan> quantities, List<String> relations,
+			String keyRelation) {
+		assert quantities.size() == relations.size();
+		List<Integer> tokenIds = new ArrayList<>();
+		for(int i=0; i<quantities.size(); ++i) {
+			String relation = relations.get(i);
+			QuantSpan qs = quantities.get(i);
+			if(relation.equals(keyRelation) || relation.equals("BOTH")) {
+				tokenIds.add(ta.getTokenIdFromCharacterOffset(qs.start));
+			}
+		}
+		return tokenIds;
+	}
+	
+	public static boolean areAllTokensInSameSentence(
+			TextAnnotation ta, List<Integer> tokenIds) {
+		Set<Integer> sentenceIds = new HashSet<>();
+		for(Integer tokenId : tokenIds) {
+			sentenceIds.add(ta.getSentenceFromToken(tokenId).getSentenceId());
+		}
+		if(sentenceIds.size() == 1) return true;
+		return false;
+	}
+	
+	public static Integer max(List<Integer> intList) {
+		Integer max = Integer.MIN_VALUE;
+		for(Integer i : intList) {
+			if(max < i) {
+				max = i;
+			}
+		}
+		return max;
+	}
+	
+	public static Integer min(List<Integer> intList) {
+		Integer min = Integer.MAX_VALUE;
+		for(Integer i : intList) {
+			if(min > i) {
+				min = i;
+			}
+		}
+		return min;
+	}
+	
+	public static String getSententialForm(TextAnnotation ta, int first, int last) {
+		int start = first, end = last;
+		while(true) {
+			if(start == 0) break;
+			if(ta.getToken(start).equals(".") || ta.getToken(start).equals("and")) {
+				start++;
+				break;
+			}
+			start--;
+		}
+		while(true) {
+			if(end == ta.size()-1) break;
+			if(ta.getToken(end).equals(".")) break;
+			if(ta.getToken(end).equals("and") || ta.getToken(end).equals(",")) {
+				end--;
+				break;
+			}
+			end++;
+		}
+		String sentence = "";
+		for(int i=start; i<=end; ++i) {
+			sentence += ta.getToken(i) + " ";
+		}
+		return sentence.trim();
+	}
 }
