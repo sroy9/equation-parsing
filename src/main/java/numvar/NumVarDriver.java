@@ -1,17 +1,20 @@
-package joint;
+package numvar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import parser.DocReader;
-import relation.RelationDriver;
-import relation.RelationFeatGen;
-import relation.RelationInfSolver;
-import relation.RelationX;
-import relation.RelationY;
+import semparse.SemInfSolver;
+import semparse.SemY;
+import structure.Equation;
+import structure.EquationSolver;
+import structure.Operation;
 import structure.SimulProb;
+import utils.FeatGen;
 import utils.Params;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
@@ -20,10 +23,12 @@ import edu.illinois.cs.cogcomp.sl.core.SLParameters;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
+import edu.illinois.cs.cogcomp.sl.learner.l2_loss_svm.L2LossSSVMDCDSolver;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
+import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
-public class JointDriver {
-
+public class NumVarDriver {
+	
 	public static void crossVal() throws Exception {
 		double acc = 0.0;
 		for(int i=0;i<5;i++) {
@@ -40,14 +45,14 @@ public class JointDriver {
 		for(SimulProb simulProb : simulProbList) {
 			if(folds.get(testFold).contains(simulProb.index)) {
 				testProbs.add(simulProb);
-			} else {
+			} else /*if(FeatGen.getQuestionSentences(simulProb.ta).size() < 2) */{
 				trainProbs.add(simulProb);
 			}
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/joint"+testFold+".save", train, testFold);
-		return testModel("models/joint"+testFold+".save", test);
+		trainModel("models/numvar"+testFold+".save", train, testFold);
+		return testModel("models/numvar"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {
@@ -56,9 +61,9 @@ public class JointDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			JointX jointX = new JointX(simulProb);
-			JointY jointY = new JointY(simulProb);
-			problem.addExample(jointX, jointY);
+			NumVarX relationX = new NumVarX(simulProb);
+			NumVarY relationY = new NumVarY(simulProb);
+			problem.addExample(relationX, relationY);
 		}
 		return problem;
 	}
@@ -68,32 +73,30 @@ public class JointDriver {
 		SLModel model = SLModel.loadModel(modelPath);
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			JointX prob = (JointX) sp.instanceList.get(i);
-			JointY gold = (JointY) sp.goldStructureList.get(i);
-			JointY pred = (JointY) model.infSolver.getBestStructure(
-					model.wv, prob);
-			double goldWt = model.wv.dotProduct(
-					model.featureGenerator.getFeatureVector(prob, gold));
-			double predWt = model.wv.dotProduct(
-					model.featureGenerator.getFeatureVector(prob, pred));
-			if(goldWt > predWt) {
-				System.out.println("PROBLEM HERE");
+			NumVarX prob = (NumVarX) sp.instanceList.get(i);
+			NumVarY gold = (NumVarY) sp.goldStructureList.get(i);
+			NumVarY pred = null;
+			if(FeatGen.getQuestionSentences(prob.ta).size() < 2) {
+				pred = (NumVarY) model.infSolver.getBestStructure(model.wv, prob);
+			} else {
+				pred = new NumVarY(false);
 			}
-			if(JointY.getLoss(gold, pred) < 0.0001) {
+			if(NumVarY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else {
-				System.out.println(prob.problemIndex+" : "+prob.relationX.ta.getText());
-				System.out.println("Skeleton : "+Tools.skeletonString(prob.relationX.skeleton));
-				System.out.println("Quantities : "+prob.relationX.quantities);
+				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
+				System.out.println("Skeleton : "+Tools.skeletonString(prob.skeleton));
+				System.out.println("Quantities : "+prob.quantities);
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
 				System.out.println("Pred : \n"+pred);
 				System.out.println("Pred weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, pred)));
-				System.out.println("Loss : "+JointY.getLoss(gold, pred));
+				System.out.println("Loss : "+NumVarY.getLoss(gold, pred));
 			}
-		}System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
+		}
+		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
 		return (acc/sp.instanceList.size());
 	}
@@ -104,11 +107,9 @@ public class JointDriver {
 		Lexiconer lm = new Lexiconer();
 		lm.setAllowNewFeatures(true);
 		model.lm = lm;
-		JointFeatGen fg = new JointFeatGen(lm);
+		NumVarFeatGen fg = new NumVarFeatGen(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new JointInfSolver(
-				fg, "models/rel"+testFold+".save", "models/sem"+testFold+".save",
-				JointInfSolver.extractTemplates(train));
+		model.infSolver = new NumVarInfSolver(fg);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
@@ -118,8 +119,7 @@ public class JointDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		JointDriver.doTrainTest(0);
-//		JointDriver.crossVal();
+//		RelationDriver.doTrainTest(0);
+		NumVarDriver.crossVal();
 	}
-
 }

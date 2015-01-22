@@ -72,7 +72,7 @@ public class SemX implements IInstance {
 			list.remove(0);
 		}
 		for(SemX sx : list) {
-			sx.isOneVar = y.isOneVar;
+			sx.isOneVar = x.isOneVar;
 			sx.lemmas = x.lemmas;
 			sx.parse = x.parse;
 			sx.posTags = x.posTags;

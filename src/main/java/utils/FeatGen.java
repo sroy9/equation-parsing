@@ -38,7 +38,7 @@ public class FeatGen {
 			List<Constituent> lemmas, int start, int end) {
 		List<String> unigrams = new ArrayList<String>();
 		for(int i = start; i <= end; ++i) {
-			if(NumberUtils.isNumber(lemmas.get(i).getLabel()/*.replace(",", "")*/)) {
+			if(NumberUtils.isNumber(lemmas.get(i).getLabel().replace(",", ""))) {
 				unigrams.add("NUMBER");
 			} else {
 				unigrams.add(lemmas.get(i).getLabel());

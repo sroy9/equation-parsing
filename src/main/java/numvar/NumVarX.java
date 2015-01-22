@@ -1,4 +1,4 @@
-package relation;
+package numvar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 
-public class RelationX implements IInstance {
+public class NumVarX implements IInstance {
 
 	public int problemIndex;
 	public TextAnnotation ta;
@@ -23,12 +23,10 @@ public class RelationX implements IInstance {
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
 	public List<Pair<String, IntPair>> skeleton;
-//	public boolean isOneVar;
 
-	public RelationX(SimulProb simulProb) {
+	public NumVarX(SimulProb simulProb) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
-//		isOneVar = simulProb.isOneVar;
 		ta = simulProb.ta;
 		posTags = simulProb.posTags;
 		parse = simulProb.parse;

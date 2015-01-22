@@ -53,6 +53,14 @@ public class Tools {
 		return false;
 	}
 	
+	// is ip2 subset of ip1
+	public static boolean doesContain(IntPair ip1, IntPair ip2) {
+		if(ip1.getFirst() <= ip2.getFirst() && ip2.getSecond() <= ip1.getSecond()) {
+			return true;
+		}
+		return false;
+	}
+	
 	public static Operation getOperationFromString(String op) {
 		if(op.equals("ADD") || op.equals("+")) return Operation.ADD;
 		if(op.equals("SUB") || op.equals("-")) return Operation.SUB;

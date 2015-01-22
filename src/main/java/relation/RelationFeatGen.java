@@ -7,6 +7,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import numvar.NumVarX;
+import numvar.NumVarY;
+
 import org.apache.commons.lang.math.NumberUtils;
 
 import semparse.SemFeatGen;
@@ -44,8 +47,31 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = getFeatures(x, y);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
-		
+	
+	public IFeatureVector getNumVarFeatureVector(RelationX x, RelationY y) {
+		List<String> features = numVarFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+	
+	public IFeatureVector getRelationFeatureVector(RelationX x, RelationY y) {
+		List<String> features = relationFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+	
+	public IFeatureVector getEqSpanFeatureVector(RelationX x, RelationY y) {
+		List<String> features = eqSpanFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+	
 	public static List<String> getFeatures(RelationX x, RelationY y) {
+		List<String> features = new ArrayList<>();
+		features.addAll(numVarFeatures(x, y));
+		features.addAll(relationFeatures(x, y));
+		features.addAll(eqSpanFeatures(x, y));
+		return features;
+	}
+		
+	public static List<String> relationFeatures(RelationX x, RelationY y) {
 		List<String> features = new ArrayList<>();
 		features.addAll(globalFeatures(x, y));
 		for(int i=0; i<y.relations.size(); ++i) {
@@ -64,7 +90,6 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		else if(x.quantities.size()>4) features.add("NumQuant>4");
 		else if(x.quantities.size()>6) features.add("NumQuant>6");
 		else if(x.quantities.size()>8) features.add("NumQuant>8");
-		features.add("IsOneVar_"+Tools.isOneVar(y.relations));
 		features.add("NumQuestionSentences_"+FeatGen.getQuestionSentences(x.ta).size());
 		return features;
 	}
@@ -135,6 +160,47 @@ public class RelationFeatGen extends AbstractFeatureGenerator implements
 		if(Tools.safeEquals(1.0, Tools.getValue(qs)) || Tools.safeEquals(2.0, Tools.getValue(qs))) {
 			features.add("ONE_OR_TWO");
 		}
+		return features;
+	}
+	
+	public static List<String> numVarFeatures(RelationX x, RelationY y) {
+		List<String> features = new ArrayList<>();
+		String prefix = ""+y.isOneVar;
+		features.add(prefix+"_NumQuestionSentences_"+FeatGen.getQuestionSentences(x.ta).size());
+		for(String feature : FeatGen.getLemmatizedBigrams(x.lemmas, 0, x.lemmas.size()-1)) {
+			features.add(prefix+"_"+feature);
+		}
+		for(int i=0; i<x.skeleton.size()-1; ++i) {
+			features.add(prefix+"_"+x.skeleton.get(i)+"_"+x.skeleton.get(i+1));
+		}
+		for(Sentence sent : FeatGen.getQuestionSentences(x.ta)) {
+			for(int i=0; i<sent.size(); ++i) {
+				features.add(prefix+"_Q_"+sent.getToken(i));
+			}
+			for(int i=0; i<sent.size()-1; ++i) {
+				features.add(prefix+"_Q_"+sent.getToken(i)+"_"+sent.getToken(i+1));
+			}
+		}
+		int numQuant = x.quantities.size();
+		int uniqueQuant = Tools.uniqueNumbers(x.quantities).size();
+		int numSent = x.ta.getNumberOfSentences();
+		
+		if(numQuant < 2) features.add(prefix+"_numQuant<2");
+		else if(numQuant < 4) features.add(prefix+"_numQuant<4");
+		else features.add(prefix+"_numQuant<6");
+		
+		if(uniqueQuant < 2) features.add(prefix+"_uniqueQuant<2");
+		else if(uniqueQuant < 4) features.add(prefix+"_uniqueQuant<4");
+		else features.add(prefix+"_uniqueQuant<6");
+		
+		if(numSent < 2) features.add(prefix+"_numSent<2");
+		else if(numSent < 4) features.add(prefix+"_numSent<4");
+		else features.add(prefix+"_numSent<6");
+		return features;
+	}
+	
+	public static List<String> eqSpanFeatures(RelationX x, RelationY y) {
+		List<String> features = new ArrayList<>();
 		return features;
 	}
 	

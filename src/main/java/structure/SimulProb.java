@@ -3,32 +3,24 @@ package structure;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.math.NumberUtils;
-
-import relation.RelationX;
 import utils.Params;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
-import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
-import edu.illinois.cs.cogcomp.edison.sentences.Sentence;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
 import edu.illinois.cs.cogcomp.quant.standardize.Quantity;
 import edu.illinois.cs.cogcomp.quant.standardize.Ratio;
-import edu.illinois.cs.cogcomp.sl.core.IInstance;
  
 public class SimulProb {
 	
@@ -39,6 +31,7 @@ public class SimulProb {
 	public List<Double> solutions;
 	public List<QuantSpan> quantities;
 	public List<String> relations;
+	public EqParse eqParse;
 	public TextAnnotation ta;
 	public List<Constituent> posTags;
 	public List<Constituent> lemmas;
@@ -52,6 +45,7 @@ public class SimulProb {
 		solutions = new ArrayList<Double>();
 		quantities = new ArrayList<QuantSpan>();
 		relations = new ArrayList<String>();
+		eqParse = new EqParse();
 	}
 	
 	public void extractQuantities(Quantifier quantifier) throws IOException {
@@ -221,25 +215,6 @@ public class SimulProb {
 				relations.add("BOTH");
 			}
 		}
-//		// Ensuring R1 comes before R2
-//		boolean needsSwap = false;
-//		for(String relation : relations) {
-//			if(relation.equals("R2")) needsSwap = true;
-//			if(relation.equals("R1")) break; 
-//		}
-//		// This ensures R1 always appears before R2
-//		if(needsSwap) {
-//			for(int i=0; i<relations.size(); ++i) {
-//				if(relations.get(i).equals("R1")) {
-//					relations.set(i, "R2");
-//				} else if(relations.get(i).equals("R2")) {
-//					relations.set(i, "R1");
-//				}
-//			}
-//			Equation tmp = equations.get(0);
-//			equations.set(0, equations.get(1));
-//			equations.set(1, tmp);
-//		}
 	}
 	
 	public void extractAnnotations() throws Exception {
@@ -455,5 +430,10 @@ public class SimulProb {
 			return true;
 		}
 		return false;
+	}
+
+	public void extractEqParse() throws IOException {
+		String annFile = Params.annotationDir+"/"+index+".ann";
+		eqParse = new EqParse(ta, annFile);
 	}
 }

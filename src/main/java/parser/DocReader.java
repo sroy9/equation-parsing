@@ -1,22 +1,15 @@
 package parser;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ArrayUtils;
-
-import com.google.gson.reflect.*;
-import com.google.gson.*;
 
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
-import edu.illinois.cs.cogcomp.core.utilities.ArrayUtilities;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.Sentence;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
@@ -24,6 +17,7 @@ import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
 import structure.Equation;
 import structure.KnowledgeBase;
 import structure.SimulProb;
+import utils.FeatGen;
 import utils.Params;
 import utils.Tools;
 
@@ -54,27 +48,9 @@ public class DocReader {
 				KnowledgeBase.appendWorldKnowledge(simulProb);
 				simulProb.extractQuantities(quantifier);
 				simulProb.extractAnnotations();
-//				System.out.println(simulProb.index+" : "+simulProb.question);
-//				System.out.println("Parse : ");
-//				for(Constituent cons : simulProb.parse) {
-//					System.out.println(cons.getLabel()+" : "+cons.getSurfaceString());
-//				}
-//				System.out.println("Skeleton : ");
-//				for(Pair<String, IntPair> pair : simulProb.skeleton) {
-//					System.out.print(pair.getFirst()+" ");
-//				}
-//				System.out.println();
-//				System.out.println("Quantities :");
-//				for(QuantSpan qs : simulProb.quantities) {
-//					System.out.println(simulProb.question.substring(
-//							qs.start, qs.end)+" : "+qs + " : "+Tools.getValue(qs));
-//				}
 				simulProb.extractEquations();
-//				for(Equation eq : simulProb.equations) {
-//					System.out.println("Equation :\n"+eq);
-//				}
 				simulProb.extractRelations();
-//				System.out.println("Relation : "+Arrays.asList(simulProb.relations));
+				simulProb.extractEqParse();
 				simulProb.checkSolver();
 				simulProbList.add(simulProb);
 			}
@@ -130,12 +106,54 @@ public class DocReader {
 		return sentenceList;
 	}
 	
+	public static List<String> getMathySentences(
+			List<SimulProb> simulProbList) {
+		List<String> sentenceList = new ArrayList<>();
+		for(SimulProb prob : simulProbList) {
+			for(int i=0; i<prob.ta.getNumberOfSentences(); ++i) {
+				Sentence sent = prob.ta.getSentence(i);
+				for(String lemma : FeatGen.getLemmatizedUnigrams(
+						prob.lemmas, 
+						sent.getStartSpan(), 
+						sent.getEndSpan()-1)) {
+					if(KnowledgeBase.mathWordSet.contains(lemma)) {
+						sentenceList.add(sent.getText());
+						break;
+					}
+				}
+			}
+		}
+		return sentenceList;
+	}
+	
+	public static void print(SimulProb simulProb) {
+		System.out.println(simulProb.index+" : "+simulProb.question);
+//		System.out.println("Parse : ");
+//		for(Constituent cons : simulProb.parse) {
+//			System.out.println(cons.getLabel()+" : "+cons.getSurfaceString());
+//		}
+		System.out.println("Skeleton : ");
+		for(Pair<String, IntPair> pair : simulProb.skeleton) {
+			System.out.print(pair.getFirst()+" ");
+		}
+		System.out.println();
+		System.out.println("Quantities :");
+		for(QuantSpan qs : simulProb.quantities) {
+			System.out.println(simulProb.question.substring(
+					qs.start, qs.end)+" : "+qs + " : "+Tools.getValue(qs));
+		}
+		System.out.println("Relation : "+Arrays.asList(simulProb.relations));
+		System.out.println("EqParse : "+simulProb.eqParse);
+		for(Equation eq : simulProb.equations) {
+			System.out.println("Equation :\n"+eq);
+		}
+	}
+	
 	public static void main(String args[]) throws Exception {
 		List<SimulProb> simulProbList = 
 				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
-		List<String> compSentences = getCompositionSentences(simulProbList);
-		for(String sent : compSentences) {
-			System.out.println(sent);
+		for(SimulProb prob : simulProbList) {
+			print(prob);
 		}
 		
 	}

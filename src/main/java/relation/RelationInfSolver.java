@@ -1,36 +1,22 @@
 package relation;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.MinMaxPriorityQueue;
-
-import semparse.SemInfSolver;
-import semparse.SemX;
-import semparse.SemY;
-import structure.Equation;
-import structure.EquationSolver;
-import structure.Operation;
 import structure.PairComparator;
 import utils.Tools;
-import edu.illinois.cs.cogcomp.core.datastructures.BoundedPriorityQueue;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
-import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.util.WeightVector;
-import edu.mit.jwi.morph.IStemmer;
 
 public class RelationInfSolver extends AbstractInferenceSolver implements
 		Serializable {
@@ -40,7 +26,8 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 	public List<Map<String, Integer>> segTemplates;
 	public List<Pair<RelationY, Double>> beam;
 
-	public RelationInfSolver(RelationFeatGen featGen, List<Map<String, Integer>> segTemplates, 
+	public RelationInfSolver(RelationFeatGen featGen, 
+			List<Map<String, Integer>> segTemplates, 
 			int testFold) throws Exception {
 		this.featGen = featGen;
 		this.segTemplates = segTemplates;
@@ -70,14 +57,29 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 		PairComparator<RelationY> relationPairComparator = 
 				new PairComparator<RelationY>() {};
 		MinMaxPriorityQueue<Pair<RelationY, Double>> beam1 = 
-				MinMaxPriorityQueue.orderedBy(relationPairComparator).maximumSize(200).create();
+				MinMaxPriorityQueue.orderedBy(relationPairComparator)
+				.maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<RelationY, Double>> beam2 = 
-				MinMaxPriorityQueue.orderedBy(relationPairComparator).maximumSize(200).create();
-		for(RelationY y : enumerateClustersRespectingTemplates(prob, segTemplates)) {
-			Double score = 0.0 + wv.dotProduct(featGen.getFeatureVector(prob, y))+
-					(goldStructure == null?0:RelationY.getLoss(y, gold));
-			beam1.add(new Pair<RelationY, Double>(y, score));
+				MinMaxPriorityQueue.orderedBy(relationPairComparator)
+				.maximumSize(200).create();
+		
+		// Number of Variables and Relation labels
+		for(boolean isOneVar : Arrays.asList(true, false)) {
+			for(RelationY y : enumerateClustersRespectingTemplates(
+					prob, segTemplates, isOneVar)) {
+				Double score = 0.0 + 
+						wv.dotProduct(featGen.getNumVarFeatureVector(prob, y)) +
+						wv.dotProduct(featGen.getRelationFeatureVector(prob, y)) +
+						(goldStructure == null? 0 : 
+							(RelationY.getNumVarLoss(y, gold) + 
+									RelationY.getRelationLoss(y, gold)));
+				beam1.add(new Pair<RelationY, Double>(y, score));
+			}
 		}
+
+		// Equation Span
+		
+		
 		if(beam1.size() > 0) pred = beam1.element().getFirst();
 		int size = 10, i=0;
 		beam.clear();
@@ -160,7 +162,7 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 	}
 	
 	public List<RelationY> enumerateClustersRespectingTemplates(
-			RelationX x, List<Map<String, Integer>> segTemplates) {
+			RelationX x, List<Map<String, Integer>> segTemplates, boolean isOneVar) {
 		List<String> relations = Arrays.asList("R1", "R2", "BOTH", "NONE");
 		List<RelationY> list1 = new ArrayList<>();
 		list1.add(new RelationY());
@@ -183,7 +185,9 @@ public class RelationInfSolver extends AbstractInferenceSolver implements
 			Map<String, Integer> stats = getStats(x, y);
 			if(isTemplatePresent(segTemplates, stats)) {
 				y.isOneVar = Tools.isOneVar(y.relations);
-				list2.add(y);
+				if(isOneVar == y.isOneVar) {
+					list2.add(y);
+				}
 			}
 		}
 		return list2;

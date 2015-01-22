@@ -1,25 +1,26 @@
 package structure;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
-
-import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
-import parser.DocReader;
-import utils.Params;
 import utils.Tools;
 
 public class KnowledgeBase {
 	
 	public static List<Knowledge> knowledgeList;
+	public static Map<String, List<String>> mathWordMap;
+	public static Set<String> mathWordSet;
 	
 	static {
+		// Animal knowledge
 		knowledgeList = new ArrayList<Knowledge>();
 		Knowledge knowledge = new Knowledge(
 				"A cow has 4 legs.");
@@ -61,10 +62,19 @@ public class KnowledgeBase {
 		knowledge.addTargets(new ArrayList<String>(Arrays.asList(
 				"dime")));
 		knowledgeList.add(knowledge);
+		
+		// Math knowledge
+		mathWordMap = new HashMap<String, List<String>>();
+		mathWordMap.put("ADD", Arrays.asList("plus", "more", "sum", "exceed"));
+		mathWordMap.put("SUB", Arrays.asList("subtract", "minus", "less", "difference"));
+		mathWordMap.put("MUL", Arrays.asList("time", "product", "twice", "thrice"));
+		mathWordSet = new HashSet<>();
+		mathWordSet.addAll(mathWordMap.get("ADD"));
+		mathWordSet.addAll(mathWordMap.get("SUB"));
+		mathWordSet.addAll(mathWordMap.get("MUL"));
 	}
 	
-	public static void appendWorldKnowledge(SimulProb simulProb) 
-			throws Exception {
+	public static void appendWorldKnowledge(SimulProb simulProb) throws Exception {
 		// Rule based knowledge acquisition
 		TextAnnotation ta = Tools.curator.getTextAnnotationWithSingleView(
 				simulProb.question, ViewNames.LEMMA, false);

@@ -91,8 +91,8 @@ public class Driver {
 				testProbs.add(simulProb);
 			}
 		}
-		SLModel relationModel = SLModel.loadModel("rel"+testFold+".save");
-		SLModel equationModel = SLModel.loadModel("sem"+testFold+".save");
+		SLModel relationModel = SLModel.loadModel("models/rel"+testFold+".save");
+		SLModel equationModel = SLModel.loadModel("models/sem"+testFold+".save");
 		return computeAccuracy(testProbs, relationModel, equationModel);
 	}
 	

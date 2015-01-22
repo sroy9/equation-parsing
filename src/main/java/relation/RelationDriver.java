@@ -50,8 +50,8 @@ public class RelationDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("rel"+testFold+".save", train, testFold);
-		return testModel("rel"+testFold+".save", test);
+		trainModel("models/rel"+testFold+".save", train, testFold);
+		return testModel("models/rel"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {

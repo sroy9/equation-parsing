@@ -46,8 +46,8 @@ public class SemDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("sem"+testFold+".save", train);
-		return testModel("sem"+testFold+".save", test);
+		trainModel("models/sem"+testFold+".save", train);
+		return testModel("models/sem"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {
