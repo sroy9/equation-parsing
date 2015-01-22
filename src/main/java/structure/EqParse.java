@@ -25,6 +25,15 @@ public class EqParse {
 		edges = new HashMap<>();
 	}
 	
+	public EqParse(EqParse other) {
+		nodes = new ArrayList<>();
+		edges = new HashMap<>();
+		for(Pair<String, IntPair> pair : other.nodes) {
+			nodes.add(pair);
+		}
+		createEdges();
+	}
+	
 	public EqParse(TextAnnotation ta, String annFile) throws IOException {
 		this();
 		List<String> lines = FileUtils.readLines(new File(annFile));
@@ -37,6 +46,12 @@ public class EqParse {
 			nodes.add(new Pair<String, IntPair>(label, new IntPair(start, end)));
 		}
 		// Edges
+		createEdges();
+	}
+	
+	public void createEdges() {
+		// Edges
+		edges.clear();
 		for(int i=0; i<nodes.size(); ++i) {
 			edges.put(i, new ArrayList<Integer>());
 		}

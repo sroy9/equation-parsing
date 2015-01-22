@@ -2,23 +2,34 @@ package joint;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
-import relation.RelationFeatGen;
-import relation.RelationInfSolver;
-import semparse.SemFeatGen;
-import semparse.SemX;
+import org.apache.commons.lang.math.NumberUtils;
+
+import structure.Equation;
+import structure.EquationSolver;
+import structure.Operation;
 import utils.FeatGen;
+import utils.Tools;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
+import edu.illinois.cs.cogcomp.edison.sentences.Sentence;
+import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
+import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.util.IFeatureVector;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
+import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
-public class JointFeatGen extends AbstractFeatureGenerator implements 
+public class JointFeatGen extends AbstractFeatureGenerator implements
 		Serializable {
-
-	private static final long serialVersionUID = -3474103412622043440L;
+	private static final long serialVersionUID = 1810851154558168679L;
 	public Lexiconer lm = null;
 	
 	public JointFeatGen(Lexiconer lm) {
@@ -26,37 +37,167 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 	}
 	
 	@Override
-	public IFeatureVector getFeatureVector(IInstance x, IStructure y) {
-		JointX jointX = (JointX) x;
-		JointY jointY = (JointY) y;
-		List<String> features = getFeatures(jointX, jointY);
+	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
+		JointX x = (JointX) arg0;
+		JointY y = (JointY) arg1;
+		List<String> features = getFeatures(x, y);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public List<String> getFeatures(JointX x, JointY y) {
+	public IFeatureVector getNumVarFeatureVector(JointX x, JointY y) {
+		List<String> features = numVarFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+	
+	public IFeatureVector getRelationFeatureVector(JointX x, JointY y) {
+		List<String> features = relationFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+	
+	public IFeatureVector getEqSpanFeatureVector(JointX x, JointY y) {
+		List<String> features = eqSpanFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+	
+	public static List<String> getFeatures(JointX x, JointY y) {
 		List<String> features = new ArrayList<>();
-		features.add("IsOneVar_"+y.isOneVar);
-		List<SemX> semXs = SemX.extractEquationProbFromRelations(x.relationX, y.relationY);
-		assert semXs.size() == y.semYs.size();
-		for(int i=0; i<semXs.size(); ++i) {
-			features.addAll(SemFeatGen.getFeatures(semXs.get(i), y.semYs.get(i)));	
-		}
-		features.addAll(solutionFeatures(x, y));
+		features.addAll(numVarFeatures(x, y));
+		features.addAll(relationFeatures(x, y));
+		features.addAll(eqSpanFeatures(x, y));
 		return features;
 	}
-
-	public List<String> solutionFeatures(JointX x, JointY y) {
+		
+	public static List<String> relationFeatures(JointX x, JointY y) {
 		List<String> features = new ArrayList<>();
-		if(y.solns == null) {
-			features.add("No_Solution");
-			return features;
+		features.addAll(globalFeatures(x, y));
+		for(int i=0; i<y.relations.size(); ++i) {
+			features.addAll(relationFeatures(x, y, i));
 		}
-		for(Double d : y.solns) {
-			if(d>1) features.add("Positive>1");
-			if(d-d.intValue() < 0.001 || d-d.intValue() > 0.999){
-				features.add("Integer");
+		return features;
+	}
+	
+	public static List<String> globalFeatures(JointX x, JointY y) {
+		List<String> features = new ArrayList<>();
+		if(Tools.getNONEcount(y.relations) > 1) features.add("NONE>1");
+		else if(Tools.getNONEcount(y.relations) > 2) features.add("NONE>2");
+		else if(Tools.getNONEcount(y.relations) > 3) features.add("NONE>3");
+		features.add("BOTH_"+Tools.getBOTHcount(y.relations));
+		if(x.quantities.size()>2) features.add("NumQuant>2");
+		else if(x.quantities.size()>4) features.add("NumQuant>4");
+		else if(x.quantities.size()>6) features.add("NumQuant>6");
+		else if(x.quantities.size()>8) features.add("NumQuant>8");
+		features.add("NumQuestionSentences_"+FeatGen.getQuestionSentences(x.ta).size());
+		return features;
+	}
+	
+	public static List<String> relationFeatures(JointX x, JointY y, int index) {
+		List<String> features = new ArrayList<>();
+		String prefix = "";
+		if(y.relations.get(index).startsWith("R")) {
+			for(int i=0; i<index; ++i) {
+				if(y.relations.get(i).startsWith("R")) {
+					prefix = (y.relations.get(index).equals(
+							y.relations.get(i)) ? "SAME" : "DIFF");
+					for(String feature : pairWise(x, y, i, index)) {
+						features.add(prefix+"_"+feature);
+					}
+				}
+			}
+		} else {
+			prefix = y.relations.get(index);
+			for(String feature : single(x, y, index)) {
+				features.add(prefix+"_"+feature);
 			}
 		}
 		return features;
 	}
+	
+	public static List<String> pairWise(JointX x, JointY y, int index1, int index2) {
+		List<String> features = new ArrayList<>();
+		QuantSpan qs1 = x.quantities.get(index1);
+		QuantSpan qs2 = x.quantities.get(index2);
+		int tokenId1 = x.ta.getTokenIdFromCharacterOffset(qs1.start);
+		Sentence sent1 = x.ta.getSentenceFromToken(tokenId1);
+		int tokenId2 = x.ta.getTokenIdFromCharacterOffset(qs2.start);
+		Sentence sent2 = x.ta.getSentenceFromToken(tokenId2);
+		if(sent1.getSentenceId() == sent2.getSentenceId()) {
+			features.add("SameSentence");
+			List<Pair<String, IntPair>> skeleton = FeatGen.getPartialSkeleton(
+					x.skeleton, tokenId1+1, tokenId2);
+			for(int i=0; i<skeleton.size(); ++i) {
+				features.add("MidUnigram_"+skeleton.get(i).getFirst());
+			}
+			for(int i=0; i<skeleton.size()-1; ++i) {
+				features.add("MidBigram_"+skeleton.get(i).getFirst()
+						+"_"+skeleton.get(i+1).getFirst());
+			}
+		}
+		if(Tools.safeEquals(Tools.getValue(qs1), Tools.getValue(qs2))) {
+			features.add("SameNumber");
+		}
+		if(Tools.getUnit(qs1).contains(Tools.getUnit(qs2)) ||
+				Tools.getUnit(qs2).contains(Tools.getUnit(qs1))) {
+			features.add("SameUnit");
+		}
+		return features;
+	}
+	
+	public static List<String> single(JointX x, JointY y, int index) {
+		List<String> features = new ArrayList<>();
+		QuantSpan qs = x.quantities.get(index);
+		int tokenId = x.ta.getTokenIdFromCharacterOffset(x.quantities.get(index).start);
+		Sentence sent = x.ta.getSentenceFromToken(tokenId);
+		List<Constituent> sentLemmas = FeatGen.partialLemmas(
+				x.lemmas, sent.getStartSpan(), sent.getEndSpan());
+		List<Pair<String, IntPair>> sentSkeleton = FeatGen.getPartialSkeleton(
+				x.skeleton, sent.getStartSpan(), sent.getEndSpan());
+		features.addAll(FeatGen.neighboringSkeletonTokens(sentSkeleton, tokenId, 3));
+		features.add("UNIT_"+Tools.getUnit(qs));
+		if(Tools.safeEquals(1.0, Tools.getValue(qs)) || Tools.safeEquals(2.0, Tools.getValue(qs))) {
+			features.add("ONE_OR_TWO");
+		}
+		return features;
+	}
+	
+	public static List<String> numVarFeatures(JointX x, JointY y) {
+		List<String> features = new ArrayList<>();
+		String prefix = ""+y.isOneVar;
+		features.add(prefix+"_NumQuestionSentences_"+FeatGen.getQuestionSentences(x.ta).size());
+		for(String feature : FeatGen.getLemmatizedBigrams(x.lemmas, 0, x.lemmas.size()-1)) {
+			features.add(prefix+"_"+feature);
+		}
+		for(int i=0; i<x.skeleton.size()-1; ++i) {
+			features.add(prefix+"_"+x.skeleton.get(i)+"_"+x.skeleton.get(i+1));
+		}
+		for(Sentence sent : FeatGen.getQuestionSentences(x.ta)) {
+			for(int i=0; i<sent.size(); ++i) {
+				features.add(prefix+"_Q_"+sent.getToken(i));
+			}
+			for(int i=0; i<sent.size()-1; ++i) {
+				features.add(prefix+"_Q_"+sent.getToken(i)+"_"+sent.getToken(i+1));
+			}
+		}
+		int numQuant = x.quantities.size();
+		int uniqueQuant = Tools.uniqueNumbers(x.quantities).size();
+		int numSent = x.ta.getNumberOfSentences();
+		
+		if(numQuant < 2) features.add(prefix+"_numQuant<2");
+		else if(numQuant < 4) features.add(prefix+"_numQuant<4");
+		else features.add(prefix+"_numQuant<6");
+		
+		if(uniqueQuant < 2) features.add(prefix+"_uniqueQuant<2");
+		else if(uniqueQuant < 4) features.add(prefix+"_uniqueQuant<4");
+		else features.add(prefix+"_uniqueQuant<6");
+		
+		if(numSent < 2) features.add(prefix+"_numSent<2");
+		else if(numSent < 4) features.add(prefix+"_numSent<4");
+		else features.add(prefix+"_numSent<6");
+		return features;
+	}
+	
+	public static List<String> eqSpanFeatures(JointX x, JointY y) {
+		List<String> features = new ArrayList<>();
+		return features;
+	}
+	
 }

@@ -3,19 +3,10 @@ package structure;
 import java.util.ArrayList;
 import java.util.List;
 
-import semparse.SemY;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 
 public class EquationSolver {
-	
-	public static List<Double> solveSemYs(List<SemY> semYList) {
-		List<Equation> equations = new ArrayList<>();
-		for(SemY y : semYList) {
-			equations.add(y);
-		}
-		return solve(equations);
-	}
 	
 	public static List<Double> solve (List<Equation> equations) {
 		boolean isOneVar = equations.get(0).isOneVar;
