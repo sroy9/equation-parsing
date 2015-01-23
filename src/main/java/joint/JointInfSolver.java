@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.MinMaxPriorityQueue;
+
+import structure.Equation;
 import structure.PairComparator;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
@@ -23,16 +25,17 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private JointFeatGen featGen;
-	public List<Map<String, Integer>> segTemplates;
+	public List<Equation> equationTemplates;
+	public List<List<Equation>> systemTemplates;
 	public List<Pair<JointY, Double>> beam;
 
 	public JointInfSolver(JointFeatGen featGen, 
-			List<Map<String, Integer>> segTemplates, 
+			List<Equation> equationTemplates,
+			List<List<Equation>> systemTemplates,
 			int testFold) throws Exception {
 		this.featGen = featGen;
-		this.segTemplates = segTemplates;
-		beam = new ArrayList<>();
-		System.out.println("Segmentation Templates : " +Arrays.asList(segTemplates));
+		this.equationTemplates = equationTemplates;
+		this.systemTemplates = systemTemplates;
 	}
 
 	@Override

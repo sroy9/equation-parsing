@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import utils.Tools;
 
@@ -18,6 +19,7 @@ public class Equation implements Serializable {
 	private static final long serialVersionUID = -1593105262537880720L;
 	public List<List<Pair<Operation, Double>>> terms;
 	public List<Operation> operations; 
+	public List<IntPair> slots;
 	public boolean isOneVar;
 	
 	public Equation() {
@@ -30,6 +32,7 @@ public class Equation implements Serializable {
 		for(int i=0; i<4; i++) {
 			operations.add(Operation.NONE);
 		}
+		slots = new ArrayList<>();
 	}
 	
 	public Equation(Equation eq) {
@@ -46,6 +49,8 @@ public class Equation implements Serializable {
 		for(int i=0; i<4; i++) {
 			operations.add(eq.operations.get(i));
 		}
+		slots = new ArrayList<>();
+		slots.addAll(eq.slots);
 	}
 	
 	public Equation(int index, String eqString) {
@@ -87,6 +92,11 @@ public class Equation implements Serializable {
 					System.out.println("ISSUE HERE : "+index);
 				}
 				lastLoc = i+1;
+			}
+		}
+		for(int i=0; i<terms.size(); ++i) {
+			for(int j=0; j<terms.get(i).size(); ++j) {
+				slots.add(new IntPair(i, j));
 			}
 		}
 	}
