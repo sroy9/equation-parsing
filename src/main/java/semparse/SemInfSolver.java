@@ -20,6 +20,8 @@ import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.BoundedPriorityQueue;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.edison.sentences.Sentence;
+import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
@@ -34,7 +36,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	private SemFeatGen featGen;
 	public List<Pair<SemY, Double>> beam;
 
-	public SemInfSolver(SemFeatGen featGen, List<SemY> templates) {
+	public SemInfSolver(SemFeatGen featGen) {
 		this.featGen = featGen;
 		beam = new ArrayList<Pair<SemY, Double>>();
 	}
@@ -67,16 +69,113 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
 				maximumSize(200).create();
 		beam = new ArrayList<Pair<SemY, Double>>();
-		
-		pred = beam2.element().getFirst();
-		
-		int size = 10, i=0;
-		while(beam2.size()>0 && i<size) {
-			++i;
-			beam.add(beam2.poll());
+		for(SemY y : enumerateSpans(blob)) {
+			beam1.add(new Pair<SemY, Double>(y, 0.0+
+					wv.dotProduct(featGen.getSpanFeatureVector(blob, y))));
 		}
+		for(Pair<SemY, Double> pair1 : beam1) {
+			Pair<SemY, Double> pair2 = 
+					getBottomUpBestParse(blob, pair1.getFirst(), wv);
+			beam2.add(new Pair<SemY, Double>(
+					pair2.getFirst(), pair1.getSecond() + pair2.getSecond()));
+		}
+		pred = beam2.element().getFirst();
 		return pred;
 	}
-		
+	
+	public Pair<SemY, Double> getBottomUpBestParse(SemX x, SemY y, WeightVector wv) {
+		Double totScore = 0.0;
+		for(IntPair ip : y.spans) {
+			y.nodes.add(new Pair<String, IntPair>("EQ", ip));
+			int start = ip.getFirst(), end = ip.getSecond();
+			for(int i=start+1; i<=end; ++i) {
+				for(int j=i-1; j>=start; --j) {
+					boolean allow = true;
+					for(Pair<String, IntPair> pair : y.nodes) {
+						if((i > pair.getSecond().getFirst() 
+								&& i < pair.getSecond().getSecond()) || 
+								(j > pair.getSecond().getFirst() 
+										&& j < pair.getSecond().getSecond())) {
+							allow = false;
+							break;
+						}
+					}
+					String bestLabel = null; 
+					Double bestScore = -Double.MAX_VALUE;
+					if(allow && wv.dotProduct(featGen.getNodeFeatureVector(
+							x, new IntPair(j, i))) > 0) {
+						for(String label : Arrays.asList(
+								"EQ", "DIV", "MUL", "SUB", "ADD", "EXPR")) {
+							if(bestScore < wv.dotProduct(featGen.getNodeTypeFeatureVector(
+									x, label, new IntPair(j, i)))) {
+								bestScore = 0.0+wv.dotProduct(featGen.getNodeTypeFeatureVector(
+										x, label, new IntPair(j, i)));
+								bestLabel = label;
+							}
+						}
+						totScore += bestScore + wv.dotProduct(featGen.getNodeFeatureVector(
+								x, new IntPair(j, i)));
+						y.nodes.add(new Pair<String, IntPair>(bestLabel, new IntPair(j, i)));
+					}
+				}
+			}
+		}
+		return new Pair<SemY, Double>(y, totScore);
+	}
+	
+	public static boolean isCandidateEqualChunk(SemX x, int i, int j) {
+		boolean mathyToken = false, quantityPresent = false, sameSentence = false;
+		if(x.ta.getSentenceFromToken(i).getSentenceId() == 
+				x.ta.getSentenceFromToken(j).getSentenceId()) {
+			sameSentence = true;
+		}
+		for(Integer tokenId : x.mathyTokenIndices) {
+			if(i <= tokenId && tokenId < j) {
+				mathyToken = true;
+				break;
+			}
+		}
+		for(QuantSpan qs : x.quantities) {
+			int loc = x.ta.getTokenIdFromCharacterOffset(qs.start);
+			if(i <= loc && loc < j) {
+				quantityPresent = true;
+				break;
+			}
+		}
+		if(sameSentence && mathyToken && quantityPresent) return true;
+		return false;
+	}
+	
+	public static List<SemY> enumerateSpans(SemX x) {
+		List<SemY> yList = new ArrayList<>();
+		yList.add(new SemY());
+		// One span
+		for(int i=0; i<x.ta.size()-1; ++i) {
+			for(int j=i+3; j<x.ta.size(); ++j) {
+				if(isCandidateEqualChunk(x, i, j)) {
+					SemY y = new SemY();
+					y.spans.add(new IntPair(i, j));
+					yList.add(y);
+				}
+			}
+		}
+		// Two span
+		for(int i=0; i<x.ta.size()-4; ++i) {
+			for(int j=i+3; j<x.ta.size()-3; ++j) {
+				for(int k=j+1; k<x.ta.size()-2; ++k) {
+					for(int l=k+1; l<x.ta.size(); ++l) {
+						if(isCandidateEqualChunk(x, i, j) && 
+								isCandidateEqualChunk(x, k, l)) {
+							SemY y = new SemY();
+							y.spans.add(new IntPair(i, j));
+							y.spans.add(new IntPair(k, l));
+							yList.add(y);
+						}		
+					}
+				}
+			}
+		}
+		return yList;
+	}
 	
 }

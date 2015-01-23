@@ -57,11 +57,9 @@ public class SemDriver {
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
 			for(int i=0; i<simulProb.equations.size(); ++i) {
-				SemX semX = new SemX(simulProb, "R"+(i+1));
-				SemY semY = new SemY(simulProb.equations.get(i));
-				if(semY.emptySlots.size() > 0) {
-					problem.addExample(semX, semY);	
-				}
+				SemX semX = new SemX(simulProb);
+				SemY semY = new SemY(simulProb);
+				problem.addExample(semX, semY);
 			}
 		}
 		return problem;
@@ -125,7 +123,7 @@ public class SemDriver {
 		model.lm = lm;
 		SemFeatGen fg = new SemFeatGen(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new SemInfSolver(fg, SemInfSolver.extractTemplates(train));
+		model.infSolver = new SemInfSolver(fg);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
