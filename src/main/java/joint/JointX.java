@@ -24,6 +24,7 @@ public class JointX implements IInstance {
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
 	public List<Pair<String, IntPair>> skeleton;
+	public List<IntPair> eqSpans;
 	public List<Equation> existingEquations;
 
 	public JointX(SimulProb simulProb) {

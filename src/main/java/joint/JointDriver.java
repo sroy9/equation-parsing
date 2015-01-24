@@ -36,7 +36,8 @@ public class JointDriver {
 	
 	public static double doTrainTest(int testFold) throws Exception {
 		List<List<Integer>> folds = DocReader.extractFolds();
-		List<SimulProb> simulProbList = DocReader.readSimulProbFromBratDir(Params.annotationDir);
+		List<SimulProb> simulProbList = 
+				DocReader.readSimulProbFromBratDir(Params.annotationDir);
 		List<SimulProb> trainProbs = new ArrayList<>();
 		List<SimulProb> testProbs = new ArrayList<>();
 		for(SimulProb simulProb : simulProbList) {
@@ -52,9 +53,11 @@ public class JointDriver {
 		return testModel("models/rel"+testFold+".save", test);
 	}
 	
-	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {
+	public static SLProblem getSP(List<SimulProb> simulProbList) 
+			throws Exception {
 		if(simulProbList == null) {
-			simulProbList = DocReader.readSimulProbFromBratDir(Params.annotationDir);
+			simulProbList = 
+					DocReader.readSimulProbFromBratDir(Params.annotationDir);
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
