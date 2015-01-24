@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import structure.Equation;
 import structure.SimulProb;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
@@ -23,6 +24,7 @@ public class JointX implements IInstance {
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
 	public List<Pair<String, IntPair>> skeleton;
+	public List<Equation> existingEquations;
 
 	public JointX(SimulProb simulProb) {
 		quantities = simulProb.quantities;

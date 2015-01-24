@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import structure.EqParse;
+import structure.Equation;
 import structure.SimulProb;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
@@ -62,4 +63,7 @@ public class SemY extends EqParse implements IStructure, Serializable {
 		return loss;
 	}
 	
+	public static Equation getEquationFromParse(SemY y) {
+		return null;
+	}
 }
