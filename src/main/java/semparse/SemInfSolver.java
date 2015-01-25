@@ -34,11 +34,9 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private SemFeatGen featGen;
-	public List<Pair<SemY, Double>> beam;
 
 	public SemInfSolver(SemFeatGen featGen) {
 		this.featGen = featGen;
-		beam = new ArrayList<Pair<SemY, Double>>();
 	}
 	
  	@Override
@@ -68,7 +66,6 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		MinMaxPriorityQueue<Pair<SemY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
 				maximumSize(200).create();
-		beam = new ArrayList<Pair<SemY, Double>>();
 		for(SemY y : enumerateSpans(blob)) {
 			beam1.add(new Pair<SemY, Double>(y, 0.0+
 					wv.dotProduct(featGen.getSpanFeatureVector(blob, y))));

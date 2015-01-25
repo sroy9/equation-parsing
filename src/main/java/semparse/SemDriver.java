@@ -69,7 +69,6 @@ public class SemDriver {
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
 		double acc = 0.0;
-		double beamAcc = 0.0;
 		double total = sp.instanceList.size();
 		Set<Integer> incorrect = new HashSet<>();
 		Set<Integer> tot = new HashSet<>();  
@@ -86,12 +85,6 @@ public class SemDriver {
 			if(goldWt > predWt) {
 				System.out.println("PROBLEM HERE");
 			}
-			for(Pair<SemY, Double> pair : ((SemInfSolver) model.infSolver).beam) {
-				if (SemY.getLoss(gold, pair.getFirst()) < 0.00001) {
-					beamAcc += 1.0;
-					break;
-				}
-			}
 			if (SemY.getLoss(gold, pred) < 0.00001) {
 				acc += 1.0;
 			} else {
@@ -106,7 +99,6 @@ public class SemDriver {
 				System.out.println("Loss : "+SemY.getLoss(gold, pred));
 			}
 		}
-		System.out.println("Beam Accuracy : = " + (beamAcc / total));
 		System.out.println("Accuracy : " + acc + " / " + total + " = "
 				+ (acc / total));
 		System.out.println("Problem Accuracy : = 1 - " + incorrect.size() + "/" 
