@@ -14,6 +14,8 @@ public class JointY implements IStructure, Serializable {
 	
 	private static final long serialVersionUID = 2399969922362221136L;
 	public List<Equation> equations;
+	public List<Integer> quantityIndex;
+	public List<Slot> slots;
 	public boolean isOneVar;
 	
 	public JointY() {

@@ -87,12 +87,6 @@ public class JointDriver {
 			if(goldWt > predWt) {
 				System.out.println("PROBLEM HERE");
 			}
-			for(Pair<JointY, Double> pair : ((JointInfSolver) model.infSolver).beam) {
-				if (JointY.getLoss(gold, pair.getFirst()) < 0.0001) {
-					beamAcc += 1.0;
-					break;
-				}
-			}
 			if(JointY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else {
@@ -124,7 +118,7 @@ public class JointDriver {
 		JointFeatGen fg = new JointFeatGen(lm);
 		model.featureGenerator = fg;
 		model.infSolver = new JointInfSolver(
-				fg, JointInfSolver.extractSegTemplates(train), testFold);
+				fg, JointInfSolver.extractTemplates(train));
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
