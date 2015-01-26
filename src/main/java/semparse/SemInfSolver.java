@@ -103,14 +103,17 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 							x, new IntPair(j, i))) > 0) {
 						for(String label : Arrays.asList(
 								"EQ", "DIV", "MUL", "SUB", "ADD", "EXPR")) {
-							if(bestScore < wv.dotProduct(featGen.getNodeTypeFeatureVector(
+							if(bestScore < wv.dotProduct(
+									featGen.getNodeTypeFeatureVector(
 									x, label, new IntPair(j, i)))) {
-								bestScore = 0.0+wv.dotProduct(featGen.getNodeTypeFeatureVector(
+								bestScore = 0.0 + wv.dotProduct(
+										featGen.getNodeTypeFeatureVector(
 										x, label, new IntPair(j, i)));
 								bestLabel = label;
 							}
 						}
-						totScore += bestScore + wv.dotProduct(featGen.getNodeFeatureVector(
+						totScore += bestScore + wv.dotProduct(
+								featGen.getNodeFeatureVector(
 								x, new IntPair(j, i)));
 						y.nodes.add(new Pair<String, IntPair>(bestLabel, new IntPair(j, i)));
 					}
@@ -152,6 +155,8 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				if(isCandidateEqualChunk(x, i, j)) {
 					SemY y = new SemY();
 					y.spans.add(new IntPair(i, j));
+					y.nodes.add(new Pair<String, IntPair>(
+							"EQ", new IntPair(i, j)));
 					yList.add(y);
 				}
 			}
@@ -166,6 +171,10 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 							SemY y = new SemY();
 							y.spans.add(new IntPair(i, j));
 							y.spans.add(new IntPair(k, l));
+							y.nodes.add(new Pair<String, IntPair>(
+									"EQ", new IntPair(i, j)));
+							y.nodes.add(new Pair<String, IntPair>(
+									"EQ", new IntPair(k, l)));
 							yList.add(y);
 						}		
 					}

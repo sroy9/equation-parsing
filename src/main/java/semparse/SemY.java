@@ -30,11 +30,22 @@ public class SemY extends EqParse implements IStructure, Serializable {
 	public SemY(SimulProb prob) {
 		this();
 		for(Pair<String, IntPair> pair : prob.eqParse.nodes) {
-			if(pair.getFirst().equals("EQ")) {
-				spans.add(pair.getSecond());
+			boolean allow = true;
+			for(Pair<String, IntPair> bigPair : prob.eqParse.nodes) {
+				if(bigPair.getFirst().equals("EQ") && 
+						bigPair.getSecond().getFirst()<=pair.getSecond().getFirst() &&
+						pair.getSecond().getSecond()<=bigPair.getSecond().getSecond()) {
+					allow = true;
+					break;
+				}
+			}
+			if(allow) {
+				nodes.add(pair);
+				if(pair.getFirst().equals("EQ")) {
+					spans.add(pair.getSecond());
+				}
 			}
 		}
-		if(spans.size() == 0) nodes.clear();
 	}
 	
 	public static float getLoss(SemY y1, SemY y2) {

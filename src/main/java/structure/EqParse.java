@@ -33,7 +33,7 @@ public class EqParse {
 		}
 		createEdges();
 	}
-	
+
 	public EqParse(TextAnnotation ta, String annFile) throws IOException {
 		this();
 		List<String> lines = FileUtils.readLines(new File(annFile));
