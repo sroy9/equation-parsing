@@ -31,6 +31,12 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
+class Expr {
+	public double score;
+	public String label;
+	public List<IntPair> divisions;
+}
+
 public class SemInfSolver extends AbstractInferenceSolver implements
 		Serializable {
 
@@ -87,9 +93,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		List<String> labels = Arrays.asList("EXPR", "ADD", "SUB", "MUL", "DIV", "EQ");
 		for(IntPair ip : y.spans) {
 			int start = ip.getFirst(), end = ip.getSecond();
-//			double score[][] = new double[end-start+1][end-start+1];
-//			String label[][] = new String[end-start+1][end-start+1];
-			// Have to keep the division used along with the label
+			Expr dpMat[][] = new Expr[end-start+1][end-start+1];
 			
 			for(int j=start+1; j<=end; ++j) {
 				for(int i=start; i<j; ++i) {
@@ -110,12 +114,12 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 							}
 						}
 					}
-					
+					dpMat[i][j] = new Expr();
+					dpMat[i][j].score = bestScore;
+					dpMat[i][j].label = bestLabel;
+					dpMat[i][j].divisions = bestDivision;
 				}
 			}
-			
-			
-			
 		}
 		return new Pair<SemY, Double>(y, totScore);
 	}
@@ -184,6 +188,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	
 	public List<List<IntPair>> enumerateDivisions(int start, int end) {
 		List<List<IntPair>> divisions = new ArrayList<>();
+		divisions.add(new ArrayList<IntPair>());
 		for(int i=start; i<end-1; ++i) {
 			for(int j=i+1; j<end; ++j) {
 				List<IntPair> ipList = new ArrayList<>();
