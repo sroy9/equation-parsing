@@ -82,49 +82,34 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	
 	public Pair<SemY, Double> getBottomUpBestParse(SemX x, SemY y, WeightVector wv) {
 		Double totScore = 0.0;
+		List<String> labels = Arrays.asList("EXPR", "ADD", "SUB", "")
 		for(IntPair ip : y.spans) {
-			y.nodes.add(new Pair<String, IntPair>("EQ", ip));
 			int start = ip.getFirst(), end = ip.getSecond();
-			for(int i=start+1; i<=end; ++i) {
-				for(int j=i-1; j>=start; --j) {
-					boolean allow = true;
-					for(Pair<String, IntPair> pair : y.nodes) {
-						if((i > pair.getSecond().getFirst() 
-								&& i < pair.getSecond().getSecond()) || 
-								(j > pair.getSecond().getFirst() 
-										&& j < pair.getSecond().getSecond())) {
-							allow = false;
-							break;
-						}
-					}
-					String bestLabel = null; 
-					Double bestScore = -Double.MAX_VALUE;
-					if(allow && wv.dotProduct(featGen.getNodeFeatureVector(
-							x, new IntPair(j, i))) > 0) {
-						for(String label : Arrays.asList(
-								"EQ", "DIV", "MUL", "SUB", "ADD", "EXPR")) {
-							if(bestScore < wv.dotProduct(
-									featGen.getNodeTypeFeatureVector(
-									x, label, new IntPair(j, i)))) {
-								bestScore = 0.0 + wv.dotProduct(
-										featGen.getNodeTypeFeatureVector(
-										x, label, new IntPair(j, i)));
-								bestLabel = label;
-							}
-						}
-						totScore += bestScore + wv.dotProduct(
-								featGen.getNodeFeatureVector(
-								x, new IntPair(j, i)));
-						y.nodes.add(new Pair<String, IntPair>(bestLabel, new IntPair(j, i)));
+			double score[][] = new double[end-start+1][end-start+1];
+			String label[][] = new String[end-start+1][end-start+1];
+			// Have to keep the division used along with the label
+			
+			for(int j=start+1; j<=end; ++j) {
+				for(int i=start; i<j; ++i) {
+					// Find argmax across all labels and all divisions
+					// label[i][j] <- label if span (i, j) is an expression
+					double bestScore = -Double.MAX_VALUE;
+					for(List<IntPair> division : enumerateDivisions(start, end)) {
+						
+						score = 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(x, i, j, division, label));
 					}
 				}
 			}
+			
+			
+			
 		}
 		return new Pair<SemY, Double>(y, totScore);
 	}
 	
 	public static boolean isCandidateEqualChunk(SemX x, int i, int j) {
-		boolean mathyToken = false, quantityPresent = false, sameSentence = false;
+		boolean mathyToken = false, quantityPresent = false, 
+				sameSentence = false;
 		if(x.ta.getSentenceFromToken(i).getSentenceId() == 
 				x.ta.getSentenceFromToken(j).getSentenceId()) {
 			sameSentence = true;
@@ -164,8 +149,8 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		// Two span
 		for(int i=0; i<x.ta.size()-4; ++i) {
 			for(int j=i+3; j<x.ta.size()-3; ++j) {
-				for(int k=j+1; k<x.ta.size()-2; ++k) {
-					for(int l=k+1; l<x.ta.size(); ++l) {
+				for(int k=j+2; k<x.ta.size()-2; ++k) {
+					for(int l=k+3; l<x.ta.size(); ++l) {
 						if(isCandidateEqualChunk(x, i, j) && 
 								isCandidateEqualChunk(x, k, l)) {
 							SemY y = new SemY();
@@ -182,6 +167,30 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 			}
 		}
 		return yList;
+	}
+	
+	public List<List<IntPair>> enumerateDivisions(int start, int end) {
+		List<List<IntPair>> divisions = new ArrayList<>();
+		for(int i=start; i<end-1; ++i) {
+			for(int j=i+1; j<end; ++j) {
+				List<IntPair> ipList = new ArrayList<>();
+				ipList.add(new IntPair(i, j));
+				divisions.add(ipList);
+			}
+		}
+		for(int i=start; i<end-3; ++i) {
+			for(int j=i+1; j<end-2; ++j) {
+				for(int k=j+2; k<end-1; ++k) {
+					for(int l=k+1; l<end; ++l) {
+						List<IntPair> ipList = new ArrayList<>();
+						ipList.add(new IntPair(i, j));
+						ipList.add(new IntPair(k, l));
+						divisions.add(ipList);
+					}
+				}
+			}
+		}
+		return divisions;
 	}
 	
 }

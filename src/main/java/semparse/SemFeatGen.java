@@ -51,13 +51,9 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public IFeatureVector getNodeFeatureVector(SemX x, IntPair span) {
-		List<String> features = nodeFeatures(x, span);
-		return FeatGen.getFeatureVectorFromList(features, lm);
-	}
-	
-	public IFeatureVector getNodeTypeFeatureVector(SemX x, String nodeLabel, IntPair span) {
-		List<String> features = nodeTypeFeatures(x, nodeLabel, span);
+	public IFeatureVector getExpressionFeatureVector(
+			SemX x, int start, int end, List<IntPair> divisions) {
+		List<String> features = expressionFeatures(x, start, end, divisions);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
@@ -66,23 +62,40 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		features.addAll(spanFeatures(x, y));
 		for(Pair<String, IntPair> pair : y.nodes) {
 			if(pair.getFirst().equals("EQ")) continue;
-			features.addAll(nodeFeatures(x, pair.getSecond()));
-			features.addAll(nodeTypeFeatures(x, pair.getFirst(), pair.getSecond()));
 		}
 		return features;
 	}
 
 	public static List<String> spanFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
+		for(IntPair span : y.spans) {
+			features.addAll(singleSpanFeatures(x, span));
+		}
+		if(y.spans.size() == 2) {
+			if(x.ta.getSentenceFromToken(y.spans.get(0).getFirst()).getSentenceId() !=
+				x.ta.getSentenceFromToken(y.spans.get(1).getFirst()).getSentenceId()) {
+				features.add("SpanMid_DiffSentence");
+			} else for(int i=y.spans.get(0).getSecond(); i<y.spans.get(1).getFirst(); ++i) {
+				features.add("SpanMid_Unigram_"+x.ta.getToken(i));
+			}
+		}
 		return features;
 	}
 	
-	public static List<String> nodeFeatures(SemX x, IntPair span) {
+	public static List<String> singleSpanFeatures(SemX x, IntPair span) {
 		List<String> features = new ArrayList<>();
+		String prefix = "SingleSpan";
+		features.add(prefix+"_StartUnigram_"+x.ta.getToken(span.getFirst()));
+		if(span.getSecond()-span.getFirst()>=2) {
+			features.add(prefix + "_StartBigram_" + x.ta.getToken(span.getFirst()) 
+					+ "_" + x.ta.getToken(span.getSecond()));
+		}
+		features.add(prefix+"_EndUnigram_"+x.ta.getToken(span.getSecond()));
 		return features;
 	}
 	
-	public static List<String> nodeTypeFeatures(SemX x, String nodeLabel, IntPair span) {
+	public static List<String> expressionFeatures(
+			SemX x, int start, int end, List<IntPair> divisions) {
 		List<String> features = new ArrayList<>();
 		return features;
 	}

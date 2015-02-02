@@ -96,8 +96,8 @@ public class SemDriver {
 		}
 		System.out.println("Accuracy : " + acc + " / " + total + " = "
 				+ (acc / total));
-		System.out.println("Non Empty Accuracy : " + nonEmptyAcc + " / " + nonEmptyTot + " = "
-				+ (nonEmptyAcc / nonEmptyTot));
+		System.out.println("Non Empty Accuracy : " + nonEmptyAcc + " / " + 
+				nonEmptyTot + " = " + (nonEmptyAcc / nonEmptyTot));
 		return acc / total;
 	}
 	
