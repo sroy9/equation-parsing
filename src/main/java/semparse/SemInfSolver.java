@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.text.DefaultEditorKit.BeepAction;
+
 import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Equation;
@@ -82,11 +84,11 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	
 	public Pair<SemY, Double> getBottomUpBestParse(SemX x, SemY y, WeightVector wv) {
 		Double totScore = 0.0;
-		List<String> labels = Arrays.asList("EXPR", "ADD", "SUB", "")
+		List<String> labels = Arrays.asList("EXPR", "ADD", "SUB", "MUL", "DIV", "EQ");
 		for(IntPair ip : y.spans) {
 			int start = ip.getFirst(), end = ip.getSecond();
-			double score[][] = new double[end-start+1][end-start+1];
-			String label[][] = new String[end-start+1][end-start+1];
+//			double score[][] = new double[end-start+1][end-start+1];
+//			String label[][] = new String[end-start+1][end-start+1];
 			// Have to keep the division used along with the label
 			
 			for(int j=start+1; j<=end; ++j) {
@@ -94,10 +96,21 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 					// Find argmax across all labels and all divisions
 					// label[i][j] <- label if span (i, j) is an expression
 					double bestScore = -Double.MAX_VALUE;
-					for(List<IntPair> division : enumerateDivisions(start, end)) {
-						
-						score = 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(x, i, j, division, label));
+					List<IntPair> bestDivision = null;
+					String bestLabel = null;
+					double score = 0.0;
+					for(String label : labels) {
+						for(List<IntPair> division : enumerateDivisions(start, end)) {
+							score = 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
+									x, i, j, division, label));
+							if(score > bestScore) {
+								bestScore = score;
+								bestLabel = label;
+								bestDivision = division;
+							}
+						}
 					}
+					
 				}
 			}
 			

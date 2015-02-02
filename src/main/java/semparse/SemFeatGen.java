@@ -52,8 +52,8 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	}
 	
 	public IFeatureVector getExpressionFeatureVector(
-			SemX x, int start, int end, List<IntPair> divisions) {
-		List<String> features = expressionFeatures(x, start, end, divisions);
+			SemX x, int start, int end, List<IntPair> divisions, String label) {
+		List<String> features = expressionFeatures(x, start, end, divisions, label);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
@@ -95,7 +95,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	}
 	
 	public static List<String> expressionFeatures(
-			SemX x, int start, int end, List<IntPair> divisions) {
+			SemX x, int start, int end, List<IntPair> divisions, String label) {
 		List<String> features = new ArrayList<>();
 		return features;
 	}
