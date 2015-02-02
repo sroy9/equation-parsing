@@ -87,12 +87,8 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		List<String> labels = Arrays.asList("EXPR", "ADD", "SUB", "MUL", "DIV", "EQ");
 		for(IntPair ip : y.spans) {
 			int start = ip.getFirst(), end = ip.getSecond();
-//			double score[][] = new double[end-start+1][end-start+1];
-//			String label[][] = new String[end-start+1][end-start+1];
-			// Have to keep the division used along with the label
-			
 			for(int j=start+1; j<=end; ++j) {
-				for(int i=start; i<j; ++i) {
+				for(int i=j-1; i>=start; --i) {
 					// Find argmax across all labels and all divisions
 					// label[i][j] <- label if span (i, j) is an expression
 					double bestScore = -Double.MAX_VALUE;
@@ -110,9 +106,9 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 							}
 						}
 					}
-					
 				}
 			}
+			
 			
 			
 			
