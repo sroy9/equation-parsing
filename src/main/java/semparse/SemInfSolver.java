@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import javax.swing.text.DefaultEditorKit.BeepAction;
@@ -34,6 +35,7 @@ import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 class Expr {
 	public double score;
 	public String label;
+	public IntPair span;
 	public List<IntPair> divisions;
 }
 
@@ -89,8 +91,8 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	}
 	
 	public Pair<SemY, Double> getBottomUpBestParse(SemX x, SemY y, WeightVector wv) {
+		List<String> labels = null;
 		Double totScore = 0.0;
-		List<String> labels = Arrays.asList("EXPR", "ADD", "SUB", "MUL", "DIV", "EQ");
 		for(IntPair ip : y.spans) {
 			int start = ip.getFirst(), end = ip.getSecond();
 			Expr dpMat[][] = new Expr[end-start+1][end-start+1];
@@ -98,6 +100,11 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				for(int i=j-1; i>=start; --i) {
 					// Find argmax across all labels and all divisions
 					// label[i][j] <- label if span (i, j) is an expression
+					if(i == start && j == end) {
+						labels = Arrays.asList("EQ");
+					} else {
+						labels = Arrays.asList("EXPR", "ADD", "SUB", "MUL", "DIV");
+					}
 					double bestScore = -Double.MAX_VALUE;
 					List<IntPair> bestDivision = null;
 					String bestLabel = null;
@@ -106,6 +113,9 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 						for(List<IntPair> division : enumerateDivisions(start, end)) {
 							score = 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
 									x, i, j, division, label));
+							for(IntPair span : division) {
+								score += dpMat[span.getFirst()-start][span.getSecond()-start].score;
+							}
 							if(score > bestScore) {
 								bestScore = score;
 								bestLabel = label;
@@ -113,12 +123,29 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 							}
 						}
 					}
-					dpMat[i][j] = new Expr();
-					dpMat[i][j].score = bestScore;
-					dpMat[i][j].label = bestLabel;
-					dpMat[i][j].divisions = bestDivision;
+					dpMat[i-start][j-start] = new Expr();
+					dpMat[i-start][j-start].score = bestScore;
+					dpMat[i-start][j-start].label = bestLabel;
+					dpMat[i-start][j-start].divisions = bestDivision;
+					dpMat[i-start][j-start].span = new IntPair(i, j);
 				}
 			}
+			List<Expr> queue = new ArrayList<Expr>();
+			queue.add(dpMat[0][end-start]);
+			Expr expr = queue.get(0);
+			queue.remove(0);
+			for(IntPair division : expr.divisions) {
+				queue.add(dpMat[division.getFirst()-start][division.getSecond()-start]);
+			}
+			while(queue.size() > 0) {
+				expr = queue.get(0);
+				y.nodes.add(new Pair<String, IntPair>(expr.label, expr.span));
+				queue.remove(0);
+				for(IntPair division : expr.divisions) {
+					queue.add(dpMat[division.getFirst()-start][division.getSecond()-start]);
+				}
+			}
+			totScore += dpMat[0][end-start].score;
 		}
 		return new Pair<SemY, Double>(y, totScore);
 	}

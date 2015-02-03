@@ -57,6 +57,17 @@ public class Tools {
 		return false;
 	}
 	
+
+	public static boolean doesContainNotEqual(IntPair ip1, IntPair ip2) {
+		if(ip1.getFirst() <= ip2.getFirst() && ip2.getSecond() <= ip1.getSecond()) {
+			if(ip1.getFirst() == ip2.getFirst() && ip2.getSecond() == ip1.getSecond()) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+	
 	public static Operation getOperationFromString(String op) {
 		if(op.equals("ADD") || op.equals("+")) return Operation.ADD;
 		if(op.equals("SUB") || op.equals("-")) return Operation.SUB;

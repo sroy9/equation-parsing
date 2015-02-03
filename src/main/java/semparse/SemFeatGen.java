@@ -61,7 +61,9 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = new ArrayList<>();
 		features.addAll(spanFeatures(x, y));
 		for(Pair<String, IntPair> pair : y.nodes) {
-			if(pair.getFirst().equals("EQ")) continue;
+			features.addAll(expressionFeatures(x, pair.getSecond().getFirst(), 
+					pair.getSecond().getSecond(), getDivisions(y.nodes, pair.getSecond()),
+					pair.getFirst()));
 		}
 		return features;
 	}
@@ -98,5 +100,25 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 			SemX x, int start, int end, List<IntPair> divisions, String label) {
 		List<String> features = new ArrayList<>();
 		return features;
+	}
+	
+	public static List<IntPair> getDivisions(List<Pair<String, IntPair>> nodes, IntPair ip) {
+		List<IntPair> divisions = new ArrayList<>();
+		for(Pair<String, IntPair> pair : nodes) {
+			if(Tools.doesContainNotEqual(ip, pair.getSecond())) {
+				boolean allow = true;
+				for(Pair<String, IntPair> pair1 : nodes) {
+					if(Tools.doesContainNotEqual(ip, pair1.getSecond()) &&
+							Tools.doesContainNotEqual(pair1.getSecond(), pair.getSecond())) {
+						allow = false;
+						break;
+					}
+				}
+				if(allow) {
+					divisions.add(pair.getSecond());
+				}
+			}
+		}
+		return divisions;
 	}
 }
