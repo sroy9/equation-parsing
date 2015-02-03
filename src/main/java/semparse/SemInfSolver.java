@@ -95,11 +95,13 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		Double totScore = 0.0;
 		for(IntPair ip : y.spans) {
 			int start = ip.getFirst(), end = ip.getSecond();
+//			System.out.println("DP matrix of size : "+(end-start+1));
 			Expr dpMat[][] = new Expr[end-start+1][end-start+1];
 			for(int j=start+1; j<=end; ++j) {
 				for(int i=j-1; i>=start; --i) {
 					// Find argmax across all labels and all divisions
 					// label[i][j] <- label if span (i, j) is an expression
+//					System.out.println("Trying to fill : "+(i-start)+" "+(j-start));
 					if(i == start && j == end) {
 						labels = Arrays.asList("EQ");
 					} else {
@@ -110,10 +112,12 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 					String bestLabel = null;
 					double score = 0.0;
 					for(String label : labels) {
-						for(List<IntPair> division : enumerateDivisions(start, end)) {
+						for(List<IntPair> division : enumerateDivisions(i, j)) {
 							score = 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
 									x, i, j, division, label));
 							for(IntPair span : division) {
+//								System.out.println("Trying to access : "+
+//										(span.getFirst()-start)+" "+(span.getSecond()-start));
 								score += dpMat[span.getFirst()-start][span.getSecond()-start].score;
 							}
 							if(score > bestScore) {
@@ -123,6 +127,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 							}
 						}
 					}
+//					System.out.println("Initializing : "+(i-start)+" "+(j-start));
 					dpMat[i-start][j-start] = new Expr();
 					dpMat[i-start][j-start].score = bestScore;
 					dpMat[i-start][j-start].label = bestLabel;
@@ -213,10 +218,12 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	}
 	
 	public List<List<IntPair>> enumerateDivisions(int start, int end) {
+//		System.out.println("Enumerate divisions : "+start+" "+end);
 		List<List<IntPair>> divisions = new ArrayList<>();
 		divisions.add(new ArrayList<IntPair>());
 		for(int i=start; i<end-1; ++i) {
-			for(int j=i+1; j<end; ++j) {
+			for(int j=i+1; j<=end; ++j) {
+				if(i==start && j==end) continue;
 				List<IntPair> ipList = new ArrayList<>();
 				ipList.add(new IntPair(i, j));
 				divisions.add(ipList);
@@ -234,6 +241,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				}
 			}
 		}
+//		System.out.println("Enumerated : "+divisions);
 		return divisions;
 	}
 	
