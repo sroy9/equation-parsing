@@ -44,6 +44,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private SemFeatGen featGen;
+	public static long spanTime=0, dpTime=0;
 
 	public SemInfSolver(SemFeatGen featGen) {
 		this.featGen = featGen;
@@ -72,20 +73,32 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<SemY>() {};
 		MinMaxPriorityQueue<Pair<SemY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
-				maximumSize(200).create();
+				maximumSize(5).create();
 		MinMaxPriorityQueue<Pair<SemY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
-				maximumSize(200).create();
+				maximumSize(5).create();
+		long lStartTime = System.nanoTime();
+//		System.out.println("Text : " +blob.ta.getText());
+//		System.out.println("Skeleton : "+blob.skeleton);
 		for(SemY y : enumerateSpans(blob)) {
 			beam1.add(new Pair<SemY, Double>(y, 0.0+
 					wv.dotProduct(featGen.getSpanFeatureVector(blob, y))));
 		}
-		for(Pair<SemY, Double> pair1 : beam1) {
+		long lEndTime = System.nanoTime();
+	 	long difference = lEndTime - lStartTime;
+	 	spanTime+=difference/1000000;
+//	 	System.out.println("Span Elapsed milliseconds: " + spanTime);
+	 	lStartTime = System.nanoTime();
+	 	for(Pair<SemY, Double> pair1 : beam1) {
 			Pair<SemY, Double> pair2 = 
 					getBottomUpBestParse(blob, pair1.getFirst(), wv);
 			beam2.add(new Pair<SemY, Double>(
 					pair2.getFirst(), pair1.getSecond() + pair2.getSecond()));
 		}
+	 	lEndTime = System.nanoTime();
+	 	difference = lEndTime - lStartTime;
+	 	dpTime+= difference/1000000;
+//	 	System.out.println("DP Elapsed milliseconds: " + dpTime);
 		pred = beam2.element().getFirst();
 		return pred;
 	}
@@ -101,7 +114,9 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				for(int i=j-1; i>=start; --i) {
 					// Find argmax across all labels and all divisions
 					// label[i][j] <- label if span (i, j) is an expression
-//					System.out.println("Trying to fill : "+(i-start)+" "+(j-start));
+					if(!isSkeletonIndex(x.skeleton, i) || !isSkeletonIndex(x.skeleton, j)) {
+						continue;
+					}
 					if(i == start && j == end) {
 						labels = Arrays.asList("EQ");
 					} else {
@@ -112,7 +127,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 					String bestLabel = null;
 					double score = 0.0;
 					for(String label : labels) {
-						for(List<IntPair> division : enumerateDivisions(i, j)) {
+						for(List<IntPair> division : enumerateDivisions(x, i, j)) {
 							score = 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
 									x, i, j, division, label));
 							for(IntPair span : division) {
@@ -127,7 +142,6 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 							}
 						}
 					}
-//					System.out.println("Initializing : "+(i-start)+" "+(j-start));
 					dpMat[i-start][j-start] = new Expr();
 					dpMat[i-start][j-start].score = bestScore;
 					dpMat[i-start][j-start].label = bestLabel;
@@ -159,7 +173,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		boolean mathyToken = false, quantityPresent = false, 
 				sameSentence = false;
 		if(x.ta.getSentenceFromToken(i).getSentenceId() == 
-				x.ta.getSentenceFromToken(j).getSentenceId()) {
+				x.ta.getSentenceFromToken(j-1).getSentenceId()) {
 			sameSentence = true;
 		}
 		for(Integer tokenId : x.mathyTokenIndices) {
@@ -181,61 +195,61 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	
 	public static List<SemY> enumerateSpans(SemX x) {
 		List<SemY> yList = new ArrayList<>();
-		yList.add(new SemY());
-		// One span
-		for(int i=0; i<x.ta.size()-1; ++i) {
-			for(int j=i+3; j<x.ta.size(); ++j) {
-				if(isCandidateEqualChunk(x, i, j)) {
-					SemY y = new SemY();
-					y.spans.add(new IntPair(i, j));
-					y.nodes.add(new Pair<String, IntPair>(
-							"EQ", new IntPair(i, j)));
-					yList.add(y);
+		List<List<IntPair>> divisions = enumerateDivisions(x, 0, x.ta.size());
+		for(List<IntPair> division : divisions) {
+			boolean allow = true;
+			for(IntPair ip : division) {
+				if(!isCandidateEqualChunk(x, ip.getFirst(), ip.getSecond())) {
+					allow = false;
+					break;
 				}
 			}
-		}
-		// Two span
-		for(int i=0; i<x.ta.size()-4; ++i) {
-			for(int j=i+3; j<x.ta.size()-3; ++j) {
-				for(int k=j+2; k<x.ta.size()-2; ++k) {
-					for(int l=k+3; l<x.ta.size(); ++l) {
-						if(isCandidateEqualChunk(x, i, j) && 
-								isCandidateEqualChunk(x, k, l)) {
-							SemY y = new SemY();
-							y.spans.add(new IntPair(i, j));
-							y.spans.add(new IntPair(k, l));
-							y.nodes.add(new Pair<String, IntPair>(
-									"EQ", new IntPair(i, j)));
-							y.nodes.add(new Pair<String, IntPair>(
-									"EQ", new IntPair(k, l)));
-							yList.add(y);
-						}		
-					}
+			if(allow) {
+				SemY y = new SemY();
+				for(IntPair ip : division) {
+					y.spans.add(new IntPair(ip.getFirst(), ip.getSecond()));
+					y.nodes.add(new Pair<String, IntPair>(
+							"EQ", new IntPair(ip.getFirst(), ip.getSecond())));
 				}
+				yList.add(y);
 			}
 		}
 		return yList;
 	}
 	
-	public List<List<IntPair>> enumerateDivisions(int start, int end) {
-//		System.out.println("Enumerate divisions : "+start+" "+end);
+	public static List<List<IntPair>> enumerateDivisions(SemX x, int startLoc, int endLoc) {
 		List<List<IntPair>> divisions = new ArrayList<>();
 		divisions.add(new ArrayList<IntPair>());
-		for(int i=start; i<end-1; ++i) {
-			for(int j=i+1; j<=end; ++j) {
-				if(i==start && j==end) continue;
+		int start=-1, end=-1;
+		for(int i=0; i<x.skeleton.size(); ++i) {
+			if(x.skeleton.get(i).getSecond().getFirst() == startLoc) {
+				start = i;
+			}
+			if(x.skeleton.get(i).getSecond().getSecond() == endLoc) {
+				end = i+1;
+			}
+		}
+//		System.out.println("Input index : "+startLoc+" "+endLoc);
+//		System.out.println("Skeleton index : "+start+" "+end);
+		
+		for(int i=start; i<end; ++i) {
+			for(int j=i; j<end; ++j) {
+				if(i==start && j==end-1) continue;
 				List<IntPair> ipList = new ArrayList<>();
-				ipList.add(new IntPair(i, j));
+				ipList.add(new IntPair(x.skeleton.get(i).getSecond().getFirst(), 
+						x.skeleton.get(j).getSecond().getSecond()));
 				divisions.add(ipList);
 			}
 		}
 		for(int i=start; i<end-3; ++i) {
-			for(int j=i+1; j<end-2; ++j) {
-				for(int k=j+2; k<end-1; ++k) {
-					for(int l=k+1; l<end; ++l) {
+			for(int j=i; j<end-3; ++j) {
+				for(int k=j+2; k<end; ++k) {
+					for(int l=k; l<end; ++l) {
 						List<IntPair> ipList = new ArrayList<>();
-						ipList.add(new IntPair(i, j));
-						ipList.add(new IntPair(k, l));
+						ipList.add(new IntPair(x.skeleton.get(i).getSecond().getFirst(), 
+								x.skeleton.get(j).getSecond().getSecond()));
+						ipList.add(new IntPair(x.skeleton.get(k).getSecond().getFirst(),
+								x.skeleton.get(l).getSecond().getSecond()));
 						divisions.add(ipList);
 					}
 				}
@@ -245,4 +259,14 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		return divisions;
 	}
 	
+	public static boolean isSkeletonIndex(
+			List<Pair<String, IntPair>> skeleton, int index) {
+		for(Pair<String, IntPair> pair : skeleton) {
+			if(pair.getSecond().getFirst() == index || 
+					pair.getSecond().getSecond() == index) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

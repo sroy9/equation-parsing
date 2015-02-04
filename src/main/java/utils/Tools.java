@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import structure.KnowledgeBase;
 import structure.Operation;
 import curator.NewCachingCurator;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
@@ -165,6 +166,12 @@ public class Tools {
 					for(QuantSpan qs : quantities) {
 						int tokenId = ta.getTokenIdFromCharacterOffset(qs.start);
 						if(tokenId >= cons.getStartSpan() && tokenId < cons.getEndSpan()) {
+							allow = false;
+							break;
+						}
+					}
+					for(int k=cons.getStartSpan(); k<cons.getEndSpan(); ++k) {
+						if(KnowledgeBase.mathWordSet.contains(unigrams.get(k))) {
 							allow = false;
 							break;
 						}

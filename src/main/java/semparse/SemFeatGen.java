@@ -88,11 +88,11 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = new ArrayList<>();
 		String prefix = "SingleSpan";
 		features.add(prefix+"_StartUnigram_"+x.ta.getToken(span.getFirst()));
-		if(span.getSecond()-span.getFirst()>=2) {
-			features.add(prefix + "_StartBigram_" + x.ta.getToken(span.getFirst()) 
-					+ "_" + x.ta.getToken(span.getSecond()));
-		}
-		features.add(prefix+"_EndUnigram_"+x.ta.getToken(span.getSecond()));
+//		if(span.getSecond()-span.getFirst()>=2) {
+//			features.add(prefix + "_StartBigram_" + x.ta.getToken(span.getFirst()) 
+//					+ "_" + x.ta.getToken(span.getSecond()));
+//		}
+//		features.add(prefix+"_EndUnigram_"+x.ta.getToken(span.getSecond()));
 		return features;
 	}
 	
