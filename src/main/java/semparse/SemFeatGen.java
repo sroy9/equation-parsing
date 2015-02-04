@@ -87,18 +87,51 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	public static List<String> singleSpanFeatures(SemX x, IntPair span) {
 		List<String> features = new ArrayList<>();
 		String prefix = "SingleSpan";
-		features.add(prefix+"_StartUnigram_"+x.ta.getToken(span.getFirst()));
-//		if(span.getSecond()-span.getFirst()>=2) {
-//			features.add(prefix + "_StartBigram_" + x.ta.getToken(span.getFirst()) 
-//					+ "_" + x.ta.getToken(span.getSecond()));
-//		}
-//		features.add(prefix+"_EndUnigram_"+x.ta.getToken(span.getSecond()));
+		features.add(prefix+"_StartUnigram_"+x.lemmas.get(span.getFirst()));
+		features.add(prefix + "_StartBigram_" + x.lemmas.get(span.getFirst()) 
+				+ "_" + x.lemmas.get(span.getFirst()+1));
+		features.add(prefix+"_EndUnigram_"+x.lemmas.get(span.getSecond()));
+		if(span.getFirst() == 0 || x.lemmas.get(span.getFirst()-1).equals(".")) {
+			features.add(prefix + "_StartBeginningOfSentence");
+		}
+		if(span.getSecond() == x.ta.size() || x.lemmas.get(span.getSecond()).equals(".")) {
+			features.add(prefix + "_EndWithEndOfSentence");
+		}
+		if((span.getFirst() == 0 || x.lemmas.get(span.getFirst()-1).equals(".")) && 
+				(span.getSecond() == x.ta.size() || x.lemmas.get(span.getSecond()).equals("."))) {
+			features.add(prefix + "_FullSentence");
+		}
 		return features;
 	}
 	
 	public static List<String> expressionFeatures(
 			SemX x, int start, int end, List<IntPair> divisions, String label) {
 		List<String> features = new ArrayList<>();
+		List<String> tokens = new ArrayList<>();
+		String prefix = label;
+		int loc = -1;
+		for(int i=0; i<x.skeleton.size(); ++i) {
+			if(x.skeleton.get(i).getSecond().getFirst() == start) {
+				loc = i;
+			}
+		}
+		if(loc==-1) {
+			System.out.println("Text : "+x.ta.getText());
+			System.out.println("Skeleton : "+x.skeleton);
+			System.out.println("Start : "+start);
+			System.out.println("Division : "+divisions);
+		}
+		for(int i=start; i<end; ++i) {
+			tokens.add(x.skeleton.get(loc).getFirst());
+			loc++;
+			i=x.skeleton.get(loc).getSecond().getSecond()-1;
+		}
+		for(String token : tokens) {
+			features.add(prefix+"_DivisionUnigram_"+token);
+		}
+		for(int i=0; i<tokens.size()-1; ++i) {
+			features.add(prefix+"_DivisionBigram_"+tokens.get(i)+"_"+tokens.get(i+1));
+		}
 		return features;
 	}
 	

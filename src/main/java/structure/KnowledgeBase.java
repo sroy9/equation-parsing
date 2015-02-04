@@ -68,10 +68,12 @@ public class KnowledgeBase {
 		mathWordMap.put("ADD", Arrays.asList("plus", "more", "sum", "exceed"));
 		mathWordMap.put("SUB", Arrays.asList("subtract", "minus", "less", "difference"));
 		mathWordMap.put("MUL", Arrays.asList("time", "product", "twice", "thrice"));
+		mathWordMap.put("DIV", Arrays.asList("ratio"));
 		mathWordSet = new HashSet<>();
 		mathWordSet.addAll(mathWordMap.get("ADD"));
 		mathWordSet.addAll(mathWordMap.get("SUB"));
 		mathWordSet.addAll(mathWordMap.get("MUL"));
+		mathWordSet.addAll(mathWordMap.get("DIV"));
 	}
 	
 	public static void appendWorldKnowledge(SimulProb simulProb) throws Exception {
