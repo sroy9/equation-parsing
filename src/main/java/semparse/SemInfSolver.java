@@ -114,7 +114,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				for(int i=j-1; i>=start; --i) {
 					// Find argmax across all labels and all divisions
 					// label[i][j] <- label if span (i, j) is an expression
-					if(!isSkeletonIndex(x.skeleton, i) || !isSkeletonIndex(x.skeleton, j)) {
+					if(!Tools.isSkeletonIndex(x.skeleton, i) || !Tools.isSkeletonIndex(x.skeleton, j)) {
 						continue;
 					}
 					if(i == start && j == end) {
@@ -257,16 +257,5 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		}
 //		System.out.println("Enumerated : "+divisions);
 		return divisions;
-	}
-	
-	public static boolean isSkeletonIndex(
-			List<Pair<String, IntPair>> skeleton, int index) {
-		for(Pair<String, IntPair> pair : skeleton) {
-			if(pair.getSecond().getFirst() == index || 
-					pair.getSecond().getSecond() == index) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

@@ -332,4 +332,26 @@ public class Tools {
 		}
 		return sentence.trim();
 	}
+
+	public static boolean isSkeletonIndex(
+			List<Pair<String, IntPair>> skeleton, int index) {
+		for(Pair<String, IntPair> pair : skeleton) {
+			if(pair.getSecond().getFirst() == index || 
+					pair.getSecond().getSecond() == index) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isConstituentIndex(
+			List<Constituent> cons, int index) {
+		for(Constituent con : cons) {
+			if(con.getStartSpan() == index || 
+					con.getEndSpan() == index) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

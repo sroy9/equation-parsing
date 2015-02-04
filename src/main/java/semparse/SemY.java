@@ -7,6 +7,7 @@ import java.util.List;
 import structure.EqParse;
 import structure.Equation;
 import structure.SimulProb;
+import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -40,10 +41,18 @@ public class SemY extends EqParse implements IStructure, Serializable {
 				}
 			}
 			if(allow) {
+				if(!Tools.isConstituentIndex(prob.chunks, pair.getSecond().getFirst()) || 
+						!Tools.isConstituentIndex(prob.chunks, pair.getSecond().getSecond())) {
+					System.out.println("Text : "+prob.ta.getText());
+					System.out.println("Chunks : "+prob.chunks);
+					System.out.println("Leaving out : "+pair);
+					continue;
+				}
 				nodes.add(pair);
 				if(pair.getFirst().equals("EQ")) {
 					spans.add(pair.getSecond());
 				}
+				
 			}
 		}
 	}
