@@ -45,12 +45,37 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	private static final long serialVersionUID = 5253748728743334706L;
 	private SemFeatGen featGen;
 	public static long spanTime=0, dpTime=0;
+	public Map<String, List<List<String>>> knowledgeBase;
 
-	public SemInfSolver(SemFeatGen featGen) {
+	public SemInfSolver(SemFeatGen featGen, SLProblem train) {
 		this.featGen = featGen;
+		this.knowledgeBase = extractKnowledgeBase(train);
 	}
 	
- 	@Override
+ 	private Map<String, List<List<String>>> extractKnowledgeBase(SLProblem train) {
+ 		Map<String, List<List<String>>> knowledgeBase = new HashMap<>();
+ 		for(int i=0; i<train.goldStructureList.size(); ++i) {
+ 			SemX x = (SemX) train.instanceList.get(i);
+ 			SemY y = (SemY) train.goldStructureList.get(i);
+//			System.out.println("EqParse : " +y.nodes);
+ 			for(Pair<String, IntPair> pair : y.nodes) {
+ 				if(!knowledgeBase.containsKey(pair.getFirst())) {
+ 					knowledgeBase.put(pair.getFirst(), new ArrayList<List<String>>());
+ 				}
+ 				knowledgeBase.get(pair.getFirst()).add(
+ 						SemFeatGen.getNodeString(x, y.nodes, pair.getSecond()));
+// 				System.out.println(pair.getFirst() + " : " +
+// 						SemFeatGen.getNodeString(x, y.nodes, pair.getSecond()));
+ 			}
+ 		}
+ 		System.out.println("Knowledge Base Size : "+knowledgeBase.size());
+ 		for(String key : knowledgeBase.keySet()) {
+ 			System.out.println(key + " : " + Arrays.asList(knowledgeBase.get(key)));
+ 		}
+ 		return knowledgeBase;
+	}
+
+	@Override
 	public IStructure getBestStructure(WeightVector wv, IInstance x)
 			throws Exception {
 		return getLossAugmentedBestStructure(wv, x, null);
@@ -78,8 +103,6 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
 				maximumSize(5).create();
 		long lStartTime = System.nanoTime();
-//		System.out.println("Text : " +blob.ta.getText());
-//		System.out.println("Skeleton : "+blob.skeleton);
 		for(SemY y : enumerateSpans(blob)) {
 			beam1.add(new Pair<SemY, Double>(y, 0.0+
 					wv.dotProduct(featGen.getSpanFeatureVector(blob, y))));
@@ -114,9 +137,6 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				for(int i=j-1; i>=start; --i) {
 					// Find argmax across all labels and all divisions
 					// label[i][j] <- label if span (i, j) is an expression
-					if(!Tools.isSkeletonIndex(x.skeleton, i) || !Tools.isSkeletonIndex(x.skeleton, j)) {
-						continue;
-					}
 					if(i == start && j == end) {
 						labels = Arrays.asList("EQ");
 					} else {
@@ -217,21 +237,9 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		return yList;
 	}
 	
-	public static List<List<IntPair>> enumerateDivisions(SemX x, int startLoc, int endLoc) {
+	public static List<List<IntPair>> enumerateDivisions(SemX x, int start, int end) {
 		List<List<IntPair>> divisions = new ArrayList<>();
 		divisions.add(new ArrayList<IntPair>());
-		int start=-1, end=-1;
-		for(int i=0; i<x.skeleton.size(); ++i) {
-			if(x.skeleton.get(i).getSecond().getFirst() == startLoc) {
-				start = i;
-			}
-			if(x.skeleton.get(i).getSecond().getSecond() == endLoc) {
-				end = i+1;
-			}
-		}
-//		System.out.println("Input index : "+startLoc+" "+endLoc);
-//		System.out.println("Skeleton index : "+start+" "+end);
-		
 		for(int i=start; i<end; ++i) {
 			for(int j=i; j<end; ++j) {
 				if(i==start && j==end-1) continue;
@@ -255,7 +263,6 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				}
 			}
 		}
-//		System.out.println("Enumerated : "+divisions);
 		return divisions;
 	}
 }

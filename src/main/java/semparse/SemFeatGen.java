@@ -109,23 +109,6 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = new ArrayList<>();
 		List<String> tokens = new ArrayList<>();
 		String prefix = label;
-		int loc = -1;
-		for(int i=0; i<x.skeleton.size(); ++i) {
-			if(x.skeleton.get(i).getSecond().getFirst() == start) {
-				loc = i;
-			}
-		}
-		if(loc==-1) {
-			System.out.println("Text : "+x.ta.getText());
-			System.out.println("Skeleton : "+x.skeleton);
-			System.out.println("Start : "+start);
-			System.out.println("Division : "+divisions);
-		}
-		for(int i=start; i<end; ++i) {
-			tokens.add(x.skeleton.get(loc).getFirst());
-			loc++;
-			i=x.skeleton.get(loc).getSecond().getSecond()-1;
-		}
 		for(String token : tokens) {
 			features.add(prefix+"_DivisionUnigram_"+token);
 		}
@@ -153,5 +136,24 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 			}
 		}
 		return divisions;
+	}
+	
+	public static List<String> getNodeString(
+			SemX x, List<Pair<String, IntPair>> nodes, IntPair ip) {
+		List<String> tokens = new ArrayList<>();
+		List<IntPair> divisions = getDivisions(nodes, ip);
+		for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
+			boolean found = false;
+			for(IntPair div : divisions) {
+				if(div.getFirst() == i) {
+					tokens.add("EXPR");
+					i = div.getSecond()-1;
+					found = true;
+					break;
+				}
+			}
+			if(!found) tokens.add(x.ta.getToken(i));
+		}
+		return tokens;
 	}
 }

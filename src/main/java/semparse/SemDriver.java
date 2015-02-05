@@ -42,7 +42,7 @@ public class SemDriver {
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
 		trainModel("models/sem"+testFold+".save", train);
-		return testModel("models/sem"+testFold+".save", test);
+		return 0;//testModel("models/sem"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {
@@ -109,13 +109,14 @@ public class SemDriver {
 		model.lm = lm;
 		SemFeatGen fg = new SemFeatGen(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new SemInfSolver(fg);
-		SLParameters para = new SLParameters();
-		para.loadConfigFile(Params.spConfigFile);
-		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
-		model.wv = learner.train(train);
-		lm.setAllowNewFeatures(false);
-		model.saveModel(modelPath);
+		model.infSolver = new SemInfSolver(fg, train);
+		return;
+//		SLParameters para = new SLParameters();
+//		para.loadConfigFile(Params.spConfigFile);
+//		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
+//		model.wv = learner.train(train);
+//		lm.setAllowNewFeatures(false);
+//		model.saveModel(modelPath);
 	}
 	
 	public static void main(String args[]) throws Exception {
