@@ -109,6 +109,18 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = new ArrayList<>();
 		List<String> tokens = new ArrayList<>();
 		String prefix = label;
+		for(int i=start; i<end; ++i) {
+			boolean allow = true;
+			for(IntPair div : divisions) {
+				if(div.getFirst() == i) {
+					tokens.add("EXPR");
+					i = div.getSecond() - 1;
+					allow = false;
+					break;
+				}
+			}
+			if(allow) tokens.add(x.ta.getToken(i));
+		}
 		for(String token : tokens) {
 			features.add(prefix+"_DivisionUnigram_"+token);
 		}
