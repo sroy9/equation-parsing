@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import parser.DocReader;
+import structure.SimulProb;
+import utils.Params;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
@@ -18,6 +21,15 @@ public class Lexicon {
 		lex = new HashMap<String, List<List<String>>>();
 	}
 	
+	@Override
+	public String toString() {
+		String str = "";
+		for(String key : lex.keySet()) {
+			str += key + " : " + Arrays.asList(lex.get(key)) + "\n\n\n";
+		}
+		return str;
+	}
+	
 	public static Lexicon extractLexicon(SLProblem prob) {
 		Lexicon lexicon = new Lexicon();
  		for(int i=0; i<prob.goldStructureList.size(); ++i) {
@@ -27,14 +39,29 @@ public class Lexicon {
  				if(!lexicon.lex.containsKey(pair.getFirst())) {
  					lexicon.lex.put(pair.getFirst(), new ArrayList<List<String>>());
  				}
- 				lexicon.lex.get(pair.getFirst()).add(
- 						SemFeatGen.getNodeString(x, y.nodes, pair.getSecond()));
+ 				List<String> pattern = SemFeatGen.getNodeString(x, y.nodes, pair.getSecond());
+ 				if(!contains(lexicon.lex.get(pair.getFirst()), pattern)) {
+ 					lexicon.lex.get(pair.getFirst()).add(pattern);
+ 				}
  			}
  		}
- 		System.out.println("Knowledge Base Size : "+lexicon.lex.size());
- 		for(String key : lexicon.lex.keySet()) {
- 			System.out.println(key + " : " + Arrays.asList(lexicon.lex.get(key)));
- 		}
  		return lexicon;
+	}
+	
+	private static boolean contains(List<List<String>> list,
+			List<String> pattern) {
+		for(List<String> l : list) {
+			if((""+Arrays.asList(l)).equals(""+Arrays.asList(pattern))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static void main(String args[]) throws Exception {
+		List<SimulProb> simulProbList = 
+				DocReader.readSimulProbFromBratDir(Params.annotationDir);
+		Lexicon lexicon = extractLexicon(SemDriver.getSP(simulProbList));
+		System.out.println(lexicon);
 	}
 }

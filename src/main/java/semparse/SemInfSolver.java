@@ -71,35 +71,35 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		SemX blob = (SemX) x;
 		SemY gold = (SemY) goldStructure;
 		SemY pred = null;
-		PairComparator<SemY> semPairComparator = 
-				new PairComparator<SemY>() {};
-		MinMaxPriorityQueue<Pair<SemY, Double>> beam1 = 
-				MinMaxPriorityQueue.orderedBy(semPairComparator).
-				maximumSize(1).create();
-		MinMaxPriorityQueue<Pair<SemY, Double>> beam2 = 
-				MinMaxPriorityQueue.orderedBy(semPairComparator).
-				maximumSize(1).create();
-		long lStartTime = System.nanoTime();
-		for(SemY y : enumerateSpans(blob)) {
-			beam1.add(new Pair<SemY, Double>(y, 0.0+
-					wv.dotProduct(featGen.getSpanFeatureVector(blob, y))));
-		}
-		long lEndTime = System.nanoTime();
-	 	long difference = lEndTime - lStartTime;
-	 	spanTime+=difference/1000000;
-//	 	System.out.println("Span Elapsed milliseconds: " + spanTime);
-	 	lStartTime = System.nanoTime();
-	 	for(Pair<SemY, Double> pair1 : beam1) {
-			Pair<SemY, Double> pair2 = 
-					getBottomUpBestParse(blob, pair1.getFirst(), wv);
-			beam2.add(new Pair<SemY, Double>(
-					pair2.getFirst(), pair1.getSecond() + pair2.getSecond()));
-		}
-	 	lEndTime = System.nanoTime();
-	 	difference = lEndTime - lStartTime;
-	 	dpTime+= difference/1000000;
-//	 	System.out.println("DP Elapsed milliseconds: " + dpTime);
-		pred = beam2.element().getFirst();
+//		PairComparator<SemY> semPairComparator = 
+//				new PairComparator<SemY>() {};
+//		MinMaxPriorityQueue<Pair<SemY, Double>> beam1 = 
+//				MinMaxPriorityQueue.orderedBy(semPairComparator).
+//				maximumSize(1).create();
+//		MinMaxPriorityQueue<Pair<SemY, Double>> beam2 = 
+//				MinMaxPriorityQueue.orderedBy(semPairComparator).
+//				maximumSize(1).create();
+//		long lStartTime = System.nanoTime();
+//		for(SemY y : enumerateSpans(blob)) {
+//			beam1.add(new Pair<SemY, Double>(y, 0.0+
+//					wv.dotProduct(featGen.getSpanFeatureVector(blob, y))));
+//		}
+//		long lEndTime = System.nanoTime();
+//	 	long difference = lEndTime - lStartTime;
+//	 	spanTime+=difference/1000000;
+////	 	System.out.println("Span Elapsed milliseconds: " + spanTime);
+//	 	lStartTime = System.nanoTime();
+//	 	for(Pair<SemY, Double> pair1 : beam1) {
+////			Pair<SemY, Double> pair2 = 
+////					getBottomUpBestParse(blob, pair1.getFirst(), wv);
+//			beam2.add(new Pair<SemY, Double>(
+//					pair2.getFirst(), pair1.getSecond() + pair2.getSecond()));
+//		}
+//	 	lEndTime = System.nanoTime();
+//	 	difference = lEndTime - lStartTime;
+//	 	dpTime+= difference/1000000;
+////	 	System.out.println("DP Elapsed milliseconds: " + dpTime);
+//		pred = beam2.element().getFirst();
 		return pred;
 	}
 	

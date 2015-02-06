@@ -164,7 +164,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 					break;
 				}
 			}
-			if(!found) tokens.add(x.ta.getToken(i));
+			if(!found) tokens.add(x.ta.getToken(i).toLowerCase());
 		}
 		return tokens;
 	}
