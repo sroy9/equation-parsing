@@ -15,7 +15,6 @@ import structure.Equation;
 import structure.EquationSolver;
 import structure.Operation;
 import utils.FeatGen;
-import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
@@ -51,19 +50,31 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public IFeatureVector getExpressionFeatureVector(
-			SemX x, int start, int end, List<IntPair> divisions, String label) {
-		List<String> features = expressionFeatures(x, start, end, divisions, label);
+	public IFeatureVector getCCGFeatureVector(
+			SemX x, IntPair span, String label) {
+		List<String> features = ccgFeatures(x, span, label);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
 	public static List<String> getFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
-		features.addAll(spanFeatures(x, y));
 		for(Pair<String, IntPair> pair : y.nodes) {
-			features.addAll(expressionFeatures(x, pair.getSecond().getFirst(), 
-					pair.getSecond().getSecond(), getDivisions(y.nodes, pair.getSecond()),
-					pair.getFirst()));
+			if(pair.getFirst().equals("EQ")) {
+				features.addAll(spanFeatures(x, y));
+			}
+			List<Pair<String, IntPair>> pattern = 
+					Lexicon.getNodeString(x, y.nodes, pair.getSecond());
+			List<Pair<String, IntPair>> ccgPattern = 
+					Lexicon.getCCGPattern(pattern, pair.getFirst());
+			for(Pair<String, IntPair> div : ccgPattern) {
+				if(!div.getFirst().equals("EXPR")) {
+					features.addAll(ccgFeatures(x, div.getSecond(), div.getFirst()));
+				}
+			}	
+			if(ccgPattern.size() == 1 && ccgPattern.get(0).getFirst().equals("EXPR")) {
+				features.addAll(ccgFeatures(
+						x, ccgPattern.get(0).getSecond(), ccgPattern.get(0).getFirst()));
+			}
 		}
 		return features;
 	}
@@ -104,68 +115,9 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 	
-	public static List<String> expressionFeatures(
-			SemX x, int start, int end, List<IntPair> divisions, String label) {
+	public static List<String> ccgFeatures(
+			SemX x, IntPair span, String ccgLabel) {
 		List<String> features = new ArrayList<>();
-		List<String> tokens = new ArrayList<>();
-		String prefix = label;
-		for(int i=start; i<end; ++i) {
-			boolean allow = true;
-			for(IntPair div : divisions) {
-				if(div.getFirst() == i) {
-					tokens.add("EXPR");
-					i = div.getSecond() - 1;
-					allow = false;
-					break;
-				}
-			}
-			if(allow) tokens.add(x.ta.getToken(i));
-		}
-		for(String token : tokens) {
-			features.add(prefix+"_DivisionUnigram_"+token);
-		}
-		for(int i=0; i<tokens.size()-1; ++i) {
-			features.add(prefix+"_DivisionBigram_"+tokens.get(i)+"_"+tokens.get(i+1));
-		}
 		return features;
-	}
-	
-	public static List<IntPair> getDivisions(List<Pair<String, IntPair>> nodes, IntPair ip) {
-		List<IntPair> divisions = new ArrayList<>();
-		for(Pair<String, IntPair> pair : nodes) {
-			if(Tools.doesContainNotEqual(ip, pair.getSecond())) {
-				boolean allow = true;
-				for(Pair<String, IntPair> pair1 : nodes) {
-					if(Tools.doesContainNotEqual(ip, pair1.getSecond()) &&
-							Tools.doesContainNotEqual(pair1.getSecond(), pair.getSecond())) {
-						allow = false;
-						break;
-					}
-				}
-				if(allow) {
-					divisions.add(pair.getSecond());
-				}
-			}
-		}
-		return divisions;
-	}
-	
-	public static List<String> getNodeString(
-			SemX x, List<Pair<String, IntPair>> nodes, IntPair ip) {
-		List<String> tokens = new ArrayList<>();
-		List<IntPair> divisions = getDivisions(nodes, ip);
-		for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
-			boolean found = false;
-			for(IntPair div : divisions) {
-				if(div.getFirst() == i) {
-					tokens.add("EXPR");
-					i = div.getSecond()-1;
-					found = true;
-					break;
-				}
-			}
-			if(!found) tokens.add(x.ta.getToken(i).toLowerCase());
-		}
-		return tokens;
 	}
 }

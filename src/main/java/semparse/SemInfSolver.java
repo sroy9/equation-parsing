@@ -44,7 +44,6 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private SemFeatGen featGen;
-	public static long spanTime=0, dpTime=0;
 	public Lexicon lexicon;
 
 	public SemInfSolver(SemFeatGen featGen, SLProblem train) {
@@ -71,38 +70,87 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		SemX blob = (SemX) x;
 		SemY gold = (SemY) goldStructure;
 		SemY pred = null;
-//		PairComparator<SemY> semPairComparator = 
-//				new PairComparator<SemY>() {};
-//		MinMaxPriorityQueue<Pair<SemY, Double>> beam1 = 
-//				MinMaxPriorityQueue.orderedBy(semPairComparator).
-//				maximumSize(1).create();
-//		MinMaxPriorityQueue<Pair<SemY, Double>> beam2 = 
-//				MinMaxPriorityQueue.orderedBy(semPairComparator).
-//				maximumSize(1).create();
-//		long lStartTime = System.nanoTime();
-//		for(SemY y : enumerateSpans(blob)) {
-//			beam1.add(new Pair<SemY, Double>(y, 0.0+
-//					wv.dotProduct(featGen.getSpanFeatureVector(blob, y))));
-//		}
-//		long lEndTime = System.nanoTime();
-//	 	long difference = lEndTime - lStartTime;
-//	 	spanTime+=difference/1000000;
-////	 	System.out.println("Span Elapsed milliseconds: " + spanTime);
-//	 	lStartTime = System.nanoTime();
-//	 	for(Pair<SemY, Double> pair1 : beam1) {
-////			Pair<SemY, Double> pair2 = 
-////					getBottomUpBestParse(blob, pair1.getFirst(), wv);
-//			beam2.add(new Pair<SemY, Double>(
-//					pair2.getFirst(), pair1.getSecond() + pair2.getSecond()));
-//		}
-//	 	lEndTime = System.nanoTime();
-//	 	difference = lEndTime - lStartTime;
-//	 	dpTime+= difference/1000000;
-////	 	System.out.println("DP Elapsed milliseconds: " + dpTime);
-//		pred = beam2.element().getFirst();
+		PairComparator<SemY> semPairComparator = 
+				new PairComparator<SemY>() {};
+		MinMaxPriorityQueue<Pair<SemY, Double>> beam1 = 
+				MinMaxPriorityQueue.orderedBy(semPairComparator).
+				maximumSize(200).create();
+		MinMaxPriorityQueue<Pair<SemY, Double>> beam2 = 
+				MinMaxPriorityQueue.orderedBy(semPairComparator).
+				maximumSize(200).create();
+		for(SemY y : enumerateSpans(blob)) {
+			beam1.add(new Pair<SemY, Double>(y, 0.0+
+					wv.dotProduct(featGen.getSpanFeatureVector(blob, y))));
+		}
+		while(true) {
+			
+			// Stopping condition : Checks if span is left
+			boolean cont = false;
+			for(Pair<SemY, Double> pair1 : beam1) {
+				if(pair1.getFirst().spans.size() > 0) {
+					cont = true;
+				}
+			}
+			if(!cont) break;	
+			
+			// State transition in beam search
+			for(Pair<SemY, Double> pair1 : beam1) {
+				if(pair1.getFirst().spans.size() == 0) {
+					beam2.add(pair1);
+				} else {
+					for(String key : lexicon.lex.keySet()) {
+						for(List<String> ccgPattern : lexicon.get(key)) {
+							Pair<Double, List<IntPair>> alignment = getBestAlignment(
+									blob, pair1.getFirst().spans.get(0), ccgPattern, wv, featGen);
+							SemY y = new SemY(pair1.getFirst());
+							y.spans.remove(0);
+							y.spans.addAll(0, alignment.getSecond());
+							y.nodes.add(new Pair<String, IntPair>(
+									key, pair1.getFirst().spans.get(0)));
+							beam2.add(new Pair<SemY, Double>(
+									y, pair1.getSecond() + alignment.getFirst()));
+						}
+					}
+				}
+			}
+			
+			beam1.clear();
+			beam1.addAll(beam2);
+			beam2.clear();
+		}
+		pred = beam1.element().getFirst();
 		return pred;
 	}
 	
+	public static Pair<Double, List<IntPair>> getBestAlignment(
+			SemX x, IntPair span, List<String> ccgPattern, 
+			WeightVector wv, SemFeatGen featGen) {
+		int loc=0;
+		double totalScore = 0;
+		List<IntPair> divs = new ArrayList<>();
+		for(int i=0; i<ccgPattern.size(); ++i) {
+			if(ccgPattern.get(i).equals("EXPR")) {
+				loc++;
+			} else {
+				IntPair bestSpan = null;
+				double bestScore = -Double.MAX_VALUE, score = -Double.MAX_VALUE;
+				for(int j=loc; j<span.getSecond(); ++j) {
+					for(int k=j+1; k<=span.getSecond(); ++k) {
+						score = wv.dotProduct(featGen.getCCGFeatureVector(
+								x, span, ccgPattern.get(i)));
+						if(score > bestScore) {
+							bestScore = score;
+							bestSpan = new IntPair(j, k);
+						}
+					}
+				}
+				divs.add(bestSpan);
+				loc = bestSpan.getSecond();
+				totalScore += bestScore;
+			}
+		}
+		return new Pair<Double, List<IntPair>>(totalScore, divs);
+	}
 	
 	public static boolean isCandidateEqualChunk(SemX x, int i, int j) {
 		boolean mathyToken = false, quantityPresent = false, 
