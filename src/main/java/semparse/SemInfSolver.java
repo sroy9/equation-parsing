@@ -32,13 +32,6 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
-class Expr {
-	public double score;
-	public String label;
-	public IntPair span;
-	public List<IntPair> divisions;
-}
-
 public class SemInfSolver extends AbstractInferenceSolver implements
 		Serializable {
 
@@ -101,7 +94,8 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 					for(String key : lexicon.lex.keySet()) {
 						for(List<String> ccgPattern : lexicon.get(key)) {
 							Pair<Double, List<IntPair>> alignment = getBestAlignment(
-									blob, pair1.getFirst().spans.get(0), ccgPattern, wv, featGen);
+									blob, pair1.getFirst().spans.get(0), 
+									ccgPattern, wv, featGen);
 							SemY y = new SemY(pair1.getFirst());
 							y.spans.remove(0);
 							y.spans.addAll(0, alignment.getSecond());
@@ -113,7 +107,6 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 					}
 				}
 			}
-			
 			beam1.clear();
 			beam1.addAll(beam2);
 			beam2.clear();
@@ -125,31 +118,54 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	public static Pair<Double, List<IntPair>> getBestAlignment(
 			SemX x, IntPair span, List<String> ccgPattern, 
 			WeightVector wv, SemFeatGen featGen) {
-		int loc=0;
-		double totalScore = 0;
-		List<IntPair> divs = new ArrayList<>();
-		for(int i=0; i<ccgPattern.size(); ++i) {
-			if(ccgPattern.get(i).equals("EXPR")) {
-				loc++;
-			} else {
-				IntPair bestSpan = null;
-				double bestScore = -Double.MAX_VALUE, score = -Double.MAX_VALUE;
-				for(int j=loc; j<span.getSecond(); ++j) {
-					for(int k=j+1; k<=span.getSecond(); ++k) {
-						score = wv.dotProduct(featGen.getCCGFeatureVector(
-								x, span, ccgPattern.get(i)));
-						if(score > bestScore) {
-							bestScore = score;
-							bestSpan = new IntPair(j, k);
-						}
-					}
+		System.out.println("getBestAlignment called with");
+		System.out.println("Span : "+span);
+		System.out.println("CCG Pattern : "+ccgPattern);
+		int m = ccgPattern.size();
+		int n = span.getSecond()-span.getFirst();
+		List<IntPair> exprs = new ArrayList<>();
+		String[][] dpPointers = new String[m+1][n+1];
+		double[][] dpScores = new double[m+1][n+1];
+		for(int i=0; i<m+1; ++i) {
+			dpScores[i][0] = 0.0;
+		}
+		for(int i=0; i<n+1; ++i) {
+			dpScores[0][i] = 0.0;
+		}
+		for(int i=1; i<=m; ++i) {
+			for(int j=1; j<=n; ++j) {
+				if(dpScores[i][j-1] > dpScores[i-1][j-1]) {
+					dpScores[i][j] = dpScores[i][j-1] + 
+							wv.dotProduct(featGen.getCCGFeatureVector(
+									x, j+span.getFirst()-1, ccgPattern.get(i-1)));
+					dpPointers[i][j] = "SAME";
+				} else {
+					dpScores[i][j] = dpScores[i-1][j-1] + 
+							wv.dotProduct(featGen.getCCGFeatureVector(
+									x, j+span.getFirst()-1, ccgPattern.get(i-1)));
+					dpPointers[i][j] = "DIFF";
 				}
-				divs.add(bestSpan);
-				loc = bestSpan.getSecond();
-				totalScore += bestScore;
 			}
 		}
-		return new Pair<Double, List<IntPair>>(totalScore, divs);
+		int i=m, j=n;
+		int lastLoc = n;
+		dpPointers[1][1] = "DIFF";
+		while(i!=0 || j!=0) {
+			if(dpPointers[i][j] == "DIFF") {
+				if(ccgPattern.get(i-1).equals("EXPR")) {
+					exprs.add(0, new IntPair(
+							j+span.getFirst()-1, lastLoc+span.getFirst()-1));
+				}
+				lastLoc = j;
+				i--;
+			}
+			j--;
+		}
+		if(exprs.size() == 1 && exprs.get(0).getFirst() == span.getFirst() &&
+				exprs.get(0).getSecond() == span.getSecond()) {
+			exprs.clear();
+		}
+		return new Pair<Double, List<IntPair>>(dpScores[m][n], exprs);
 	}
 	
 	public static boolean isCandidateEqualChunk(SemX x, int i, int j) {
@@ -190,9 +206,8 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 			if(allow) {
 				SemY y = new SemY();
 				for(IntPair ip : division) {
-					y.spans.add(new IntPair(ip.getFirst(), ip.getSecond()));
-					y.nodes.add(new Pair<String, IntPair>(
-							"EQ", new IntPair(ip.getFirst(), ip.getSecond())));
+					y.spans.add(ip);
+					y.nodes.add(new Pair<String, IntPair>("EQ", ip));
 				}
 				yList.add(y);
 			}
@@ -205,7 +220,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		divisions.add(new ArrayList<IntPair>());
 		for(int i=start; i<end; ++i) {
 			for(int j=i+1; j<end; ++j) {
-				if(i==start && j==end-1) continue;
+				if(i==start && j==end) continue;
 				List<IntPair> ipList = new ArrayList<>();
 				ipList.add(new IntPair(i,j));
 				divisions.add(ipList);

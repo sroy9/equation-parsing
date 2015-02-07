@@ -51,8 +51,8 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	}
 	
 	public IFeatureVector getCCGFeatureVector(
-			SemX x, IntPair span, String label) {
-		List<String> features = ccgFeatures(x, span, label);
+			SemX x, int index, String label) {
+		List<String> features = ccgFeatures(x, index, label);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
@@ -67,14 +67,10 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 			List<Pair<String, IntPair>> ccgPattern = 
 					Lexicon.getCCGPattern(pattern, pair.getFirst());
 			for(Pair<String, IntPair> div : ccgPattern) {
-				if(!div.getFirst().equals("EXPR")) {
-					features.addAll(ccgFeatures(x, div.getSecond(), div.getFirst()));
+				for(int i=div.getSecond().getFirst(); i<div.getSecond().getSecond(); ++i) {
+					features.addAll(ccgFeatures(x, i, div.getFirst()));
 				}
 			}	
-			if(ccgPattern.size() == 1 && ccgPattern.get(0).getFirst().equals("EXPR")) {
-				features.addAll(ccgFeatures(
-						x, ccgPattern.get(0).getSecond(), ccgPattern.get(0).getFirst()));
-			}
 		}
 		return features;
 	}
@@ -116,7 +112,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	}
 	
 	public static List<String> ccgFeatures(
-			SemX x, IntPair span, String ccgLabel) {
+			SemX x, int index, String ccgLabel) {
 		List<String> features = new ArrayList<>();
 		return features;
 	}
