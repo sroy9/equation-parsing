@@ -215,7 +215,8 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		return yList;
 	}
 	
-	public static List<List<IntPair>> enumerateDivisions(SemX x, int start, int end) {
+	public static List<List<IntPair>> enumerateDivisions(
+			SemX x, int start, int end) {
 		List<List<IntPair>> divisions = new ArrayList<>();
 		divisions.add(new ArrayList<IntPair>());
 		for(int i=start; i<end; ++i) {
