@@ -45,36 +45,34 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public IFeatureVector getSpanFeatureVector(SemX x, SemY y) {
-		List<String> features = spanFeatures(x, y);
-		return FeatGen.getFeatureVectorFromList(features, lm);
-	}
-	
-	public IFeatureVector getCCGFeatureVector(
-			SemX x, int index, String label) {
-		List<String> features = ccgFeatures(x, index, label);
-		return FeatGen.getFeatureVectorFromList(features, lm);
-	}
-	
 	public static List<String> getFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
 		for(Pair<String, IntPair> pair : y.nodes) {
 			if(pair.getFirst().equals("EQ")) {
 				features.addAll(spanFeatures(x, y));
 			}
+		}
+		for(Integer i : y.partitions.keySet()) {
+			features.addAll(partitionFeatures(x, i));
+		}
+		for(Pair<String, IntPair> pair : y.nodes) {
 			List<Pair<String, IntPair>> pattern = 
 					Lexicon.getNodeString(x, y.nodes, pair.getSecond());
-			List<Pair<String, IntPair>> ccgPattern = 
-					Lexicon.getCCGPattern(pattern, pair.getFirst());
-			for(Pair<String, IntPair> div : ccgPattern) {
-				for(int i=div.getSecond().getFirst(); i<div.getSecond().getSecond(); ++i) {
-					features.addAll(ccgFeatures(x, i, div.getFirst()));
-				}
-			}	
+			List<IntPair> divs = new ArrayList<>();
+			for(Pair<String, IntPair> p : pattern) {
+				if(p.getFirst().equals("EXPR")) divs.add(p.getSecond());
+			}
+			features.addAll(expressionFeatures(x, pair.getSecond().getFirst(), 
+					pair.getSecond().getSecond(), divs, pair.getFirst()));
 		}
 		return features;
 	}
 
+	public IFeatureVector getSpanFeatureVector(SemX x, SemY y) {
+		List<String> features = spanFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+	
 	public static List<String> spanFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
 		for(IntPair span : y.spans) {
@@ -110,13 +108,26 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		}
 		return features;
 	}
+
+	public IFeatureVector getExpressionFeatureVector(SemX x, int i, int j,
+			List<IntPair> division, String label) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
-	public static List<String> ccgFeatures(
-			SemX x, int index, String ccgLabel) {
+	public static List<String> expressionFeatures(SemX x, int i, int j,
+			List<IntPair> division, String label) {
 		List<String> features = new ArrayList<>();
-		features.add(ccgLabel+"_Token_"+x.ta.getToken(index).toLowerCase());
-		features.add(ccgLabel+"_Lemma_"+x.lemmas.get(index).getLabel());
-		features.add(ccgLabel+"_Pos_"+x.posTags.get(index).getLabel());
+		return features;
+	}
+
+	public IFeatureVector getPartitionFeatureVector(SemX blob, int i) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public static List<String> partitionFeatures(SemX blob, int i) {
+		List<String> features = new ArrayList<>();
 		return features;
 	}
 }

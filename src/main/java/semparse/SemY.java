@@ -2,7 +2,11 @@ package semparse;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.map.HashedMap;
 
 import structure.EqParse;
 import structure.Equation;
@@ -15,17 +19,21 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 public class SemY extends EqParse implements IStructure, Serializable {
 	
 	private static final long serialVersionUID = 2399969922362221136L;
+	public Map<Integer, String> partitions;
 	public List<IntPair> spans;
 	
 	public SemY() {
 		super();
 		spans = new ArrayList<>();
+		partitions = new HashMap<>();
 	}
 	
 	public SemY(SemY other) {
 		super(other);
 		spans = new ArrayList<>();
 		spans.addAll(other.spans);
+		partitions = new HashMap<>();
+		partitions.putAll(other.partitions);
 	}
 	
 	public SemY(SimulProb prob) {
@@ -42,10 +50,16 @@ public class SemY extends EqParse implements IStructure, Serializable {
 			}
 			if(allow) {
 				nodes.add(pair);
+				partitions.put(pair.getSecond().getFirst(), "B-PART");
 				if(pair.getFirst().equals("EQ")) {
 					spans.add(pair.getSecond());
+					for(int i=pair.getSecond().getFirst(); 
+							i<pair.getSecond().getSecond(); ++i) {
+						if(!partitions.containsKey(i)) {
+							partitions.put(i, "I-PART");
+						}
+					}
 				}
-				
 			}
 		}
 	}

@@ -41,7 +41,7 @@ public class SemDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-//		trainModel("models/sem"+testFold+".save", train);
+		trainModel("models/sem"+testFold+".save", train);
 		return testModel("models/sem"+testFold+".save", test);
 	}
 	
@@ -109,7 +109,7 @@ public class SemDriver {
 		model.lm = lm;
 		SemFeatGen fg = new SemFeatGen(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new SemInfSolver(fg, train);
+		model.infSolver = new SemInfSolver(fg);
 //		return;
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);

@@ -32,16 +32,21 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
+class Expr {
+	public double score;
+	public String label;
+	public IntPair span;
+	public List<IntPair> divisions;
+}
+
 public class SemInfSolver extends AbstractInferenceSolver implements
 		Serializable {
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private SemFeatGen featGen;
-	public Lexicon lexicon;
 
-	public SemInfSolver(SemFeatGen featGen, SLProblem train) {
+	public SemInfSolver(SemFeatGen featGen) {
 		this.featGen = featGen;
-		this.lexicon = Lexicon.extractLexicon(train);
 	}
 	
 	@Override
@@ -71,102 +76,101 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		MinMaxPriorityQueue<Pair<SemY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
 				maximumSize(200).create();
+		MinMaxPriorityQueue<Pair<SemY, Double>> shortBeam1 = 
+				MinMaxPriorityQueue.orderedBy(semPairComparator).
+				maximumSize(10).create();
+		MinMaxPriorityQueue<Pair<SemY, Double>> shortBeam2 = 
+				MinMaxPriorityQueue.orderedBy(semPairComparator).
+				maximumSize(10).create();
 		for(SemY y : enumerateSpans(blob)) {
 			beam1.add(new Pair<SemY, Double>(y, 0.0+
 					wv.dotProduct(featGen.getSpanFeatureVector(blob, y))));
 		}
-		while(true) {
-			
-			// Stopping condition : Checks if span is left
-			boolean cont = false;
-			for(Pair<SemY, Double> pair1 : beam1) {
-				if(pair1.getFirst().spans.size() > 0) {
-					cont = true;
-				}
-			}
-			if(!cont) break;	
-			
-			// State transition in beam search
-			for(Pair<SemY, Double> pair1 : beam1) {
-				if(pair1.getFirst().spans.size() == 0) {
-					beam2.add(pair1);
-				} else {
-					for(String key : lexicon.lex.keySet()) {
-						for(List<String> ccgPattern : lexicon.get(key)) {
-							Pair<Double, List<IntPair>> alignment = getBestAlignment(
-									blob, pair1.getFirst().spans.get(0), 
-									ccgPattern, wv, featGen);
-							SemY y = new SemY(pair1.getFirst());
-							y.spans.remove(0);
-							y.spans.addAll(0, alignment.getSecond());
-							y.nodes.add(new Pair<String, IntPair>(
-									key, pair1.getFirst().spans.get(0)));
-							beam2.add(new Pair<SemY, Double>(
-									y, pair1.getSecond() + alignment.getFirst()));
+		for(Pair<SemY, Double> pair : beam1) {
+			shortBeam1.add(pair);
+			for(IntPair span : pair.getFirst().spans) {
+				for(int i=span.getFirst(); i<span.getSecond(); ++i) {
+					for(Pair<SemY, Double> p : shortBeam1) {
+						for(String label : Arrays.asList("B-PART", "I-PART")) {
+							SemY y = new SemY(p.getFirst());
+							y.partitions.put(i, label);
+							shortBeam2.add(new Pair<SemY, Double>(y, 
+									1.0*wv.dotProduct(featGen.getPartitionFeatureVector(blob, i))));
 						}
 					}
+					shortBeam1.clear();
+					shortBeam1.addAll(shortBeam2);
+					shortBeam2.clear();
 				}
 			}
-			beam1.clear();
-			beam1.addAll(beam2);
-			beam2.clear();
+			beam2.addAll(shortBeam1);
+		}
+		beam1.clear();
+		for(Pair<SemY, Double> pair : beam2) {
+			beam1.add(getBottomUpBestParse(blob, pair.getFirst(), wv));
 		}
 		pred = beam1.element().getFirst();
 		return pred;
 	}
 	
-	public static Pair<Double, List<IntPair>> getBestAlignment(
-			SemX x, IntPair span, List<String> ccgPattern, 
-			WeightVector wv, SemFeatGen featGen) {
-//		System.out.println("getBestAlignment called with");
-//		System.out.println("Span : "+span);
-//		System.out.println("CCG Pattern : "+ccgPattern);
-		int m = ccgPattern.size();
-		int n = span.getSecond()-span.getFirst();
-		List<IntPair> exprs = new ArrayList<>();
-		String[][] dpPointers = new String[m+1][n+1];
-		double[][] dpScores = new double[m+1][n+1];
-		for(int i=0; i<m+1; ++i) {
-			dpScores[i][0] = 0.0;
-		}
-		for(int i=0; i<n+1; ++i) {
-			dpScores[0][i] = 0.0;
-		}
-		for(int i=1; i<=m; ++i) {
-			for(int j=1; j<=n; ++j) {
-				if(dpScores[i][j-1] > dpScores[i-1][j-1]) {
-					dpScores[i][j] = dpScores[i][j-1] + 
-							wv.dotProduct(featGen.getCCGFeatureVector(
-									x, j+span.getFirst()-1, ccgPattern.get(i-1)));
-					dpPointers[i][j] = "SAME";
-				} else {
-					dpScores[i][j] = dpScores[i-1][j-1] + 
-							wv.dotProduct(featGen.getCCGFeatureVector(
-									x, j+span.getFirst()-1, ccgPattern.get(i-1)));
-					dpPointers[i][j] = "DIFF";
+	public Pair<SemY, Double> getBottomUpBestParse(SemX x, SemY y, WeightVector wv) {
+		List<String> labels = null;
+		Double totScore = 0.0;
+		for(IntPair ip : y.spans) {
+			int start = ip.getFirst(), end = ip.getSecond(); 
+			Expr dpMat[][] = new Expr[end-start+1][end-start+1];
+			for(int j=start+1; j<=end; ++j) {
+				for(int i=j-1; i>=start; --i) {
+					if(i == start && j == end) {
+						labels = Arrays.asList("EQ");
+					} else {
+						labels = Arrays.asList("EXPR", "ADD", "SUB", "MUL", "DIV");
+					}
+					double bestScore = -Double.MAX_VALUE;
+					List<IntPair> bestDivision = null;
+					String bestLabel = null;
+					double score = 0.0;
+					for(String label : labels) {
+						for(List<IntPair> division : enumerateDivisions(x, i, j)) {
+							score = 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
+									x, i, j, division, label));
+							for(IntPair span : division) {
+								score += dpMat[span.getFirst()-start][span.getSecond()-start].score;
+							}
+							if(score > bestScore) {
+								bestScore = score;
+								bestLabel = label;
+								bestDivision = division;
+							}
+						}
+					}
+					dpMat[i-start][j-start] = new Expr();
+					dpMat[i-start][j-start].score = bestScore;
+					dpMat[i-start][j-start].label = bestLabel;
+					dpMat[i-start][j-start].divisions = bestDivision;
+					dpMat[i-start][j-start].span = new IntPair(i, j);
 				}
 			}
-		}
-		int i=m, j=n;
-		int lastLoc = n+1;
-		dpPointers[1][1] = "DIFF";
-		while(i!=0 || j!=0) {
-			if(dpPointers[i][j] == "DIFF") {
-				if(ccgPattern.get(i-1).equals("EXPR")) {
-					exprs.add(0, new IntPair(
-							j+span.getFirst()-1, lastLoc+span.getFirst()-1));
-				}
-				lastLoc = j;
-				i--;
+			List<Expr> queue = new ArrayList<Expr>();
+			queue.add(dpMat[0][end-start]);
+			Expr expr = queue.get(0);
+			queue.remove(0);
+			for(IntPair division : expr.divisions) {
+				queue.add(dpMat[division.getFirst()-start][division.getSecond()-start]);
 			}
-			j--;
+			while(queue.size() > 0) {
+				expr = queue.get(0);
+				y.nodes.add(new Pair<String, IntPair>(expr.label, expr.span));
+				queue.remove(0);
+				for(IntPair division : expr.divisions) {
+					queue.add(dpMat[division.getFirst()-start][division.getSecond()-start]);
+				}
+			}
+			totScore += dpMat[0][end-start].score;
 		}
-		if(exprs.size() == 1 && exprs.get(0).getFirst() == span.getFirst() &&
-				exprs.get(0).getSecond() == span.getSecond()) {
-			exprs.clear();
-		}
-		return new Pair<Double, List<IntPair>>(dpScores[m][n], exprs);
+		return new Pair<SemY, Double>(y, totScore);
 	}
+
 	
 	public static boolean isCandidateEqualChunk(SemX x, int i, int j) {
 		boolean mathyToken = false, quantityPresent = false, 
