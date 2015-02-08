@@ -118,9 +118,9 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	public static Pair<Double, List<IntPair>> getBestAlignment(
 			SemX x, IntPair span, List<String> ccgPattern, 
 			WeightVector wv, SemFeatGen featGen) {
-		System.out.println("getBestAlignment called with");
-		System.out.println("Span : "+span);
-		System.out.println("CCG Pattern : "+ccgPattern);
+//		System.out.println("getBestAlignment called with");
+//		System.out.println("Span : "+span);
+//		System.out.println("CCG Pattern : "+ccgPattern);
 		int m = ccgPattern.size();
 		int n = span.getSecond()-span.getFirst();
 		List<IntPair> exprs = new ArrayList<>();
@@ -148,7 +148,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 			}
 		}
 		int i=m, j=n;
-		int lastLoc = n;
+		int lastLoc = n+1;
 		dpPointers[1][1] = "DIFF";
 		while(i!=0 || j!=0) {
 			if(dpPointers[i][j] == "DIFF") {

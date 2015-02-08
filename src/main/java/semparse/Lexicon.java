@@ -1,5 +1,6 @@
 package semparse;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,8 +15,9 @@ import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 
-public class Lexicon {
+public class Lexicon implements Serializable {
 
+	private static final long serialVersionUID = 6497021707338812080L;
 	Map<String, List<List<String>>> lex;
 	
 	public Lexicon() {

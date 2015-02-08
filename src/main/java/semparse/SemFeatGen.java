@@ -114,6 +114,9 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	public static List<String> ccgFeatures(
 			SemX x, int index, String ccgLabel) {
 		List<String> features = new ArrayList<>();
+		features.add(ccgLabel+"_Token_"+x.ta.getToken(index).toLowerCase());
+		features.add(ccgLabel+"_Lemma_"+x.lemmas.get(index).getLabel());
+		features.add(ccgLabel+"_Pos_"+x.posTags.get(index).getLabel());
 		return features;
 	}
 }
