@@ -78,14 +78,16 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<SemY, Double>> shortBeam1 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
-				maximumSize(10).create();
+				maximumSize(50).create();
 		MinMaxPriorityQueue<Pair<SemY, Double>> shortBeam2 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
-				maximumSize(10).create();
+				maximumSize(50).create();
+		System.out.println("Enumerating spans");
 		for(SemY y : enumerateSpans(blob)) {
 			beam1.add(new Pair<SemY, Double>(y, 0.0+
 					wv.dotProduct(featGen.getSpanFeatureVector(blob, y))));
 		}
+		System.out.println("Partitioning");
 		for(Pair<SemY, Double> pair : beam1) {
 			shortBeam1.add(pair);
 			for(IntPair span : pair.getFirst().spans) {
@@ -94,8 +96,13 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 						for(String label : Arrays.asList("B-PART", "I-PART")) {
 							SemY y = new SemY(p.getFirst());
 							y.partitions.put(i, label);
-							shortBeam2.add(new Pair<SemY, Double>(y, 
-									1.0*wv.dotProduct(featGen.getPartitionFeatureVector(blob, i))));
+//							System.out.println("Wv len : "+wv.getLength());
+//							System.out.println("FeatGen : "+featGen.hashCode());
+//							System.out.println("Short Beam "+shortBeam2.size());
+//							System.out.println("Y : "+y.hashCode());
+//							System.out.println("Pair : "+p);
+							shortBeam2.add(new Pair<SemY, Double>(y, p.getSecond() + 
+									wv.dotProduct(featGen.getPartitionFeatureVector(blob, i))));
 						}
 					}
 					shortBeam1.clear();
@@ -105,9 +112,12 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 			}
 			beam2.addAll(shortBeam1);
 		}
+		System.out.println("Parsing");
 		beam1.clear();
 		for(Pair<SemY, Double> pair : beam2) {
-			beam1.add(getBottomUpBestParse(blob, pair.getFirst(), wv));
+			Pair<SemY, Double> parse = getBottomUpBestParse(blob, pair.getFirst(), wv);
+			beam1.add(new Pair<SemY, Double>(parse.getFirst(), 
+					pair.getSecond() + parse.getSecond()));
 		}
 		pred = beam1.element().getFirst();
 		return pred;
@@ -117,11 +127,12 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		List<String> labels = null;
 		Double totScore = 0.0;
 		for(IntPair ip : y.spans) {
-			int start = ip.getFirst(), end = ip.getSecond(); 
-			Expr dpMat[][] = new Expr[end-start+1][end-start+1];
-			for(int j=start+1; j<=end; ++j) {
-				for(int i=j-1; i>=start; --i) {
-					if(i == start && j == end) {
+			List<IntPair> partitions = extractPartitions(y, ip);
+			int n = partitions.size();
+			Expr dpMat[][] = new Expr[n+1][n+1];
+			for(int i=0; i<n; ++i) {
+				for(int j=i+1; j<=n; ++j) {
+					if(i == 0 && j == n) {
 						labels = Arrays.asList("EQ");
 					} else {
 						labels = Arrays.asList("EXPR", "ADD", "SUB", "MUL", "DIV");
@@ -131,11 +142,13 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 					String bestLabel = null;
 					double score = 0.0;
 					for(String label : labels) {
-						for(List<IntPair> division : enumerateDivisions(x, i, j)) {
+						for(List<IntPair> division : enumerateDivisions(i, j)) {
 							score = 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
-									x, i, j, division, label));
+									x, partitions.get(i).getFirst(), partitions.get(j-1).getSecond(), 
+									extractTokenDivisionFromPartitionDivision(partitions, division), 
+									label));
 							for(IntPair span : division) {
-								score += dpMat[span.getFirst()-start][span.getSecond()-start].score;
+								score += dpMat[span.getFirst()][span.getSecond()].score;
 							}
 							if(score > bestScore) {
 								bestScore = score;
@@ -144,29 +157,32 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 							}
 						}
 					}
-					dpMat[i-start][j-start] = new Expr();
-					dpMat[i-start][j-start].score = bestScore;
-					dpMat[i-start][j-start].label = bestLabel;
-					dpMat[i-start][j-start].divisions = bestDivision;
-					dpMat[i-start][j-start].span = new IntPair(i, j);
+					dpMat[i][j] = new Expr();
+					dpMat[i][j].score = bestScore;
+					dpMat[i][j].label = bestLabel;
+					dpMat[i][j].divisions = bestDivision;
 				}
 			}
 			List<Expr> queue = new ArrayList<Expr>();
-			queue.add(dpMat[0][end-start]);
+			queue.add(dpMat[0][n]);
 			Expr expr = queue.get(0);
 			queue.remove(0);
 			for(IntPair division : expr.divisions) {
-				queue.add(dpMat[division.getFirst()-start][division.getSecond()-start]);
+				queue.add(dpMat[division.getFirst()][division.getSecond()]);
 			}
 			while(queue.size() > 0) {
 				expr = queue.get(0);
-				y.nodes.add(new Pair<String, IntPair>(expr.label, expr.span));
+				int i = expr.span.getFirst();
+				int j = expr.span.getSecond();
+				y.nodes.add(new Pair<String, IntPair>(expr.label, 
+						new IntPair(partitions.get(i).getFirst(), 
+								partitions.get(j-1).getSecond())));
 				queue.remove(0);
 				for(IntPair division : expr.divisions) {
-					queue.add(dpMat[division.getFirst()-start][division.getSecond()-start]);
+					queue.add(dpMat[division.getFirst()][division.getSecond()]);
 				}
 			}
-			totScore += dpMat[0][end-start].score;
+			totScore += dpMat[0][n].score;
 		}
 		return new Pair<SemY, Double>(y, totScore);
 	}
@@ -198,7 +214,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	
 	public static List<SemY> enumerateSpans(SemX x) {
 		List<SemY> yList = new ArrayList<>();
-		List<List<IntPair>> divisions = enumerateDivisions(x, 0, x.ta.size());
+		List<List<IntPair>> divisions = enumerateDivisions(0, x.ta.size());
 		for(List<IntPair> division : divisions) {
 			boolean allow = true;
 			for(IntPair ip : division) {
@@ -220,7 +236,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	}
 	
 	public static List<List<IntPair>> enumerateDivisions(
-			SemX x, int start, int end) {
+			int start, int end) {
 		List<List<IntPair>> divisions = new ArrayList<>();
 		divisions.add(new ArrayList<IntPair>());
 		for(int i=start; i<end; ++i) {
@@ -244,5 +260,30 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 			}
 		}
 		return divisions;
+	}
+	
+	public List<IntPair> extractPartitions(SemY y, IntPair span) {
+		List<IntPair> partitions = new ArrayList<>();
+		int lastLoc = 0;
+		for(int i=span.getFirst()+1; i<span.getSecond(); ++i) {
+			if(y.partitions.get(i).equals("B-PART")) {
+				partitions.add(new IntPair(lastLoc, i));
+				lastLoc = i;
+			}
+		}
+		return partitions;
+	}
+	
+	public List<IntPair> extractTokenDivisionFromPartitionDivision(
+			List<IntPair> partitions, List<IntPair> partDivision) {
+		List<IntPair> tokenDivision = new ArrayList<>();
+		for(IntPair div : partDivision) {
+			int i = div.getFirst();
+			int j = div.getSecond();
+			tokenDivision.add(new IntPair(
+					partitions.get(i).getFirst(), 
+					partitions.get(j-1).getSecond()));
+		}
+		return tokenDivision;
 	}
 }

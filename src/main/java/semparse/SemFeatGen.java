@@ -111,8 +111,8 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 
 	public IFeatureVector getExpressionFeatureVector(SemX x, int i, int j,
 			List<IntPair> division, String label) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> features = expressionFeatures(x, i, j, division, label);
+		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
 	public static List<String> expressionFeatures(SemX x, int i, int j,
@@ -122,8 +122,8 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	}
 
 	public IFeatureVector getPartitionFeatureVector(SemX blob, int i) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> features = partitionFeatures(blob, i);
+		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
 	public static List<String> partitionFeatures(SemX blob, int i) {
