@@ -47,20 +47,18 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	
 	public static List<String> getFeatures(SemX x, SemY y) {
 		List<String> features = new ArrayList<>();
-		for(Pair<String, IntPair> pair : y.nodes) {
-			if(pair.getFirst().equals("EQ")) {
-				features.addAll(spanFeatures(x, y));
-			}
-		}
+		features.addAll(spanFeatures(x, y));
 		for(Integer i : y.partitions.keySet()) {
-			features.addAll(partitionFeatures(x, i));
+			features.addAll(partitionFeatures(x, y, i));
 		}
 		for(Pair<String, IntPair> pair : y.nodes) {
 			List<Pair<String, IntPair>> pattern = 
 					Lexicon.getNodeString(x, y.nodes, pair.getSecond());
 			List<IntPair> divs = new ArrayList<>();
-			for(Pair<String, IntPair> p : pattern) {
-				if(p.getFirst().equals("EXPR")) divs.add(p.getSecond());
+			if(pattern.size() > 1) { 
+				for(Pair<String, IntPair> p : pattern) {
+					if(p.getFirst().equals("EXPR")) divs.add(p.getSecond());
+				}
 			}
 			features.addAll(expressionFeatures(x, pair.getSecond().getFirst(), 
 					pair.getSecond().getSecond(), divs, pair.getFirst()));
@@ -95,7 +93,11 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		features.add(prefix+"_StartUnigram_"+x.lemmas.get(span.getFirst()));
 		features.add(prefix + "_StartBigram_" + x.lemmas.get(span.getFirst()) 
 				+ "_" + x.lemmas.get(span.getFirst()+1));
-		features.add(prefix+"_EndUnigram_"+x.lemmas.get(span.getSecond()));
+		features.add(prefix+"_EndUnigram_"+x.lemmas.get(span.getSecond()-1));
+		if(x.ta.size() > span.getSecond()) {
+			features.add(prefix+"_EndBigram_"+x.lemmas.get(span.getSecond()-1)+"_"+
+					x.lemmas.get(span.getSecond()));
+		}
 		if(span.getFirst() == 0 || x.lemmas.get(span.getFirst()-1).equals(".")) {
 			features.add(prefix + "_StartBeginningOfSentence");
 		}
@@ -121,12 +123,12 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 
-	public IFeatureVector getPartitionFeatureVector(SemX blob, int i) {
-		List<String> features = partitionFeatures(blob, i);
+	public IFeatureVector getPartitionFeatureVector(SemX x, SemY y, int i) {
+		List<String> features = partitionFeatures(x, y, i);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public static List<String> partitionFeatures(SemX blob, int i) {
+	public static List<String> partitionFeatures(SemX x, SemY y, int i) {
 		List<String> features = new ArrayList<>();
 		return features;
 	}

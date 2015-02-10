@@ -3,6 +3,7 @@ package semparse;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -37,6 +38,11 @@ class Expr {
 	public String label;
 	public IntPair span;
 	public List<IntPair> divisions;
+	
+	@Override
+	public String toString() {
+		return label +" "+span+" "+divisions;
+	}
 }
 
 public class SemInfSolver extends AbstractInferenceSolver implements
@@ -72,22 +78,22 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<SemY>() {};
 		MinMaxPriorityQueue<Pair<SemY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
-				maximumSize(200).create();
+				maximumSize(50).create();
 		MinMaxPriorityQueue<Pair<SemY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
-				maximumSize(200).create();
+				maximumSize(50).create();
 		MinMaxPriorityQueue<Pair<SemY, Double>> shortBeam1 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
-				maximumSize(50).create();
+				maximumSize(10).create();
 		MinMaxPriorityQueue<Pair<SemY, Double>> shortBeam2 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
-				maximumSize(50).create();
-		System.out.println("Enumerating spans");
+				maximumSize(10).create();
+//		System.out.println(new Date()+" : Enumerating spans");
 		for(SemY y : enumerateSpans(blob)) {
 			beam1.add(new Pair<SemY, Double>(y, 0.0+
 					wv.dotProduct(featGen.getSpanFeatureVector(blob, y))));
 		}
-		System.out.println("Partitioning");
+//		System.out.println(new Date()+" : Partitioning");
 		for(Pair<SemY, Double> pair : beam1) {
 			shortBeam1.add(pair);
 			for(IntPair span : pair.getFirst().spans) {
@@ -96,13 +102,8 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 						for(String label : Arrays.asList("B-PART", "I-PART")) {
 							SemY y = new SemY(p.getFirst());
 							y.partitions.put(i, label);
-//							System.out.println("Wv len : "+wv.getLength());
-//							System.out.println("FeatGen : "+featGen.hashCode());
-//							System.out.println("Short Beam "+shortBeam2.size());
-//							System.out.println("Y : "+y.hashCode());
-//							System.out.println("Pair : "+p);
 							shortBeam2.add(new Pair<SemY, Double>(y, p.getSecond() + 
-									wv.dotProduct(featGen.getPartitionFeatureVector(blob, i))));
+									wv.dotProduct(featGen.getPartitionFeatureVector(blob, y, i))));
 						}
 					}
 					shortBeam1.clear();
@@ -112,14 +113,15 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 			}
 			beam2.addAll(shortBeam1);
 		}
-		System.out.println("Parsing");
 		beam1.clear();
+//		System.out.println(new Date()+" : Parsing");
 		for(Pair<SemY, Double> pair : beam2) {
 			Pair<SemY, Double> parse = getBottomUpBestParse(blob, pair.getFirst(), wv);
 			beam1.add(new Pair<SemY, Double>(parse.getFirst(), 
 					pair.getSecond() + parse.getSecond()));
 		}
 		pred = beam1.element().getFirst();
+//		System.out.println(new Date()+" : Inference done");
 		return pred;
 	}
 	
@@ -128,10 +130,12 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		Double totScore = 0.0;
 		for(IntPair ip : y.spans) {
 			List<IntPair> partitions = extractPartitions(y, ip);
+			if(partitions.size() < 5) continue;
 			int n = partitions.size();
+//			System.out.println("Partition size : "+n+" for "+ip);
 			Expr dpMat[][] = new Expr[n+1][n+1];
-			for(int i=0; i<n; ++i) {
-				for(int j=i+1; j<=n; ++j) {
+			for(int j=1; j<=n; ++j) {
+				for(int i=j-1; i>=0; --i) {
 					if(i == 0 && j == n) {
 						labels = Arrays.asList("EQ");
 					} else {
@@ -140,14 +144,18 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 					double bestScore = -Double.MAX_VALUE;
 					List<IntPair> bestDivision = null;
 					String bestLabel = null;
-					double score = 0.0;
+					double score;
 					for(String label : labels) {
 						for(List<IntPair> division : enumerateDivisions(i, j)) {
+							if(label.equals("EXPR") && division.size() > 0) continue;
+							if(!label.equals("EXPR") && division.size() == 0) continue; 
+							if(label.equals("EQ") && division.size() != 2) continue; 
 							score = 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
 									x, partitions.get(i).getFirst(), partitions.get(j-1).getSecond(), 
 									extractTokenDivisionFromPartitionDivision(partitions, division), 
 									label));
 							for(IntPair span : division) {
+//								System.out.println("Trying to access "+span);
 								score += dpMat[span.getFirst()][span.getSecond()].score;
 							}
 							if(score > bestScore) {
@@ -157,9 +165,11 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 							}
 						}
 					}
+//					System.out.println("Initialized : "+i+" "+j);
 					dpMat[i][j] = new Expr();
 					dpMat[i][j].score = bestScore;
 					dpMat[i][j].label = bestLabel;
+					dpMat[i][j].span = new IntPair(i, j);
 					dpMat[i][j].divisions = bestDivision;
 				}
 			}
@@ -189,6 +199,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 
 	
 	public static boolean isCandidateEqualChunk(SemX x, int i, int j) {
+		if(j-i<5) return false;
 		boolean mathyToken = false, quantityPresent = false, 
 				sameSentence = false;
 		if(x.ta.getSentenceFromToken(i).getSentenceId() == 
@@ -227,7 +238,6 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				SemY y = new SemY();
 				for(IntPair ip : division) {
 					y.spans.add(ip);
-					y.nodes.add(new Pair<String, IntPair>("EQ", ip));
 				}
 				yList.add(y);
 			}
@@ -240,17 +250,17 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		List<List<IntPair>> divisions = new ArrayList<>();
 		divisions.add(new ArrayList<IntPair>());
 		for(int i=start; i<end; ++i) {
-			for(int j=i+1; j<end; ++j) {
+			for(int j=i+1; j<=end; ++j) {
 				if(i==start && j==end) continue;
 				List<IntPair> ipList = new ArrayList<>();
 				ipList.add(new IntPair(i,j));
 				divisions.add(ipList);
 			}
 		}
-		for(int i=start; i<end-3; ++i) {
-			for(int j=i+1; j<end-3; ++j) {
+		for(int i=start; i<end-2; ++i) {
+			for(int j=i+1; j<end-1; ++j) {
 				for(int k=j+2; k<end; ++k) {
-					for(int l=k+1; l<end; ++l) {
+					for(int l=k+1; l<=end; ++l) {
 						List<IntPair> ipList = new ArrayList<>();
 						ipList.add(new IntPair(i, j));
 						ipList.add(new IntPair(k, l));
@@ -271,6 +281,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				lastLoc = i;
 			}
 		}
+		partitions.add(new IntPair(lastLoc, span.getSecond()));
 		return partitions;
 	}
 	
