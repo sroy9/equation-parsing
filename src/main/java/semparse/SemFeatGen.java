@@ -120,22 +120,49 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public static List<String> expressionFeatures(SemX x, int i, int j,
+	public static List<String> expressionFeatures(SemX x, int start, int end,
 			List<IntPair> division, String label) {
 		List<String> features = new ArrayList<>();
+		List<String> terms = new ArrayList<>();
+		int loc = 0;
+		for(int i=start; i<end; ++i) {
+			if(division.get(loc).getFirst() == i) {
+				terms.add("EXPR");
+				i = division.get(loc).getSecond()-1;
+				loc++;
+			} else if(NumberUtils.isNumber(x.ta.getToken(i))) {
+				terms.add("NUMBER");
+			} else {
+				terms.add(x.ta.getToken(i).toLowerCase());
+			}
+		}
+		for(int i=0; i<terms.size(); ++i) {
+			features.add(label+"_Unigram_"+terms.get(i));
+		}
+		for(int i=0; i<terms.size()-1; ++i) {
+			features.add(label+"_Bigram_"+terms.get(i)+"_"+terms.get(i+1));
+		}
 		return features;
 	}
 
 	public IFeatureVector getPartitionFeatureVector(
 			SemX x, int i, String prevLabel, String label) {
 		List<String> features = partitionFeatures(x, i, prevLabel, label);
-		
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
 	public static List<String> partitionFeatures(
 			SemX x, int i, String prevLabel, String label) {
 		List<String> features = new ArrayList<>();
+		List<String> tokens = FeatGen.getLemmatizedUnigrams(x.lemmas, 0, x.ta.size()-1);
+		features.add(label+"_PrevLabel_"+prevLabel);
+		features.add(label+"_Unigram_"+tokens.get(i));
+		if(i+1<x.ta.size()) {
+			features.add(label+"_StartBigram_"+tokens.get(i)+"_"+tokens.get(i+1));
+		}
+		if(i>0) {
+			features.add(label+"_EndBigram_"+tokens.get(i-1)+"_"+tokens.get(i));
+		}
 		return features;
 	}
 }

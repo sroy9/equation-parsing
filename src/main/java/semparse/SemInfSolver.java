@@ -96,7 +96,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		for(Pair<SemY, Double> pair : beam1) {
 			SemY y = pair.getFirst();
 			for(IntPair span : pair.getFirst().spans) {
-				List<Expr> partitions = getBestPartition(blob, span, wv);
+				List<Expr> partitions = getLocallyBestPartition(blob, span, wv);
 				for(Expr partition : partitions) {
 					y.partitions.put(partition.span.getFirst(), "B-PART");
 					for(int i=partition.span.getFirst()+1; i<partition.span.getSecond(); ++i) {
@@ -113,7 +113,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		return pred;
 	}
 	
-	public List<Expr> getBestPartition(
+	public List<Expr> getLocallyBestPartition(
 			SemX x, IntPair span, WeightVector wv) {
 		List<Expr> exprList = new ArrayList<Expr>();
 		List<String> labels = Arrays.asList("B-PART", "I-PART");
@@ -166,8 +166,10 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 						if(!label.equals("EXPR") && division.size() == 0) continue; 
 						if(label.equals("EQ") && division.size() != 2) continue; 
 						score = 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
-								x, partitions.get(i).span.getFirst(), partitions.get(j-1).span.getSecond(), 
-								InfHelper.extractTokenDivisionFromPartitionDivision(partitions, division), 
+								x, partitions.get(i).span.getFirst(), 
+								partitions.get(j-1).span.getSecond(), 
+								InfHelper.extractTokenDivisionFromPartitionDivision(
+										partitions, division), 
 								label));
 						for(IntPair ip : division) {
 							score += dpMat[ip.getFirst()][ip.getSecond()].score;
