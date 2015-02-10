@@ -49,9 +49,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = new ArrayList<>();
 		features.addAll(spanFeatures(x, y));
 		for(Integer i : y.partitions.keySet()) {
-			String prevLabel = null;
-			if(y.partitions.keySet().contains(i-1)) prevLabel = y.partitions.get(i-1);
-			features.addAll(partitionFeatures(x, i, prevLabel, y.partitions.get(i)));
+			features.addAll(partitionFeatures(x, y, i));
 		}
 		for(Pair<String, IntPair> pair : y.nodes) {
 			List<Pair<String, IntPair>> pattern = 
@@ -126,7 +124,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		List<String> terms = new ArrayList<>();
 		int loc = 0;
 		for(int i=start; i<end; ++i) {
-			if(division.get(loc).getFirst() == i) {
+			if(loc < division.size() && division.get(loc).getFirst() == i) {
 				terms.add("EXPR");
 				i = division.get(loc).getSecond()-1;
 				loc++;
@@ -146,15 +144,18 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 	}
 
 	public IFeatureVector getPartitionFeatureVector(
-			SemX x, int i, String prevLabel, String label) {
-		List<String> features = partitionFeatures(x, i, prevLabel, label);
+			SemX x, SemY y, int i) {
+		List<String> features = partitionFeatures(x, y, i);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
 	public static List<String> partitionFeatures(
-			SemX x, int i, String prevLabel, String label) {
+			SemX x, SemY y, int i) {
 		List<String> features = new ArrayList<>();
 		List<String> tokens = FeatGen.getLemmatizedUnigrams(x.lemmas, 0, x.ta.size()-1);
+		String label = y.partitions.get(i);
+		String prevLabel = null;
+		if(y.partitions.containsKey(i-1)) prevLabel = y.partitions.get(i-1); 
 		features.add(label+"_PrevLabel_"+prevLabel);
 		features.add(label+"_Unigram_"+tokens.get(i));
 		if(i+1<x.ta.size()) {

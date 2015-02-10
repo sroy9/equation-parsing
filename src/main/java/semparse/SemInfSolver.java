@@ -38,9 +38,21 @@ class Expr {
 	public IntPair span;
 	public List<IntPair> divisions;
 	
+	public Expr() {
+		divisions = new ArrayList<IntPair>();
+	}
+	
 	@Override
 	public String toString() {
 		return label +" "+span+" "+divisions;
+	}
+	
+	public Expr(Expr other) {
+		this.score = other.score;
+		this.label = other.label;
+		this.span = other.span;
+		this.divisions = new ArrayList<IntPair>();
+		this.divisions.addAll(other.divisions);
 	}
 }
 
@@ -77,80 +89,73 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<SemY>() {};
 		MinMaxPriorityQueue<Pair<SemY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
-				maximumSize(50).create();
+				maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<SemY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
-				maximumSize(50).create();
+				maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<SemY, Double>> shortBeam1 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
 				maximumSize(10).create();
 		MinMaxPriorityQueue<Pair<SemY, Double>> shortBeam2 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
 				maximumSize(10).create();
-//		System.out.println(new Date()+" : Enumerating spans");
+		
+
+		
 		for(SemY y : InfHelper.enumerateSpans(blob)) {
 			beam1.add(new Pair<SemY, Double>(y, 0.0+
 					wv.dotProduct(featGen.getSpanFeatureVector(blob, y))));
 		}
-//		System.out.println(new Date()+" : Partitioning");
+		
+		
 		for(Pair<SemY, Double> pair : beam1) {
+			shortBeam1.add(pair);
+			for(IntPair span : pair.getFirst().spans) {
+				for(int i=span.getFirst(); i<span.getSecond(); ++i) {
+					for(Pair<SemY, Double> p : shortBeam1) {
+						for(String label : Arrays.asList("B-PART", "I-PART")) {
+							SemY y = new SemY(p.getFirst());
+							y.partitions.put(i, label);
+							shortBeam2.add(new Pair<SemY, Double>(y, p.getSecond() + 
+									wv.dotProduct(featGen.getPartitionFeatureVector(blob, y, i))));
+						}
+					}
+					shortBeam1.clear();
+					shortBeam1.addAll(shortBeam2);
+					shortBeam2.clear();
+				}
+			}
+			beam2.addAll(shortBeam1);
+		}
+		beam1.clear();
+		
+		
+		for(Pair<SemY, Double> pair : beam2) {
+			double score = pair.getSecond();
 			SemY y = pair.getFirst();
 			for(IntPair span : pair.getFirst().spans) {
-				List<Expr> partitions = getLocallyBestPartition(blob, span, wv);
-				for(Expr partition : partitions) {
-					y.partitions.put(partition.span.getFirst(), "B-PART");
-					for(int i=partition.span.getFirst()+1; i<partition.span.getSecond(); ++i) {
-						y.partitions.put(i, "I-PART");
-					}
-				}
-				Pair<SemY, Double> parse = getBottomUpBestParse(blob, y, partitions, wv);
-				beam2.add(new Pair<SemY, Double>(parse.getFirst(), 
-						pair.getSecond() + parse.getSecond()));
+				List<IntPair> partitions = InfHelper.extractPartitions(y, span);
+				if(partitions.size() < 3) continue;
+				score += getBottomUpBestParse(blob, y, partitions, wv);
 			}
+			beam1.add(new Pair<SemY, Double>(y, score));
 		}
-		pred = beam2.element().getFirst();
+		
+		
+//		System.out.println(new Date()+" : Number of parses : "+beam2.size());
+		pred = beam1.element().getFirst();
 //		System.out.println(new Date()+" : Inference done");
 		return pred;
 	}
 	
-	public List<Expr> getLocallyBestPartition(
-			SemX x, IntPair span, WeightVector wv) {
-		List<Expr> exprList = new ArrayList<Expr>();
-		List<String> labels = Arrays.asList("B-PART", "I-PART");
-		for(int i=span.getFirst(); i<span.getSecond(); ++i) {
-			String bestLabel = null;
-			double bestScore = - Double.MAX_VALUE;
-			String prevLabel = null;
-			if(i > span.getFirst()) {
-				prevLabel = exprList.get(i-span.getFirst()-1).label;
-			}
-			for(String label : labels) {
-				double score = wv.dotProduct(featGen.getPartitionFeatureVector(
-						x, i, prevLabel, label));
-				if(score > bestScore) {
-					bestScore = score;
-					bestLabel = label;
-				}
-			}
-			Expr expr = new Expr();
-			expr.label = bestLabel;
-			expr.score = bestScore;
-			expr.span = new IntPair(i, i+1);
-			exprList.add(expr);
-		}
-		return InfHelper.extractPartitions(exprList);
-	}
-	
-	public Pair<SemY, Double> getBottomUpBestParse(
-			SemX x, SemY y, List<Expr> partitions, WeightVector wv) {
+	public Double getBottomUpBestParse(
+			SemX x, SemY y, List<IntPair> partitions, WeightVector wv) {
 		List<String> labels = null;
 		int n = partitions.size();
+//		System.out.println("Partitions size : "+n);
 		Expr dpMat[][] = new Expr[n+1][n+1];
-		for(int i=0; i<n; ++i) {
-			dpMat[i][i+1] = partitions.get(i);
-		}
-		for(int j=2; j<=n; ++j) {
-			for(int i=j-2; i>=0; --i) {
+		for(int j=1; j<=n; ++j) {
+			for(int i=j-1; i>=0; --i) {
 				if(i == 0 && j == n) {
 					labels = Arrays.asList("EQ");
 				} else {
@@ -166,8 +171,8 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 						if(!label.equals("EXPR") && division.size() == 0) continue; 
 						if(label.equals("EQ") && division.size() != 2) continue; 
 						score = 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
-								x, partitions.get(i).span.getFirst(), 
-								partitions.get(j-1).span.getSecond(), 
+								x, partitions.get(i).getFirst(), 
+								partitions.get(j-1).getSecond(), 
 								InfHelper.extractTokenDivisionFromPartitionDivision(
 										partitions, division), 
 								label));
@@ -186,28 +191,26 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				dpMat[i][j].label = bestLabel;
 				dpMat[i][j].span = new IntPair(i, j);
 				dpMat[i][j].divisions = bestDivision;
+//				System.out.println("DpMat "+i+" "+j+" "+dpMat[i][j]);
 			}
 		}
+//		System.out.println("Queue");
 		List<Expr> queue = new ArrayList<Expr>();
 		queue.add(dpMat[0][n]);
-		Expr expr = queue.get(0);
-		queue.remove(0);
-		for(IntPair division : expr.divisions) {
-			queue.add(dpMat[division.getFirst()][division.getSecond()]);
-		}
 		while(queue.size() > 0) {
-			expr = queue.get(0);
+			Expr expr = queue.get(0);
+//			System.out.println(expr);
 			int i = expr.span.getFirst();
 			int j = expr.span.getSecond();
 			y.nodes.add(new Pair<String, IntPair>(expr.label, 
-					new IntPair(partitions.get(i).span.getFirst(), 
-							partitions.get(j-1).span.getSecond())));
+					new IntPair(partitions.get(i).getFirst(), 
+							partitions.get(j-1).getSecond())));
 			queue.remove(0);
 			for(IntPair division : expr.divisions) {
 				queue.add(dpMat[division.getFirst()][division.getSecond()]);
 			}
 		}
-		return new Pair<SemY, Double>(y, dpMat[0][n].score);
+		return dpMat[0][n].score;
 	}	
 	
 }

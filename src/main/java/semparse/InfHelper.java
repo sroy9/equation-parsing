@@ -117,19 +117,20 @@ public class InfHelper {
 		int start = tokenLabels.get(lastLoc).span.getFirst();
 		int end = tokenLabels.get(tokenLabels.size()-1).span.getSecond();
 		expr.span = new IntPair(start, end);
+		expr.divisions = new ArrayList<IntPair>();
 		partitions.add(expr);
 		return partitions;
 	}
 	
 	public static List<IntPair> extractTokenDivisionFromPartitionDivision(
-			List<Expr> partitions, List<IntPair> partDivision) {
+			List<IntPair> partitions, List<IntPair> partDivision) {
 		List<IntPair> tokenDivision = new ArrayList<>();
 		for(IntPair div : partDivision) {
 			int i = div.getFirst();
 			int j = div.getSecond();
 			tokenDivision.add(new IntPair(
-					partitions.get(i).span.getFirst(), 
-					partitions.get(j-1).span.getSecond()));
+					partitions.get(i).getFirst(), 
+					partitions.get(j-1).getSecond()));
 		}
 		return tokenDivision;
 	}
