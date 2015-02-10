@@ -84,6 +84,7 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 				features.add("SpanMid_Unigram_"+x.ta.getToken(i));
 			}
 		}
+		if(y.spans.size() == 0) features.add("No_Spans");
 		return features;
 	}
 	
@@ -125,6 +126,8 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 
 	public IFeatureVector getPartitionFeatureVector(SemX x, SemY y, int i) {
 		List<String> features = partitionFeatures(x, y, i);
+		String prefix = y.partitions.get(i);
+		
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
