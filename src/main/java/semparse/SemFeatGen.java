@@ -49,7 +49,9 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = new ArrayList<>();
 		features.addAll(spanFeatures(x, y));
 		for(Integer i : y.partitions.keySet()) {
-			features.addAll(partitionFeatures(x, y, i));
+			String prevLabel = null;
+			if(y.partitions.keySet().contains(i-1)) prevLabel = y.partitions.get(i-1);
+			features.addAll(partitionFeatures(x, i, prevLabel, y.partitions.get(i)));
 		}
 		for(Pair<String, IntPair> pair : y.nodes) {
 			List<Pair<String, IntPair>> pattern = 
@@ -124,14 +126,15 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 
-	public IFeatureVector getPartitionFeatureVector(SemX x, SemY y, int i) {
-		List<String> features = partitionFeatures(x, y, i);
-		String prefix = y.partitions.get(i);
+	public IFeatureVector getPartitionFeatureVector(
+			SemX x, int i, String prevLabel, String label) {
+		List<String> features = partitionFeatures(x, i, prevLabel, label);
 		
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public static List<String> partitionFeatures(SemX x, SemY y, int i) {
+	public static List<String> partitionFeatures(
+			SemX x, int i, String prevLabel, String label) {
 		List<String> features = new ArrayList<>();
 		return features;
 	}
