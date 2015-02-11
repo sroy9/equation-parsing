@@ -61,9 +61,11 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private SemFeatGen featGen;
+	public Lexicon lexicon;
 
-	public SemInfSolver(SemFeatGen featGen) {
+	public SemInfSolver(SemFeatGen featGen, Lexicon lex) {
 		this.featGen = featGen;
+		this.lexicon = lex;
 	}
 	
 	@Override
@@ -93,41 +95,32 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		MinMaxPriorityQueue<Pair<SemY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
 				maximumSize(200).create();
-		MinMaxPriorityQueue<Pair<SemY, Double>> shortBeam1 = 
-				MinMaxPriorityQueue.orderedBy(semPairComparator).
-				maximumSize(10).create();
-		MinMaxPriorityQueue<Pair<SemY, Double>> shortBeam2 = 
-				MinMaxPriorityQueue.orderedBy(semPairComparator).
-				maximumSize(10).create();
-		
-
 		
 		for(SemY y : InfHelper.enumerateSpans(blob)) {
 			beam1.add(new Pair<SemY, Double>(y, 0.0+
 					wv.dotProduct(featGen.getSpanFeatureVector(blob, y))));
 		}
 		
-		
-		for(Pair<SemY, Double> pair : beam1) {
-			shortBeam1.add(pair);
-			for(IntPair span : pair.getFirst().spans) {
-				for(int i=span.getFirst(); i<span.getSecond(); ++i) {
-					for(Pair<SemY, Double> p : shortBeam1) {
-						for(String label : Arrays.asList("B-PART", "I-PART")) {
-							SemY y = new SemY(p.getFirst());
-							y.partitions.put(i, label);
-							shortBeam2.add(new Pair<SemY, Double>(y, p.getSecond() + 
-									wv.dotProduct(featGen.getPartitionFeatureVector(blob, y, i))));
-						}
-					}
-					shortBeam1.clear();
-					shortBeam1.addAll(shortBeam2);
-					shortBeam2.clear();
-				}
-			}
-			beam2.addAll(shortBeam1);
-		}
-		beam1.clear();
+//		for(Pair<SemY, Double> pair : beam1) {
+//			shortBeam1.add(pair);
+//			for(IntPair span : pair.getFirst().spans) {
+//				for(int i=span.getFirst(); i<span.getSecond(); ++i) {
+//					for(Pair<SemY, Double> p : shortBeam1) {
+//						for(String label : Arrays.asList("B-PART", "I-PART")) {
+//							SemY y = new SemY(p.getFirst());
+//							y.partitions.put(i, label);
+//							shortBeam2.add(new Pair<SemY, Double>(y, p.getSecond() + 
+//									wv.dotProduct(featGen.getPartitionFeatureVector(blob, y, i))));
+//						}
+//					}
+//					shortBeam1.clear();
+//					shortBeam1.addAll(shortBeam2);
+//					shortBeam2.clear();
+//				}
+//			}
+//			beam2.addAll(shortBeam1);
+//		}
+//		beam1.clear();
 		
 		
 		for(Pair<SemY, Double> pair : beam2) {

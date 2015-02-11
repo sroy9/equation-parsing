@@ -22,12 +22,10 @@ import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 public class Lexicon implements Serializable {
 
 	private static final long serialVersionUID = 6497021707338812080L;
-	Map<String, List<List<String>>> lex;
-	Map<String, List<List<String>>> ccgGroups;
+	Map<String, List<Pair<List<String>, Integer>>> ccgGroups;
 	
 	public Lexicon() {
-		lex = new HashMap<String, List<List<String>>>();
-		ccgGroups = new HashMap<String, List<List<String>>>();
+		ccgGroups = new HashMap<String, List<Pair<List<String>, Integer>>>();
 	}
 	
 	@Override
@@ -39,19 +37,11 @@ public class Lexicon implements Serializable {
 		return str;
 	}
 	
-	public List<List<String>> get(String key) {
+	public List<Pair<List<String>, Integer>> get(String key) {
 		if(ccgGroups.containsKey(key))
 			return ccgGroups.get(key);
 		else 
 			return new ArrayList<>();
-	}
-	
-	public List<List<String>> getAll() {
-		List<List<String>> allPats = new ArrayList<>();
-		for(String key : ccgGroups.keySet()) {
-			allPats.addAll(ccgGroups.get(key));
-		}
-		return allPats;
 	}
 	
 	public static List<IntPair> getDivisions(
@@ -101,27 +91,22 @@ public class Lexicon implements Serializable {
  			SemX x = (SemX) prob.instanceList.get(i);
  			SemY y = (SemY) prob.goldStructureList.get(i);
  			for(Pair<String, IntPair> pair : y.nodes) {
- 				if(!lexicon.lex.containsKey(pair.getFirst())) {
- 					lexicon.lex.put(pair.getFirst(), new ArrayList<List<String>>());
- 				}
- 				System.out.println("Problem index : "+x.problemIndex);
+// 				System.out.println("Problem index : "+x.problemIndex);
  				List<Pair<String, IntPair>> pattern = 
  						Lexicon.getNodeString(x, y.nodes, pair.getSecond());
- 				System.out.println("NodeString : "+pattern);
+// 				System.out.println("NodeString : "+pattern);
  				List<Pair<String, IntPair>> ccgPattern = 
  						getCCGPattern(pattern, pair.getFirst());
- 				System.out.println("CCG Pattern : "+ccgPattern+"\n");
+// 				System.out.println("CCG Pattern : "+ccgPattern+"\n");
  				List<String> ccgOnlyStrings = new ArrayList<>();
  				for(Pair<String, IntPair> pat : ccgPattern) {
  					ccgOnlyStrings.add(pat.getFirst());
  				}
- 				if(!contains(lexicon.lex.get(pair.getFirst()), ccgOnlyStrings)) {
- 					lexicon.lex.get(pair.getFirst()).add(ccgOnlyStrings);
- 				}
  				
  				for(Pair<String, IntPair> pat : ccgPattern) {
  					if(!lexicon.ccgGroups.containsKey(pat.getFirst())) {
- 						lexicon.ccgGroups.put(pat.getFirst(), new ArrayList<List<String>>());
+ 						lexicon.ccgGroups.put(pat.getFirst(), 
+ 								new ArrayList<Pair<List<String>, Integer>>());
  					}
  					if(!pat.getFirst().equals("EXPR")) {
  						List<String> terms = new ArrayList<>();
@@ -132,8 +117,13 @@ public class Lexicon implements Serializable {
  								terms.add(x.ta.getToken(j).toLowerCase());
  							}
  						}
- 						if(!contains(lexicon.ccgGroups.get(pat.getFirst()), terms)) {
- 							lexicon.ccgGroups.get(pat.getFirst()).add(terms);
+ 						int index = findIndex(lexicon.ccgGroups.get(pat.getFirst()), terms);
+ 						if(index == -1) {
+ 							lexicon.ccgGroups.get(pat.getFirst()).add(
+ 									new Pair<List<String>, Integer>(terms, 1));
+ 						} else {
+ 							int num = lexicon.ccgGroups.get(pat.getFirst()).get(index).getSecond();
+ 							lexicon.ccgGroups.get(pat.getFirst()).get(index).setSecond(num+1);
  						}
  					}
  				}
@@ -163,7 +153,7 @@ public class Lexicon implements Serializable {
 				ccgPattern.add(pattern.get(i));
 			}
 		}
-		System.out.println("Intermediate : "+ccgPattern);
+//		System.out.println("Intermediate : "+ccgPattern);
 		for(int i=0; i<ccgPattern.size(); i++) {
 			if(ccgPattern.get(i).getFirst().equals("EXPR")) continue;
 			int prev = 0, next = 0;
@@ -183,14 +173,54 @@ public class Lexicon implements Serializable {
 		return ccgPattern;
 	}
 	
-	private static boolean contains(List<List<String>> list,
+	private static int findIndex(List<Pair<List<String>, Integer>> list, 
 			List<String> pattern) {
-		for(List<String> l : list) {
-			if((""+Arrays.asList(l)).equals(""+Arrays.asList(pattern))) {
-				return true;
+		for(int i=0; i<list.size(); ++i) {
+			Pair<List<String>, Integer> l = list.get(i);
+			if((""+Arrays.asList(l.getFirst())).equals(""+Arrays.asList(pattern))) {
+				return i;
 			}
 		}
-		return false;
+		return -1;
+	}
+	
+	public static SemY extractLexiconBasedPartition(SemX x, Lexicon lex, int occThreshold) {
+		SemY y = new SemY();
+		List<String> tokens = new ArrayList<String>();
+		for(String token : x.ta.getTokens()) {
+			if(NumberUtils.isNumber(token)) {
+				tokens.add("NUMBER");
+			} else {
+				tokens.add(token.toLowerCase());
+			}
+		}
+		List<Pair<String, IntPair>> matches = lexMatches(x, lex, occThreshold);
+		matches = maximalMatches(matches);
+		
+		return y;
+	}
+
+	private static List<Pair<String, IntPair>> maximalMatches(
+			List<Pair<String, IntPair>> matches) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private static List<Pair<String, IntPair>> lexMatches(SemX x, Lexicon lex,
+			int occThreshold) {
+		List<Pair<String, IntPair>> matches = new ArrayList<Pair<String,IntPair>>();
+		for(int i=0; i<x.ta.size(); ++i) {
+			for(int j=i+1; j<x.ta.size(); ++j) {
+				boolean found = false;
+				
+				
+				
+				
+				
+				
+			}
+		}
+		return matches;
 	}
 
 	public static void main(String args[]) throws Exception {
