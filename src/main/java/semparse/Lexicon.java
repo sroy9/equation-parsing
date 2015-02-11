@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.print.attribute.standard.NumberUp;
+
+import org.apache.commons.lang.math.NumberUtils;
+
 import parser.DocReader;
 import structure.SimulProb;
 import utils.Params;
@@ -122,7 +126,11 @@ public class Lexicon implements Serializable {
  					if(!pat.getFirst().equals("EXPR")) {
  						List<String> terms = new ArrayList<>();
  						for(int j=pat.getSecond().getFirst(); j<pat.getSecond().getSecond(); ++j) {
- 							terms.add(x.ta.getToken(j));
+ 							if(NumberUtils.isNumber(x.ta.getToken(j))) {
+ 								terms.add("NUMBER");
+ 							} else {
+ 								terms.add(x.ta.getToken(j).toLowerCase());
+ 							}
  						}
  						if(!contains(lexicon.ccgGroups.get(pat.getFirst()), terms)) {
  							lexicon.ccgGroups.get(pat.getFirst()).add(terms);
