@@ -51,18 +51,6 @@ public class SemFeatGen extends AbstractFeatureGenerator implements
 		for(Integer i : y.partitions.keySet()) {
 			features.addAll(partitionFeatures(x, y, i));
 		}
-		for(Pair<String, IntPair> pair : y.nodes) {
-			List<Pair<String, IntPair>> pattern = 
-					Lexicon.getNodeString(x, y.nodes, pair.getSecond());
-			List<IntPair> divs = new ArrayList<>();
-			if(pattern.size() > 1) { 
-				for(Pair<String, IntPair> p : pattern) {
-					if(p.getFirst().equals("EXPR")) divs.add(p.getSecond());
-				}
-			}
-			features.addAll(expressionFeatures(x, pair.getSecond().getFirst(), 
-					pair.getSecond().getSecond(), divs, pair.getFirst()));
-		}
 		return features;
 	}
 

@@ -61,11 +61,9 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private SemFeatGen featGen;
-	public Lexicon lexicon;
 
-	public SemInfSolver(SemFeatGen featGen, Lexicon lex) {
+	public SemInfSolver(SemFeatGen featGen) {
 		this.featGen = featGen;
-		this.lexicon = lex;
 	}
 	
 	@Override
@@ -95,49 +93,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		MinMaxPriorityQueue<Pair<SemY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(semPairComparator).
 				maximumSize(200).create();
-		
-		for(SemY y : InfHelper.enumerateSpans(blob)) {
-			beam1.add(new Pair<SemY, Double>(y, 0.0+
-					wv.dotProduct(featGen.getSpanFeatureVector(blob, y))));
-		}
-		
-//		for(Pair<SemY, Double> pair : beam1) {
-//			shortBeam1.add(pair);
-//			for(IntPair span : pair.getFirst().spans) {
-//				for(int i=span.getFirst(); i<span.getSecond(); ++i) {
-//					for(Pair<SemY, Double> p : shortBeam1) {
-//						for(String label : Arrays.asList("B-PART", "I-PART")) {
-//							SemY y = new SemY(p.getFirst());
-//							y.partitions.put(i, label);
-//							shortBeam2.add(new Pair<SemY, Double>(y, p.getSecond() + 
-//									wv.dotProduct(featGen.getPartitionFeatureVector(blob, y, i))));
-//						}
-//					}
-//					shortBeam1.clear();
-//					shortBeam1.addAll(shortBeam2);
-//					shortBeam2.clear();
-//				}
-//			}
-//			beam2.addAll(shortBeam1);
-//		}
-//		beam1.clear();
-		
-		
-		for(Pair<SemY, Double> pair : beam2) {
-			double score = pair.getSecond();
-			SemY y = pair.getFirst();
-			for(IntPair span : pair.getFirst().spans) {
-				List<IntPair> partitions = InfHelper.extractPartitions(y, span);
-				if(partitions.size() < 3) continue;
-				score += getBottomUpBestParse(blob, y, partitions, wv);
-			}
-			beam1.add(new Pair<SemY, Double>(y, score));
-		}
-		
-		
-//		System.out.println(new Date()+" : Number of parses : "+beam2.size());
 		pred = beam1.element().getFirst();
-//		System.out.println(new Date()+" : Inference done");
 		return pred;
 	}
 	
@@ -159,25 +115,25 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				String bestLabel = null;
 				double score;
 				for(String label : labels) {
-					for(List<IntPair> division : InfHelper.enumerateDivisions(i, j)) {
-						if(label.equals("EXPR") && division.size() > 0) continue;
-						if(!label.equals("EXPR") && division.size() == 0) continue; 
-						if(label.equals("EQ") && division.size() != 2) continue; 
-						score = 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
-								x, partitions.get(i).getFirst(), 
-								partitions.get(j-1).getSecond(), 
-								InfHelper.extractTokenDivisionFromPartitionDivision(
-										partitions, division), 
-								label));
-						for(IntPair ip : division) {
-							score += dpMat[ip.getFirst()][ip.getSecond()].score;
-						}
-						if(score > bestScore) {
-							bestScore = score;
-							bestLabel = label;
-							bestDivision = division;
-						}
-					}
+//					for(List<IntPair> division : InfHelper.enumerateDivisions(i, j)) {
+//						if(label.equals("EXPR") && division.size() > 0) continue;
+//						if(!label.equals("EXPR") && division.size() == 0) continue; 
+//						if(label.equals("EQ") && division.size() != 2) continue; 
+//						score = 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
+//								x, partitions.get(i).getFirst(), 
+//								partitions.get(j-1).getSecond(), 
+//								InfHelper.extractTokenDivisionFromPartitionDivision(
+//										partitions, division), 
+//								label));
+//						for(IntPair ip : division) {
+//							score += dpMat[ip.getFirst()][ip.getSecond()].score;
+//						}
+//						if(score > bestScore) {
+//							bestScore = score;
+//							bestLabel = label;
+//							bestDivision = division;
+//						}
+//					}
 				}
 				dpMat[i][j] = new Expr();
 				dpMat[i][j].score = bestScore;

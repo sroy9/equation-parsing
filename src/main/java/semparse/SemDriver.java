@@ -103,20 +103,20 @@ public class SemDriver {
 	
 	public static void trainModel(String modelPath, SLProblem train)
 			throws Exception {
-		SLModel model = new SLModel();
-		Lexiconer lm = new Lexiconer();
-		lm.setAllowNewFeatures(true);
-		model.lm = lm;
-		SemFeatGen fg = new SemFeatGen(lm);
-		model.featureGenerator = fg;
-		model.infSolver = new SemInfSolver(fg);
-//		return;
-		SLParameters para = new SLParameters();
-		para.loadConfigFile(Params.spConfigFile);
-		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
-		model.wv = learner.train(train);
-		lm.setAllowNewFeatures(false);
-		model.saveModel(modelPath);
+//		SLModel model = new SLModel();
+//		Lexiconer lm = new Lexiconer();
+//		lm.setAllowNewFeatures(true);
+//		model.lm = lm;
+//		SemFeatGen fg = new SemFeatGen(lm);
+//		model.featureGenerator = fg;
+//		model.infSolver = new SemInfSolver(fg);
+////		return;
+//		SLParameters para = new SLParameters();
+//		para.loadConfigFile(Params.spConfigFile);
+//		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
+//		model.wv = learner.train(train);
+//		lm.setAllowNewFeatures(false);
+//		model.saveModel(modelPath);
 	}
 	
 	public static void main(String args[]) throws Exception {
