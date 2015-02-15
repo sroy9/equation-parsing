@@ -16,28 +16,30 @@ import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 
 public class EqParse {
-	
+
+	public List<Pair<Integer, String>> triggers;
 	public List<Pair<String, IntPair>> nodes;
-	public Map<Integer, List<Integer>> edges;
 	
 	public EqParse() {
+		triggers = new ArrayList<Pair<Integer,String>>();
 		nodes = new ArrayList<>();
-		edges = new HashMap<>();
 	}
 	
 	public EqParse(EqParse other) {
+		triggers = other.triggers;
 		nodes = new ArrayList<>();
-		edges = new HashMap<>();
 		for(Pair<String, IntPair> pair : other.nodes) {
 			nodes.add(pair);
 		}
-		createEdges();
 	}
 
 	public EqParse(TextAnnotation ta, String annFile) throws IOException {
 		this();
+		for(String token : ta.getTokens()) {
+			
+		}
+		
 		List<String> lines = FileUtils.readLines(new File(annFile));
-		// Nodes
 		for(String line : lines) {
 			String strArr[] = line.split("\t")[1].split(" ");
 			String label = strArr[0];
@@ -45,26 +47,8 @@ public class EqParse {
 			int end = ta.getTokenIdFromCharacterOffset(Integer.parseInt(strArr[2])-1)+1;
 			nodes.add(new Pair<String, IntPair>(label, new IntPair(start, end)));
 		}
-		// Edges
-		createEdges();
 	}
-	
-	public void createEdges() {
-		// Edges
-		edges.clear();
-		for(int i=0; i<nodes.size(); ++i) {
-			edges.put(i, new ArrayList<Integer>());
-		}
-		for(int i=0; i<nodes.size(); ++i) {
-			for(int j=0; j<nodes.size(); ++j) {
-				if(i!=j && Tools.doesContain(
-						nodes.get(i).getSecond(), nodes.get(j).getSecond())) {
-					edges.get(i).add(j);
-				}
-			}
-		}
-	}
-	
+		
 	@Override
 	public String toString() {
 		return ""+Arrays.asList(nodes);

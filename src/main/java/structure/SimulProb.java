@@ -160,9 +160,6 @@ public class SimulProb {
 	
 	public void checkSolver() throws Exception {
 		List<Double> solns = EquationSolver.solve(equations);
-//		System.out.println("Gold solutions : "+Arrays.asList(solutions));
-//		System.out.println("Predicted solutions : "+Arrays.asList(solns));
-//		if(solns == null) System.out.println("Error : No solutions : "+index);
 		for(Double d1 : solutions) {
 			boolean present = false;
 			for(Double d2 : solns) {
@@ -197,15 +194,6 @@ public class SimulProb {
 				}
 			}
 			if(candidates.size() == 1) {
-//				for(int i=0; i<quantities.size(); ++i) {
-//					if(i!=quantNo && Tools.safeEquals(Tools.getValue(quantities.get(i)), 
-//							Tools.getValue(qs))) {
-//						System.out.println(index + " : "+question);
-//						System.out.println("Quantities : "+quantities);
-//						System.out.println("Confusion : "+quantNo+" : "+qs);
-//						System.out.println();
-//					}
-//				}
 				for(Integer i : candidates) {
 					relations.add("R"+(i+1));
 				}
