@@ -78,60 +78,8 @@ public class DocReader {
 		return folds;
 	}
 	
-	public static List<String> getCompositionSentences(
-			List<SimulProb> simulProbList) {
-		List<String> sentenceList = new ArrayList<>();
-		for(SimulProb prob : simulProbList) {
-			List<Integer> tokenIdsR1 = Tools.getTokenIdsForRelation(
-					prob.ta, prob.quantities, prob.relations, "R1");
-			List<Integer> tokenIdsR2 = Tools.getTokenIdsForRelation(
-					prob.ta, prob.quantities, prob.relations, "R2");
-			if(tokenIdsR1.size() > 0 && 
-					Tools.areAllTokensInSameSentence(prob.ta, tokenIdsR1)) {
-				if(tokenIdsR2.size() == 0 || Tools.max(tokenIdsR1) < Tools.min(tokenIdsR2)
-						|| Tools.max(tokenIdsR2) < Tools.min(tokenIdsR1)) {
-					sentenceList.add(Tools.getSententialForm(
-							prob.ta, Tools.min(tokenIdsR1), Tools.max(tokenIdsR1)));
-				}
-			}
-			if(tokenIdsR2.size() > 0 && 
-					Tools.areAllTokensInSameSentence(prob.ta, tokenIdsR2)) {
-				if(tokenIdsR1.size() == 0 || Tools.max(tokenIdsR2) < Tools.min(tokenIdsR1)
-						|| Tools.max(tokenIdsR1) < Tools.min(tokenIdsR2)) {
-					sentenceList.add(Tools.getSententialForm(
-							prob.ta, Tools.min(tokenIdsR2), Tools.max(tokenIdsR2)));
-				}
-			}	
-		}
-		return sentenceList;
-	}
-	
-	public static List<String> getMathySentences(
-			List<SimulProb> simulProbList) {
-		List<String> sentenceList = new ArrayList<>();
-		for(SimulProb prob : simulProbList) {
-			for(int i=0; i<prob.ta.getNumberOfSentences(); ++i) {
-				Sentence sent = prob.ta.getSentence(i);
-				for(String lemma : FeatGen.getLemmatizedUnigrams(
-						prob.lemmas, 
-						sent.getStartSpan(), 
-						sent.getEndSpan()-1)) {
-					if(KnowledgeBase.mathWordSet.contains(lemma)) {
-						sentenceList.add(sent.getText());
-						break;
-					}
-				}
-			}
-		}
-		return sentenceList;
-	}
-	
 	public static void print(SimulProb simulProb) {
 		System.out.println(simulProb.index+" : "+simulProb.question);
-//		System.out.println("Parse : ");
-//		for(Constituent cons : simulProb.parse) {
-//			System.out.println(cons.getLabel()+" : "+cons.getSurfaceString());
-//		}
 		System.out.println("Skeleton : ");
 		for(Pair<String, IntPair> pair : simulProb.skeleton) {
 			System.out.print(pair.getFirst()+" ");
@@ -143,7 +91,8 @@ public class DocReader {
 					qs.start, qs.end)+" : "+qs + " : "+Tools.getValue(qs));
 		}
 		System.out.println("Relation : "+Arrays.asList(simulProb.relations));
-		System.out.println("EqParse : "+simulProb.eqParse);
+		System.out.println("Triggers : "+simulProb.triggers);
+		System.out.println("Nodes : "+simulProb.nodes);
 		for(Equation eq : simulProb.equations) {
 			System.out.println("Equation :\n"+eq);
 		}

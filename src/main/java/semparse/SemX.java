@@ -35,7 +35,7 @@ public class SemX implements IInstance {
 		mathyTokenIndices = new ArrayList<>();
 		for(int i=0; i<ta.size(); ++i) {
 			String token = ta.getToken(i);
-			if(KnowledgeBase.mathWordSet.contains(token)) {
+			if(KnowledgeBase.mathNodeSet.contains(token)) {
 				mathyTokenIndices.add(i);
 			}
 		}

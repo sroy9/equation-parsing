@@ -44,10 +44,6 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public IFeatureVector getNumVarFeatureVector(JointX x, boolean isOneVar) {
-		List<String> features = numVarFeatures(x, isOneVar);
-		return FeatGen.getFeatureVectorFromList(features, lm);
-	}
 	
 	public IFeatureVector getAlignmentFeatureVector(JointX x, JointY y, int slotNo) {
 		List<String> features = alignmentFeatures(x, y, slotNo);
@@ -61,7 +57,7 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 
 	public static List<String> getFeatures(JointX x, JointY y) {
 		List<String> features = new ArrayList<>();
-		features.addAll(numVarFeatures(x, y.isOneVar));
+//		features.addAll(numVarFeatures(x, y.isOneVar));
 		return features;
 	}
 	

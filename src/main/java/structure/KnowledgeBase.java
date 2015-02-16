@@ -16,8 +16,9 @@ import utils.Tools;
 public class KnowledgeBase {
 	
 	public static List<Knowledge> knowledgeList;
-	public static Map<String, List<String>> mathWordMap;
-	public static Set<String> mathWordSet;
+	public static Map<String, List<String>> mathNodeMap;
+	public static Set<String> mathNodeSet;
+	public static Set<String> mathIndicatorSet;
 	
 	static {
 		// Animal knowledge
@@ -64,16 +65,20 @@ public class KnowledgeBase {
 		knowledgeList.add(knowledge);
 		
 		// Math knowledge
-		mathWordMap = new HashMap<String, List<String>>();
-		mathWordMap.put("ADD", Arrays.asList("plus", "more", "sum", "exceed"));
-		mathWordMap.put("SUB", Arrays.asList("subtract", "minus", "less", "difference"));
-		mathWordMap.put("MUL", Arrays.asList("time", "product", "twice", "thrice"));
-		mathWordMap.put("DIV", Arrays.asList("ratio"));
-		mathWordSet = new HashSet<>();
-		mathWordSet.addAll(mathWordMap.get("ADD"));
-		mathWordSet.addAll(mathWordMap.get("SUB"));
-		mathWordSet.addAll(mathWordMap.get("MUL"));
-		mathWordSet.addAll(mathWordMap.get("DIV"));
+		mathNodeMap = new HashMap<String, List<String>>();
+		mathNodeMap.put("ADD", Arrays.asList("plus", "more", "sum", "exceed"));
+		mathNodeMap.put("SUB", Arrays.asList("subtract", "minus", "less", "difference"));
+		mathNodeMap.put("MUL", Arrays.asList("product"));
+		mathNodeMap.put("DIV", Arrays.asList("ratio"));
+		mathNodeSet = new HashSet<>();
+		mathNodeSet.addAll(mathNodeMap.get("ADD"));
+		mathNodeSet.addAll(mathNodeMap.get("SUB"));
+		mathNodeSet.addAll(mathNodeMap.get("MUL"));
+		mathNodeSet.addAll(mathNodeMap.get("DIV"));
+		mathIndicatorSet = new HashSet<>();
+		mathIndicatorSet.addAll(mathNodeSet);
+		mathIndicatorSet.addAll(Arrays.asList(
+				"times", "thrice", "triple", "twice", "double", "half"));
 	}
 	
 	public static void appendWorldKnowledge(SimulProb simulProb) throws Exception {

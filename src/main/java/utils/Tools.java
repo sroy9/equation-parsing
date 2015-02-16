@@ -171,7 +171,7 @@ public class Tools {
 						}
 					}
 					for(int k=cons.getStartSpan(); k<cons.getEndSpan(); ++k) {
-						if(KnowledgeBase.mathWordSet.contains(unigrams.get(k))) {
+						if(KnowledgeBase.mathNodeSet.contains(unigrams.get(k))) {
 							allow = false;
 							break;
 						}

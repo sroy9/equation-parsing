@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+
 import utils.Params;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
@@ -31,13 +32,14 @@ public class SimulProb {
 	public List<Double> solutions;
 	public List<QuantSpan> quantities;
 	public List<String> relations;
-	public EqParse eqParse;
 	public TextAnnotation ta;
 	public List<Constituent> posTags;
 	public List<Constituent> lemmas;
 	public List<Constituent> chunks;
 	public List<Constituent> parse;
 	public List<Pair<String, IntPair>> skeleton;
+	public List<Pair<Integer, String>> triggers;
+	public List<Pair<String, IntPair>> nodes;
   	
 	public SimulProb(int index) {
 		this.index = index;
@@ -45,7 +47,8 @@ public class SimulProb {
 		solutions = new ArrayList<Double>();
 		quantities = new ArrayList<QuantSpan>();
 		relations = new ArrayList<String>();
-		eqParse = new EqParse();
+		triggers = new ArrayList<Pair<Integer,String>>();
+		nodes = new ArrayList<>();
 	}
 	
 	public void extractQuantities(Quantifier quantifier) throws IOException {
@@ -95,9 +98,6 @@ public class SimulProb {
 				}
 			}
 		}
-//		System.out.println("Variable Names : "+Arrays.asList(variableNames));
-//		if(variableNames.size() > 2) System.out.println("ISSUE HERE : "+index);
-		
 		for(String var : variableNames.keySet()) {
 			variableNamesSorted.add(var);
 		}
@@ -422,6 +422,38 @@ public class SimulProb {
 
 	public void extractEqParse() throws IOException {
 		String annFile = Params.annotationDir+"/"+index+".ann";
-		eqParse = new EqParse(ta, annFile);
+		for(int i=0; i<ta.size(); ++i) {
+			if(KnowledgeBase.mathNodeMap.containsKey(
+					ta.getToken(i).toLowerCase())) {
+				triggers.add(new Pair<Integer, String>(i, "OP"));
+			} else {
+				for(int j=0; j<quantities.size(); ++j) {
+					int start = ta.getTokenIdFromCharacterOffset(
+							quantities.get(j).start);
+					if(i == start) {
+						triggers.add(new Pair<Integer, String>(i, "NUMBER"));
+						break;
+					}
+				}
+			}
+		}
+		List<String> lines = FileUtils.readLines(new File(annFile));
+		for(String line : lines) {
+			String strArr[] = line.split("\t")[1].split(" ");
+			String label = strArr[0];
+			int start = ta.getTokenIdFromCharacterOffset(
+					Integer.parseInt(strArr[1]));
+			int end = ta.getTokenIdFromCharacterOffset(
+					Integer.parseInt(strArr[2])-1)+1;
+			List<Integer> relevantIndex = new ArrayList<>();
+			for(int i=0; i<triggers.size(); ++i) {
+				if(triggers.get(i).getFirst()>=start && 
+						triggers.get(i).getFirst()<end) {
+					relevantIndex.add(i);
+				}
+			}
+			nodes.add(new Pair<String, IntPair>(label, new IntPair(
+					relevantIndex.get(0), relevantIndex.get(relevantIndex.size()-1)+1)));
+		}
 	}
 }

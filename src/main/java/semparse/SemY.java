@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.apache.commons.collections.map.HashedMap;
 
-import structure.EqParse;
 import structure.Equation;
 import structure.SimulProb;
 import utils.Tools;
@@ -16,20 +15,19 @@ import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
-public class SemY extends EqParse implements IStructure, Serializable {
+public class SemY implements IStructure, Serializable {
 	
 	private static final long serialVersionUID = 2399969922362221136L;
 	public Map<Integer, String> partitions;
+	public List<Pair<String, IntPair>> nodes;
 	public List<IntPair> spans;
 	
 	public SemY() {
-		super();
 		spans = new ArrayList<>();
 		partitions = new HashMap<>();
 	}
 	
 	public SemY(SemY other) {
-		super(other);
 		spans = new ArrayList<>();
 		spans.addAll(other.spans);
 		partitions = new HashMap<>();
@@ -38,9 +36,9 @@ public class SemY extends EqParse implements IStructure, Serializable {
 	
 	public SemY(SimulProb prob) {
 		this();
-		for(Pair<String, IntPair> pair : prob.eqParse.nodes) {
+		for(Pair<String, IntPair> pair : prob.nodes) {
 			boolean allow = true;
-			for(Pair<String, IntPair> bigPair : prob.eqParse.nodes) {
+			for(Pair<String, IntPair> bigPair : prob.nodes) {
 				if(bigPair.getFirst().equals("EQ") && 
 						bigPair.getSecond().getFirst()<=pair.getSecond().getFirst() &&
 						pair.getSecond().getSecond()<=bigPair.getSecond().getSecond()) {

@@ -124,4 +124,14 @@ public class EquationSolver {
 			return solutions;
 		}		
 	}
+	
+	public static boolean doesHaveSameSolution(
+			List<Equation> list1, List<Equation> list2) {
+		List<Double> soln1 = solve(list1);
+		List<Double> soln2 = solve(list2);
+		if(soln1 != null && Tools.equals(soln1, soln2)) {
+			return true;
+		}
+		return false;
+	}
 }
