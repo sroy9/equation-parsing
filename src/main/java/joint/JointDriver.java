@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import parser.DocReader;
+import reader.DocReader;
 import structure.Equation;
 import structure.EquationSolver;
 import structure.Operation;

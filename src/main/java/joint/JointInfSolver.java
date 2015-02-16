@@ -65,7 +65,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		
 		// Get best equation trees
 		
-		// Extract grafted tempaltes
+		// Extract grafted templates
 		
 		// Fill up remaining slots
 //		for(int i=0; i<maxNumSlots; ++i) {

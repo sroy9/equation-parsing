@@ -1,14 +1,17 @@
-package semparse;
+package partition;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import java_cup.internal_error;
 import reader.DocReader;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLParameters;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
@@ -16,7 +19,7 @@ import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
-public class SemDriver {
+public class PartitionDriver {
 	
 	public static void crossVal() throws Exception {
 		double crossValAcc = 0.0;
@@ -41,8 +44,8 @@ public class SemDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/sem"+testFold+".save", train);
-		return testModel("models/sem"+testFold+".save", test);
+		trainModel("models/partition"+testFold+".save", train);
+		return testModel("models/partition"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) throws Exception {
@@ -50,11 +53,23 @@ public class SemDriver {
 			simulProbList = DocReader.readSimulProbFromBratDir(Params.annotationDir);
 		}
 		SLProblem problem = new SLProblem();
-		for (SimulProb simulProb : simulProbList) {
-			for(int i=0; i<simulProb.equations.size(); ++i) {
-				SemX semX = new SemX(simulProb);
-				SemY semY = new SemY(simulProb);
-				problem.addExample(semX, semY);
+		for (SimulProb prob : simulProbList) {
+			for(int i=0; i<prob.triggers.size()-1; ++i) {
+				int index1 = prob.triggers.get(i).getFirst();
+				int index2 = prob.triggers.get(i+1).getFirst();
+				if(prob.ta.getSentenceFromToken(index1) == 
+						prob.ta.getSentenceFromToken(index2)) {
+					PartitionX x = new PartitionX(prob, i, i+1);
+					PartitionY y = new PartitionY(false);
+					for(Pair<String, IntPair> pair : prob.nodes) {
+						if(pair.getSecond().getFirst() <= i && 
+								pair.getSecond().getSecond() > i+1) {
+							y = new PartitionY(true);
+							break;
+						}
+					}
+					problem.addExample(x, y);
+				}
 			}
 		}
 		return problem;
@@ -64,13 +79,11 @@ public class SemDriver {
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
 		double acc = 0.0;
-		double nonEmptyAcc = 0.0;
-		double nonEmptyTot = 0.0;
 		double total = sp.instanceList.size();
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			SemX prob = (SemX) sp.instanceList.get(i);
-			SemY gold = (SemY) sp.goldStructureList.get(i);
-			SemY pred = (SemY) model.infSolver.getBestStructure(
+			PartitionX prob = (PartitionX) sp.instanceList.get(i);
+			PartitionY gold = (PartitionY) sp.goldStructureList.get(i);
+			PartitionY pred = (PartitionY) model.infSolver.getBestStructure(
 					model.wv, sp.instanceList.get(i));
 			double goldWt = model.wv.dotProduct(
 					model.featureGenerator.getFeatureVector(prob, gold));
@@ -79,48 +92,39 @@ public class SemDriver {
 			if(goldWt > predWt) {
 				System.out.println("PROBLEM HERE");
 			}
-			if(gold.nodes.size() != 0) nonEmptyTot += 1.0;
-			if (SemY.getLoss(gold, pred) < 0.00001) {
+			if (PartitionY.getLoss(gold, pred) < 0.00001) {
 				acc += 1.0;
-				if(gold.nodes.size() != 0) nonEmptyAcc += 1.0; 
 			} else {
-				System.out.println("Text : "+prob.ta.getText());
-				System.out.println("Skeleton : "+Tools.skeletonString(prob.skeleton));
-				System.out.println("Quantities : "+prob.quantities);
-				System.out.println("Gold : \n"+gold);
-				System.out.println("Gold weight : "+goldWt);
-				System.out.println("Pred : \n"+pred);
-				System.out.println("Pred weight : "+predWt);
-				System.out.println("Loss : "+SemY.getLoss(gold, pred));
+//				System.out.println("Gold : \n"+gold);
+//				System.out.println("Gold weight : "+goldWt);
+//				System.out.println("Pred : \n"+pred);
+//				System.out.println("Pred weight : "+predWt);
+//				System.out.println("Loss : "+PartitionY.getLoss(gold, pred));
 			}
 		}
 		System.out.println("Accuracy : " + acc + " / " + total + " = "
 				+ (acc / total));
-		System.out.println("Non Empty Accuracy : " + nonEmptyAcc + " / " + 
-				nonEmptyTot + " = " + (nonEmptyAcc / nonEmptyTot));
 		return acc / total;
 	}
 	
 	public static void trainModel(String modelPath, SLProblem train)
 			throws Exception {
-//		SLModel model = new SLModel();
-//		Lexiconer lm = new Lexiconer();
-//		lm.setAllowNewFeatures(true);
-//		model.lm = lm;
-//		SemFeatGen fg = new SemFeatGen(lm);
-//		model.featureGenerator = fg;
-//		model.infSolver = new SemInfSolver(fg);
-////		return;
-//		SLParameters para = new SLParameters();
-//		para.loadConfigFile(Params.spConfigFile);
-//		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
-//		model.wv = learner.train(train);
-//		lm.setAllowNewFeatures(false);
-//		model.saveModel(modelPath);
+		SLModel model = new SLModel();
+		Lexiconer lm = new Lexiconer();
+		lm.setAllowNewFeatures(true);
+		model.lm = lm;
+		PartitionFeatGen fg = new PartitionFeatGen(lm);
+		model.featureGenerator = fg;
+		model.infSolver = new PartitionInfSolver(fg);
+		SLParameters para = new SLParameters();
+		para.loadConfigFile(Params.spConfigFile);
+		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
+		model.wv = learner.train(train);
+		lm.setAllowNewFeatures(false);
+		model.saveModel(modelPath);
 	}
 	
 	public static void main(String args[]) throws Exception {
-//		SemDriver.crossVal();
-		SemDriver.doTrainTest(0);
+		PartitionDriver.doTrainTest(0);
 	}
 }
