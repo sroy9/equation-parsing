@@ -78,6 +78,8 @@ public class PartitionDriver {
 	private static double testModel(String modelPath, SLProblem sp)
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
+		Set<Integer> wrongProbIndex = new HashSet<>();
+		Set<Integer> allProbIndex = new HashSet<>();
 		double acc = 0.0;
 		double total = sp.instanceList.size();
 		for (int i = 0; i < sp.instanceList.size(); i++) {
@@ -85,16 +87,11 @@ public class PartitionDriver {
 			PartitionY gold = (PartitionY) sp.goldStructureList.get(i);
 			PartitionY pred = (PartitionY) model.infSolver.getBestStructure(
 					model.wv, sp.instanceList.get(i));
-			double goldWt = model.wv.dotProduct(
-					model.featureGenerator.getFeatureVector(prob, gold));
-			double predWt = model.wv.dotProduct(
-					model.featureGenerator.getFeatureVector(prob, pred));
-			if(goldWt > predWt) {
-				System.out.println("PROBLEM HERE");
-			}
+			allProbIndex.add(prob.problemIndex);
 			if (PartitionY.getLoss(gold, pred) < 0.00001) {
 				acc += 1.0;
 			} else {
+				wrongProbIndex.add(prob.problemIndex);
 //				System.out.println("Gold : \n"+gold);
 //				System.out.println("Gold weight : "+goldWt);
 //				System.out.println("Pred : \n"+pred);
@@ -104,7 +101,10 @@ public class PartitionDriver {
 		}
 		System.out.println("Accuracy : " + acc + " / " + total + " = "
 				+ (acc / total));
-		return acc / total;
+		System.out.println("Problem Accuracy : " + (allProbIndex.size() - wrongProbIndex.size()) + 
+				" / " + allProbIndex.size() + " = "
+				+ ((allProbIndex.size() - wrongProbIndex.size())*1.0/allProbIndex.size()));
+		return ((allProbIndex.size() - wrongProbIndex.size())*1.0/allProbIndex.size());
 	}
 	
 	public static void trainModel(String modelPath, SLProblem train)

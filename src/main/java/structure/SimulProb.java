@@ -452,6 +452,7 @@ public class SimulProb {
 					relevantIndex.add(i);
 				}
 			}
+			if(relevantIndex.size() == 0) continue;
 			nodes.add(new Pair<String, IntPair>(label, new IntPair(
 					relevantIndex.get(0), relevantIndex.get(relevantIndex.size()-1)+1)));
 		}
