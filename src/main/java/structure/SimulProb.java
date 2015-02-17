@@ -38,8 +38,8 @@ public class SimulProb {
 	public List<Constituent> chunks;
 	public List<Constituent> parse;
 	public List<Pair<String, IntPair>> skeleton;
-	public List<Pair<Integer, String>> triggers;
-	public List<Pair<String, IntPair>> nodes;
+	public List<Trigger> triggers;
+	public List<Node> nodes;
   	
 	public SimulProb(int index) {
 		this.index = index;
@@ -47,7 +47,7 @@ public class SimulProb {
 		solutions = new ArrayList<Double>();
 		quantities = new ArrayList<QuantSpan>();
 		relations = new ArrayList<String>();
-		triggers = new ArrayList<Pair<Integer,String>>();
+		triggers = new ArrayList<Trigger>();
 		nodes = new ArrayList<>();
 	}
 	
@@ -425,13 +425,14 @@ public class SimulProb {
 		for(int i=0; i<ta.size(); ++i) {
 			if(KnowledgeBase.mathNodeMap.containsKey(
 					ta.getToken(i).toLowerCase())) {
-				triggers.add(new Pair<Integer, String>(i, "OP"));
+				triggers.add(new Trigger(i, "OP", null));
 			} else {
 				for(int j=0; j<quantities.size(); ++j) {
 					int start = ta.getTokenIdFromCharacterOffset(
 							quantities.get(j).start);
 					if(i == start) {
-						triggers.add(new Pair<Integer, String>(i, "NUMBER"));
+						triggers.add(new Trigger(i, "NUMBER", 
+								Tools.getValue(quantities.get(j))));
 						break;
 					}
 				}
@@ -447,13 +448,13 @@ public class SimulProb {
 					Integer.parseInt(strArr[2])-1)+1;
 			List<Integer> relevantIndex = new ArrayList<>();
 			for(int i=0; i<triggers.size(); ++i) {
-				if(triggers.get(i).getFirst()>=start && 
-						triggers.get(i).getFirst()<end) {
+				if(triggers.get(i).index>=start && 
+						triggers.get(i).index<end) {
 					relevantIndex.add(i);
 				}
 			}
 			if(relevantIndex.size() == 0) continue;
-			nodes.add(new Pair<String, IntPair>(label, new IntPair(
+			nodes.add(new Node(label, new IntPair(
 					relevantIndex.get(0), relevantIndex.get(relevantIndex.size()-1)+1)));
 		}
 	}

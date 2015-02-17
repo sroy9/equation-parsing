@@ -8,7 +8,9 @@ import java.util.Map;
 import partition.PartitionY;
 import structure.Equation;
 import structure.KnowledgeBase;
+import structure.Node;
 import structure.SimulProb;
+import structure.Trigger;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
@@ -27,7 +29,7 @@ public class JointX implements IInstance {
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
 	public List<Pair<String, IntPair>> skeleton;
-	public List<Pair<Integer, String>> triggers;
+	public List<Trigger> triggers;
 	public Map<Integer, Boolean> partitions;
 	public List<IntPair> eqSpans;
 	
@@ -43,14 +45,14 @@ public class JointX implements IInstance {
 		partitions = new HashMap<Integer, Boolean>();
 		if(useGold) {
 			for(int i=0; i<simulProb.triggers.size()-1; ++i) {
-				int index1 = simulProb.triggers.get(i).getFirst();
-				int index2 = simulProb.triggers.get(i+1).getFirst();
+				int index1 = simulProb.triggers.get(i).index;
+				int index2 = simulProb.triggers.get(i+1).index;
 				if(simulProb.ta.getSentenceFromToken(index1) == 
 						simulProb.ta.getSentenceFromToken(index2)) {
 					partitions.put(i, true);
-					for(Pair<String, IntPair> pair : simulProb.nodes) {
-						if(pair.getSecond().getFirst() <= i && 
-								pair.getSecond().getSecond() > i+1) {
+					for(Node pair : simulProb.nodes) {
+						if(pair.span.getFirst() <= i && 
+								pair.span.getSecond() > i+1) {
 							partitions.put(i, false);
 							break;
 						}
@@ -69,7 +71,7 @@ public class JointX implements IInstance {
 				int minDist = Integer.MAX_VALUE;
 				int pivot = -1;
 				for(int j=0; j<triggers.size(); j++) {
-					int dist = Math.abs(triggers.get(j).getFirst() - i);
+					int dist = Math.abs(triggers.get(j).index - i);
 					if(dist < minDist) {
 						minDist = dist;
 						pivot = j;
@@ -77,8 +79,8 @@ public class JointX implements IInstance {
 				}
 				int start = pivot, end = pivot+1;
 				for(int j=start-1; j>=0; --j) {
-					int index1 = triggers.get(j).getFirst();
-					int index2 = triggers.get(j+1).getFirst();
+					int index1 = triggers.get(j).index;
+					int index2 = triggers.get(j+1).index;
 					if(ta.getSentenceFromToken(index1) == 
 							ta.getSentenceFromToken(index2) && 
 							partitions.containsKey(j) &&
@@ -89,8 +91,8 @@ public class JointX implements IInstance {
 					}
 				}
 				for(int j=end; j<triggers.size(); ++j) {
-					int index1 = triggers.get(j-1).getFirst();
-					int index2 = triggers.get(j).getFirst();
+					int index1 = triggers.get(j-1).index;
+					int index2 = triggers.get(j).index;
 					if(ta.getSentenceFromToken(index1) == 
 							ta.getSentenceFromToken(index2) && 
 							partitions.containsKey(j-1) &&
@@ -101,7 +103,7 @@ public class JointX implements IInstance {
 					}
 				}
 				eqSpans.add(new IntPair(start, end));
-				i = triggers.get(end-1).getFirst()+1;
+				i = triggers.get(end-1).index+1;
 			}	
 		}
 	}
