@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import semparse.SemY;
 import structure.Equation;
 import structure.EquationSolver;
 import structure.SimulProb;

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import partition.PartitionX;
+import partition.PartitionY;
 import reader.DocReader;
 import structure.Equation;
 import structure.EquationSolver;
@@ -14,6 +16,7 @@ import structure.Operation;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLParameters;
@@ -49,8 +52,8 @@ public class JointDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/rel"+testFold+".save", train, testFold);
-		return testModel("models/rel"+testFold+".save", test);
+		trainModel("models/joint"+testFold+".save", train, testFold);
+		return testModel("models/joint"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
@@ -60,10 +63,10 @@ public class JointDriver {
 					DocReader.readSimulProbFromBratDir(Params.annotationDir);
 		}
 		SLProblem problem = new SLProblem();
-		for (SimulProb simulProb : simulProbList) {
-			JointX relationX = new JointX(simulProb);
-			JointY relationY = new JointY(simulProb);
-			problem.addExample(relationX, relationY);
+		for (SimulProb prob : simulProbList) {
+			JointX x = new JointX(prob, true);
+			JointY y = new JointY(prob);
+			problem.addExample(x, y);
 		}
 		return problem;
 	}

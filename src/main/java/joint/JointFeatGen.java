@@ -96,5 +96,11 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 		else features.add(prefix+"_numSent<6");
 		return features;
 	}
+
+	public IFeatureVector getExpressionFeatureVector(JointX x, int i, int j,
+			List<IntPair> division, String label) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
