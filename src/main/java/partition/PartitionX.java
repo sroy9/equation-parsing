@@ -5,6 +5,7 @@ import java.util.List;
 
 import structure.KnowledgeBase;
 import structure.SimulProb;
+import structure.Trigger;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
@@ -22,7 +23,7 @@ public class PartitionX implements IInstance {
 	public List<Constituent> dependencyParse;
 	public List<Pair<String, IntPair>> skeleton;
 	public List<QuantSpan> quantities;
-	public List<Pair<Integer, String>> triggers;
+	public List<Trigger> triggers;
 	public int index1, index2;
 	
 	public PartitionX(SimulProb simulProb, int index1, int index2) 

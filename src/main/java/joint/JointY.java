@@ -7,6 +7,7 @@ import java.util.List;
 
 import structure.Equation;
 import structure.EquationSolver;
+import structure.Node;
 import structure.SimulProb;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
@@ -16,7 +17,7 @@ public class JointY implements IStructure, Serializable {
 	
 	private static final long serialVersionUID = 2399969922362221136L;
 	public List<Equation> equations;
-	public List<Pair<String, IntPair>> nodes;
+	public List<Node> nodes;
 	
 	public JointY() {
 		equations = new ArrayList<>();
@@ -37,28 +38,28 @@ public class JointY implements IStructure, Serializable {
 		for(Equation eq : prob.equations) {
 			equations.add(eq);
 		}
-		nodes = new ArrayList<>();
+		nodes = new ArrayList<Node>();
 		nodes.addAll(prob.nodes);
 	}
 	
 	public static float getNodeLoss(JointY y1, JointY y2) {
 		float loss = 0.0f;
-		for(Pair<String, IntPair> pair1 : y1.nodes) {
+		for(Node pair1 : y1.nodes) {
 			boolean found = false;
-			for(Pair<String, IntPair> pair2 : y2.nodes) {
-				if(pair1.getFirst().equals(pair2.getFirst()) && 
-						pair1.getSecond().equals(pair2.getSecond())) {
+			for(Node pair2 : y2.nodes) {
+				if(pair1.label.equals(pair2.label) && 
+						pair1.span.equals(pair2.span)) {
 					found = true;
 					break;
 				}
 			}
 			if(!found) loss += 1.0;
 		}
-		for(Pair<String, IntPair> pair1 : y2.nodes) {
+		for(Node pair1 : y2.nodes) {
 			boolean found = false;
-			for(Pair<String, IntPair> pair2 : y1.nodes) {
-				if(pair1.getFirst().equals(pair2.getFirst()) && 
-						pair1.getSecond().equals(pair2.getSecond())) {
+			for(Node pair2 : y1.nodes) {
+				if(pair1.label.equals(pair2.label) && 
+						pair1.span.equals(pair2.span)) {
 					found = true;
 					break;
 				}

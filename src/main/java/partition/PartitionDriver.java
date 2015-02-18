@@ -7,6 +7,7 @@ import java.util.Set;
 
 import java_cup.internal_error;
 import reader.DocReader;
+import structure.Node;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
@@ -55,15 +56,15 @@ public class PartitionDriver {
 		SLProblem problem = new SLProblem();
 		for (SimulProb prob : simulProbList) {
 			for(int i=0; i<prob.triggers.size()-1; ++i) {
-				int index1 = prob.triggers.get(i).getFirst();
-				int index2 = prob.triggers.get(i+1).getFirst();
+				int index1 = prob.triggers.get(i).index;
+				int index2 = prob.triggers.get(i+1).index;
 				if(prob.ta.getSentenceFromToken(index1) == 
 						prob.ta.getSentenceFromToken(index2)) {
 					PartitionX x = new PartitionX(prob, i, i+1);
 					PartitionY y = new PartitionY(false);
-					for(Pair<String, IntPair> pair : prob.nodes) {
-						if(pair.getSecond().getFirst() <= i && 
-								pair.getSecond().getSecond() > i+1) {
+					for(Node pair : prob.nodes) {
+						if(pair.span.getFirst() <= i && 
+								pair.span.getSecond() > i+1) {
 							y = new PartitionY(true);
 							break;
 						}

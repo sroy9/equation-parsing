@@ -81,18 +81,25 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 			IInstance x, IStructure goldStructure) throws Exception {
 		JointX prob = (JointX) x;
 		JointY gold = (JointY) goldStructure;
-		JointY pred = null;
-		PairComparator<JointY> relationPairComparator = 
+		JointY pred = new JointY();
+		PairComparator<JointY> jointPairComparator = 
 				new PairComparator<JointY>() {};
 		MinMaxPriorityQueue<Pair<JointY, Double>> beam1 = 
-				MinMaxPriorityQueue.orderedBy(relationPairComparator)
+				MinMaxPriorityQueue.orderedBy(jointPairComparator)
 				.maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<JointY, Double>> beam2 = 
-				MinMaxPriorityQueue.orderedBy(relationPairComparator)
+				MinMaxPriorityQueue.orderedBy(jointPairComparator)
 				.maximumSize(200).create();
 		// Get best equation trees
-		
+		List<String> eqStrings = new ArrayList<>();
+		for(IntPair eqSpan : prob.eqSpans) {
+			Pair<String, List<Node>> pair = getBottomUpBestParse(prob, eqSpan, wv);
+			eqStrings.add(pair.getFirst());
+			pred.nodes.addAll(pair.getSecond());
+		}
 		// Extract grafted templates
+		List<List<Equation>> relevantTemplates = extractGraftedTemplates(
+				prob, templates, eqStrings); 
 		
 		// Fill up remaining slots
 //		for(int i=0; i<maxNumSlots; ++i) {
@@ -124,7 +131,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 	public static List<List<Equation>> extractTemplates(SLProblem slProb) {
 		List<List<Equation>> templates = new ArrayList<>();
 		for(IStructure struct : slProb.goldStructureList) {
-			JointY gold = (JointY) struct;
+			JointY gold = new JointY((JointY) struct);
 			for(Equation eq1 : gold.equations) {
 				for(int j=0; j<5; ++j) {
 					for(int k=0; k<eq1.terms.get(j).size(); ++k) {
@@ -150,10 +157,108 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 	}
 	
 	public static List<List<Equation>> extractGraftedTemplates(
-			JointX x, JointY y, List<List<Equation>> templates, List<List<Node>> nodes) {
+			JointX x, List<List<Equation>> templates, List<String> eqStrings) {
 		List<List<Equation>> relevantTemplates = new ArrayList<>();
-		
+		List<Equation> mathEquations = new ArrayList<>();
+		for(String eqString : eqStrings) {
+			int count = 0;
+			String newStr = "";
+			for(int i=0; i<eqString.length(); ++i) {
+				if(eqString.charAt(i) == 'V') {
+					count++;
+					newStr += "V"+count;
+				} else {
+					newStr += eqString.charAt(i);
+				}
+			}
+			if(!newStr.contains("=")) {
+				count++;
+				newStr = newStr+"=V"+count;
+			}
+			mathEquations.add(new Equation(0, eqString));
+ 		}
+		for(List<Equation> template : templates) {
+			List<Equation> graft = extractedGraftedTemplate(
+					template, mathEquations);
+			if(graft != null) {
+				relevantTemplates.add(graft);
+			}
+		}
 		return relevantTemplates;
+	}
+	
+	// Greedy matching should work
+	public static List<Equation> extractedGraftedTemplate(
+			List<Equation> template, List<Equation> mathEquations) {
+		List<Equation> graft = new ArrayList<>();
+		for(Equation eq : template) {
+			graft.add(new Equation(eq));
+		}
+		List<IntPair> match = new ArrayList<>();
+		boolean allFound = true;
+		for(Equation eq : mathEquations) {
+			boolean found = false;
+			Equation eq1 = new Equation(eq);
+			for(int j=0; j<5; ++j) {
+				for(int k=0; k<eq1.terms.get(j).size(); ++k) {
+					eq1.terms.get(j).get(k).setSecond(null);
+				}
+			}
+			for(int i=0; i<template.size(); ++i) {
+				if(Equation.getLoss(template.get(i), eq1) < 0.01 && 
+						!match.contains(new IntPair(i, 2))) {
+					graft.set(i, eq);
+					match.add(new IntPair(i, 2));
+					found = true;
+					break;
+				}
+			}
+			if(found) continue;
+			for(int i=0; i<template.size(); ++i) {
+				if(partialEquationMatch(template.get(i), eq1, 0) && 
+						!match.contains(new IntPair(i, 0))) {
+					graft.get(i).terms.set(0, eq1.terms.get(0));
+					graft.get(i).terms.set(1, eq1.terms.get(1));
+					graft.get(i).operations.set(0, eq1.operations.get(0));
+					graft.get(i).operations.set(1, eq1.operations.get(1));
+					match.add(new IntPair(i, 0));
+					found = true;
+					break;
+				}
+				if(partialEquationMatch(template.get(i), eq1, 1) && 
+						!match.contains(new IntPair(i, 1))) {
+					graft.get(i).terms.set(2, eq1.terms.get(0));
+					graft.get(i).terms.set(3, eq1.terms.get(1));
+					graft.get(i).operations.set(2, eq1.operations.get(0));
+					graft.get(i).operations.set(3, eq1.operations.get(1));
+					match.add(new IntPair(i, 1));
+					found = true;
+					break;
+				}
+			}
+			if(!found) {
+				allFound = false;
+				break;
+			}
+		}
+		if(allFound) {
+			return graft;
+		}
+		return null;
+	}
+	
+	public static boolean partialEquationMatch(
+			Equation template, Equation eq, int index) {
+		if(template.terms.get(4).size() > 0) return false;
+		if(Equation.getLossPairLists(template.terms.get(2*index), eq.terms.get(0)) < 0.01) {
+			if(Equation.getLossPairLists(template.terms.get(2*index+1), eq.terms.get(1)) < 0.01) {
+				if(template.operations.get(2*index) == eq.operations.get(0) &&
+						template.operations.get(2*index+1) == eq.operations.get(1)) {
+					return true;		
+				}
+			}
+		}
+		return false;
 	}
 	
 	public List<Equation> enumerateEquations(
@@ -199,7 +304,6 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 	public Pair<String, List<Node>> getBottomUpBestParse(
 			JointX x, IntPair span, WeightVector wv) {
 		
-		String eqString = "";
 		List<Node> nodes = new ArrayList<>();
 		List<String> labels = null;
 		int n = span.getSecond() - span.getFirst();
@@ -243,14 +347,14 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 				dpMat[i][j].divisions = bestDivision;
 				if(i+1 == j) {
 					if(bestLabel.equals("EXPR")) dpMat[i][j].eqString = ""+triggers.get(i).num;
-					if(bestLabel.equals("ADD")) dpMat[i][j].eqString = "V1+V2";
-					if(bestLabel.equals("SUB")) dpMat[i][j].eqString = "V1-V2";
-					if(bestLabel.equals("MUL")) dpMat[i][j].eqString = triggers.get(i).num+"*V1";
+					if(bestLabel.equals("ADD")) dpMat[i][j].eqString = "V+V";
+					if(bestLabel.equals("SUB")) dpMat[i][j].eqString = "V-V";
+					if(bestLabel.equals("MUL")) dpMat[i][j].eqString = triggers.get(i).num+"*V";
 					if(bestLabel.equals("DIV") && triggers.get(i).num == null) {
-						dpMat[i][j].eqString = "V1/V2";
+						dpMat[i][j].eqString = "V/V";
 					}
 					if(bestLabel.equals("DIV") && triggers.get(i).num != null) {
-						dpMat[i][j].eqString = "V1/"+triggers.get(i).num;
+						dpMat[i][j].eqString = "V/"+triggers.get(i).num;
 					}
 				} else {
 					List<Integer> locs = new ArrayList<>();
@@ -264,23 +368,32 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					}
 					if(count == 1) {
 						IntPair ip = bestDivision.get(locs.get(0));
-						if(bestLabel.equals("ADD")) dpMat[i][j].eqString = "V1+"+dpMat[ip.getFirst()][ip.getSecond()];
-						if(bestLabel.equals("SUB")) dpMat[i][j].eqString = "V1-"+dpMat[ip.getFirst()][ip.getSecond()];
-						if(bestLabel.equals("MUL")) dpMat[i][j].eqString = "V1*"+dpMat[ip.getFirst()][ip.getSecond()];
-						if(bestLabel.equals("DIV")) dpMat[i][j].eqString = "V1/"+dpMat[ip.getFirst()][ip.getSecond()];
+						if(bestLabel.equals("ADD")) dpMat[i][j].eqString = 
+								"V+"+dpMat[ip.getFirst()][ip.getSecond()];
+						if(bestLabel.equals("SUB")) dpMat[i][j].eqString = 
+								"V-"+dpMat[ip.getFirst()][ip.getSecond()];
+						if(bestLabel.equals("MUL")) dpMat[i][j].eqString = 
+								"V*"+dpMat[ip.getFirst()][ip.getSecond()];
+						if(bestLabel.equals("DIV")) dpMat[i][j].eqString = 
+								"V/"+dpMat[ip.getFirst()][ip.getSecond()];
 					}
 					if(count == 2) {
 						IntPair ip1 = bestDivision.get(locs.get(0));
 						IntPair ip2 = bestDivision.get(locs.get(1));
-						if(bestLabel.equals("EQ")) dpMat[i][j].eqString = dpMat[ip1.getFirst()][ip1.getSecond()]+
+						if(bestLabel.equals("EQ")) dpMat[i][j].eqString = 
+								dpMat[ip1.getFirst()][ip1.getSecond()]+
 								"="+dpMat[ip2.getFirst()][ip2.getSecond()];
-						if(bestLabel.equals("ADD")) dpMat[i][j].eqString = dpMat[ip1.getFirst()][ip1.getSecond()]+
+						if(bestLabel.equals("ADD")) dpMat[i][j].eqString = 
+								dpMat[ip1.getFirst()][ip1.getSecond()]+
 								"+"+dpMat[ip2.getFirst()][ip2.getSecond()];
-						if(bestLabel.equals("SUB")) dpMat[i][j].eqString = dpMat[ip1.getFirst()][ip1.getSecond()]+
+						if(bestLabel.equals("SUB")) dpMat[i][j].eqString = 
+								dpMat[ip1.getFirst()][ip1.getSecond()]+
 								"-"+dpMat[ip2.getFirst()][ip2.getSecond()];
-						if(bestLabel.equals("MUL")) dpMat[i][j].eqString = dpMat[ip1.getFirst()][ip1.getSecond()]+
+						if(bestLabel.equals("MUL")) dpMat[i][j].eqString = 
+								dpMat[ip1.getFirst()][ip1.getSecond()]+
 								"*"+dpMat[ip2.getFirst()][ip2.getSecond()];
-						if(bestLabel.equals("DIV")) dpMat[i][j].eqString = dpMat[ip1.getFirst()][ip1.getSecond()]+
+						if(bestLabel.equals("DIV")) dpMat[i][j].eqString = 
+								dpMat[ip1.getFirst()][ip1.getSecond()]+
 								"/"+dpMat[ip2.getFirst()][ip2.getSecond()];
 					}
 					
@@ -303,14 +416,16 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		return new Pair<String, List<Node>>(dpMat[0][n].eqString, nodes);
 	}
 
-	public static List<List<IntPair>> enumerateDivisions(JointX x, int start, int end) {
+	public static List<List<IntPair>> enumerateDivisions(
+			JointX x, int start, int end) {
 		List<List<IntPair>> divisions = new ArrayList<>();
 		if(start+1 == end) {
 			divisions.add(new ArrayList<IntPair>());
 			return divisions;
 		}
 		for(int i=start+1; i<end; ++i) {
-			List<IntPair> div = Arrays.asList(new IntPair(start, i), new IntPair(i, end));
+			List<IntPair> div = Arrays.asList(
+					new IntPair(start, i), new IntPair(i, end));
 			divisions.add(div);
 		}
 		for(int i=start+1; i<end-1; ++i) {
