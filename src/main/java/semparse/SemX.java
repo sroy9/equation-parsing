@@ -1,4 +1,4 @@
-package joint;
+package semparse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 
-public class JointX implements IInstance {
+public class SemX implements IInstance {
 
 	public int problemIndex;
 	public TextAnnotation ta;
@@ -33,7 +33,7 @@ public class JointX implements IInstance {
 	public Map<Integer, Boolean> partitions;
 	public List<IntPair> eqSpans;
 	
-	public JointX(SimulProb simulProb, boolean useGold) {
+	public SemX(SimulProb simulProb, boolean useGold) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;

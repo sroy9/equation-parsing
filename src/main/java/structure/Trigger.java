@@ -12,5 +12,10 @@ public class Trigger {
 		this.num = num;
 	}
 	
+	@Override
+	public String toString() {
+		return "("+index+", "+label+", "+num+")";
+	}
+	
 
 }

@@ -423,7 +423,7 @@ public class SimulProb {
 	public void extractEqParse() throws IOException {
 		String annFile = Params.annotationDir+"/"+index+".ann";
 		for(int i=0; i<ta.size(); ++i) {
-			if(KnowledgeBase.mathNodeMap.containsKey(
+			if(KnowledgeBase.mathNodeSet.contains(
 					ta.getToken(i).toLowerCase())) {
 				triggers.add(new Trigger(i, "OP", null));
 			} else {
