@@ -106,7 +106,6 @@ public class JointDriver {
 				System.out.println("Loss : "+JointY.getLoss(gold, pred));
 			}
 		}
-		System.out.println("Beam Accuracy : = " + (beamAcc / sp.instanceList.size()));
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
 		return (acc/sp.instanceList.size());

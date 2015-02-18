@@ -82,14 +82,15 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		JointX prob = (JointX) x;
 		JointY gold = (JointY) goldStructure;
 		JointY pred = new JointY();
-		PairComparator<JointY> jointPairComparator = 
-				new PairComparator<JointY>() {};
-		MinMaxPriorityQueue<Pair<JointY, Double>> beam1 = 
+		PairComparator<Template> jointPairComparator = 
+				new PairComparator<Template>() {};
+		MinMaxPriorityQueue<Pair<Template, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(jointPairComparator)
 				.maximumSize(200).create();
-		MinMaxPriorityQueue<Pair<JointY, Double>> beam2 = 
+		MinMaxPriorityQueue<Pair<Template, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(jointPairComparator)
 				.maximumSize(200).create();
+		
 		// Get best equation trees
 		List<String> eqStrings = new ArrayList<>();
 		for(IntPair eqSpan : prob.eqSpans) {
@@ -97,34 +98,40 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 			eqStrings.add(pair.getFirst());
 			pred.nodes.addAll(pair.getSecond());
 		}
+		
 		// Extract grafted templates
-		List<List<Equation>> relevantTemplates = extractGraftedTemplates(
+		List<Template> relevantTemplates = extractGraftedTemplates(
 				prob, templates, eqStrings); 
+		int maxNumSlots = 0;
+		for(Template template : relevantTemplates) {
+			if(template.slots.size() > maxNumSlots) {
+				maxNumSlots = template.slots.size();
+			}
+		}
 		
 		// Fill up remaining slots
-//		for(int i=0; i<maxNumSlots; ++i) {
-//			for(Pair<JointY, Double> pair : beam1) {
-//				JointY y = pair.getFirst();
-//				if(pair.getFirst().slots.size() >= i) {
-//					beam2.add(pair);
-//				} else {
-//					for(int j=0; j<prob.quantities.size(); ++j) {
-//						JointY yNew = new JointY(pair.getFirst());
-//						yNew.equations.get(y.slots.get(i).i).
-//						terms.get(y.slots.get(i).j).get(y.slots.get(i).k).setSecond(
-//								Tools.getValue(prob.quantities.get(j)));
-//						yNew.quantityIndex.add(j);
-//						beam2.add(new Pair<JointY, Double>(yNew, pair.getSecond() + 
-//								wv.dotProduct(featGen.getAlignmentFeatureVector(
-//										prob, yNew, i))));
-//					}
-//				}
-//			}
-//			beam1.clear();
-//			beam1.addAll(beam2);
-//			beam2.clear();
-//		}
-		if(beam2.size() > 0) pred = beam2.element().getFirst();
+		for(int i=0; i<maxNumSlots; ++i) {
+			for(Pair<Template, Double> pair : beam1) {
+				Template y = pair.getFirst();
+				if(pair.getFirst().slots.size() >= i) {
+					beam2.add(pair);
+				} else {
+					for(int j=0; j<prob.quantities.size(); ++j) {
+						Template yNew = new Template(y);
+						yNew.equations.get(y.slots.get(i).i).
+						terms.get(y.slots.get(i).j).get(y.slots.get(i).k).setSecond(
+								Tools.getValue(prob.quantities.get(j)));
+						beam2.add(new Pair<Template, Double>(yNew, pair.getSecond() + 
+								wv.dotProduct(featGen.getAlignmentFeatureVector(
+										prob, yNew, i))));
+					}
+				}
+			}
+			beam1.clear();
+			beam1.addAll(beam2);
+			beam2.clear();
+		}
+		pred.equations = beam1.element().getFirst().equations;
 		return pred;
 	}
 	
@@ -156,9 +163,9 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		return templates;
 	}
 	
-	public static List<List<Equation>> extractGraftedTemplates(
+	public static List<Template> extractGraftedTemplates(
 			JointX x, List<List<Equation>> templates, List<String> eqStrings) {
-		List<List<Equation>> relevantTemplates = new ArrayList<>();
+		List<Template> relevantTemplates = new ArrayList<>();
 		List<Equation> mathEquations = new ArrayList<>();
 		for(String eqString : eqStrings) {
 			int count = 0;
@@ -181,7 +188,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 			List<Equation> graft = extractedGraftedTemplate(
 					template, mathEquations);
 			if(graft != null) {
-				relevantTemplates.add(graft);
+				relevantTemplates.add(new Template(graft));
 			}
 		}
 		return relevantTemplates;

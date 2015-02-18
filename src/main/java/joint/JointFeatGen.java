@@ -45,12 +45,12 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 	}
 	
 	
-	public IFeatureVector getAlignmentFeatureVector(JointX x, JointY y, int slotNo) {
+	public IFeatureVector getAlignmentFeatureVector(JointX x, Template y, int slotNo) {
 		List<String> features = alignmentFeatures(x, y, slotNo);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 		
-	private List<String> alignmentFeatures(JointX x, JointY y, int slotNo) {
+	private List<String> alignmentFeatures(JointX x, Template y, int slotNo) {
 		// TODO Auto-generated method stub
 		return null;
 	}
