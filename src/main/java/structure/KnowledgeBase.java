@@ -66,8 +66,11 @@ public class KnowledgeBase {
 		
 		// Math knowledge
 		mathNodeMap = new HashMap<String, List<String>>();
-		mathNodeMap.put("ADD", Arrays.asList("plus", "more", "sum", "exceeds", "added"));
-		mathNodeMap.put("SUB", Arrays.asList("subtracted", "minus", "less", "difference", "differs"));
+		mathNodeMap.put("ADD", Arrays.asList("plus", "more", "sum", "exceeds", 
+				"added", "older", "faster", "greater", "longer", "increased"));
+		mathNodeMap.put("SUB", Arrays.asList("subtracted", "minus", "less", 
+				"short", "difference", "differs", "younger", "slower", "fewer", 
+				"shorter", "decreased"));
 		mathNodeMap.put("MUL", Arrays.asList("product"));
 		mathNodeMap.put("DIV", Arrays.asList("ratio"));
 		mathNodeSet = new HashSet<>();

@@ -248,6 +248,7 @@ public class Tools {
 	}
 	
 	public static boolean equals(List<Double> arr1, List<Double> arr2) {
+		if(arr1 == null || arr2 == null) return false;
 		if(arr1.size() != arr2.size()) return false;
 		for(Double d1 : arr1) {
 			boolean found = false;

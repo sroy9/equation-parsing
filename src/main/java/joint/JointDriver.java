@@ -129,7 +129,7 @@ public class JointDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		JointDriver.doTrainTest(2);
+		JointDriver.doTrainTest(0);
 //		JointDriver.crossVal();
 	}
 	
@@ -171,6 +171,9 @@ public class JointDriver {
 		for(List<Equation> template : templates) {
 			List<Equation> graft = extractedGraftedTemplate(
 					template, mathEquations);
+			System.out.println("Template : "+template);
+			System.out.println("Math Equations : "+mathEquations);
+			System.out.println("Graft : "+graft);
 			if(graft != null) {
 				relevantTemplates.add(new Template(graft));
 			}
@@ -267,11 +270,11 @@ public class JointDriver {
 				}
 			}
 			eqStrings.add(SemInfSolver.postProcessEqString(SemInfSolver.getEqString(x, maxNode)));
-			System.out.println("EqString : "+eqStrings.get(eqStrings.size()-1));
-			System.out.println("Problem Index : "+simulProb.index);
-			System.out.println("Text : "+simulProb.ta.getText());
-			System.out.println("Triggers : "+simulProb.triggers);
-			System.out.println("Node : "+y.nodes);
+//			System.out.println("EqString : "+eqStrings.get(eqStrings.size()-1));
+//			System.out.println("Problem Index : "+simulProb.index);
+//			System.out.println("Text : "+simulProb.ta.getText());
+//			System.out.println("Triggers : "+simulProb.triggers);
+//			System.out.println("Node : "+y.nodes);
 		}
 		return eqStrings;
 	}
