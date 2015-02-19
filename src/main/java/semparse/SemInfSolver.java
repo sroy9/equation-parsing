@@ -196,7 +196,6 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 					x.triggers.get(node.span.getFirst()).num != null) {
 				str = "V/"+x.triggers.get(node.span.getFirst()).num;
 			}
-			return str;
 		} else {
 			List<Integer> locs = new ArrayList<>();
 			int count = 0;
@@ -225,9 +224,26 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 				if(node.label.equals("MUL")) str = childStr1+"*"+childStr2;
 				if(node.label.equals("DIV")) str = childStr1+"/"+childStr2;
 			}
-			return str;
 		}
+		return str;
 	}
 	
+	public static String postProcessEqString(String str) {
+		int count = 0;
+		String newStr = "";
+		for(int i=0; i<str.length(); ++i) {
+			if(str.charAt(i) == 'V') {
+				count++;
+				newStr += "V"+count;
+			} else {
+				newStr += str.charAt(i);
+			}
+		}
+		if(!newStr.contains("=")) {
+			count++;
+			newStr = newStr+"=V"+count;
+		}
+		return newStr;
+	}
 	
 }

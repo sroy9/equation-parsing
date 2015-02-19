@@ -167,20 +167,6 @@ public class JointDriver {
 		List<Template> relevantTemplates = new ArrayList<>();
 		List<Equation> mathEquations = new ArrayList<>();
 		for(String eqString : eqStrings) {
-			int count = 0;
-			String newStr = "";
-			for(int i=0; i<eqString.length(); ++i) {
-				if(eqString.charAt(i) == 'V') {
-					count++;
-					newStr += "V"+count;
-				} else {
-					newStr += eqString.charAt(i);
-				}
-			}
-			if(!newStr.contains("=")) {
-				count++;
-				newStr = newStr+"=V"+count;
-			}
 			mathEquations.add(new Equation(0, eqString));
  		}
 		for(List<Equation> template : templates) {
@@ -281,7 +267,12 @@ public class JointDriver {
 					maxNode = node;
 				}
 			}
-			eqStrings.add(SemInfSolver.getEqString(x, maxNode));
+			eqStrings.add(SemInfSolver.postProcessEqString(SemInfSolver.getEqString(x, maxNode)));
+			System.out.println("EqString : "+eqStrings.get(eqStrings.size()-1));
+			System.out.println("Problem Index : "+simulProb.index);
+			System.out.println("Text : "+simulProb.ta.getText());
+			System.out.println("Triggers : "+simulProb.triggers);
+			System.out.println("Node : "+y.nodes);
 		}
 		return eqStrings;
 	}

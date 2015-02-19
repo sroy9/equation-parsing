@@ -55,6 +55,7 @@ public class Equation implements Serializable {
 	
 	public Equation(int index, String eqString) {
 		this();
+//		System.out.println("EqString : "+eqString);
 		eqString = eqString.trim()+" ";
 		int lastLoc = 0;
 		for(int i=0; i<eqString.length(); ++i) {
@@ -202,10 +203,7 @@ public class Equation implements Serializable {
 		for(int i=0; i<5; i++) {
 			List<Pair<Operation, Double>> pairList1 = y1.terms.get(i);
 			List<Pair<Operation, Double>> pairList2 = y2.terms.get(i);
-			if(pairList1.size() != pairList2.size()) loss += 4.0;
-			else {
-				loss += getLossPairLists(pairList1, pairList2);
-			}
+			loss += getLossPairLists(pairList1, pairList2);
 		}
 		for(int i=0; i<4; ++i) {
 			if(y1.operations.get(i) != y2.operations.get(i)) {
@@ -217,6 +215,7 @@ public class Equation implements Serializable {
 	
 	public static float getLossPairLists(List<Pair<Operation, Double>> pairList1,
 			List<Pair<Operation, Double>> pairList2) {
+		if(pairList1.size() != pairList2.size()) return 4.0f;
 		if(pairList1.size() == 0) {
 			return 0.0f;
 		}

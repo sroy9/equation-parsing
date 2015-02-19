@@ -50,57 +50,14 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 		
-	private List<String> alignmentFeatures(JointX x, Template y, int slotNo) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public static List<String> getFeatures(JointX x, JointY y) {
 		List<String> features = new ArrayList<>();
-//		features.addAll(numVarFeatures(x, y.isOneVar));
 		return features;
 	}
 	
-	public static List<String> numVarFeatures(JointX x, boolean isOneVar) {
+	public static List<String> alignmentFeatures(JointX x, Template y, int slotNo) {
 		List<String> features = new ArrayList<>();
-		String prefix = ""+isOneVar;
-		features.add(prefix+"_NumQuestionSentences_"+FeatGen.getQuestionSentences(x.ta).size());
-		for(String feature : FeatGen.getLemmatizedBigrams(x.lemmas, 0, x.lemmas.size()-1)) {
-			features.add(prefix+"_"+feature);
-		}
-		for(int i=0; i<x.skeleton.size()-1; ++i) {
-			features.add(prefix+"_"+x.skeleton.get(i)+"_"+x.skeleton.get(i+1));
-		}
-		for(Sentence sent : FeatGen.getQuestionSentences(x.ta)) {
-			for(int i=0; i<sent.size(); ++i) {
-				features.add(prefix+"_Q_"+sent.getToken(i));
-			}
-			for(int i=0; i<sent.size()-1; ++i) {
-				features.add(prefix+"_Q_"+sent.getToken(i)+"_"+sent.getToken(i+1));
-			}
-		}
-		int numQuant = x.quantities.size();
-		int uniqueQuant = Tools.uniqueNumbers(x.quantities).size();
-		int numSent = x.ta.getNumberOfSentences();
-		
-		if(numQuant < 2) features.add(prefix+"_numQuant<2");
-		else if(numQuant < 4) features.add(prefix+"_numQuant<4");
-		else features.add(prefix+"_numQuant<6");
-		
-		if(uniqueQuant < 2) features.add(prefix+"_uniqueQuant<2");
-		else if(uniqueQuant < 4) features.add(prefix+"_uniqueQuant<4");
-		else features.add(prefix+"_uniqueQuant<6");
-		
-		if(numSent < 2) features.add(prefix+"_numSent<2");
-		else if(numSent < 4) features.add(prefix+"_numSent<4");
-		else features.add(prefix+"_numSent<6");
 		return features;
 	}
 
-	public IFeatureVector getExpressionFeatureVector(JointX x, int i, int j,
-			List<IntPair> division, String label) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 }
