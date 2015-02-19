@@ -3,10 +3,13 @@ package partition;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import java_cup.internal_error;
 import reader.DocReader;
+import semparse.SemDriver;
+import structure.KnowledgeBase;
 import structure.Node;
 import structure.SimulProb;
 import utils.Params;
@@ -55,9 +58,18 @@ public class PartitionDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb prob : simulProbList) {
+			Map<Integer, Boolean> partition = SemDriver.extractGoldPartition(prob);
 			for(int i=0; i<prob.triggers.size()-1; ++i) {
 				int index1 = prob.triggers.get(i).index;
 				int index2 = prob.triggers.get(i+1).index;
+				boolean allow = false;
+				for(String token : prob.ta.getSentenceFromToken(index1).getTokens()) {
+					if(KnowledgeBase.mathIndicatorSet.contains(token.toLowerCase())) {
+						allow = true;
+						break;
+					}
+				}
+				if(!allow) continue;
 				if(prob.ta.getSentenceFromToken(index1) == 
 						prob.ta.getSentenceFromToken(index2)) {
 					PartitionX x = new PartitionX(prob, i, i+1);

@@ -201,7 +201,7 @@ public class SemDriver {
 				partitions.put(i, true);
 				for(Node pair : simulProb.nodes) {
 					if(pair.span.getFirst() <= i && 
-							pair.span.getSecond() > i+1) {
+							pair.span.getSecond() >= i+1) {
 						partitions.put(i, false);
 						break;
 					}
