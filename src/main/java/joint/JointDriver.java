@@ -77,7 +77,7 @@ public class JointDriver {
 		SLModel model = SLModel.loadModel(modelPath);
 		Set<Integer> incorrect = new HashSet<>();
 		Set<Integer> total = new HashSet<>();
-		double acc = 0.0, beamAcc = 0.0;
+		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			JointX prob = (JointX) sp.instanceList.get(i);
 			JointY gold = (JointY) sp.goldStructureList.get(i);
@@ -130,8 +130,8 @@ public class JointDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-//		RelationDriver.doTrainTest(0);
-		JointDriver.crossVal();
+		JointDriver.doTrainTest(0);
+//		JointDriver.crossVal();
 	}
 	
 	public static List<List<Equation>> extractTemplates(SLProblem slProb) {
