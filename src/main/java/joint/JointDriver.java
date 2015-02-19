@@ -62,8 +62,7 @@ public class JointDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			Map<Integer, Boolean> partitions = SemDriver.extractGoldPartition(simulProb);
-			List<IntPair> eqSpans = SemDriver.extractGoldEqSpans(simulProb, partitions);
+			List<IntPair> eqSpans = SemDriver.extractGoldEqSpans(simulProb);
 			List<String> eqStrings = JointDriver.extractGoldEqStrings(simulProb, eqSpans);
 			JointX x = new JointX(simulProb, eqStrings);
 			JointY y = new JointY(simulProb);
@@ -130,7 +129,7 @@ public class JointDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		JointDriver.doTrainTest(0);
+		JointDriver.doTrainTest(2);
 //		JointDriver.crossVal();
 	}
 	

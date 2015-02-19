@@ -68,8 +68,7 @@ public class SemDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			Map<Integer, Boolean> partitions = extractGoldPartition(simulProb);
-			List<IntPair> eqSpans = extractGoldEqSpans(simulProb, partitions);
+			List<IntPair> eqSpans = extractGoldEqSpans(simulProb);
 			for(IntPair span : eqSpans) {
 				SemX x = new SemX(simulProb, span);
 				SemY y = new SemY(simulProb, span);
@@ -137,58 +136,73 @@ public class SemDriver {
 		model.saveModel(modelPath);
 	}
 
-	public static List<IntPair> extractGoldEqSpans(
-			SimulProb prob, Map<Integer, Boolean> partitions) {
-		int start, end=0;
-		List<IntPair> eqSpans = new ArrayList<>();
-		for(int i=0; i<prob.ta.size(); ++i) {
-			if(KnowledgeBase.mathIndicatorSet.contains(
-					prob.ta.getToken(i).toLowerCase())) {
-//				System.out.println("Found indicator at "+i);
-				int minDist = Integer.MAX_VALUE;
-				int pivot = -1;
-				for(int j=end; j<prob.triggers.size(); j++) {
-					int dist = Math.abs(prob.triggers.get(j).index - i);
-					if(dist < minDist) {
-						minDist = dist;
-						pivot = j;
-					}
+	public static List<IntPair> extractGoldEqSpans(SimulProb prob) {
+		List<IntPair> eqSpans = new ArrayList<IntPair>();
+		for(Node node1 : prob.nodes) {
+			boolean allow = true;
+			for(Node node2 : prob.nodes) {
+				if(Tools.doesContainNotEqual(node2.span, node1.span)) {
+					allow = false;
 				}
-				if(pivot == -1) continue;
-//				System.out.println("Pivot found at "+pivot);
-				start = pivot; 
-				end = pivot+1;
-				for(int j=start-1; j>=0; --j) {
-					int index1 = prob.triggers.get(j).index;
-					int index2 = prob.triggers.get(j+1).index;
-					if(prob.ta.getSentenceFromToken(index1) == 
-							prob.ta.getSentenceFromToken(index2) && 
-							partitions.containsKey(j) &&
-							partitions.get(j) == false) {
-						start = j;
-					} else {
-						break;
-					}
-				}
-				for(int j=end; j<prob.triggers.size(); ++j) {
-					int index1 = prob.triggers.get(j-1).index;
-					int index2 = prob.triggers.get(j).index;
-					if(prob.ta.getSentenceFromToken(index1) == 
-							prob.ta.getSentenceFromToken(index2) && 
-							partitions.containsKey(j-1) &&
-							partitions.get(j-1) == false) {
-						end = j+1;
-					} else {
-						break;
-					}
-				}
-				eqSpans.add(new IntPair(start, end));
-				i = prob.triggers.get(end-1).index+1;
-				
-			}	
+			}
+			if(allow) eqSpans.add(node1.span);
 		}
 		return eqSpans;
 	}
+	
+	
+//	public static List<IntPair> extractGoldEqSpans(
+//			SimulProb prob, Map<Integer, Boolean> partitions) {
+//		int start, end=0;
+//		List<IntPair> eqSpans = new ArrayList<>();
+//		for(int i=0; i<prob.ta.size(); ++i) {
+//			if(KnowledgeBase.mathIndicatorSet.contains(
+//					prob.ta.getToken(i).toLowerCase())) {
+////				System.out.println("Found indicator at "+i);
+//				int minDist = Integer.MAX_VALUE;
+//				int pivot = -1;
+//				for(int j=end; j<prob.triggers.size(); j++) {
+//					int dist = Math.abs(prob.triggers.get(j).index - i);
+//					if(dist < minDist) {
+//						minDist = dist;
+//						pivot = j;
+//					}
+//				}
+//				if(pivot == -1) continue;
+////				System.out.println("Pivot found at "+pivot);
+//				start = pivot; 
+//				end = pivot+1;
+//				for(int j=start-1; j>=0; --j) {
+//					int index1 = prob.triggers.get(j).index;
+//					int index2 = prob.triggers.get(j+1).index;
+//					if(prob.ta.getSentenceFromToken(index1) == 
+//							prob.ta.getSentenceFromToken(index2) && 
+//							partitions.containsKey(j) &&
+//							partitions.get(j) == false) {
+//						start = j;
+//					} else {
+//						break;
+//					}
+//				}
+//				for(int j=end; j<prob.triggers.size(); ++j) {
+//					int index1 = prob.triggers.get(j-1).index;
+//					int index2 = prob.triggers.get(j).index;
+//					if(prob.ta.getSentenceFromToken(index1) == 
+//							prob.ta.getSentenceFromToken(index2) && 
+//							partitions.containsKey(j-1) &&
+//							partitions.get(j-1) == false) {
+//						end = j+1;
+//					} else {
+//						break;
+//					}
+//				}
+//				eqSpans.add(new IntPair(start, end));
+//				i = prob.triggers.get(end-1).index+1;
+//				
+//			}	
+//		}
+//		return eqSpans;
+//	}
 	
 	public static Map<Integer, Boolean> extractGoldPartition(
 			SimulProb simulProb) {
