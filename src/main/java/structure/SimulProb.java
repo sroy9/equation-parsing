@@ -455,7 +455,11 @@ public class SimulProb {
 			}
 			if(relevantIndex.size() == 0) continue;
 			nodes.add(new Node(label, new IntPair(
-					relevantIndex.get(0), relevantIndex.get(relevantIndex.size()-1)+1)));
+					relevantIndex.get(0), 
+					relevantIndex.get(relevantIndex.size()-1)+1), 
+					new ArrayList<Node>()));
 		}
+		
+		
 	}
 }

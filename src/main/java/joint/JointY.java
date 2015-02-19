@@ -17,11 +17,9 @@ public class JointY implements IStructure, Serializable {
 	
 	private static final long serialVersionUID = 2399969922362221136L;
 	public List<Equation> equations;
-	public List<Node> nodes;
 	
 	public JointY() {
 		equations = new ArrayList<>();
-		nodes = new ArrayList<>();
 	}
 	
 	public JointY(JointY other) {
@@ -29,8 +27,6 @@ public class JointY implements IStructure, Serializable {
 		for(Equation eq : other.equations) {
 			equations.add(new Equation(eq));
 		}
-		nodes = new ArrayList<>();
-		nodes.addAll(other.nodes);
 	}
 	
 	public JointY(SimulProb prob) {
@@ -38,35 +34,6 @@ public class JointY implements IStructure, Serializable {
 		for(Equation eq : prob.equations) {
 			equations.add(eq);
 		}
-		nodes = new ArrayList<Node>();
-		nodes.addAll(prob.nodes);
-	}
-	
-	public static float getNodeLoss(JointY y1, JointY y2) {
-		float loss = 0.0f;
-		for(Node pair1 : y1.nodes) {
-			boolean found = false;
-			for(Node pair2 : y2.nodes) {
-				if(pair1.label.equals(pair2.label) && 
-						pair1.span.equals(pair2.span)) {
-					found = true;
-					break;
-				}
-			}
-			if(!found) loss += 1.0;
-		}
-		for(Node pair1 : y2.nodes) {
-			boolean found = false;
-			for(Node pair2 : y1.nodes) {
-				if(pair1.label.equals(pair2.label) && 
-						pair1.span.equals(pair2.span)) {
-					found = true;
-					break;
-				}
-			}
-			if(!found) loss += 1.0;
-		}
-		return loss;
 	}
 	
 	public static float getEquationLoss(JointY y1, JointY y2) {
@@ -91,7 +58,7 @@ public class JointY implements IStructure, Serializable {
 	}
 	
 	public static float getLoss(JointY y1, JointY y2) {
-		return getNodeLoss(y1, y2) + getEquationLoss(y1, y2) + getSolutionLoss(y1, y2);
+		return getEquationLoss(y1, y2) + getSolutionLoss(y1, y2);
 	}
 	
 	@Override

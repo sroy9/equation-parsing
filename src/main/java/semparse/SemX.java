@@ -31,9 +31,9 @@ public class SemX implements IInstance {
 	public List<Pair<String, IntPair>> skeleton;
 	public List<Trigger> triggers;
 	public Map<Integer, Boolean> partitions;
-	public List<IntPair> eqSpans;
+	public IntPair eqSpan;
 	
-	public SemX(SimulProb simulProb, boolean useGold) {
+	public SemX(SimulProb simulProb, IntPair span) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;
@@ -42,79 +42,7 @@ public class SemX implements IInstance {
 		lemmas = simulProb.lemmas;
 		skeleton = simulProb.skeleton;
 		triggers = simulProb.triggers;
-		partitions = new HashMap<Integer, Boolean>();
-		if(useGold) {
-			for(int i=0; i<simulProb.triggers.size()-1; ++i) {
-				int index1 = simulProb.triggers.get(i).index;
-				int index2 = simulProb.triggers.get(i+1).index;
-				if(simulProb.ta.getSentenceFromToken(index1) == 
-						simulProb.ta.getSentenceFromToken(index2)) {
-					partitions.put(i, true);
-					for(Node pair : simulProb.nodes) {
-						if(pair.span.getFirst() <= i && 
-								pair.span.getSecond() > i+1) {
-							partitions.put(i, false);
-							break;
-						}
-					}
-				}
-			}
-		}
-		eqSpans = new ArrayList<>();
-		extractEqSpans();
+		eqSpan = span;
 	}
 	
-	public void extractEqSpans() {
-		System.out.println("Text : "+ta.getText());
-		System.out.println("Triggers : "+triggers);
-		System.out.println("Partition : "+partitions);
-		int start, end=0;
-		for(int i=0; i<ta.size(); ++i) {
-			if(KnowledgeBase.mathIndicatorSet.contains(
-					ta.getToken(i).toLowerCase())) {
-//				System.out.println("Found indicator at "+i);
-				int minDist = Integer.MAX_VALUE;
-				int pivot = -1;
-				for(int j=end; j<triggers.size(); j++) {
-					int dist = Math.abs(triggers.get(j).index - i);
-					if(dist < minDist) {
-						minDist = dist;
-						pivot = j;
-					}
-				}
-				if(pivot == -1) continue;
-//				System.out.println("Pivot found at "+pivot);
-				start = pivot; 
-				end = pivot+1;
-				for(int j=start-1; j>=0; --j) {
-					int index1 = triggers.get(j).index;
-					int index2 = triggers.get(j+1).index;
-					if(ta.getSentenceFromToken(index1) == 
-							ta.getSentenceFromToken(index2) && 
-							partitions.containsKey(j) &&
-							partitions.get(j) == false) {
-						start = j;
-					} else {
-						break;
-					}
-				}
-				for(int j=end; j<triggers.size(); ++j) {
-					int index1 = triggers.get(j-1).index;
-					int index2 = triggers.get(j).index;
-					if(ta.getSentenceFromToken(index1) == 
-							ta.getSentenceFromToken(index2) && 
-							partitions.containsKey(j-1) &&
-							partitions.get(j-1) == false) {
-						end = j+1;
-					} else {
-						break;
-					}
-				}
-				eqSpans.add(new IntPair(start, end));
-				i = triggers.get(end-1).index+2;
-//				System.out.println("EqSpan added : "+new IntPair(start, end));
-				
-			}	
-		}
-	}
 }

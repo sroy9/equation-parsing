@@ -1,31 +1,29 @@
 package joint;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
 import java.util.Set;
 
-import partition.PartitionX;
-import partition.PartitionY;
 import reader.DocReader;
+import semparse.SemDriver;
+import semparse.SemInfSolver;
+import semparse.SemX;
+import semparse.SemY;
 import structure.Equation;
-import structure.EquationSolver;
-import structure.Operation;
+import structure.Node;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLParameters;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
-import edu.illinois.cs.cogcomp.sl.learner.l2_loss_svm.L2LossSSVMDCDSolver;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
-import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
 public class JointDriver {
 	
@@ -63,9 +61,12 @@ public class JointDriver {
 					DocReader.readSimulProbFromBratDir(Params.annotationDir);
 		}
 		SLProblem problem = new SLProblem();
-		for (SimulProb prob : simulProbList) {
-			JointX x = new JointX(prob, true);
-			JointY y = new JointY(prob);
+		for (SimulProb simulProb : simulProbList) {
+			Map<Integer, Boolean> partitions = SemDriver.extractGoldPartition(simulProb);
+			List<IntPair> eqSpans = SemDriver.extractGoldEqSpans(simulProb, partitions);
+			List<String> eqStrings = JointDriver.extractGoldEqStrings(simulProb, eqSpans);
+			JointX x = new JointX(simulProb, eqStrings);
+			JointY y = new JointY(simulProb);
 			problem.addExample(x, y);
 		}
 		return problem;
@@ -119,8 +120,7 @@ public class JointDriver {
 		model.lm = lm;
 		JointFeatGen fg = new JointFeatGen(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new JointInfSolver(
-				fg, JointInfSolver.extractTemplates(train));
+		model.infSolver = new JointInfSolver(fg, extractTemplates(train));
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
@@ -132,5 +132,157 @@ public class JointDriver {
 	public static void main(String args[]) throws Exception {
 //		RelationDriver.doTrainTest(0);
 		JointDriver.crossVal();
+	}
+	
+	public static List<List<Equation>> extractTemplates(SLProblem slProb) {
+		List<List<Equation>> templates = new ArrayList<>();
+		for(IStructure struct : slProb.goldStructureList) {
+			JointY gold = new JointY((JointY) struct);
+			for(Equation eq1 : gold.equations) {
+				for(int j=0; j<5; ++j) {
+					for(int k=0; k<eq1.terms.get(j).size(); ++k) {
+						eq1.terms.get(j).get(k).setSecond(null);
+					}
+				}
+			}
+			boolean alreadyPresent = false;
+			for(int i=0; i< templates.size(); ++i) { 
+				JointY y = new JointY();
+				y.equations = templates.get(i); 
+				if(JointY.getEquationLoss(gold, y) < 0.0001) {
+					alreadyPresent = true;
+					break;
+				}
+			}
+			if(!alreadyPresent) {
+				templates.add(gold.equations);
+			}
+		}
+		System.out.println("Number of templates : "+templates.size());
+		return templates;
+	}
+	
+	public static List<Template> extractGraftedTemplates(
+			JointX x, List<List<Equation>> templates, List<String> eqStrings) {
+		List<Template> relevantTemplates = new ArrayList<>();
+		List<Equation> mathEquations = new ArrayList<>();
+		for(String eqString : eqStrings) {
+			int count = 0;
+			String newStr = "";
+			for(int i=0; i<eqString.length(); ++i) {
+				if(eqString.charAt(i) == 'V') {
+					count++;
+					newStr += "V"+count;
+				} else {
+					newStr += eqString.charAt(i);
+				}
+			}
+			if(!newStr.contains("=")) {
+				count++;
+				newStr = newStr+"=V"+count;
+			}
+			mathEquations.add(new Equation(0, eqString));
+ 		}
+		for(List<Equation> template : templates) {
+			List<Equation> graft = extractedGraftedTemplate(
+					template, mathEquations);
+			if(graft != null) {
+				relevantTemplates.add(new Template(graft));
+			}
+		}
+		return relevantTemplates;
+	}
+	
+	// Greedy matching should work
+	public static List<Equation> extractedGraftedTemplate(
+			List<Equation> template, List<Equation> mathEquations) {
+		List<Equation> graft = new ArrayList<>();
+		for(Equation eq : template) {
+			graft.add(new Equation(eq));
+		}
+		List<IntPair> match = new ArrayList<>();
+		boolean allFound = true;
+		for(Equation eq : mathEquations) {
+			boolean found = false;
+			Equation eq1 = new Equation(eq);
+			for(int j=0; j<5; ++j) {
+				for(int k=0; k<eq1.terms.get(j).size(); ++k) {
+					eq1.terms.get(j).get(k).setSecond(null);
+				}
+			}
+			for(int i=0; i<template.size(); ++i) {
+				if(Equation.getLoss(template.get(i), eq1) < 0.01 && 
+						!match.contains(new IntPair(i, 2))) {
+					graft.set(i, eq);
+					match.add(new IntPair(i, 2));
+					found = true;
+					break;
+				}
+			}
+			if(found) continue;
+			for(int i=0; i<template.size(); ++i) {
+				if(partialEquationMatch(template.get(i), eq1, 0) && 
+						!match.contains(new IntPair(i, 0))) {
+					graft.get(i).terms.set(0, eq1.terms.get(0));
+					graft.get(i).terms.set(1, eq1.terms.get(1));
+					graft.get(i).operations.set(0, eq1.operations.get(0));
+					graft.get(i).operations.set(1, eq1.operations.get(1));
+					match.add(new IntPair(i, 0));
+					found = true;
+					break;
+				}
+				if(partialEquationMatch(template.get(i), eq1, 1) && 
+						!match.contains(new IntPair(i, 1))) {
+					graft.get(i).terms.set(2, eq1.terms.get(0));
+					graft.get(i).terms.set(3, eq1.terms.get(1));
+					graft.get(i).operations.set(2, eq1.operations.get(0));
+					graft.get(i).operations.set(3, eq1.operations.get(1));
+					match.add(new IntPair(i, 1));
+					found = true;
+					break;
+				}
+			}
+			if(!found) {
+				allFound = false;
+				break;
+			}
+		}
+		if(allFound) {
+			return graft;
+		}
+		return null;
+	}
+	
+	public static boolean partialEquationMatch(
+			Equation template, Equation eq, int index) {
+		if(template.terms.get(4).size() > 0) return false;
+		if(Equation.getLossPairLists(template.terms.get(2*index), eq.terms.get(0)) < 0.01) {
+			if(Equation.getLossPairLists(template.terms.get(2*index+1), eq.terms.get(1)) < 0.01) {
+				if(template.operations.get(2*index) == eq.operations.get(0) &&
+						template.operations.get(2*index+1) == eq.operations.get(1)) {
+					return true;		
+				}
+			}
+		}
+		return false;
+	}
+	
+	public static List<String> extractGoldEqStrings(
+			SimulProb simulProb, List<IntPair> eqSpans) {
+		List<String> eqStrings = new ArrayList<>();
+		for(IntPair span : eqSpans) {
+			SemX x = new SemX(simulProb, span);
+			SemY y = new SemY(simulProb, span);
+			Node maxNode = null;
+			int maxSize = 0;
+			for(Node node : y.nodes) {
+				if(node.span.getSecond() - node.span.getFirst() > maxSize) {
+					maxSize = node.span.getSecond() - node.span.getFirst();
+					maxNode = node;
+				}
+			}
+			eqStrings.add(SemInfSolver.getEqString(x, maxNode));
+		}
+		return eqStrings;
 	}
 }

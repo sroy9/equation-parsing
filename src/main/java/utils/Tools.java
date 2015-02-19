@@ -51,19 +51,19 @@ public class Tools {
 	}
 	
 	// is ip2 subset of ip1
-	public static boolean doesContain(IntPair ip1, IntPair ip2) {
-		if(ip1.getFirst() <= ip2.getFirst() && ip2.getSecond() <= ip1.getSecond()) {
+	public static boolean doesContain(IntPair big, IntPair small) {
+		if(big.getFirst() <= small.getFirst() && small.getSecond() <= big.getSecond()) {
 			return true;
 		}
 		return false;
 	}
 	
 
-	public static boolean doesContainNotEqual(IntPair ip1, IntPair ip2) {
-		if(ip1.getFirst() == ip2.getFirst() && ip2.getSecond() == ip1.getSecond()) {
+	public static boolean doesContainNotEqual(IntPair big, IntPair small) {
+		if(big.getFirst() == small.getFirst() && big.getSecond() == small.getSecond()) {
 			return false;
 		}
-		if(ip1.getFirst() <= ip2.getFirst() && ip2.getSecond() <= ip1.getSecond()) {
+		if(big.getFirst() <= small.getFirst() && small.getSecond() <= big.getSecond()) {
 			return true;
 		}
 		return false;

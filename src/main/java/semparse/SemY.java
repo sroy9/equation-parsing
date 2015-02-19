@@ -3,12 +3,15 @@ package semparse;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import structure.Equation;
 import structure.EquationSolver;
 import structure.Node;
 import structure.SimulProb;
+import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -16,30 +19,59 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 public class SemY implements IStructure, Serializable {
 	
 	private static final long serialVersionUID = 2399969922362221136L;
-	public List<Equation> equations;
 	public List<Node> nodes;
 	
 	public SemY() {
-		equations = new ArrayList<>();
 		nodes = new ArrayList<>();
 	}
 	
 	public SemY(SemY other) {
-		equations = new ArrayList<>();
-		for(Equation eq : other.equations) {
-			equations.add(new Equation(eq));
-		}
 		nodes = new ArrayList<>();
 		nodes.addAll(other.nodes);
 	}
 	
-	public SemY(SimulProb prob) {
-		equations = new ArrayList<>();
-		for(Equation eq : prob.equations) {
-			equations.add(eq);
-		}
+	public SemY(SimulProb prob,  IntPair span) {
 		nodes = new ArrayList<Node>();
-		nodes.addAll(prob.nodes);
+		for(Node node : prob.nodes) {
+			if(Tools.doesContain(span, node.span)) {
+				nodes.add(node);
+			}
+		}
+		for(int i=span.getFirst(); i<span.getSecond(); ++i) {
+			boolean found = false;
+			for(Node node : nodes) {
+				if(node.span.getFirst() == i && node.span.getSecond() == (i+1)) {
+					found = true;
+					break;
+				}
+			}
+			if(!found) nodes.add(new Node("NULL", new IntPair(i, i+1), null));
+		}
+		for(Node node : nodes) {
+			List<Node> children = new ArrayList<>();
+			for(Node node1 : nodes) {
+				if(Tools.doesContainNotEqual(node.span, node1.span)) {
+					boolean allow = true;
+					for(Node node2 : nodes) {
+						if(Tools.doesContainNotEqual(node.span, node2.span) 
+								&& Tools.doesContainNotEqual(node2.span, node1.span)) {
+							allow = false;
+							break;
+						}
+					}
+					if(allow) {
+						children.add(node1);
+					}
+				}
+			}
+			Collections.sort(children, new Comparator<Node>() {
+			    @Override
+			    public int compare(Node a, Node b) {
+			    		return (int)Math.signum(a.span.getFirst() - b.span.getFirst());
+			    }
+			});
+			node.children = children;
+		}
 	}
 	
 	public static float getNodeLoss(SemY y1, SemY y2) {
@@ -67,27 +99,6 @@ public class SemY implements IStructure, Serializable {
 			if(!found) loss += 1.0;
 		}
 		return loss;
-	}
-	
-	public static float getEquationLoss(SemY y1, SemY y2) {
-		if(y1.equations.size() != y2.equations.size()) return 10.0f;
-		if(y1.equations.size() == 1) return Equation.getLoss(
-				y1.equations.get(0), y2.equations.get(0));
-		if(y1.equations.size() == 2) {
-			float loss1 = Equation.getLoss(y1.equations.get(0), y2.equations.get(0)) + 
-					Equation.getLoss(y1.equations.get(1), y2.equations.get(1));
-			float loss2 = Equation.getLoss(y1.equations.get(0), y2.equations.get(1)) + 
-					Equation.getLoss(y1.equations.get(1), y2.equations.get(0));
-			return Math.min(loss1, loss2);
-		}
-		return 10.0f;		
-	}
-	
-	public static float getSolutionLoss(SemY y1, SemY y2) {
-		if(EquationSolver.doesHaveSameSolution(y1.equations, y2.equations)) {
-			return 0.0f;
-		}
-		return 5.0f;
 	}
 	
 	public static float getLoss(SemY y1, SemY y2) {

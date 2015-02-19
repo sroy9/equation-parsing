@@ -24,32 +24,6 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
-class Expr {
-	public double score;
-	public String label;
-	public IntPair span;
-	public List<IntPair> divisions;
-	public String eqString;
-	
-	public Expr() {
-		divisions = new ArrayList<IntPair>();
-		eqString = "";
-	}
-	
-	@Override
-	public String toString() {
-		return label +" "+span+" "+divisions;
-	}
-	
-	public Expr(Expr other) {
-		this.score = other.score;
-		this.label = other.label;
-		this.span = other.span;
-		this.divisions = new ArrayList<IntPair>();
-		this.divisions.addAll(other.divisions);
-	}
-}
-
 public class JointInfSolver extends AbstractInferenceSolver implements
 		Serializable {
 
@@ -91,19 +65,11 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 				MinMaxPriorityQueue.orderedBy(jointPairComparator)
 				.maximumSize(200).create();
 		
-		// Get best equation trees
-		List<String> eqStrings = new ArrayList<>();
-		for(IntPair eqSpan : prob.eqSpans) {
-			Pair<String, List<Node>> pair = getBottomUpBestParse(prob, eqSpan, wv);
-			eqStrings.add(pair.getFirst());
-			pred.nodes.addAll(pair.getSecond());
-		}
-		
-		// Extract grafted templates
-		List<Template> relevantTemplates = extractGraftedTemplates(
-				prob, templates, eqStrings); 
+		List<Template> grafts = extractGraftedTemplates(prob, templates, prob.eqStrings);
+ 		
 		int maxNumSlots = 0;
-		for(Template template : relevantTemplates) {
+		for(Template template : grafts) {
+			beam1.add(new Pair<Template, Double>(template, 0.0));
 			if(template.slots.size() > maxNumSlots) {
 				maxNumSlots = template.slots.size();
 			}
@@ -307,146 +273,6 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		}
 		return list2;
 	}
-	
-	public Pair<String, List<Node>> getBottomUpBestParse(
-			JointX x, IntPair span, WeightVector wv) {
-		
-		List<Node> nodes = new ArrayList<>();
-		List<String> labels = null;
-		int n = span.getSecond() - span.getFirst();
-		Expr dpMat[][] = new Expr[n+1][n+1];
-		List<Trigger> triggers = new ArrayList<>();
-		for(int i=span.getFirst(); i<span.getSecond(); ++i) {
-			triggers.add(x.triggers.get(i));
-		}
-		
-		for(int j=1; j<=n; ++j) {
-			for(int i=j-1; i>=0; --i) {
-				if(i+1 == j && triggers.get(i).label.equals("NUMBER")) {
-					labels = Arrays.asList("EXPR", "ADD", "SUB", "MUL", "DIV");
-				} else if(i+1 == j && triggers.get(i).label.equals("OP")) {
-					labels = Arrays.asList("OP", "ADD", "SUB", "DIV");
-				} else {
-					labels = Arrays.asList("EQ", "ADD", "SUB", "MUL", "DIV");
-				}
-				double bestScore = -Double.MAX_VALUE;
-				List<IntPair> bestDivision = null;
-				String bestLabel = null;
-				double score;
-				for(String label : labels) {
-					for(List<IntPair> division : enumerateDivisions(x, i, j)) { 
-						score = 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
-								x, i, j, division, label));
-						for(IntPair ip : division) {
-							score += dpMat[ip.getFirst()][ip.getSecond()].score;
-						}
-						if(score > bestScore) {
-							bestScore = score;
-							bestLabel = label;
-							bestDivision = division;
-						}
-					}
-				}
-				dpMat[i][j] = new Expr();
-				dpMat[i][j].score = bestScore;
-				dpMat[i][j].label = bestLabel;
-				dpMat[i][j].span = new IntPair(i, j);
-				dpMat[i][j].divisions = bestDivision;
-				if(i+1 == j) {
-					if(bestLabel.equals("EXPR")) dpMat[i][j].eqString = ""+triggers.get(i).num;
-					if(bestLabel.equals("ADD")) dpMat[i][j].eqString = "V+V";
-					if(bestLabel.equals("SUB")) dpMat[i][j].eqString = "V-V";
-					if(bestLabel.equals("MUL")) dpMat[i][j].eqString = triggers.get(i).num+"*V";
-					if(bestLabel.equals("DIV") && triggers.get(i).num == null) {
-						dpMat[i][j].eqString = "V/V";
-					}
-					if(bestLabel.equals("DIV") && triggers.get(i).num != null) {
-						dpMat[i][j].eqString = "V/"+triggers.get(i).num;
-					}
-				} else {
-					List<Integer> locs = new ArrayList<>();
-					int count = 0;
-					for(int k=0; k<bestDivision.size(); ++k) {
-						IntPair ip = bestDivision.get(k);
-						if(!dpMat[ip.getFirst()][ip.getSecond()].eqString.equals("")) {
-							locs.add(k);
-							count++;
-						}
-					}
-					if(count == 1) {
-						IntPair ip = bestDivision.get(locs.get(0));
-						if(bestLabel.equals("ADD")) dpMat[i][j].eqString = 
-								"V+"+dpMat[ip.getFirst()][ip.getSecond()];
-						if(bestLabel.equals("SUB")) dpMat[i][j].eqString = 
-								"V-"+dpMat[ip.getFirst()][ip.getSecond()];
-						if(bestLabel.equals("MUL")) dpMat[i][j].eqString = 
-								"V*"+dpMat[ip.getFirst()][ip.getSecond()];
-						if(bestLabel.equals("DIV")) dpMat[i][j].eqString = 
-								"V/"+dpMat[ip.getFirst()][ip.getSecond()];
-					}
-					if(count == 2) {
-						IntPair ip1 = bestDivision.get(locs.get(0));
-						IntPair ip2 = bestDivision.get(locs.get(1));
-						if(bestLabel.equals("EQ")) dpMat[i][j].eqString = 
-								dpMat[ip1.getFirst()][ip1.getSecond()]+
-								"="+dpMat[ip2.getFirst()][ip2.getSecond()];
-						if(bestLabel.equals("ADD")) dpMat[i][j].eqString = 
-								dpMat[ip1.getFirst()][ip1.getSecond()]+
-								"+"+dpMat[ip2.getFirst()][ip2.getSecond()];
-						if(bestLabel.equals("SUB")) dpMat[i][j].eqString = 
-								dpMat[ip1.getFirst()][ip1.getSecond()]+
-								"-"+dpMat[ip2.getFirst()][ip2.getSecond()];
-						if(bestLabel.equals("MUL")) dpMat[i][j].eqString = 
-								dpMat[ip1.getFirst()][ip1.getSecond()]+
-								"*"+dpMat[ip2.getFirst()][ip2.getSecond()];
-						if(bestLabel.equals("DIV")) dpMat[i][j].eqString = 
-								dpMat[ip1.getFirst()][ip1.getSecond()]+
-								"/"+dpMat[ip2.getFirst()][ip2.getSecond()];
-					}
-					
-				}
-				
-			}
-		}
-		List<Expr> queue = new ArrayList<Expr>();
-		queue.add(dpMat[0][n]);
-		while(queue.size() > 0) {
-			Expr expr = queue.get(0);
-			int i = expr.span.getFirst();
-			int j = expr.span.getSecond();
-			nodes.add(new Node(expr.label, new IntPair(i, j)));
-			queue.remove(0);
-			for(IntPair division : expr.divisions) {
-				queue.add(dpMat[division.getFirst()][division.getSecond()]);
-			}
-		}
-		return new Pair<String, List<Node>>(dpMat[0][n].eqString, nodes);
-	}
 
-	public static List<List<IntPair>> enumerateDivisions(
-			JointX x, int start, int end) {
-		List<List<IntPair>> divisions = new ArrayList<>();
-		if(start+1 == end) {
-			divisions.add(new ArrayList<IntPair>());
-			return divisions;
-		}
-		for(int i=start+1; i<end; ++i) {
-			List<IntPair> div = Arrays.asList(
-					new IntPair(start, i), new IntPair(i, end));
-			divisions.add(div);
-		}
-		for(int i=start+1; i<end-1; ++i) {
-			for(int j=i+1; j<end; ++j) {
-				List<IntPair> div = Arrays.asList(new IntPair(start, i), 
-						new IntPair(i, j), new IntPair(j, end));
-				if((i-start == 1 && x.triggers.get(start).label.equals("OP")) ||
-						(j-i == 1 && x.triggers.get(i).label.equals("OP")) ||
-						(end-j == 1 && x.triggers.get(j).label.equals("OP"))) {
-					divisions.add(div);
-				}
-			}
-		}
-		return divisions;
-	}	
 	
 }
