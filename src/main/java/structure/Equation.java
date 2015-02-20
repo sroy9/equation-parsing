@@ -164,9 +164,8 @@ public class Equation implements Serializable {
 			for(Pair<Operation, Double> pair : list) {
 				str+=i+" : ["+pair.getFirst()+" "+pair.getSecond()+"] ";
 			}
-			str+="\n";	
 		}
-		str+="Op : "+Arrays.asList(operations)+"\n";
+		str+="\nOp : "+Arrays.asList(operations);
 		return str;
 	}
 	
