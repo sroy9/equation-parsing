@@ -16,6 +16,7 @@ import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
 import structure.Equation;
 import structure.KnowledgeBase;
+import structure.Operation;
 import structure.SimulProb;
 import utils.FeatGen;
 import utils.Params;
@@ -97,6 +98,7 @@ public class DocReader {
 			System.out.println("Equation :\n"+eq);
 		}
 	}
+	
 	
 	public static void main(String args[]) throws Exception {
 		List<SimulProb> simulProbList = 
