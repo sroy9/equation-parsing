@@ -38,7 +38,6 @@ public class SimulProb {
 	public List<Constituent> chunks;
 	public List<Constituent> parse;
 	public List<Pair<String, IntPair>> skeleton;
-	public List<Trigger> triggers;
 	public List<Node> nodes;
   	
 	public SimulProb(int index) {
@@ -47,7 +46,6 @@ public class SimulProb {
 		solutions = new ArrayList<Double>();
 		quantities = new ArrayList<QuantSpan>();
 		relations = new ArrayList<String>();
-		triggers = new ArrayList<Trigger>();
 		nodes = new ArrayList<>();
 	}
 	
@@ -158,53 +156,6 @@ public class SimulProb {
 		return null;
 	}
 	
-	public void checkSolver() throws Exception {
-		List<Double> solns = EquationSolver.solve(equations);
-		for(Double d1 : solutions) {
-			boolean present = false;
-			for(Double d2 : solns) {
-				if(Tools.safeEquals(d1, d2)) {
-					present = true;
-					break;
-				}
-			}
-			if(!present) {
-//				System.out.println("Error : Solutions not matching : "+index);
-			}
-		}
-	}
-	
-	public void extractRelations() {
-		Set<Integer> candidates;
-		for(int quantNo = 0; quantNo < quantities.size(); quantNo++) {
-			if(isSpecialCase(index, quantNo)) continue;
-			// Back to machines
-			QuantSpan qs = quantities.get(quantNo);
-			candidates = new HashSet<>();
-			for(int j=0; j<equations.size(); ++j) {
-				Equation eq = equations.get(j);
-				for(int i=0; i<5; ++i) {
-					List<Pair<Operation, Double>> list = eq.terms.get(i);
-					for(Pair<Operation, Double> pair : list) {
-						if(Tools.safeEquals(Tools.getValue(qs), pair.getSecond())) {
-							candidates.add(j);
-							break;
-						}
-					}
-				}
-			}
-			if(candidates.size() == 1) {
-				for(Integer i : candidates) {
-					relations.add("R"+(i+1));
-				}
-			} else if(candidates.size() == 0) {
-				relations.add("NONE");
-			} else {
-				relations.add("BOTH");
-			}
-		}
-	}
-	
 	public void extractAnnotations() throws Exception {
 		ta = new TextAnnotation("", "", question);
 		posTags = Tools.curator.getTextAnnotationWithSingleView(
@@ -220,204 +171,6 @@ public class SimulProb {
 				question, ViewNames.PARSE_STANFORD, false)
 				.getView(ViewNames.PARSE_STANFORD).getConstituents();
 		skeleton = Tools.getSkeleton(ta, lemmas, parse, quantities);
-	}
-	
-	boolean isSpecialCase(int index, int quantNo) {
-		// Human annotation
-		if(index ==  1292 && quantNo == 0) {
-			relations.add("R1");
-			return true;
-		}
-		if(index ==  1292 && quantNo == 4) {
-			relations.add("R2");
-			return true;
-		}
-		if(index ==  1997 && quantNo == 1) {
-			relations.add("R1");
-			return true;
-		}
-		if(index ==  1997 && quantNo == 3) {
-			relations.add("R2");
-			return true;
-		}
-		if(index ==  2518 && quantNo == 0) {
-			relations.add("R1");
-			return true;
-		}
-		if(index ==  2518 && quantNo == 4) {
-			relations.add("R2");
-			return true;
-		}
-		if(index ==  3623 && quantNo == 0) {
-			relations.add("R1");
-			return true;
-		}
-		if(index ==  3623 && quantNo == 4) {
-			relations.add("R2");
-			return true;
-		}
-		if(index ==  5356 && quantNo == 0) {
-			relations.add("R1");
-			return true;
-		}
-		if(index ==  5356 && quantNo == 4) {
-			relations.add("R2");
-			return true;
-		}
-		if(index ==  5652 && quantNo == 1) {
-			relations.add("R1");
-			return true;
-		}
-		if(index ==  5652 && quantNo == 2) {
-			relations.add("R2");
-			return true;		
-		}
-		if(index ==  6254 && quantNo == 1) {
-			relations.add("R1");
-			return true;
-		}
-		if(index ==  6254 && quantNo == 3) {
-			relations.add("R2");
-			return true;
-		}
-		if(index ==  6448 && quantNo == 1) {
-			relations.add("R1");
-			return true;
-		}
-		if(index ==  6448 && quantNo == 3) {
-			relations.add("R2");
-			return true;
-		}
-		// 2nd  phase
-		if(index ==  1292 && quantNo == 6) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  1292 && quantNo == 7) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  155 && quantNo == 1) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  155 && quantNo == 3) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  1658 && quantNo == 1) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  1658 && quantNo == 7) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  2075 && quantNo == 0) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  222 && quantNo == 2) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  2681 && quantNo == 0) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  2824 && quantNo == 2) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  3289 && quantNo == 0) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  3394 && quantNo == 0) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  5007 && quantNo == 0) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  5425 && quantNo == 0) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  5701 && quantNo == 0) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index ==  5710 && quantNo == 0) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 5843 && quantNo == 2) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 6208 && quantNo == 1) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 6290 && quantNo == 4) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 6376 && quantNo == 0) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 6376 && quantNo == 3) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 6376 && quantNo == 5) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 6505 && quantNo == 1) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 6666 && quantNo == 3) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 6878 && quantNo == 0) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 6878 && quantNo == 4) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 6945 && quantNo == 3) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 6952 && quantNo == 1) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 6957 && quantNo == 1) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 6957 && quantNo == 4) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 7126 && quantNo == 0) {
-			relations.add("NONE");
-			return true;
-		}
-		if(index == 767 && quantNo == 0) {
-			relations.add("NONE");
-			return true;
-		}
-		return false;
 	}
 
 	public void extractEqParse() throws IOException {

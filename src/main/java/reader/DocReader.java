@@ -10,19 +10,28 @@ import org.apache.commons.io.FileUtils;
 
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
-import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
-import edu.illinois.cs.cogcomp.edison.sentences.Sentence;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
 import structure.Equation;
-import structure.KnowledgeBase;
-import structure.Operation;
 import structure.SimulProb;
-import utils.FeatGen;
 import utils.Params;
 import utils.Tools;
 
 public class DocReader {
+	
+	public static void createBratFiles(String eqParseFile) throws IOException {
+		String lines[] = FileUtils.readFileToString(new File(eqParseFile)).split("\n");
+		for(int i=0; i<lines.length; ++i) {
+			if(lines[i].startsWith("#")) continue;
+			FileUtils.writeStringToFile(
+					new File(Params.annotationDir+"/"+i+".txt"), 
+					lines[i]+"\n\n"+lines[i+1]);
+			FileUtils.writeStringToFile(
+					new File(Params.annotationDir+"/"+i+".ann"), 
+					"");
+			++i;
+		}
+	}
 	
 	// Reads list of files from brat folder
 	public static List<SimulProb> readSimulProbFromBratDir(String bratDir) throws Exception {
@@ -40,18 +49,12 @@ public class DocReader {
 				int index = Integer.parseInt(file.getName().substring(
 								0, 
 								file.getName().length()-4));
-				if(index == 2121 || index == 5894 || index == 1583 || index == 2455
-						|| index == 5133 || index == 6027) {
-					continue;
-				}
 				SimulProb simulProb = new SimulProb(index);
 				simulProb.extractQuestionsAndSolutions();
 				simulProb.extractQuantities(quantifier);
 				simulProb.extractAnnotations();
 				simulProb.extractEquations();
-				simulProb.extractRelations();
 				simulProb.extractEqParse();
-				simulProb.checkSolver();
 				simulProbList.add(simulProb);
 			}
 		}
@@ -62,20 +65,6 @@ public class DocReader {
 			newSimulProbList.add(simulProbList.get(i));
 		}
 		return newSimulProbList;
-	}
-	
-	public static List<List<Integer>> extractFolds() throws IOException {
-		List<List<Integer>> folds = new ArrayList<>();
-		for(int i=0; i<5; ++i) {
-			String foldNumbers = FileUtils.readFileToString(
-					new File(Params.foldsFile+i+".txt"));
-			List<Integer> foldIndices = new ArrayList<>();
-			for(String str : foldNumbers.split("\n")) {
-				foldIndices.add(Integer.parseInt(str));
-			}
-			folds.add(foldIndices);
-		}
-		return folds;
 	}
 	
 	public static void print(SimulProb simulProb) {
@@ -99,11 +88,12 @@ public class DocReader {
 	
 	
 	public static void main(String args[]) throws Exception {
-		List<SimulProb> simulProbList = 
-				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
-		for(SimulProb prob : simulProbList) {
-			print(prob);
-		}
+//		List<SimulProb> simulProbList = 
+//				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
+//		for(SimulProb prob : simulProbList) {
+//			print(prob);
+//		}
+		DocReader.createBratFiles("data/equationparse.txt");
 		
 	}
 }
