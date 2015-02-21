@@ -1,0 +1,3 @@
+Twice the number of girls exceeds the number of boys by 12.
+
+2*V1=V2+12

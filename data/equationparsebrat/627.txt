@@ -1,0 +1,3 @@
+The degree measure of angle C is 60 degrees larger than the degree measure of angle A.
+
+V1=60+V2

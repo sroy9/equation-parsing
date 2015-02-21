@@ -1,0 +1,3 @@
+Four years ago, the father was 3 times as old as the son.
+
+V1-4=3*V2-3*4

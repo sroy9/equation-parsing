@@ -1,0 +1,3 @@
+A certain number added twice to itself equals 96.
+
+V1+2*V2=96

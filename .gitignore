@@ -9,5 +9,4 @@ bin/
 .settings
 .*
 log/
-data/
 models/

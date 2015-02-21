@@ -1,0 +1,3 @@
+2 similar tables and 6 similar chairs cost 6600 dollars.
+
+2*V1+6*V2=6600

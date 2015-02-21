@@ -1,0 +1,3 @@
+One car is traveling 15 kilometers per hour faster than the other.
+
+V1=15+V2

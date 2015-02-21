@@ -1,0 +1,3 @@
+The third side of the triangle is 6 inches longer than the first side.
+
+V1=6+V2

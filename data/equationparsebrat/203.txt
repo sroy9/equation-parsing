@@ -1,0 +1,3 @@
+They lost 21 more games than they won.
+
+V1=21+V2

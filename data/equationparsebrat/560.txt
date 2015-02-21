@@ -1,0 +1,3 @@
+Tuition costs $704 more than room and board.
+
+V1=704+V2

@@ -1,0 +1,3 @@
+Twice the smaller number is 6 more than the larger.
+
+2*V1=6+V2

@@ -1,0 +1,3 @@
+At today 's matinee , there are 20 more children than adults.
+
+V1=V2+20

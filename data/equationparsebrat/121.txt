@@ -1,0 +1,3 @@
+The state market has 27 more apples than oranges.
+
+V1+27=V2

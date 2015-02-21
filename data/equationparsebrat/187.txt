@@ -1,0 +1,3 @@
+The larger of two numbers is 23 less than twice the smaller.
+
+V1=2*V2-23

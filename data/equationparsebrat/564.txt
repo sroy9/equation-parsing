@@ -1,0 +1,3 @@
+A boy is 10 years older than his brother. 
+
+V1=10+V2

@@ -1,0 +1,3 @@
+A 177-inch pipe is cut into two pieces.
+
+V1+V2=177

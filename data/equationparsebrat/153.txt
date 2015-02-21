@@ -1,0 +1,3 @@
+Jill has 6 more dolls than Jane does.
+
+V1=6+V2

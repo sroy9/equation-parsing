@@ -1,0 +1,3 @@
+If three times the smaller number is subtracted from the larger number , the result is 22. 
+
+3*V1-V2=22

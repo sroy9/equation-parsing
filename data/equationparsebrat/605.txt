@@ -1,0 +1,3 @@
+Four less than eight times a certain number is −660.
+
+8*V1-4=(-660)

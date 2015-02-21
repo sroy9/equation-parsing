@@ -1,0 +1,3 @@
+The second of two complementary angles is 57 degrees larger than 2 times the first angle.
+
+V1=57+2*V2

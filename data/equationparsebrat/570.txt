@@ -1,0 +1,3 @@
+Four years ago, John was twice as old as Mary. 
+
+V1-4=2*V2-2*4

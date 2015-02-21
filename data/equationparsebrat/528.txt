@@ -1,0 +1,3 @@
+If five is subtracted from three times a certain number, the result is 10. 
+
+3*V1-5=10

@@ -1,0 +1,3 @@
+In 20 years, the father will be twice as old as his son.
+
+V1+20=2*V2+2*20

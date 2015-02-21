@@ -1,0 +1,3 @@
+When 18 is subtracted from six times a certain number, the result is −42.
+
+6*V1-18=(-42)

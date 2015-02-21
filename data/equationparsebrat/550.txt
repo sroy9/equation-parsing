@@ -1,0 +1,3 @@
+A bicycle and a bicycle helmet cost $240.
+
+V1+V2=240

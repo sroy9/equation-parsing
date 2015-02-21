@@ -1,0 +1,3 @@
+The age of the older of two boys is twice that of the younger.
+
+V1=2*V2

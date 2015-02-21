@@ -1,0 +1,3 @@
+The total cost of a shirt and a sweater is 80.34 dollars.
+
+V1+V2=80.34

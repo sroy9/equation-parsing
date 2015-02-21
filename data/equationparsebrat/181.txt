@@ -1,0 +1,3 @@
+17 is 4 less than 8 times a number.
+
+8*V1-4=17

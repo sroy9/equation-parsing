@@ -1,0 +1,3 @@
+Twice the larger number exceeds 3 times the smaller number by 16.
+
+2*V1=3*V2+16

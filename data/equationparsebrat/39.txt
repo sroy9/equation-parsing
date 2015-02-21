@@ -1,0 +1,3 @@
+One number is 3 times the other.
+
+V1=3*V2

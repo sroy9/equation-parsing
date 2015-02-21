@@ -1,0 +1,3 @@
+Jerry Weller received 20,196 more votes than opponent John Pavich.
+
+V1=20196+V2

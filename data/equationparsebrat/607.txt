@@ -1,0 +1,3 @@
+Nine less than five times a certain number is 141.
+
+5*V1-9=141

@@ -1,0 +1,3 @@
+The second side of the triangle is 2 times as long as the first side.
+
+V1=2*V2

@@ -1,0 +1,3 @@
+3 footballs and 1 soccer ball cost 155 dollars.
+
+3*V1+V2=155

@@ -1,0 +1,3 @@
+The longest piece is twice as long as the shorter piece.
+
+V1=2*V2

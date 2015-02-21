@@ -1,0 +1,3 @@
+The freight train travels 30 kilometers per hour slower than the express train.
+
+V1=V2-30

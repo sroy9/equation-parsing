@@ -1,0 +1,3 @@
+He has 4 times as many large postcards as small postcards.
+
+V1=4*V2

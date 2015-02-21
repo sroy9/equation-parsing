@@ -1,0 +1,3 @@
+The length is 40 cm longer than the width.
+
+V1=40+V2

@@ -1,0 +1,3 @@
+A boy has $2.25 in nickels and dimes.
+
+0.1*V1+0.05*V2=2.25

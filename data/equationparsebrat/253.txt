@@ -1,0 +1,3 @@
+2 ducks and 9 pigs cost 269 dollars.
+
+2*V1+9*V2=269

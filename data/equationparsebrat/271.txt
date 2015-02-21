@@ -1,0 +1,3 @@
+Jim plans to save 15 dollars a week.
+
+V1=15*V2

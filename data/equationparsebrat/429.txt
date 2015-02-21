@@ -1,0 +1,3 @@
+24 is divided in two parts.
+
+V1+V2=24

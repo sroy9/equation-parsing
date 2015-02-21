@@ -1,0 +1,3 @@
+A collection of half dollars and nickels is worth $13.40.
+
+0.5*V1+0.05*V2=13.4

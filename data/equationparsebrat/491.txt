@@ -1,0 +1,3 @@
+The other plan costs 0.40 dollars per text message with no monthly fee.
+
+V1=0.4*V2

@@ -1,0 +1,3 @@
+After several days, he is two times as far from the beginning of the trail as he is from the end.
+
+V1=2*V2

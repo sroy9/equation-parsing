@@ -1,0 +1,3 @@
+A coin purse contains 18 coins in nickels and dimes. 
+
+V1+V2=18

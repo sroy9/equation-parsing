@@ -1,0 +1,3 @@
+The table cost 500 dollars more than a chair.
+
+V1=500+V2

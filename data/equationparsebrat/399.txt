@@ -1,0 +1,3 @@
+Two numbers are in the ratio 8 to 3. 
+
+V1=2.6667*V2

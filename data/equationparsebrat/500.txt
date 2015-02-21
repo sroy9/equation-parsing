@@ -1,0 +1,3 @@
+A collection of dimes and quarters is worth $15.25.
+
+0.1*V1+0.25*V2=15.25
