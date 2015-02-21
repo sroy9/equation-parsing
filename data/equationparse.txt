@@ -1,3 +1,4 @@
+# Kushman Dataset
 A writing workshop enrolls novelists and poets in a ratio of 5 to 3.
 Bob invested 6100 dollars in 2 funds , which pay 7 % and 6 % simple interest respectively.
 You have 160 dollars and save 7 dollars per week.
@@ -249,8 +250,87 @@ The other plan costs 0.40 dollars per text message with no monthly fee.
 The cost includes an overhead of 81,000 dollars , plus production costs of 7,000 dollars per performance.
 One number is 11 more than 3 times another number.
 One integer is twice another.
-
-
-
-
-
+# Wallace Book
+A collection of dimes and quaters is worth $15.25.
+A purse contains $3.90 made up of dimes and quarters.
+A collection of half dollars and nickels is worth $13.40.
+A boy has $2.25 in nickels and dimes.
+There are twice as many dimes as nickels.
+A bank contains 27 coins in dimes and quarters.
+A coin purse contains 18 coins in nickels and dimes. 
+The number of 15-cent stamps is four less than three times the number of 18-cent stamps.
+There are six more quarters than dimes. 
+The total value of dimes and quarters in a bank is $6.05.
+The number of dimes is 10 less than twice the number of nickels. 
+The number of 22-cent stamps is three more than four times the number of 40-cent stamps. 
+A total of $50000 is invested, part of it at 5% and the rest at 7.5%. 
+When five is added to three more than a certain number, the result is 19.
+If five is subtracted from three times a certain number, the result is 10. 
+When 18 is subtracted from six times a certain number, the result is −42.
+A certain number added twice to itself equals 96.
+Sixty more than nine times a number is the same as two less than ten times the number.
+Eleven less than seven times a number is five more than six times the number.
+Fourteen less than eight times a number is three more than four times the number.
+The third angle is 12 degrees larger than the first angle.
+The third angle is 3 times as large as the first.
+The measure of the third angle is 40 degrees greater than that of the first angle. 
+The length is 40 cm longer than the width.
+The land cost 4 times as much as the cabin.
+A bicycle and a bicycle helmet cost $240.
+The bicycle cost 5 times as much as the helmet.
+Aaron had 7 times as many sheep as Beth.
+An electrician cuts a 30 feet piece of wire into two pieces.
+One piece is 2 feet longer than the other.
+Tuition costs $704 more than room and board.
+In 4 years, he will be twice as old as his brother.
+A boy is 10 years older than his brother. 
+In 20 years, the father will be twice as old as his son.
+In 6 years, Diane will be twice as old as Amy.
+Four years ago, John was twice as old as Mary. 
+Four years ago, the father was 3 times as old as the son.
+The sum of the ages of a china plate and a glass plate is 16 years. 
+Four years ago, the china plate was three times the age of the glass plate. 
+Four years ago, the bronze plaque was one-half the age of the wood plaque.
+The age of the older of two boys is twice that of the younger.
+In 12 years, the limestone will be three times as old as the marble statue.
+A limestone statue is 56 years older than a marble statue.
+The sum of Clyde and Wendy’s age is 64. 
+In four years, Wendy will be three times as old as Clyde.
+Two years ago, the age of the older ship was three times the age of the newer ship. 
+Four years ago, Elli was 3 times as old as Dan. 
+One cyclist rides twice as fast as the other.
+The first plane is flying 25 mph slower than the second plane. 
+# Redwood
+The second angle is 6 degrees larger than 2 times the measure of the first angle.
+The second angle is 10 degrees larger than 3 times the measure of the first angle.
+The second angle is 10 degrees larger than 4 times the measure of the first angle.
+Four less than eight times a certain number is −660.
+Nine less than five times a certain number is 141.
+After several days, he is four times as far from the beginning of the trail as he is from the end.
+After several days, he is two times as far from the beginning of the trail as he is from the end.
+The second pieces is 3 times as long as the first piece.
+The second pieces is 7 times as long as the first piece.
+The third piece is 5 feet longer than the first piece
+The second side of the triangle is 2 times as long as the first side.
+The third side of the triangle is 6 inches longer than the first side.
+The degree measure of angle C is 30 degrees larger than the degree measure of angle A.
+The degree measure of angle B is 4 times the degree measure of angle A.
+The degree measure of angle B is 4 times the degree measure of angle A. 
+The degree measure of angle C is 60 degrees larger than the degree measure of angle A.
+Seven more than two times a certain number is 181.
+Nine more than two times a certain number is 137.
+The amount invested in the certificate of deposit is $3,000 more than 8 times the amount invested in the mutual fund.
+The second of two complementary angles is 42 degrees larger than 3 times the first angle.
+The second of two complementary angles is 57 degrees larger than 2 times the first angle.
+The length of the rectangle is 28 inches more than twice the width.
+The length of the rectangle is 24 inches more than twice the width.
+Maria has $6.35 in change in her pocket, all in nickels and quarters.
+Amy has $5.05 in change in her pocket, all in nickels and quarters.
+Roberto has $5.45 in change in his pocket, all in dimes and quarters.
+Benjamin has $7.40 in change in his pocket, all in dimes and quarters. 
+The second of two supplementary angles is 40 degrees larger than 3 times the first angle.
+The second of two supplementary angles is 114 degrees larger than 2 times the first angle.
+Eileen inherits $20,000 and decides to invest the money in two accounts, part in a certificate of deposit that pays 3% interest per year, and the rest in a mutual fund that pays 5% per year. 
+Alice inherits $40,000 and decides to invest the money in two accounts, part in a certificate of deposit that pays 3% interest per year, and the rest in a mutual fund that pays 6% per year. 
+The length of the rectangle is 12 centimeters less than three times the width.
+The length of the rectangle is 28 feet less than three times the width.
