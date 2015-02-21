@@ -1,4 +1,4 @@
-package joint;
+package template;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -7,13 +7,13 @@ import java.util.Map;
 import java.util.Set;
 
 import reader.DocReader;
-import semparse.SemDriver;
-import semparse.SemInfSolver;
-import semparse.SemX;
-import semparse.SemY;
 import structure.Equation;
 import structure.Node;
 import structure.SimulProb;
+import tree.TreeDriver;
+import tree.TreeInfSolver;
+import tree.TreeX;
+import tree.TreeY;
 import utils.Params;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
@@ -25,7 +25,7 @@ import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
-public class JointDriver {
+public class TemplateDriver {
 	
 	public static void crossVal() throws Exception {
 		double acc = 0.0;
@@ -62,10 +62,10 @@ public class JointDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			List<IntPair> eqSpans = SemDriver.extractGoldEqSpans(simulProb);
-			List<String> eqStrings = JointDriver.extractGoldEqStrings(simulProb, eqSpans);
-			JointX x = new JointX(simulProb, eqStrings);
-			JointY y = new JointY(simulProb);
+			List<IntPair> eqSpans = TreeDriver.extractGoldEqSpans(simulProb);
+			List<String> eqStrings = TemplateDriver.extractGoldEqStrings(simulProb, eqSpans);
+			TemplateX x = new TemplateX(simulProb, eqStrings);
+			TemplateY y = new TemplateY(simulProb);
 			problem.addExample(x, y);
 		}
 		return problem;
@@ -78,9 +78,9 @@ public class JointDriver {
 		Set<Integer> total = new HashSet<>();
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			JointX prob = (JointX) sp.instanceList.get(i);
-			JointY gold = (JointY) sp.goldStructureList.get(i);
-			JointY pred = (JointY) model.infSolver.getBestStructure(
+			TemplateX prob = (TemplateX) sp.instanceList.get(i);
+			TemplateY gold = (TemplateY) sp.goldStructureList.get(i);
+			TemplateY pred = (TemplateY) model.infSolver.getBestStructure(
 					model.wv, prob);
 			total.add(prob.problemIndex);
 			double goldWt = model.wv.dotProduct(
@@ -90,7 +90,7 @@ public class JointDriver {
 			if(goldWt > predWt) {
 				System.out.println("PROBLEM HERE");
 			}
-			if(JointY.getLoss(gold, pred) < 0.0001) {
+			if(TemplateY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else {
 				incorrect.add(prob.problemIndex);
@@ -103,7 +103,7 @@ public class JointDriver {
 				System.out.println("Pred : \n"+pred);
 				System.out.println("Pred weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, pred)));
-				System.out.println("Loss : "+JointY.getLoss(gold, pred));
+				System.out.println("Loss : "+TemplateY.getLoss(gold, pred));
 			}
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
@@ -117,9 +117,9 @@ public class JointDriver {
 		Lexiconer lm = new Lexiconer();
 		lm.setAllowNewFeatures(true);
 		model.lm = lm;
-		JointFeatGen fg = new JointFeatGen(lm);
+		TemplateFeatGen fg = new TemplateFeatGen(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new JointInfSolver(fg, extractTemplates(train));
+		model.infSolver = new TemplateInfSolver(fg, extractTemplates(train));
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
@@ -129,14 +129,14 @@ public class JointDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		JointDriver.doTrainTest(0);
+		TemplateDriver.doTrainTest(0);
 //		JointDriver.crossVal();
 	}
 	
 	public static List<List<Equation>> extractTemplates(SLProblem slProb) {
 		List<List<Equation>> templates = new ArrayList<>();
 		for(IStructure struct : slProb.goldStructureList) {
-			JointY gold = new JointY((JointY) struct);
+			TemplateY gold = new TemplateY((TemplateY) struct);
 			for(Equation eq1 : gold.equations) {
 				for(int j=0; j<5; ++j) {
 					for(int k=0; k<eq1.terms.get(j).size(); ++k) {
@@ -146,9 +146,9 @@ public class JointDriver {
 			}
 			boolean alreadyPresent = false;
 			for(int i=0; i< templates.size(); ++i) { 
-				JointY y = new JointY();
+				TemplateY y = new TemplateY();
 				y.equations = templates.get(i); 
-				if(JointY.getEquationLoss(gold, y) < 0.0001) {
+				if(TemplateY.getEquationLoss(gold, y) < 0.0001) {
 					alreadyPresent = true;
 					break;
 				}
@@ -162,7 +162,7 @@ public class JointDriver {
 	}
 	
 	public static List<Template> extractGraftedTemplates(
-			JointX x, List<List<Equation>> templates, List<String> eqStrings) {
+			TemplateX x, List<List<Equation>> templates, List<String> eqStrings) {
 		List<Template> relevantTemplates = new ArrayList<>();
 		List<Equation> mathEquations = new ArrayList<>();
 		for(String eqString : eqStrings) {
@@ -259,8 +259,8 @@ public class JointDriver {
 			SimulProb simulProb, List<IntPair> eqSpans) {
 		List<String> eqStrings = new ArrayList<>();
 		for(IntPair span : eqSpans) {
-			SemX x = new SemX(simulProb, span);
-			SemY y = new SemY(simulProb, span);
+			TreeX x = new TreeX(simulProb, span);
+			TreeY y = new TreeY(simulProb, span);
 			Node maxNode = null;
 			int maxSize = 0;
 			for(Node node : y.nodes) {
@@ -269,7 +269,7 @@ public class JointDriver {
 					maxNode = node;
 				}
 			}
-			eqStrings.add(SemInfSolver.postProcessEqString(SemInfSolver.getEqString(x, maxNode)));
+			eqStrings.add(TreeInfSolver.postProcessEqString(TreeInfSolver.getEqString(x, maxNode)));
 //			System.out.println("EqString : "+eqStrings.get(eqStrings.size()-1));
 //			System.out.println("Problem Index : "+simulProb.index);
 //			System.out.println("Text : "+simulProb.ta.getText());

@@ -46,7 +46,6 @@ public class DocReader {
 				}
 				SimulProb simulProb = new SimulProb(index);
 				simulProb.extractQuestionsAndSolutions();
-				KnowledgeBase.appendWorldKnowledge(simulProb);
 				simulProb.extractQuantities(quantifier);
 				simulProb.extractAnnotations();
 				simulProb.extractEquations();
@@ -92,7 +91,6 @@ public class DocReader {
 					qs.start, qs.end)+" : "+qs + " : "+Tools.getValue(qs));
 		}
 		System.out.println("Relation : "+Arrays.asList(simulProb.relations));
-		System.out.println("Triggers : "+simulProb.triggers);
 		System.out.println("Nodes : "+simulProb.nodes);
 		for(Equation eq : simulProb.equations) {
 			System.out.println("Equation :\n"+eq);

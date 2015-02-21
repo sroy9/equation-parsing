@@ -1,4 +1,4 @@
-package semparse;
+package tree;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,7 +9,6 @@ import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Node;
 import structure.PairComparator;
-import structure.Trigger;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
@@ -17,13 +16,13 @@ import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
-public class SemInfSolver extends AbstractInferenceSolver implements
+public class TreeInfSolver extends AbstractInferenceSolver implements
 		Serializable {
 
 	private static final long serialVersionUID = 5253748728743334706L;
-	private SemFeatGen featGen;
+	private TreeFeatGen featGen;
 
-	public SemInfSolver(SemFeatGen featGen) 
+	public TreeInfSolver(TreeFeatGen featGen) 
 			throws Exception {
 		this.featGen = featGen;
 	}
@@ -36,31 +35,27 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		
 	@Override
 	public float getLoss(IInstance arg0, IStructure arg1, IStructure arg2) {
-		SemY r1 = (SemY) arg1;
-		SemY r2 = (SemY) arg2;
-		return SemY.getLoss(r1, r2);
+		TreeY r1 = (TreeY) arg1;
+		TreeY r2 = (TreeY) arg2;
+		return TreeY.getLoss(r1, r2);
 	}
 
 	@Override
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
-		SemX prob = (SemX) x;
-		SemY pred = new SemY();
+		TreeX prob = (TreeX) x;
+		TreeY pred = new TreeY();
 		// Get best equation trees
 		Pair<String, List<Node>> pair = getBottomUpBestParse(prob, wv);
 		pred.nodes.addAll(pair.getSecond());
 		return pred;
 	}
 	
-	public Pair<String, List<Node>> getBottomUpBestParse(SemX x, WeightVector wv) {
+	public Pair<String, List<Node>> getBottomUpBestParse(TreeX x, WeightVector wv) {
 		
 		List<Node> nodes = new ArrayList<>();
 		List<String> labels = null;
 		int n = x.eqSpan.getSecond() - x.eqSpan.getFirst();
-		List<Trigger> triggers = new ArrayList<>();
-		for(int i=x.eqSpan.getFirst(); i<x.eqSpan.getSecond(); ++i) {
-			triggers.add(x.triggers.get(i));
-		}
 		
 		// Initializing of CKY beam
 		PairComparator<Node> nodePairComparator = 
@@ -154,7 +149,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 	}
 
 	public static List<List<IntPair>> enumerateDivisions(
-			SemX x, int start, int end) {
+			TreeX x, int start, int end) {
 		List<List<IntPair>> divisions = new ArrayList<>();
 		if(start+1 == end) {
 			divisions.add(new ArrayList<IntPair>());
@@ -179,7 +174,7 @@ public class SemInfSolver extends AbstractInferenceSolver implements
 		return divisions;
 	}
 	
-	public static String getEqString(SemX x, Node node) {
+	public static String getEqString(TreeX x, Node node) {
 		String str = "";
 		if(node.span.getFirst()+1 == node.span.getSecond()) {
 			if(node.label.equals("EXPR")) str = 

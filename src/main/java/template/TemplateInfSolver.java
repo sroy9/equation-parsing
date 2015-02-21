@@ -1,37 +1,30 @@
-package joint;
+package template;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Equation;
-import structure.KnowledgeBase;
-import structure.Node;
 import structure.PairComparator;
-import structure.Trigger;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
-import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
-public class JointInfSolver extends AbstractInferenceSolver implements
+public class TemplateInfSolver extends AbstractInferenceSolver implements
 		Serializable {
 
 	private static final long serialVersionUID = 5253748728743334706L;
-	private JointFeatGen featGen;
+	private TemplateFeatGen featGen;
 	public List<List<Equation>> templates;
 
-	public JointInfSolver(JointFeatGen featGen, List<List<Equation>> templates) 
+	public TemplateInfSolver(TemplateFeatGen featGen, List<List<Equation>> templates) 
 			throws Exception {
 		this.featGen = featGen;
 		this.templates = templates;
@@ -45,17 +38,17 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		
 	@Override
 	public float getLoss(IInstance arg0, IStructure arg1, IStructure arg2) {
-		JointY r1 = (JointY) arg1;
-		JointY r2 = (JointY) arg2;
-		return JointY.getLoss(r1, r2);
+		TemplateY r1 = (TemplateY) arg1;
+		TemplateY r2 = (TemplateY) arg2;
+		return TemplateY.getLoss(r1, r2);
 	}
 
 	@Override
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
-		JointX prob = (JointX) x;
-		JointY gold = (JointY) goldStructure;
-		JointY pred = new JointY();
+		TemplateX prob = (TemplateX) x;
+		TemplateY gold = (TemplateY) goldStructure;
+		TemplateY pred = new TemplateY();
 		PairComparator<Template> jointPairComparator = 
 				new PairComparator<Template>() {};
 		MinMaxPriorityQueue<Pair<Template, Double>> beam1 = 
@@ -65,7 +58,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 				MinMaxPriorityQueue.orderedBy(jointPairComparator)
 				.maximumSize(200).create();
 		
-		List<Template> grafts = JointDriver.extractGraftedTemplates(
+		List<Template> grafts = TemplateDriver.extractGraftedTemplates(
 				prob, templates, prob.eqStrings);
  		
 		int maxNumSlots = 0;

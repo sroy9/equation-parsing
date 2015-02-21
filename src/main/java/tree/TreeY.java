@@ -1,4 +1,4 @@
-package semparse;
+package tree;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -7,30 +7,27 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import structure.Equation;
-import structure.EquationSolver;
 import structure.Node;
 import structure.SimulProb;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
-public class SemY implements IStructure, Serializable {
+public class TreeY implements IStructure, Serializable {
 	
 	private static final long serialVersionUID = 2399969922362221136L;
 	public List<Node> nodes;
 	
-	public SemY() {
+	public TreeY() {
 		nodes = new ArrayList<>();
 	}
 	
-	public SemY(SemY other) {
+	public TreeY(TreeY other) {
 		nodes = new ArrayList<>();
 		nodes.addAll(other.nodes);
 	}
 	
-	public SemY(SimulProb prob,  IntPair span) {
+	public TreeY(SimulProb prob,  IntPair span) {
 		nodes = new ArrayList<Node>();
 		for(Node node : prob.nodes) {
 			if(Tools.doesContain(span, node.span)) {
@@ -74,7 +71,7 @@ public class SemY implements IStructure, Serializable {
 		}
 	}
 	
-	public static float getNodeLoss(SemY y1, SemY y2) {
+	public static float getNodeLoss(TreeY y1, TreeY y2) {
 		float loss = 0.0f;
 		for(Node pair1 : y1.nodes) {
 			boolean found = false;
@@ -101,7 +98,7 @@ public class SemY implements IStructure, Serializable {
 		return loss;
 	}
 	
-	public static float getLoss(SemY y1, SemY y2) {
+	public static float getLoss(TreeY y1, TreeY y2) {
 		return getNodeLoss(y1, y2);
 	}
 	

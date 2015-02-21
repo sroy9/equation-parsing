@@ -1,4 +1,4 @@
-package joint;
+package template;
 
 public class Slot {
 
