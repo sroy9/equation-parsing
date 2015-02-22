@@ -1,3 +1,5 @@
 Two years ago, the age of the older ship was three times the age of the newer ship. 
 
 V1-2=3*V2-3*2
+
+[Two (years )][ago ], [the (age )][of ][the older (ship )][was ][three (times )][the (age )][of ][the newer (ship )]. 

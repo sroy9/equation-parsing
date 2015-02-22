@@ -1,3 +1,5 @@
 There are 69 more girls than boys.
 
 V1+69=V2
+
+[There ][are ][69 more (girls )][than ][(boys )]. 

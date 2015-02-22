@@ -8,8 +8,12 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import curator.NewCachingCurator;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
+import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
+import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
 import structure.Equation;
@@ -19,22 +23,57 @@ import utils.Tools;
 
 public class DocReader {
 	
-	public static void createBratFiles(String eqParseFile) throws IOException {
+	public static void createBratFiles(String eqParseFile) throws Exception {
 		String lines[] = FileUtils.readFileToString(new File(eqParseFile)).split("\n");
+		
 		for(int i=0; i<lines.length; ++i) {
 			if(lines[i].startsWith("#")) continue;
+			TextAnnotation ta = Tools.curator.getTextAnnotationWithSingleView(
+					lines[i], ViewNames.POS, false);
+			List<Constituent> posTags = ta.getView(ViewNames.POS)
+					.getConstituents();
+			List<Constituent> chunks = Tools.curator.getTextAnnotationWithSingleView(
+					lines[i], ViewNames.SHALLOW_PARSE, false)
+					.getView(ViewNames.SHALLOW_PARSE).getConstituents();
+			String str = "";
+			str += lines[i]+"\n\n"+lines[i+1]+"\n\n";
+			for(int j=0; j<=ta.size(); ++j) {
+				for(Constituent cons : posTags) {
+					if(cons.getLabel().startsWith("N") && 
+							cons.getEndSpan() == j) {
+						str += ")";
+					}
+				}
+				for(Constituent cons : chunks) {
+					if(cons.getEndSpan() == j) {
+						str += "]";
+					}
+				}
+				for(Constituent cons : chunks) {
+					if(cons.getStartSpan() == j) {
+						str += "[";
+					}
+				}
+				for(Constituent cons : posTags) {
+					if(cons.getLabel().startsWith("N") && 
+							cons.getStartSpan() == j) {
+						str += "(";
+					}
+				}
+				if(j==ta.size()) continue;
+				str += ta.getToken(j) + " ";
+			}
 			FileUtils.writeStringToFile(
 					new File(Params.annotationDir+"/"+i+".txt"), 
-					lines[i]+"\n\n"+lines[i+1]);
-			FileUtils.writeStringToFile(
-					new File(Params.annotationDir+"/"+i+".ann"), 
-					"");
+					str);
+			
 			++i;
 		}
 	}
 	
 	// Reads list of files from brat folder
-	public static List<SimulProb> readSimulProbFromBratDir(String bratDir) throws Exception {
+	public static List<SimulProb> readSimulProbFromBratDir(String bratDir) 
+			throws Exception {
 		return readSimulProbFromBratDir(bratDir, 0.0, 1.0);
 	}
 	

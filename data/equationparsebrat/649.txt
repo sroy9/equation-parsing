@@ -1,3 +1,5 @@
 Benjamin has $7.40 in change in his pocket, all in dimes and quarters. 
 
 0.1*V1+0.25*V2=7.4
+
+[(Benjamin )][has ][($7.40 )][in ][(change )][in ][his (pocket )], [all ][in ][(dimes )and (quarters )]. 

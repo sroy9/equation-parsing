@@ -1,3 +1,5 @@
 There are twice as many children as adults in the group.
 
 2*V1=V2
+
+[There ][are ][twice ][as ][many (children )][as (adults )][in ][the (group )]. 

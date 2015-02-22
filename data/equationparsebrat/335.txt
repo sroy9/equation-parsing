@@ -1,3 +1,5 @@
-A serving of fries costs 0.25 dollars more then a hamburger.
+A serving of fries costs 0.25 dollars more than a hamburger.
 
 V1=0.25+V2
+
+[A serving ][of ][(fries )(costs )][0.25 (dollars )][more then ][a (hamburger )]. 

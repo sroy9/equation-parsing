@@ -1,3 +1,5 @@
 In 4 years, he will be twice as old as his brother.
 
 V1+4=2*V2+2*4
+
+[In ][4 (years )], [he ][will be ][twice as old ][as ][his (brother )]. 
