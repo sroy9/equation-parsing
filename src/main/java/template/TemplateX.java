@@ -19,10 +19,8 @@ public class TemplateX implements IInstance {
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
 	public List<Pair<String, IntPair>> skeleton;
-	public List<IntPair> eqSpans;
-	public List<String> eqStrings;
 	
-	public TemplateX(SimulProb simulProb, List<String> eqStrings) {
+	public TemplateX(SimulProb simulProb) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;
@@ -30,6 +28,5 @@ public class TemplateX implements IInstance {
 		parse = simulProb.parse;
 		lemmas = simulProb.lemmas;
 		skeleton = simulProb.skeleton;
-		this.eqStrings = eqStrings;
 	}
 }

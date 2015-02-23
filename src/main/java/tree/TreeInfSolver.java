@@ -46,8 +46,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		TreeX prob = (TreeX) x;
 		TreeY pred = new TreeY();
 		// Get best equation trees
-		Pair<String, List<Node>> pair = getBottomUpBestParse(prob, wv);
-		pred.nodes.addAll(pair.getSecond());
+		
 		return pred;
 	}
 	

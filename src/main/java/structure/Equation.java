@@ -60,6 +60,10 @@ public class Equation implements Serializable {
 		int lastLoc = 0;
 		for(int i=0; i<eqString.length(); ++i) {
 			char ch = eqString.charAt(i);
+			if(ch == '(') {
+				while(eqString.charAt(i) != ')') ++i;
+				continue;
+			}
 			char prevCh = ' ';
 			if(i>0) prevCh = eqString.charAt(i-1);
 			if(ch == '=' || ch =='+' || (ch == '-' && !isSymbol(prevCh)) ||
@@ -110,7 +114,7 @@ public class Equation implements Serializable {
 			if(ch == '*' || ch == '/' || i == term.length()-1) {
 				String number = term.substring(lastLoc, i);
 				try {
-					Double d = Double.parseDouble(number);
+					Double d = Double.parseDouble(number.replaceAll("\\(|\\)", ""));
 					if(lastLoc == 0 || term.charAt(lastLoc-1) == '*') {
 						terms.get(index).add(
 								new Pair<Operation, Double>(Operation.MUL, d));

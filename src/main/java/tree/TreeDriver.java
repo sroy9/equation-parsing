@@ -57,12 +57,9 @@ public class TreeDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			List<IntPair> eqSpans = extractGoldEqSpans(simulProb);
-			for(IntPair span : eqSpans) {
-				TreeX x = new TreeX(simulProb, span);
-				TreeY y = new TreeY(simulProb, span);
-				problem.addExample(x, y);	
-			}
+			TreeX x = new TreeX(simulProb);
+			TreeY y = new TreeY(simulProb);
+			problem.addExample(x, y);
 		}
 		return problem;
 	}
@@ -92,7 +89,6 @@ public class TreeDriver {
 				incorrect.add(prob.problemIndex);
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
-				System.out.println("Eq Span : "+prob.eqSpan);
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
@@ -124,20 +120,6 @@ public class TreeDriver {
 		model.saveModel(modelPath);
 	}
 
-	public static List<IntPair> extractGoldEqSpans(SimulProb prob) {
-		List<IntPair> eqSpans = new ArrayList<IntPair>();
-		for(Node node1 : prob.nodes) {
-			boolean allow = true;
-			for(Node node2 : prob.nodes) {
-				if(Tools.doesContainNotEqual(node2.span, node1.span)) {
-					allow = false;
-				}
-			}
-			if(allow) eqSpans.add(node1.span);
-		}
-		return eqSpans;
-	}
-	
 	public static void main(String args[]) throws Exception {
 		TreeDriver.doTrainTest(0);
 //		SemDriver.crossVal();

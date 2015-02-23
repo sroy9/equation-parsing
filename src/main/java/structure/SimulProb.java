@@ -26,31 +26,27 @@ import edu.illinois.cs.cogcomp.quant.standardize.Ratio;
 public class SimulProb {
 	
 	public int index;
-	public String question;
+	public String text;
 	public boolean isOneVar;
-	public List<Equation> equations;
-	public List<Double> solutions;
+	public Equation equation;
 	public List<QuantSpan> quantities;
-	public List<String> relations;
+	public Map<String, List<Integer>> varTokens;
 	public TextAnnotation ta;
 	public List<Constituent> posTags;
 	public List<Constituent> lemmas;
 	public List<Constituent> chunks;
 	public List<Constituent> parse;
 	public List<Pair<String, IntPair>> skeleton;
-	public List<Node> nodes;
   	
 	public SimulProb(int index) {
 		this.index = index;
-		equations = new ArrayList<Equation>();
-		solutions = new ArrayList<Double>();
+		equation = new Equation();
 		quantities = new ArrayList<QuantSpan>();
-		relations = new ArrayList<String>();
-		nodes = new ArrayList<>();
+		varTokens = new HashMap<>();
 	}
 	
 	public void extractQuantities(Quantifier quantifier) throws IOException {
-		List<QuantSpan> spanArray = quantifier.getSpans(question, true);
+		List<QuantSpan> spanArray = quantifier.getSpans(text, true);
 		quantities = new ArrayList<QuantSpan>();
 		for(QuantSpan span : spanArray){
 			if(span.object instanceof Quantity || span.object instanceof Ratio) {
@@ -59,92 +55,12 @@ public class SimulProb {
 		}
 	}
 	
-	public void extractQuestionsAndSolutions() throws Exception {
+	public void extractTextAndEquation() throws Exception {
 		String fileName = Params.annotationDir + index + ".txt";
 		List<String> lines = FileUtils.readLines(new File(fileName));
-		question = lines.get(0);
-		solutions = new ArrayList<Double>();
-		String ans[] = lines.get(lines.size()-1).split(" ");
-		for(String str : ans) {
-			solutions.add(Double.parseDouble(str.trim()));
-		}
-	}
-
-	// Equations will be changed to replace variable names by V1, V2
-	public void extractEquations() throws IOException {
-		String fileName = Params.annotationDir + index + ".txt";
-		Map<String, String> variableNames = new HashMap<String, String>();
-		List<String> variableNamesSorted = new ArrayList<String>();
-		List<String> lines = FileUtils.readLines(new File(fileName));
-		List<String> equationStrings = new ArrayList<>();
-		equations = new ArrayList<Equation>();
-		for(int i = 2; i < lines.size()-1; ++i) {
-			if(i % 2 == 0) {
-				equationStrings.add(lines.get(i).replaceAll("\\(|\\)", ""));
-			}
-		}
-		for(String eq : equationStrings) {
-			for(String str : eq.split("(\\+|\\-|\\*|\\/|=)")) {
-				if(str.length() == 0) continue;
-				try {
-					Double d = Double.parseDouble(str.trim());
-				} catch(NumberFormatException e) {
-					int size = variableNames.keySet().size();
-					if(!variableNames.keySet().contains(str.trim())) {
-						variableNames.put(str.trim(), "V"+(size+1));	
-					}
-				}
-			}
-		}
-		for(String var : variableNames.keySet()) {
-			variableNamesSorted.add(var);
-		}
-		if(variableNamesSorted.size() == 2) {
-			if(variableNamesSorted.get(0).length() < 
-					variableNamesSorted.get(1).length()) {
-				String tmp = variableNamesSorted.get(0);
-				variableNamesSorted.set(0, variableNamesSorted.get(1));
-				variableNamesSorted.set(1, tmp); 
-			}
-		}
-		for(int i=0; i<equationStrings.size(); ++i) {
-			for(String varName : variableNamesSorted) {
-				equationStrings.set(i, equationStrings.get(i).replaceAll(
-						varName, 
-						variableNames.get(varName)));
-			}
-			equations.add(new Equation(index, equationStrings.get(i)));
-		}
-		if(equations.size() == 1) {
-			equations.get(0).isOneVar = true;
-		} else {
-			boolean oneVar = true;
-			Equation eq = equations.get(1);
-			for(int i=0; i<5; ++i) {
-				if(eq.terms.get(i).size() > 0) {
-					oneVar = false;
-					break;
-				}
-			}
-			for(int i=0; i<4; ++i) {
-				if(eq.operations.get(i) != Operation.ADD && i%2 == 0) {
-					oneVar = false;
-					break;
-				}
-				if(eq.operations.get(i) != Operation.NONE && i%2 == 1) {
-					oneVar = false;
-					break;
-				}
-			}
-			if(oneVar) {
-				equations.get(0).isOneVar = true;
-				equations.remove(1);
-			}
-		}
-		isOneVar = equations.size() == 1 ? true : false;
-	}
-
-	
+		text = lines.get(0);
+		equation = new Equation(0, lines.get(2));
+	}	
 	
 	public QuantSpan getRelevantQuantSpans(IntPair ip) {
 		for(QuantSpan qs : quantities) {
@@ -157,40 +73,24 @@ public class SimulProb {
 	}
 	
 	public void extractAnnotations() throws Exception {
-		ta = new TextAnnotation("", "", question);
+		ta = new TextAnnotation("", "", text);
 		posTags = Tools.curator.getTextAnnotationWithSingleView(
-				question, ViewNames.POS, false)
+				text, ViewNames.POS, false)
 				.getView(ViewNames.POS).getConstituents();
 		lemmas = Tools.curator.getTextAnnotationWithSingleView(
-				question, ViewNames.LEMMA, false)
+				text, ViewNames.LEMMA, false)
 				.getView(ViewNames.LEMMA).getConstituents();
 		chunks = Tools.curator.getTextAnnotationWithSingleView(
-				question, ViewNames.SHALLOW_PARSE, false)
+				text, ViewNames.SHALLOW_PARSE, false)
 				.getView(ViewNames.SHALLOW_PARSE).getConstituents();
 		parse = Tools.curator.getTextAnnotationWithSingleView(
-				question, ViewNames.PARSE_STANFORD, false)
+				text, ViewNames.PARSE_STANFORD, false)
 				.getView(ViewNames.PARSE_STANFORD).getConstituents();
 		skeleton = Tools.getSkeleton(ta, lemmas, parse, quantities);
 	}
 
-	public void extractEqParse() throws IOException {
+	public void extractVarTokens() throws IOException {
 		String annFile = Params.annotationDir+"/"+index+".ann";
-		for(int i=0; i<ta.size(); ++i) {
-			if(KnowledgeBase.mathNodeSet.contains(
-					ta.getToken(i).toLowerCase())) {
-				triggers.add(new Trigger(i, "OP", null));
-			} else {
-				for(int j=0; j<quantities.size(); ++j) {
-					int start = ta.getTokenIdFromCharacterOffset(
-							quantities.get(j).start);
-					if(i == start) {
-						triggers.add(new Trigger(i, "NUMBER", 
-								Tools.getValue(quantities.get(j))));
-						break;
-					}
-				}
-			}
-		}
 		List<String> lines = FileUtils.readLines(new File(annFile));
 		for(String line : lines) {
 			String strArr[] = line.split("\t")[1].split(" ");
@@ -199,18 +99,15 @@ public class SimulProb {
 					Integer.parseInt(strArr[1]));
 			int end = ta.getTokenIdFromCharacterOffset(
 					Integer.parseInt(strArr[2])-1)+1;
-			List<Integer> relevantIndex = new ArrayList<>();
-			for(int i=0; i<triggers.size(); ++i) {
-				if(triggers.get(i).index>=start && 
-						triggers.get(i).index<end) {
-					relevantIndex.add(i);
+			if(!varTokens.containsKey(label)) {
+				varTokens.put(label, new ArrayList<Integer>());
+			}
+			for(int i=start; i<end; ++i) {
+				if(posTags.get(i).getLabel().startsWith("N") || 
+						posTags.get(i).getLabel().startsWith("V")) {
+					varTokens.get(label).add(i);
 				}
 			}
-			if(relevantIndex.size() == 0) continue;
-			nodes.add(new Node(label, new IntPair(
-					relevantIndex.get(0), 
-					relevantIndex.get(relevantIndex.size()-1)+1), 
-					new ArrayList<Node>()));
 		}
 		
 		

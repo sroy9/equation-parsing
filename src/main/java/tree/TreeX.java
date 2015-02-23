@@ -20,10 +20,8 @@ public class TreeX implements IInstance {
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
 	public List<Pair<String, IntPair>> skeleton;
-	public Map<Integer, Boolean> partitions;
-	public IntPair eqSpan;
 	
-	public TreeX(SimulProb simulProb, IntPair span) {
+	public TreeX(SimulProb simulProb) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;
@@ -31,7 +29,6 @@ public class TreeX implements IInstance {
 		parse = simulProb.parse;
 		lemmas = simulProb.lemmas;
 		skeleton = simulProb.skeleton;
-		eqSpan = span;
 	}
 	
 }

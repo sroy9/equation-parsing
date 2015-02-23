@@ -89,11 +89,10 @@ public class DocReader {
 								0, 
 								file.getName().length()-4));
 				SimulProb simulProb = new SimulProb(index);
-				simulProb.extractQuestionsAndSolutions();
+				simulProb.extractTextAndEquation();
 				simulProb.extractQuantities(quantifier);
 				simulProb.extractAnnotations();
-				simulProb.extractEquations();
-				simulProb.extractEqParse();
+				simulProb.extractVarTokens();
 				simulProbList.add(simulProb);
 			}
 		}
@@ -107,32 +106,31 @@ public class DocReader {
 	}
 	
 	public static void print(SimulProb simulProb) {
-		System.out.println(simulProb.index+" : "+simulProb.question);
-		System.out.println("Skeleton : ");
-		for(Pair<String, IntPair> pair : simulProb.skeleton) {
-			System.out.print(pair.getFirst()+" ");
-		}
-		System.out.println();
+		System.out.println(simulProb.index+" : "+simulProb.text);
 		System.out.println("Quantities :");
 		for(QuantSpan qs : simulProb.quantities) {
-			System.out.println(simulProb.question.substring(
-					qs.start, qs.end)+" : "+qs + " : "+Tools.getValue(qs));
+			System.out.print("[" + simulProb.text.substring(
+					qs.start, qs.end)+" : "+ qs + " : "+Tools.getValue(qs) + "] ");
 		}
-		System.out.println("Relation : "+Arrays.asList(simulProb.relations));
-		System.out.println("Nodes : "+simulProb.nodes);
-		for(Equation eq : simulProb.equations) {
-			System.out.println("Equation :\n"+eq);
-		}
+		System.out.println();
+		System.out.println("Equation : "+simulProb.equation);
+		System.out.println("VarTokens : "+simulProb.varTokens);
+		System.out.println();
 	}
 	
+	public static List<List<Integer>> extractFolds() {
+		List<List<Integer>> folds = new ArrayList<>();
+		
+		return folds;
+	}
 	
 	public static void main(String args[]) throws Exception {
-//		List<SimulProb> simulProbList = 
-//				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
-//		for(SimulProb prob : simulProbList) {
-//			print(prob);
-//		}
-		DocReader.createBratFiles("data/equationparse.txt");
+		List<SimulProb> simulProbList = 
+				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
+		for(SimulProb prob : simulProbList) {
+			print(prob);
+		}
+//		DocReader.createBratFiles("data/equationparse.txt");
 		
 	}
 }

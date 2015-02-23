@@ -29,7 +29,7 @@ public class TemplateFeatGen extends AbstractFeatureGenerator implements
 	}
 	
 	
-	public IFeatureVector getAlignmentFeatureVector(TemplateX x, Template y, int slotNo) {
+	public IFeatureVector getAlignmentFeatureVector(TemplateX x, TemplateY y, int slotNo) {
 		List<String> features = alignmentFeatures(x, y, slotNo);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
@@ -39,7 +39,7 @@ public class TemplateFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 	
-	public static List<String> alignmentFeatures(TemplateX x, Template y, int slotNo) {
+	public static List<String> alignmentFeatures(TemplateX x, TemplateY y, int slotNo) {
 		List<String> features = new ArrayList<>();
 		return features;
 	}

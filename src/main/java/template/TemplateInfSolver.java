@@ -22,9 +22,9 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private TemplateFeatGen featGen;
-	public List<List<Equation>> templates;
+	public List<Equation> templates;
 
-	public TemplateInfSolver(TemplateFeatGen featGen, List<List<Equation>> templates) 
+	public TemplateInfSolver(TemplateFeatGen featGen, List< Equation> templates) 
 			throws Exception {
 		this.featGen = featGen;
 		this.templates = templates;
@@ -49,21 +49,18 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 		TemplateX prob = (TemplateX) x;
 		TemplateY gold = (TemplateY) goldStructure;
 		TemplateY pred = new TemplateY();
-		PairComparator<Template> jointPairComparator = 
-				new PairComparator<Template>() {};
-		MinMaxPriorityQueue<Pair<Template, Double>> beam1 = 
+		PairComparator<Equation> jointPairComparator = 
+				new PairComparator<Equation>() {};
+		MinMaxPriorityQueue<Pair<Equation, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(jointPairComparator)
 				.maximumSize(200).create();
-		MinMaxPriorityQueue<Pair<Template, Double>> beam2 = 
+		MinMaxPriorityQueue<Pair<Equation, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(jointPairComparator)
 				.maximumSize(200).create();
 		
-		List<Template> grafts = TemplateDriver.extractGraftedTemplates(
-				prob, templates, prob.eqStrings);
- 		
 		int maxNumSlots = 0;
-		for(Template template : grafts) {
-			beam1.add(new Pair<Template, Double>(template, 0.0));
+		for(Equation template : templates) {
+			beam1.add(new Pair<Equation, Double>(template, 0.0));
 			if(template.slots.size() > maxNumSlots) {
 				maxNumSlots = template.slots.size();
 			}
@@ -71,17 +68,16 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 		
 		// Fill up remaining slots
 		for(int i=0; i<maxNumSlots; ++i) {
-			for(Pair<Template, Double> pair : beam1) {
-				Template y = pair.getFirst();
+			for(Pair<Equation, Double> pair : beam1) {
+				Equation y = pair.getFirst();
 				if(pair.getFirst().slots.size() <= i) {
 					beam2.add(pair);
 				} else {
 					for(int j=0; j<prob.quantities.size(); ++j) {
-						Template yNew = new Template(y);
-						yNew.equations.get(y.slots.get(i).i).
-						terms.get(y.slots.get(i).j).get(y.slots.get(i).k).setSecond(
-								Tools.getValue(prob.quantities.get(j)));
-						beam2.add(new Pair<Template, Double>(yNew, pair.getSecond() + 
+						Equation yNew = new Equation(y);
+						yNew.terms.get(y.slots.get(i).getFirst()).get(y.slots.get(i).getSecond())
+						.setSecond(Tools.getValue(prob.quantities.get(j)));
+						beam2.add(new Pair<Equation, Double>(yNew, pair.getSecond() + 
 								wv.dotProduct(featGen.getAlignmentFeatureVector(
 										prob, yNew, i))));
 					}

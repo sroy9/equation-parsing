@@ -57,14 +57,11 @@ public class TemplateDriver {
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
 			throws Exception {
 		if(simulProbList == null) {
-			simulProbList = 
-					DocReader.readSimulProbFromBratDir(Params.annotationDir);
+			simulProbList = DocReader.readSimulProbFromBratDir(Params.annotationDir);
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			List<IntPair> eqSpans = TreeDriver.extractGoldEqSpans(simulProb);
-			List<String> eqStrings = TemplateDriver.extractGoldEqStrings(simulProb, eqSpans);
-			TemplateX x = new TemplateX(simulProb, eqStrings);
+			TemplateX x = new TemplateX(simulProb);
 			TemplateY y = new TemplateY(simulProb);
 			problem.addExample(x, y);
 		}
@@ -130,152 +127,31 @@ public class TemplateDriver {
 	
 	public static void main(String args[]) throws Exception {
 		TemplateDriver.doTrainTest(0);
-//		JointDriver.crossVal();
 	}
 	
-	public static List<List<Equation>> extractTemplates(SLProblem slProb) {
-		List<List<Equation>> templates = new ArrayList<>();
+	public static List<Equation> extractTemplates(SLProblem slProb) {
+		List<Equation> templates = new ArrayList<>();
 		for(IStructure struct : slProb.goldStructureList) {
 			TemplateY gold = new TemplateY((TemplateY) struct);
-			for(Equation eq1 : gold.equations) {
-				for(int j=0; j<5; ++j) {
-					for(int k=0; k<eq1.terms.get(j).size(); ++k) {
-						eq1.terms.get(j).get(k).setSecond(null);
-					}
+			for(int j=0; j<5; ++j) {
+				for(int k=0; k<gold.equation.terms.get(j).size(); ++k) {
+					gold.equation.terms.get(j).get(k).setSecond(null);
 				}
 			}
 			boolean alreadyPresent = false;
 			for(int i=0; i< templates.size(); ++i) { 
 				TemplateY y = new TemplateY();
-				y.equations = templates.get(i); 
+				y.equation = templates.get(i); 
 				if(TemplateY.getEquationLoss(gold, y) < 0.0001) {
 					alreadyPresent = true;
 					break;
 				}
 			}
 			if(!alreadyPresent) {
-				templates.add(gold.equations);
+				templates.add(gold.equation);
 			}
 		}
 		System.out.println("Number of templates : "+templates.size());
 		return templates;
-	}
-	
-	public static List<Template> extractGraftedTemplates(
-			TemplateX x, List<List<Equation>> templates, List<String> eqStrings) {
-		List<Template> relevantTemplates = new ArrayList<>();
-		List<Equation> mathEquations = new ArrayList<>();
-		for(String eqString : eqStrings) {
-			mathEquations.add(new Equation(0, eqString));
- 		}
-		for(List<Equation> template : templates) {
-			List<Equation> graft = extractedGraftedTemplate(
-					template, mathEquations);
-			System.out.println("Template : "+template);
-			System.out.println("Math Equations : "+mathEquations);
-			System.out.println("Graft : "+graft);
-			if(graft != null) {
-				relevantTemplates.add(new Template(graft));
-			}
-		}
-		return relevantTemplates;
-	}
-	
-	// Greedy matching should work
-	public static List<Equation> extractedGraftedTemplate(
-			List<Equation> template, List<Equation> mathEquations) {
-		List<Equation> graft = new ArrayList<>();
-		for(Equation eq : template) {
-			graft.add(new Equation(eq));
-		}
-		List<IntPair> match = new ArrayList<>();
-		boolean allFound = true;
-		for(Equation eq : mathEquations) {
-			boolean found = false;
-			Equation eq1 = new Equation(eq);
-			for(int j=0; j<5; ++j) {
-				for(int k=0; k<eq1.terms.get(j).size(); ++k) {
-					eq1.terms.get(j).get(k).setSecond(null);
-				}
-			}
-			for(int i=0; i<template.size(); ++i) {
-				if(Equation.getLoss(template.get(i), eq1) < 0.01 && 
-						!match.contains(new IntPair(i, 2))) {
-					graft.set(i, eq);
-					match.add(new IntPair(i, 2));
-					found = true;
-					break;
-				}
-			}
-			if(found) continue;
-			for(int i=0; i<template.size(); ++i) {
-				if(partialEquationMatch(template.get(i), eq1, 0) && 
-						!match.contains(new IntPair(i, 0))) {
-					graft.get(i).terms.set(0, eq1.terms.get(0));
-					graft.get(i).terms.set(1, eq1.terms.get(1));
-					graft.get(i).operations.set(0, eq1.operations.get(0));
-					graft.get(i).operations.set(1, eq1.operations.get(1));
-					match.add(new IntPair(i, 0));
-					found = true;
-					break;
-				}
-				if(partialEquationMatch(template.get(i), eq1, 1) && 
-						!match.contains(new IntPair(i, 1))) {
-					graft.get(i).terms.set(2, eq1.terms.get(0));
-					graft.get(i).terms.set(3, eq1.terms.get(1));
-					graft.get(i).operations.set(2, eq1.operations.get(0));
-					graft.get(i).operations.set(3, eq1.operations.get(1));
-					match.add(new IntPair(i, 1));
-					found = true;
-					break;
-				}
-			}
-			if(!found) {
-				allFound = false;
-				break;
-			}
-		}
-		if(allFound) {
-			return graft;
-		}
-		return null;
-	}
-	
-	public static boolean partialEquationMatch(
-			Equation template, Equation eq, int index) {
-		if(template.terms.get(4).size() > 0) return false;
-		if(Equation.getLossPairLists(template.terms.get(2*index), eq.terms.get(0)) < 0.01) {
-			if(Equation.getLossPairLists(template.terms.get(2*index+1), eq.terms.get(1)) < 0.01) {
-				if(template.operations.get(2*index) == eq.operations.get(0) &&
-						template.operations.get(2*index+1) == eq.operations.get(1)) {
-					return true;		
-				}
-			}
-		}
-		return false;
-	}
-	
-	public static List<String> extractGoldEqStrings(
-			SimulProb simulProb, List<IntPair> eqSpans) {
-		List<String> eqStrings = new ArrayList<>();
-		for(IntPair span : eqSpans) {
-			TreeX x = new TreeX(simulProb, span);
-			TreeY y = new TreeY(simulProb, span);
-			Node maxNode = null;
-			int maxSize = 0;
-			for(Node node : y.nodes) {
-				if(node.span.getSecond() - node.span.getFirst() > maxSize) {
-					maxSize = node.span.getSecond() - node.span.getFirst();
-					maxNode = node;
-				}
-			}
-			eqStrings.add(TreeInfSolver.postProcessEqString(TreeInfSolver.getEqString(x, maxNode)));
-//			System.out.println("EqString : "+eqStrings.get(eqStrings.size()-1));
-//			System.out.println("Problem Index : "+simulProb.index);
-//			System.out.println("Text : "+simulProb.ta.getText());
-//			System.out.println("Triggers : "+simulProb.triggers);
-//			System.out.println("Node : "+y.nodes);
-		}
-		return eqStrings;
 	}
 }
