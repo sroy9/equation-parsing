@@ -25,6 +25,8 @@ public class TreeY implements IStructure, Serializable {
 	public TreeY() {
 		equation = new Equation();
 		varTokens = new HashMap<String, List<Integer>>();
+		varTokens.put("V1", new ArrayList<Integer>());
+		varTokens.put("V2", new ArrayList<Integer>());
 	}
 	
 	public TreeY(TreeY other) {
@@ -40,8 +42,17 @@ public class TreeY implements IStructure, Serializable {
 	}
 	
 	public static float getLoss(TreeY y1, TreeY y2) {
-		return Equation.getLoss(y1.equation, y2.equation) + 
-				SimulProb.getVarTokenLoss(y1.varTokens, y2.varTokens);
+		float loss1 = Equation.getLossOrderFixed(y1.equation, y2.equation) + 
+				SimulProb.getVarTokenLossOrderFixed(y1.varTokens, y2.varTokens);
+		Equation y11 = new Equation(y1.equation);
+		Equation.exchange(y11.terms);
+		Equation.exchange(y11.operations);
+		Map<String, List<Integer>> varTokens = new HashMap<>();
+		varTokens.put("V1", y1.varTokens.get("V2"));
+		varTokens.put("V2", y1.varTokens.get("V1"));
+		float loss2 = Equation.getLossOrderFixed(y11, y2.equation) + 
+				SimulProb.getVarTokenLossOrderFixed(varTokens, y2.varTokens);
+		return Math.min(loss1, loss2);
 	}
 	
 	@Override

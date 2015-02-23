@@ -47,15 +47,40 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		TreeX prob = (TreeX) x;
 		TreeY pred = new TreeY();
 		// Get best equation trees
-		PairComparator<TreeY> jointPairComparator = 
+		PairComparator<TreeY> pairComparator = 
 				new PairComparator<TreeY>() {};
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam1 = 
-				MinMaxPriorityQueue.orderedBy(jointPairComparator)
+				MinMaxPriorityQueue.orderedBy(pairComparator)
 				.maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam2 = 
-				MinMaxPriorityQueue.orderedBy(jointPairComparator)
+				MinMaxPriorityQueue.orderedBy(pairComparator)
 				.maximumSize(200).create();
-		
+		for(int i=0; i<prob.ta.size(); ++i) {
+			for(int j=i; j<prob.ta.size(); ++j) {
+				if(prob.posTags.get(i).getLabel().startsWith("N") || 
+						prob.posTags.get(i).getLabel().startsWith("V")) {
+					TreeY y = new TreeY();
+					y.varTokens.get("V1").add(i);
+					y.varTokens.get("V2").add(j);
+					beam1.add(new Pair<TreeY, Double>(y, 
+							wv.dotProduct(featGen.getVarTokenFeatureVector(y))));
+				}
+			}
+		}
+		for(Pair<TreeY, Double> pair : beam1) {
+			for(int i=0; i<prob.quantities.size(); ++i) {
+				beam2.add(pair);
+				TreeY y = new TreeY(pair.getFirst());
+				beam2.add(new Pair<TreeY, Double>(y, pair.getSecond() + 
+						wv.dotProduct(featGen.getQuantityFeatureVector(y))));
+			}
+		}
+		beam1.clear();
+		beam1.addAll(beam2);
+		beam2.clear();
+		for(Pair<TreeY, Double> pair : beam1) {
+			
+		}
 		
 		return pred;
 	}

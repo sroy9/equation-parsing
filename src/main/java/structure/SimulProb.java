@@ -111,7 +111,8 @@ public class SimulProb {
 		}
 	}
 	
-	public static float getVarTokenLoss(Map<String, List<Integer>> varToken1,
+	public static float getVarTokenLossOrderFixed(
+			Map<String, List<Integer>> varToken1,
 			Map<String, List<Integer>> varToken2) {
 		float loss1 = 0.0f, loss2 = 0.0f;
 		for(String key : varToken1.keySet()) {

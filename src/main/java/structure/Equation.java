@@ -23,7 +23,6 @@ public class Equation implements Serializable {
 	public List<Operation> operations; 
 	public List<IntPair> slots;
 	public boolean isOneVar;
-	public Map<String, List<Integer>> varTokens;
 	
 	public Equation() {
 		isOneVar = false;
@@ -36,7 +35,6 @@ public class Equation implements Serializable {
 			operations.add(Operation.NONE);
 		}
 		slots = new ArrayList<>();
-		varTokens = new HashMap<String, List<Integer>>();
 	}
 	
 	public Equation(Equation eq) {
@@ -55,8 +53,6 @@ public class Equation implements Serializable {
 		}
 		slots = new ArrayList<>();
 		slots.addAll(eq.slots);
-		varTokens = new HashMap<String, List<Integer>>();
-		varTokens.putAll(eq.varTokens);
 	}
 	
 	public Equation(int index, String eqString) {
