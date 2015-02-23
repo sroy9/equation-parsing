@@ -3,7 +3,9 @@ package structure;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
@@ -21,6 +23,7 @@ public class Equation implements Serializable {
 	public List<Operation> operations; 
 	public List<IntPair> slots;
 	public boolean isOneVar;
+	public Map<String, List<Integer>> varTokens;
 	
 	public Equation() {
 		isOneVar = false;
@@ -33,6 +36,7 @@ public class Equation implements Serializable {
 			operations.add(Operation.NONE);
 		}
 		slots = new ArrayList<>();
+		varTokens = new HashMap<String, List<Integer>>();
 	}
 	
 	public Equation(Equation eq) {
@@ -51,6 +55,8 @@ public class Equation implements Serializable {
 		}
 		slots = new ArrayList<>();
 		slots.addAll(eq.slots);
+		varTokens = new HashMap<String, List<Integer>>();
+		varTokens.putAll(eq.varTokens);
 	}
 	
 	public Equation(int index, String eqString) {

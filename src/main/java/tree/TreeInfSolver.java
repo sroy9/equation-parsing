@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.common.collect.MinMaxPriorityQueue;
 
+import structure.Equation;
 import structure.Node;
 import structure.PairComparator;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
@@ -46,6 +47,15 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		TreeX prob = (TreeX) x;
 		TreeY pred = new TreeY();
 		// Get best equation trees
+		PairComparator<TreeY> jointPairComparator = 
+				new PairComparator<TreeY>() {};
+		MinMaxPriorityQueue<Pair<TreeY, Double>> beam1 = 
+				MinMaxPriorityQueue.orderedBy(jointPairComparator)
+				.maximumSize(200).create();
+		MinMaxPriorityQueue<Pair<TreeY, Double>> beam2 = 
+				MinMaxPriorityQueue.orderedBy(jointPairComparator)
+				.maximumSize(200).create();
+		
 		
 		return pred;
 	}
@@ -147,31 +157,6 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		return childrenList;
 	}
 
-	public static List<List<IntPair>> enumerateDivisions(
-			TreeX x, int start, int end) {
-		List<List<IntPair>> divisions = new ArrayList<>();
-		if(start+1 == end) {
-			divisions.add(new ArrayList<IntPair>());
-			return divisions;
-		}
-		for(int i=start+1; i<end; ++i) {
-			List<IntPair> div = Arrays.asList(
-					new IntPair(start, i), new IntPair(i, end));
-			divisions.add(div);
-		}
-		for(int i=start+1; i<end-1; ++i) {
-			for(int j=i+1; j<end; ++j) {
-				List<IntPair> div = Arrays.asList(new IntPair(start, i), 
-						new IntPair(i, j), new IntPair(j, end));
-				if((i-start == 1 && x.triggers.get(start).label.equals("OP")) ||
-						(j-i == 1 && x.triggers.get(i).label.equals("OP")) ||
-						(end-j == 1 && x.triggers.get(j).label.equals("OP"))) {
-					divisions.add(div);
-				}
-			}
-		}
-		return divisions;
-	}
 	
 	public static String getEqString(TreeX x, Node node) {
 		String str = "";

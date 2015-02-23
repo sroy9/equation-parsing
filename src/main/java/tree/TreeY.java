@@ -36,11 +36,12 @@ public class TreeY implements IStructure, Serializable {
 	public TreeY(SimulProb prob) {
 		equation = new Equation(prob.equation);
 		varTokens = new HashMap<String, List<Integer>>();
-		varTokens.putAll(m);
+		varTokens.putAll(prob.varTokens);
 	}
 	
 	public static float getLoss(TreeY y1, TreeY y2) {
-		return Equation.getLoss(y1.equation, y2.equation);
+		return Equation.getLoss(y1.equation, y2.equation) + 
+				SimulProb.getVarTokenLoss(y1.varTokens, y2.varTokens);
 	}
 	
 	@Override
