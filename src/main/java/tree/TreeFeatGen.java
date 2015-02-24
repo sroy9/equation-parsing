@@ -40,11 +40,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		
 	public static List<String> getFeatures(TreeX x, TreeY y) {
 		List<String> features = new ArrayList<>();
-		for(Node node : y.nodes) {
-			features.addAll(expressionFeatures(
-					x, node.span.getFirst(), node.span.getSecond(), 
-					node.children, node.label));
-		}
 		return features;
 	}
 	
@@ -55,12 +50,22 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 	}
 
 	public IFeatureVector getVarTokenFeatureVector(TreeY y) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> features = varTokenFeatures(y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+
+	private List<String> varTokenFeatures(TreeY y) {
+		List<String> features = new ArrayList<>();
+		return features;
 	}
 
 	public IFeatureVector getQuantityFeatureVector(TreeY y) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> features = quantityFeatures(y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+
+	private List<String> quantityFeatures(TreeY y) {
+		List<String> features = new ArrayList<>();
+		return features;
 	}
 }

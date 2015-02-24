@@ -28,6 +28,7 @@ public class Node {
 	}
 	
 	public Node(Node other) {
+		this();
 		this.label = other.label;
 		this.span = other.span;
 		this.tokenIndex = other.tokenIndex;
@@ -69,7 +70,7 @@ public class Node {
 	
 	public static Node parseNode(String eqString) {
 		eqString = eqString.trim();
-		System.out.println("EqString : "+eqString);
+//		System.out.println("EqString : "+eqString);
 		int index = eqString.indexOf("=");
 		if(index != -1) {
 			Node node = new Node();

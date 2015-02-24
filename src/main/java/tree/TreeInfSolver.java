@@ -105,10 +105,9 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		Collections.sort(y.nodes, new Comparator<Node>() {
 		    @Override
 		    public int compare(Node a, Node b) {
-		    		return (int) Math.signum(a.span.getFirst() - b.span.getFirst());
+		    		return (int) Math.signum(a.tokenIndex - b.tokenIndex);
 		    }
 		});
-		List<String> labels = null;
 		
 		// Initializing of CKY beam
 		PairComparator<Node> nodePairComparator = 
@@ -127,6 +126,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		// CKY Beam Search
 		for(int j=1; j<=n; ++j) {
 			for(int i=j-1; i>=0; --i) {
+				List<String> labels = new ArrayList<>();
 				if(i+1 == j) {
 					y.nodes.get(i).span = new IntPair(i, j);
 					dpMat.get(i).get(j).add(new Pair<Node, Double>(y.nodes.get(i), 0.0));

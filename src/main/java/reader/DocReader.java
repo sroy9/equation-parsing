@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -85,6 +86,7 @@ public class DocReader {
 		File dir = new File(bratDir);
 		for(File file : dir.listFiles()) {
 			if(file.getName().endsWith(".txt")) {
+				System.out.println("Reading "+file.getName());
 				int index = Integer.parseInt(file.getName().substring(
 								0, 
 								file.getName().length()-4));
@@ -120,7 +122,26 @@ public class DocReader {
 	
 	public static List<List<Integer>> extractFolds() {
 		List<List<Integer>> folds = new ArrayList<>();
-		
+		List<Integer> allIndices = new ArrayList<>();
+		File dir = new File(Params.annotationDir);
+		for(File file : dir.listFiles()) {
+			if(file.getName().endsWith(".txt")) {
+				System.out.println("Reading "+file.getName());
+				int index = Integer.parseInt(file.getName().substring(
+								0, 
+								file.getName().length()-4));
+				allIndices.add(index);
+			}
+		}
+		Collections.shuffle(allIndices);
+		for(int i=0; i<5; ++i) {
+			List<Integer> fold = new ArrayList<>();
+			for(int j = (int) (i*allIndices.size()/5.0); 
+					j < (int) ((i+1)*allIndices.size()/5.0); ++j) {
+				fold.add(allIndices.get(j));
+			}
+			folds.add(fold);
+		}
 		return folds;
 	}
 	
