@@ -105,7 +105,7 @@ public class RelDriver {
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
 		System.out.println("Strict Accuracy : ="+ (1-1.0*incorrect.size()/total.size()) + " incorrect "+ incorrect.size() + " out of "+total.size());
-		return (acc/sp.instanceList.size());
+		return (1-1.0*incorrect.size()/total.size());
 	}
 	
 	public static void trainModel(String modelPath, SLProblem train, int testFold) 
