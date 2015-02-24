@@ -1,5 +1,5 @@
 In a given day , the mill turns out three times as many units of plywood as lumber.
 
-3*V1=V2
+V1/3=V2
 
 [In ][a given (day )], [the (mill )][turns ][out ][three (times )][as ][many (units )][of ][(plywood )][as ][(lumber )]. 

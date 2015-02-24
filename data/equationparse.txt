@@ -10,7 +10,7 @@ V1=210+5*V2
 A 20-foot board is cut into 2 pieces.
 V1+V2=20
 You are currently twice as far from your house as you are from your mothers house.
-V1=2*V2
+V1/2=V2
 A total of 10,000 dollars is invested in 2 funds paying 5 % and 7 % annual interest.
 V1+V2=10000
 For his long distance phone service Milan pays a 2 dollars monthly fee plus 12 cents per minute.
@@ -76,7 +76,7 @@ V1=38.95+0.31*V2
 The difference between 2 times a number and -8 is -12.
 2*V1-(-8)=(-12)
 In college there are 15 times as many students as professors.
-V1=15*V2
+V1/15=V2
 Together the students and professors number 40,000.
 V1+V2=40000
 The price of the washer is 3 times the price of the dryer.
@@ -178,13 +178,13 @@ V1=40+V2
 She can buy four roses and five daisies for 7.90 dollars.
 4*V1+5*V2=7.90
 There are twice as many children as adults in the group.
-2*V1=V2
+V1/2=V2
 17 is 4 less than 8 times a number.
 8*V1-4=17
 Jerry Weller received 20,196 more votes than opponent John Pavich.
 V1=20196+V2
 A swim team has 5 times as many girls as boys.
-V1=5*V2
+V1/5=V2
 The larger of two numbers is 23 less than twice the smaller.
 V1=2*V2-23
 The sum of the two numbers is 70.
@@ -274,7 +274,7 @@ V1=15*V2
 0.40 of one part exceeds 0.625 of the other part by 10.
 0.4*V1=0.625*V2+10
 In a given day , the mill turns out three times as many units of plywood as lumber.
-3*V1=V2
+V1/3=V2
 One number is 3 less than twice another.
 V1=2*V2-3
 The freight train travels 30 kilometers per hour slower than the express train.
@@ -314,19 +314,19 @@ If the product of 5 and a number is increased by 4 , the result is 19.
 2 footballs and 3 soccer balls cost 220 dollars.
 2*V1+3*V2=220
 In 1 day , a store sold 1.6 as many DVDs as CDs.
-V1=1.6*V2
+V1/1.6=V2
 The total number of DVDs and CDs sold that day was 273.
 V1+V2=273
 The cost of a child 's ticket was 4 dollars less than the cost of an adult 's ticket.
 V1=V2-4
 A rancher raises 5 times as many cows as horses.
-V1=5*V2
+V1/5=V2
 1 number is 3 less than twice another number.
 V1=2*V2-3
 Honda day shift produced 4 times as much as second shift.
 V1=4*V2
 The shoe store has twice as many black shoes as it does brown shoes.
-V1=2*V2
+V1/2=V2
 If three times the smaller number is subtracted from the larger number , the result is 22. 
 3*V1-V2=22
 One cyclist travels 8 kilometers per hour faster than the other.
@@ -402,7 +402,7 @@ V1=2.6667*V2
 One number is 3 times as large as the other number.
 V1=3*V2
 There were 7 times as many thermometers as hot-water bottles sold.
-V1=7*V2
+V1/7=V2
 Jordan 's salary is 1250 dollars a month plus a 5 % commission on all of his sales.
 V1=1250+0.05*V2
 Steve has 36 coins consisting of dimes and nickels.
@@ -418,13 +418,13 @@ V1=2*V2-16
 Twice the larger number exceeds 3 times the smaller number by 16.
 2*V1=3*V2+16
 He has 4 times as many large postcards as small postcards.
-V1=4*V2
+V1/4=V2
 The total cost of a pair of pants and a belt was 70.93 dollars.
 V1+V2=70.93
 He has 12 more dimes than nickels.
-V1+12=V2
+V1=V2-12
 This year he wants to plant 80 more acres of sunflowers than flax.
-V1+80=V2
+V1=V2-80
 7 time the first part added to 5 times the second part makes 146.
 7*V1+5*V2=146
 24 is divided in two parts.
@@ -476,7 +476,7 @@ V1=12+V2
 Bob invested 22,000 dollars , part at 18 % and part at 14 %.
 V1+V2=22000
 There were twice as many adults as children.
-V1=2*V2
+V1/2=V2
 The total number of Democrats and Republicans in the House of Representatives was 434.
 V1+V2=434
 There were 30 more Republicans then Democrats.
@@ -507,7 +507,7 @@ A collection of half dollars and nickels is worth $13.40.
 A boy has $2.25 in nickels and dimes.
 0.1*V1+0.05*V2=2.25
 There are twice as many dimes as nickels.
-V1=2*V2
+V1/2=V2
 A bank contains 27 coins in dimes and quarters.
 V1+V2=27
 A coin purse contains 18 coins in nickels and dimes. 
@@ -553,7 +553,7 @@ V1+V2=240
 The bicycle cost 5 times as much as the helmet.
 V1=5*V2
 Aaron had 7 times as many sheep as Beth.
-V1=7*V2
+V1/7=V2
 An electrician cuts a 30 feet piece of wire into two pieces.
 V1+V2=30
 One piece is 2 feet longer than the other.
@@ -608,9 +608,9 @@ Four less than eight times a certain number is −660.
 Nine less than five times a certain number is 141.
 5*V1-9=141
 After several days, he is four times as far from the beginning of the trail as he is from the end.
-V1=4*V2
+V1/4=V2
 After several days, he is two times as far from the beginning of the trail as he is from the end.
-V1=2*V2
+V1/2=V2
 The second pieces is 3 times as long as the first piece.
 V1=3*V2
 The second pieces is 7 times as long as the first piece.
