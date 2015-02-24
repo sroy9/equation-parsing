@@ -69,7 +69,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					beam1.add(new Pair<TreeY, Double>(y, 
-							wv.dotProduct(featGen.getVarTokenFeatureVector(y))));
+							1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(y))));
 				}
 			}
 		}
@@ -85,7 +85,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 								null,
 								new ArrayList<Node>()));
 				beam2.add(new Pair<TreeY, Double>(y, pair.getSecond() + 
-						wv.dotProduct(featGen.getQuantityFeatureVector(y))));
+						1.0*wv.dotProduct(featGen.getQuantityFeatureVector(y))));
 			}
 		}
 		beam1.clear();
@@ -155,9 +155,9 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				}
 			}
 		}
-		Equation eq = new Equation(0, getEqString(x, dpMat.get(0).get(n).element().getFirst()));
 		TreeY pred = new TreeY(pair.getFirst());
-		pred.equation = eq;
+		pred.equation = new Equation();
+		pred.equation.root = dpMat.get(0).get(n).element().getFirst();
 		return new Pair<TreeY, Double>(pred, pair.getSecond() + 
 				dpMat.get(0).get(n).element().getSecond());
 	}
@@ -185,74 +185,6 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 			tmpList.clear();
 		}
 		return childrenList;
-	}
-
-	
-	public static String getEqString(TreeX x, Node node) {
-		String str = "";
-		if(node.span.getFirst()+1 == node.span.getSecond()) {
-			if(node.label.equals("NUM")) str = 
-					""+x.triggers.get(node.span.getFirst()).num;
-			if(node.label.equals("ADD")) str = "V+V";
-			if(node.label.equals("SUB")) str = "V-V";
-			if(node.label.equals("MUL")) str = 
-					x.triggers.get(node.span.getFirst()).num+"*V";
-			if(node.label.equals("DIV") && 
-					x.triggers.get(node.span.getFirst()).num == null) {
-				str = "V/V";
-			}
-			if(node.label.equals("DIV") && 
-					x.triggers.get(node.span.getFirst()).num != null) {
-				str = "V/"+x.triggers.get(node.span.getFirst()).num;
-			}
-		} else {
-			List<Integer> locs = new ArrayList<>();
-			int count = 0;
-			List<String> childrenStrings = new ArrayList<>();
-			for(int i=0; i<node.children.size(); ++i) {
-				String childStr = getEqString(x, node.children.get(i));
-				childrenStrings.add(childStr);
-				if(!childStr.equals("")) {
-					locs.add(i);
-					count++;
-				}
-			}
-			if(count == 1) {
-				String childStr = childrenStrings.get(locs.get(0));
-				if(node.label.equals("ADD")) str = "V+"+childStr;
-				if(node.label.equals("SUB")) str = "V-"+childStr;
-				if(node.label.equals("MUL")) str = "V*"+childStr;
-				if(node.label.equals("DIV")) str = "V/"+childStr;
-			}
-			if(count == 2) {
-				String childStr1 = childrenStrings.get(locs.get(1));
-				String childStr2 = childrenStrings.get(locs.get(0));
-				if(node.label.equals("EQ")) str = childStr1+"="+childStr2;
-				if(node.label.equals("ADD")) str = childStr1+"+"+childStr2;
-				if(node.label.equals("SUB")) str = childStr1+"-"+childStr2;
-				if(node.label.equals("MUL")) str = childStr1+"*"+childStr2;
-				if(node.label.equals("DIV")) str = childStr1+"/"+childStr2;
-			}
-		}
-		return str;
-	}
-	
-	public static String postProcessEqString(String str) {
-		int count = 0;
-		String newStr = "";
-		for(int i=0; i<str.length(); ++i) {
-			if(str.charAt(i) == 'V') {
-				count++;
-				newStr += "V"+count;
-			} else {
-				newStr += str.charAt(i);
-			}
-		}
-		if(!newStr.contains("=")) {
-			count++;
-			newStr = newStr+"=V"+count;
-		}
-		return newStr;
 	}
 	
 }

@@ -53,4 +53,14 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = new ArrayList<>();
 		return features;
 	}
+
+	public IFeatureVector getVarTokenFeatureVector(TreeY y) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IFeatureVector getQuantityFeatureVector(TreeY y) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

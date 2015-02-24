@@ -111,18 +111,21 @@ public class SimulProb {
 		}
 	}
 	
-	public static float getVarTokenLossOrderFixed(
-			Map<String, List<Integer>> varToken1,
-			Map<String, List<Integer>> varToken2) {
-		float loss1 = 0.0f, loss2 = 0.0f;
-		for(String key : varToken1.keySet()) {
-			if(!varToken1.get(key).contains(varToken2.get(key).get(0))) {
-				loss1 += 1.0;
-			}
-			if(!varToken2.get(key).contains(varToken1.get(key).get(0))) {
-				loss2 += 1.0;
-			}
+	public static float getVarTokenLoss(Map<String, List<Integer>> gold,
+			Map<String, List<Integer>> pred, boolean varNameSwap) {
+		float loss = 0.0f;
+		if(!varNameSwap && !gold.get("V1").contains(pred.get("V1").get(0))) {
+			loss += 1.0;
 		}
-		return Math.min(loss1, loss2);
+		if(!varNameSwap && !gold.get("V2").contains(pred.get("V2").get(0))) {
+			loss += 1.0;
+		}
+		if(varNameSwap && !gold.get("V1").contains(pred.get("V2").get(0))) {
+			loss += 1.0;
+		}
+		if(varNameSwap && !gold.get("V2").contains(pred.get("V1").get(0))) {
+			loss += 1.0;
+		}
+		return loss;
 	}
 }

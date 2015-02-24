@@ -38,8 +38,8 @@ public class Equation implements Serializable {
 		return root.toString();
 	}
 	
-	public static float getLoss(Equation y1, Equation y2) {
-		return Node.getLoss(y1.root, y2.root);
+	public static float getLoss(Equation y1, Equation y2, boolean varNameSwap) {
+		return Node.getLoss(y1.root, y2.root, varNameSwap);
 	}
 
 }
