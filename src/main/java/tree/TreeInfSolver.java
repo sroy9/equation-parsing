@@ -3,6 +3,8 @@ package tree;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.google.common.collect.MinMaxPriorityQueue;
@@ -55,11 +57,15 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator)
 				.maximumSize(200).create();
+		
+		// Grounding of variables
 		for(int i=0; i<prob.ta.size(); ++i) {
 			for(int j=i; j<prob.ta.size(); ++j) {
 				if(prob.posTags.get(i).getLabel().startsWith("N") || 
 						prob.posTags.get(i).getLabel().startsWith("V")) {
 					TreeY y = new TreeY();
+					y.nodes.add(new Node("VAR", i, new ArrayList<Node>()));
+					y.nodes.add(new Node("VAR", j, new ArrayList<Node>()));
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					beam1.add(new Pair<TreeY, Double>(y, 
@@ -67,10 +73,16 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				}
 			}
 		}
+		
+		// Relevant Quantity Detection
 		for(Pair<TreeY, Double> pair : beam1) {
 			for(int i=0; i<prob.quantities.size(); ++i) {
 				beam2.add(pair);
 				TreeY y = new TreeY(pair.getFirst());
+				y.nodes.add(new Node("NUM", 
+						prob.ta.getTokenIdFromCharacterOffset(
+								prob.quantities.get(i).start), 
+								new ArrayList<Node>()));
 				beam2.add(new Pair<TreeY, Double>(y, pair.getSecond() + 
 						wv.dotProduct(featGen.getQuantityFeatureVector(y))));
 			}
@@ -78,18 +90,24 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		beam1.clear();
 		beam1.addAll(beam2);
 		beam2.clear();
-		for(Pair<TreeY, Double> pair : beam1) {
-			
-		}
 		
-		return pred;
+		// Equation generation
+		for(Pair<TreeY, Double> pair : beam1) {
+			beam2.add(getBottomUpBestParse(prob, pair, wv));
+		}
+		return beam2.element().getFirst();
 	}
 	
-	public Pair<String, List<Node>> getBottomUpBestParse(TreeX x, WeightVector wv) {
-		
-		List<Node> nodes = new ArrayList<>();
+	public Pair<TreeY, Double> getBottomUpBestParse(
+			TreeX x, Pair<TreeY, Double> pair, WeightVector wv) {
+		TreeY y = pair.getFirst();
+		Collections.sort(y.nodes, new Comparator<Node>() {
+		    @Override
+		    public int compare(Node a, Node b) {
+		    		return (int) Math.signum(a.index - b.index);
+		    }
+		});
 		List<String> labels = null;
-		int n = x.eqSpan.getSecond() - x.eqSpan.getFirst();
 		
 		// Initializing of CKY beam
 		PairComparator<Node> nodePairComparator = 

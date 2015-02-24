@@ -21,6 +21,7 @@ public class TreeY implements IStructure, Serializable {
 	private static final long serialVersionUID = 2399969922362221136L;
 	public Equation equation;
 	public Map<String, List<Integer>> varTokens;
+	public List<Node> nodes;
 	
 	public TreeY() {
 		equation = new Equation();
