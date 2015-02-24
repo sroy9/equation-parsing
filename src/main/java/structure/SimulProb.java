@@ -3,6 +3,7 @@ package structure;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -103,18 +104,21 @@ public class SimulProb {
 				varTokens.put(label, new ArrayList<Integer>());
 			}
 			for(int i=start; i<end; ++i) {
-//				if(posTags.get(i).getLabel().startsWith("N") || 
-//						posTags.get(i).getLabel().startsWith("V") ||
-//						posTags.get(i).getLabel().startsWith("J") ||
-//						posTags.get(i).getLabel().equals("CD")) {
+				if(posTags.get(i).getLabel().startsWith("N") || 
+						posTags.get(i).getLabel().startsWith("V") ||
+						posTags.get(i).getLabel().startsWith("J") ||
+						KnowledgeBase.specialVarTokens.contains(
+								ta.getToken(i).toLowerCase())) {
 					varTokens.get(label).add(i);
-//				}
+				}
 			}
 		}
 	}
 	
 	public static float getVarTokenLoss(Map<String, List<Integer>> gold,
 			Map<String, List<Integer>> pred, boolean varNameSwap) {
+		System.out.println("VarTokenLoss called with : "+Arrays.asList(gold)+" and "+
+			Arrays.asList(pred));
 		float loss = 0.0f;
 		if(gold.keySet().size() != pred.keySet().size()) return 4.0f;
 		if(gold.keySet().size() == 1) {

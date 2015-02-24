@@ -561,37 +561,37 @@ V1=2+V2
 Tuition costs 704 dollars more than room and board.
 V1=704+V2
 In 4 years, he will be twice as old as his brother.
-V1+4=2*V2+2*4
+V1=2*V2
 A boy is 10 years older than his brother. 
 V1=10+V2
 In 20 years, the father will be twice as old as his son.
-V1+20=2*V2+2*20
+V1=2*V2
 In 6 years, Diane will be twice as old as Amy.
-V1+6=2*V2+2*6
+V1=2*V2
 Four years ago, John was twice as old as Mary. 
-V1-4=2*V2-2*4
+V1=2*V2
 Four years ago, the father was 3 times as old as the son.
-V1-4=3*V2-3*4
+V1=3*V2
 The sum of the ages of a china plate and a glass plate is 16 years. 
 V1+V2=16
 Four years ago, the china plate was three times the age of the glass plate. 
-V1-4=3*V2-3*4
+V1=3*V2
 Four years ago, the bronze plaque was one-half the age of the wood plaque.
-V1-4=0.5*V2-0.5*4
+V1=0.5*V2
 The age of the older of two boys is twice that of the younger.
 V1=2*V2
 In 12 years, the limestone will be three times as old as the marble statue.
-V1+12=3*V2+3*12
+V1=3*V2
 A limestone statue is 56 years older than a marble statue.
 V1=V2+56
 The sum of Clyde and Wendy’s age is 64. 
 V1+V2=64
 In four years, Wendy will be three times as old as Clyde.
-V1+4=3*V2+3*4
+V1=3*V2
 Two years ago, the age of the older ship was three times the age of the newer ship. 
-V1-2=3*V2-3*2
+V1=3*V2
 Four years ago, Elli was 3 times as old as Dan. 
-V1-4=3*V2-3*4
+V1=3*V2
 One cyclist rides twice as fast as the other.
 V1=2*V2
 The first plane is flying 25 mph slower than the second plane. 

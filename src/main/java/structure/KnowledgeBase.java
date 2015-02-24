@@ -12,6 +12,7 @@ public class KnowledgeBase {
 	public static Map<String, List<String>> mathNodeMap;
 	public static Set<String> mathNodeSet;
 	public static Set<String> mathIndicatorSet;
+	public static Set<String> specialVarTokens;
 	
 	static {
 		// Math knowledge
@@ -32,6 +33,11 @@ public class KnowledgeBase {
 		mathIndicatorSet.addAll(mathNodeSet);
 		mathIndicatorSet.addAll(Arrays.asList(
 				"times", "thrice", "triple", "twice", "double", "half"));
+		
+		// Variable Knowledge
+		specialVarTokens = new HashSet<String>();
+		specialVarTokens.addAll(Arrays.asList("one", "other", "another", "first", 
+				"second", "larger", "smaller", "greater", "lesser", "x", "this", "itself", "he"));
 	}
 	
 }

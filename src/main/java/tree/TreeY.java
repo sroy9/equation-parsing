@@ -32,6 +32,7 @@ public class TreeY implements IStructure, Serializable {
 	public TreeY(TreeY other) {
 		equation = new Equation(other.equation);
 		nodes = new ArrayList<>();
+		nodes.addAll(other.nodes);
 		varTokens = new HashMap<String, List<Integer>>();
 		varTokens.putAll(other.varTokens);
 	}

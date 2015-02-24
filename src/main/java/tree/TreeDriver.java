@@ -45,8 +45,8 @@ public class TreeDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/sem"+testFold+".save", train, testFold);
-		return testModel("models/sem"+testFold+".save", test);
+		trainModel("models/tree"+testFold+".save", train, testFold);
+		return testModel("models/tree"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
