@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.commons.io.FileUtils;
 
@@ -135,7 +136,7 @@ public class DocReader {
 				allIndices.add(index);
 			}
 		}
-		Collections.shuffle(allIndices);
+		Collections.shuffle(allIndices,new Random(0));
 		for(int i=0; i<5; ++i) {
 			List<Integer> fold = new ArrayList<>();
 			for(int j = (int) (i*allIndices.size()/5.0); 

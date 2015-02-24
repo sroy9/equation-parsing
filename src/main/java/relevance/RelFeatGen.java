@@ -34,6 +34,43 @@ public class RelFeatGen extends AbstractFeatureGenerator implements
 		
 	public static List<String> getFeatures(RelX x, RelY y) {
 		List<String> features = new ArrayList<>();
+		addPOSfeatures(features,x,y,x.quantIndex);
 		return features;
+	}
+	private static void addPOSfeatures(List<String> features, RelX x, RelY y, int index) {
+		int window = 3;
+		int before = Math.max(0, index - window);
+		int after = Math.min(x.posTags.size() - 1, index + window);
+		int i;
+		String __id;
+		String __value;
+
+		String[] tags = new String[before + after + 1];
+		i = 0;
+
+		for (int j = before; j <= after; j++) {
+			tags[i++] = x.posTags.get(j).getLabel();
+		}
+
+		for (int j = 0; j < window; j++) {
+			for (i = 0; i < tags.length; i++) {
+				StringBuilder f = new StringBuilder();
+				for (int context = 0; context <= j && i + context < tags.length; context++) {
+					if (context != 0) {
+						f.append("_");
+					}
+					f.append(tags[i + context]);
+				}
+				__id = ("POS_"+i + "_" + j);
+				__value = "_" + (f.toString());
+				addFeature(__id + __value,y,features);
+
+			}
+		}		
+	}
+
+	private static void addFeature(String string,
+			RelY y, List<String> features) {
+		features.add(string+"_L"+y.decision);
 	}
 }
