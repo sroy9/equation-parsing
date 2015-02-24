@@ -32,9 +32,9 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public IFeatureVector getExpressionFeatureVector(TreeX x, int i, int j,
-			List<Node> children, String label) {
-		List<String> features = expressionFeatures(x, i, j, children, label);
+	public IFeatureVector getExpressionFeatureVector(TreeX x, TreeY y, 
+			int i, int j, List<Node> children, String label) {
+		List<String> features = expressionFeatures(x, y, i, j, children, label);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 		
@@ -43,8 +43,8 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 	
-	public static List<String> expressionFeatures(TreeX x, int start, int end,
-			List<Node> children, String label) {
+	public static List<String> expressionFeatures(TreeX x, TreeY y,
+			int start, int end, List<Node> children, String label) {
 		List<String> features = new ArrayList<>();
 		return features;
 	}

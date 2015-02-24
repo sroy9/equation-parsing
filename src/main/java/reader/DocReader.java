@@ -86,7 +86,7 @@ public class DocReader {
 		File dir = new File(bratDir);
 		for(File file : dir.listFiles()) {
 			if(file.getName().endsWith(".txt")) {
-				System.out.println("Reading "+file.getName());
+//				System.out.println("Reading "+file.getName());
 				int index = Integer.parseInt(file.getName().substring(
 								0, 
 								file.getName().length()-4));
@@ -117,6 +117,7 @@ public class DocReader {
 		}
 		System.out.println();
 		System.out.println("Equation : "+simulProb.equation);
+		System.out.println("Leaves : "+simulProb.equation.root.getLeaves());
 		System.out.println("VarTokens : "+simulProb.varTokens);
 		System.out.println();
 		

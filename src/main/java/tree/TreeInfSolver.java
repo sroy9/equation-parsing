@@ -66,7 +66,6 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 			Node node = new Node("NUM", 
 					prob.ta.getTokenIdFromCharacterOffset(
 							prob.quantities.get(i).start), 
-							null,
 							new ArrayList<Node>());
 			node.value = Tools.getValue(prob.quantities.get(i));
 			seed.nodes.add(node);
@@ -80,7 +79,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 					KnowledgeBase.specialVarTokens.contains(
 							prob.ta.getToken(i).toLowerCase())) {
 				TreeY y = new TreeY(seed);
-				Node node = new Node("VAR", i, null, new ArrayList<Node>());
+				Node node = new Node("VAR", i, new ArrayList<Node>());
 				node.varId = "V1";
 				y.nodes.add(node);
 				y.varTokens.put("V1", new ArrayList<Integer>());
@@ -94,10 +93,10 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 							KnowledgeBase.specialVarTokens.contains(
 									prob.ta.getToken(j).toLowerCase())) {
 						y = new TreeY(seed);
-						node = new Node("VAR", i, null, new ArrayList<Node>());
+						node = new Node("VAR", i, new ArrayList<Node>());
 						node.varId = "V1";
 						y.nodes.add(node);
-						node = new Node("VAR", j, null, new ArrayList<Node>());
+						node = new Node("VAR", j, new ArrayList<Node>());
 						node.varId = "V2";
 						y.nodes.add(node);
 						y.varTokens.put("V1", new ArrayList<Integer>());
@@ -149,7 +148,6 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 			for(int i=j-1; i>=0; --i) {
 				List<String> labels = new ArrayList<>();
 				if(i+1 == j) {
-					y.nodes.get(i).span = new IntPair(i, j);
 					dpMat.get(i).get(j).add(new Pair<Node, Double>(y.nodes.get(i), 0.0));
 					continue;
 				} else if(i == 0 && j == n) {
@@ -168,9 +166,10 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 								children.add(childrenPair.getFirst());
 							}
 							score += 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
-									x, i, j, children, label));
+									x, y, y.nodes.get(i).tokenIndex, y.nodes.get(j-1).tokenIndex, 
+									children, label));
 							dpMat.get(i).get(j).add(new Pair<Node, Double>(
-									new Node(label, -1, new IntPair(i, j), children), score));
+									new Node(label, -1, children), score));
 						}
 					}
 				}
@@ -206,6 +205,53 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 			tmpList.clear();
 		}
 		return childrenList;
+	}
+	
+	public TreeY getLatentBestStructure(
+			TreeX x, TreeY gold, WeightVector wv) {
+		TreeY best = null;
+		double bestScore = -Double.MAX_VALUE;
+		if(gold.varTokens.keySet().size() == 1) {
+			for(Integer tokenIndex : gold.varTokens.get("V1")) {
+				TreeY yNew = new TreeY(gold);
+				yNew.varTokens.get("V1").clear();
+				yNew.varTokens.get("V1").add(tokenIndex);
+				for(Node node : yNew.equation.root.getLeaves()) {
+					if(node.label.equals("VAR")) {
+						node.tokenIndex = tokenIndex;
+					}
+				}
+				double score = wv.dotProduct(
+						featGen.getFeatureVector(x, yNew));
+				if(score > bestScore) {
+					best = yNew;
+				}
+			}
+		}
+		if(gold.varTokens.keySet().size() == 2) {
+			for(Integer tokenIndex1 : gold.varTokens.get("V1")) {
+				for(Integer tokenIndex2 : gold.varTokens.get("V2")) {
+					TreeY yNew = new TreeY(gold);
+					yNew.varTokens.get("V1").clear();
+					yNew.varTokens.get("V1").add(tokenIndex1);
+					yNew.varTokens.get("V2").clear();
+					yNew.varTokens.get("V2").add(tokenIndex2);
+					for(Node node : yNew.equation.root.getLeaves()) {
+						if(node.label.equals("VAR") && node.varId.equals("V1")) {
+							node.tokenIndex = tokenIndex1;
+						}
+						if(node.label.equals("VAR") && node.varId.equals("V2")) {
+							node.tokenIndex = tokenIndex2;
+						}
+					}
+					double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
+					if(score > bestScore) {
+						best = yNew;
+					}
+				}
+			}
+		}
+		return best;
 	}
 	
 }

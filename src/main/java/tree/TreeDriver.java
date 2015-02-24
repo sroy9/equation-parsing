@@ -19,6 +19,7 @@ import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
+import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
 public class TreeDriver {
 	
@@ -115,11 +116,32 @@ public class TreeDriver {
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
-		model.wv = learner.train(train);
+//		model.wv = learner.train(train);
+		model.wv = latentSVMLearner(learner, train, 
+				(TreeInfSolver) model.infSolver, 50);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}
 
+	public static WeightVector latentSVMLearner(
+			Learner learner, SLProblem sp, TreeInfSolver infSolver, 
+			int maxIter) throws Exception {
+		WeightVector wv = new WeightVector(7000);
+		wv.setExtendable(true);
+		for(int i=0; i<maxIter; ++i) {
+			SLProblem newProb = new SLProblem();
+			for(int j=0; j<sp.size(); ++j) {
+				TreeX prob = (TreeX) sp.instanceList.get(i);
+				TreeY gold = (TreeY) sp.goldStructureList.get(i);
+				TreeY bestLatent = infSolver.getLatentBestStructure(prob, gold, wv);
+				newProb.addExample(prob, bestLatent);
+			}
+			wv = learner.train(newProb, wv);
+			sp = newProb;
+		}
+		return wv;
+	}
+	
 	public static void main(String args[]) throws Exception {
 		TreeDriver.doTrainTest(0);
 //		SemDriver.crossVal();

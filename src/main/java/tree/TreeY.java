@@ -39,6 +39,7 @@ public class TreeY implements IStructure, Serializable {
 	
 	public TreeY(SimulProb prob) {
 		equation = new Equation(prob.equation);
+		nodes = new ArrayList<>();
 		varTokens = new HashMap<String, List<Integer>>();
 		varTokens.putAll(prob.varTokens);
 	}

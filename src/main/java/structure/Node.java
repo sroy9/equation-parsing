@@ -20,9 +20,8 @@ public class Node {
 		children = new ArrayList<>();
 	}
 	
-	public Node(String label, int index, IntPair span, List<Node> children) {
+	public Node(String label, int index, List<Node> children) {
 		this.label = label;
-		this.span = span;
 		this.tokenIndex = index;
 		this.children = children;
 	}
@@ -41,7 +40,8 @@ public class Node {
 	
 	@Override
 	public String toString() {
-		if(children.size() == 0) return label + "_" + (label.equals("NUM") ? value : varId);
+		if(children.size() == 0) return label + "_" + 
+				(label.equals("NUM") ? value : varId);
 		return children.get(0).toString() + " " + label + " " + 
 				children.get(1).toString();
 	}
@@ -53,8 +53,6 @@ public class Node {
 		if(node1.children.size() == 0) {
 			if(node1.label == "NUM" && !Tools.safeEquals(node1.value, node2.value)) return 1.0f;
 			if(node1.label == "VAR") {
-				System.out.println("Node1 : "+node1);
-				System.out.println("Node2 : "+node2);
 				if(!varNameSwap && !node1.varId.equals(node2.varId)) return 1.0f;
 				if(varNameSwap && node1.varId.equals(node2.varId)) return 1.0f;
 			}
@@ -119,7 +117,8 @@ public class Node {
 		return node;
 	}
 	
-	public static int indexOfMathOp(String equationString, List<Character> keys, int start) {
+	public static int indexOfMathOp(
+			String equationString, List<Character> keys, int start) {
 		int finalIndex = -1, index;
 		for(Character key : keys) {
 			index = equationString.indexOf(key, start);
