@@ -59,7 +59,7 @@ public class SimulProb {
 		String fileName = Params.annotationDir + index + ".txt";
 		List<String> lines = FileUtils.readLines(new File(fileName));
 		text = lines.get(0);
-		equation = new Equation(0, lines.get(2));
+		equation = new Equation(lines.get(2));
 	}	
 	
 	public QuantSpan getRelevantQuantSpans(IntPair ip) {
