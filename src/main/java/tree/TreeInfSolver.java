@@ -59,6 +59,8 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator)
 				.maximumSize(200).create();
+//		System.out.println("InfSolver called for problem : "+prob.problemIndex);
+		
 		TreeY seed = new TreeY();
 		for(Integer i : prob.relevantQuantIndices) {
 			Node node = new Node("NUM", 
@@ -108,13 +110,13 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				}
 			}
 		}
-		System.out.println("Beam size : "+beam1.size());
+//		System.out.println("Beam size : "+beam1.size());
 		
 		// Equation generation
 		for(Pair<TreeY, Double> pair : beam1) {
 			beam2.add(getBottomUpBestParse(prob, pair, wv));
 		}
-		System.out.println("Beam size : "+beam2.size());
+//		System.out.println("Beam size : "+beam2.size());
 		return beam2.element().getFirst();
 	}
 	

@@ -47,7 +47,7 @@ public class Node {
 	}
 	
 	public static float getLoss(Node node1, Node node2, boolean varNameSwap) {
-		System.out.println("NodeLoss called with "+node1+" and "+node2);
+//		System.out.println("NodeLoss called with "+node1+" and "+node2);
 		if(node1.children.size() != node2.children.size()) return 4.0f;
 		if(!node1.label.equals(node2.label)) return 4.0f;
 		if(node1.children.size() == 0) {

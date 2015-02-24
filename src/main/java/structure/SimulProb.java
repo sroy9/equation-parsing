@@ -117,8 +117,8 @@ public class SimulProb {
 	
 	public static float getVarTokenLoss(Map<String, List<Integer>> gold,
 			Map<String, List<Integer>> pred, boolean varNameSwap) {
-		System.out.println("VarTokenLoss called with : "+Arrays.asList(gold)+" and "+
-			Arrays.asList(pred));
+//		System.out.println("VarTokenLoss called with : "+Arrays.asList(gold)+" and "+
+//			Arrays.asList(pred));
 		float loss = 0.0f;
 		if(gold.keySet().size() != pred.keySet().size()) return 4.0f;
 		if(gold.keySet().size() == 1) {

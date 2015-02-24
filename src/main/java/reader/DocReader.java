@@ -128,7 +128,7 @@ public class DocReader {
 		File dir = new File(Params.annotationDir);
 		for(File file : dir.listFiles()) {
 			if(file.getName().endsWith(".txt")) {
-				System.out.println("Reading "+file.getName());
+//				System.out.println("Reading "+file.getName());
 				int index = Integer.parseInt(file.getName().substring(
 								0, 
 								file.getName().length()-4));
@@ -148,12 +148,12 @@ public class DocReader {
 	}
 	
 	public static void main(String args[]) throws Exception {
-//		List<SimulProb> simulProbList = 
-//				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
-//		for(SimulProb prob : simulProbList) {
-//			print(prob);
-//		}
-		DocReader.createBratFiles("data/equationparse.txt");
+		List<SimulProb> simulProbList = 
+				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
+		for(SimulProb prob : simulProbList) {
+			print(prob);
+		}
+//		DocReader.createBratFiles("data/equationparse.txt");
 		
 	}
 }
