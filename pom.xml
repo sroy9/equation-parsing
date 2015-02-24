@@ -73,8 +73,8 @@
   </dependency>
   <dependency>
     <groupId>edu.illinois.cs.cogcomp</groupId>
-    <artifactId>IllinoisSL-core</artifactId>
-    <version>0.1</version>
+    <artifactId>illinois-sl</artifactId>
+    <version>0.2</version>
   </dependency>
   <dependency>
     <groupId>edu.illinois.cs.cogcomp</groupId>
