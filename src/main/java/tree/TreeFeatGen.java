@@ -59,12 +59,12 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 
-	public IFeatureVector getQuantityFeatureVector(TreeY y) {
-		List<String> features = quantityFeatures(y);
+	public IFeatureVector getQuantityFeatureVector(int i) {
+		List<String> features = quantityFeatures(i);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 
-	private List<String> quantityFeatures(TreeY y) {
+	private List<String> quantityFeatures(int i) {
 		List<String> features = new ArrayList<>();
 		return features;
 	}

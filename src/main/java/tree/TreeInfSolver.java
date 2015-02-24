@@ -12,6 +12,7 @@ import com.google.common.collect.MinMaxPriorityQueue;
 import structure.Equation;
 import structure.Node;
 import structure.PairComparator;
+import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
@@ -60,32 +61,56 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		
 		// Grounding of variables
 		for(int i=0; i<prob.ta.size(); ++i) {
-			for(int j=i; j<prob.ta.size(); ++j) {
-				if(prob.posTags.get(i).getLabel().startsWith("N") || 
-						prob.posTags.get(i).getLabel().startsWith("V")) {
-					TreeY y = new TreeY();
-					y.nodes.add(new Node("VAR", i, null, new ArrayList<Node>()));
-					y.nodes.add(new Node("VAR", j, null, new ArrayList<Node>()));
-					y.varTokens.get("V1").add(i);
-					y.varTokens.get("V2").add(j);
-					beam1.add(new Pair<TreeY, Double>(y, 
-							1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(y))));
+//			if(prob.posTags.get(i).getLabel().startsWith("N") || 
+//					prob.posTags.get(i).getLabel().startsWith("V") ||
+//					prob.posTags.get(i).getLabel().startsWith("J") ||
+//					prob.posTags.get(i).getLabel().equals("CD")) {
+				TreeY y = new TreeY();
+				Node node = new Node("VAR", i, null, new ArrayList<Node>());
+				node.varId = "V1";
+				y.nodes.add(node);
+				y.varTokens.put("V1", new ArrayList<Integer>());
+				y.varTokens.get("V1").add(i);
+				beam1.add(new Pair<TreeY, Double>(y, 
+						1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(y))));
+				
+				for(int j=i; j<prob.ta.size(); ++j) {
+//					if(prob.posTags.get(j).getLabel().startsWith("N") || 
+//							prob.posTags.get(j).getLabel().startsWith("V") ||
+//							prob.posTags.get(j).getLabel().startsWith("J") ||
+//							prob.posTags.get(j).getLabel().equals("CD")) {
+						y = new TreeY();
+						node = new Node("VAR", i, null, new ArrayList<Node>());
+						node.varId = "V1";
+						y.nodes.add(node);
+						node = new Node("VAR", j, null, new ArrayList<Node>());
+						node.varId = "V2";
+						y.nodes.add(node);
+						y.varTokens.put("V1", new ArrayList<Integer>());
+						y.varTokens.put("V2", new ArrayList<Integer>());
+						y.varTokens.get("V1").add(i);
+						y.varTokens.get("V2").add(j);
+						beam1.add(new Pair<TreeY, Double>(y, 
+								1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(y))));
+//					}
 				}
-			}
+//			}
 		}
 		
 		// Relevant Quantity Detection
 		for(Pair<TreeY, Double> pair : beam1) {
 			for(int i=0; i<prob.quantities.size(); ++i) {
-				beam2.add(pair);
+				beam2.add(new Pair<TreeY, Double>(pair.getFirst(), pair.getSecond() +
+						1.0*wv.dotProduct(featGen.getQuantityFeatureVector(i))));
 				TreeY y = new TreeY(pair.getFirst());
-				y.nodes.add(new Node("NUM", 
+				Node node = new Node("NUM", 
 						prob.ta.getTokenIdFromCharacterOffset(
 								prob.quantities.get(i).start), 
 								null,
-								new ArrayList<Node>()));
-				beam2.add(new Pair<TreeY, Double>(y, pair.getSecond() + 
-						1.0*wv.dotProduct(featGen.getQuantityFeatureVector(y))));
+								new ArrayList<Node>());
+				node.value = Tools.getValue(prob.quantities.get(i));
+				y.nodes.add(node);
+				beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()));
 			}
 		}
 		beam1.clear();

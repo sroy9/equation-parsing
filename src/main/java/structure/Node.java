@@ -32,6 +32,8 @@ public class Node {
 		this.label = other.label;
 		this.span = other.span;
 		this.tokenIndex = other.tokenIndex;
+		this.value = other.value;
+		this.varId = other.varId;
 		for(Node child : other.children) {
 			this.children.add(new Node(child));			
 		}
@@ -45,6 +47,7 @@ public class Node {
 	}
 	
 	public static float getLoss(Node node1, Node node2, boolean varNameSwap) {
+		System.out.println("NodeLoss called with "+node1+" "+node2);
 		if(node1.children.size() != node2.children.size()) return 4.0f;
 		if(!node1.label.equals(node2.label)) return 4.0f;
 		if(node1.children.size() == 0) {

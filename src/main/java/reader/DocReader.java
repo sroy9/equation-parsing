@@ -108,6 +108,7 @@ public class DocReader {
 	}
 	
 	public static void print(SimulProb simulProb) {
+//		if(!simulProb.equation.toString().contains("V2")) {
 		System.out.println(simulProb.index+" : "+simulProb.text);
 		System.out.println("Quantities :");
 		for(QuantSpan qs : simulProb.quantities) {
@@ -118,6 +119,7 @@ public class DocReader {
 		System.out.println("Equation : "+simulProb.equation);
 		System.out.println("VarTokens : "+simulProb.varTokens);
 		System.out.println();
+		
 	}
 	
 	public static List<List<Integer>> extractFolds() {

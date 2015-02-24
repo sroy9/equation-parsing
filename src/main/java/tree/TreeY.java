@@ -27,8 +27,6 @@ public class TreeY implements IStructure, Serializable {
 		equation = new Equation();
 		nodes = new ArrayList<>();
 		varTokens = new HashMap<String, List<Integer>>();
-		varTokens.put("V1", new ArrayList<Integer>());
-		varTokens.put("V2", new ArrayList<Integer>());
 	}
 	
 	public TreeY(TreeY other) {
@@ -45,7 +43,8 @@ public class TreeY implements IStructure, Serializable {
 	}
 	
 	public static float getLoss(TreeY gold, TreeY pred) {
-		if(pred.varTokens.get("V1").size() > 1 || pred.varTokens.get("V2").size() > 1) {
+		if(pred.varTokens.get("V1").size() > 1 || 
+				(pred.varTokens.containsKey("V2") && pred.varTokens.get("V2").size() > 1)) {
 			System.err.println("Error in TreeY getLoss() function");
 		}
 		float loss1 = Equation.getLoss(gold.equation, pred.equation, true) + 

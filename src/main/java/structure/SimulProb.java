@@ -103,10 +103,12 @@ public class SimulProb {
 				varTokens.put(label, new ArrayList<Integer>());
 			}
 			for(int i=start; i<end; ++i) {
-				if(posTags.get(i).getLabel().startsWith("N") || 
-						posTags.get(i).getLabel().startsWith("V")) {
+//				if(posTags.get(i).getLabel().startsWith("N") || 
+//						posTags.get(i).getLabel().startsWith("V") ||
+//						posTags.get(i).getLabel().startsWith("J") ||
+//						posTags.get(i).getLabel().equals("CD")) {
 					varTokens.get(label).add(i);
-				}
+//				}
 			}
 		}
 	}
@@ -114,17 +116,24 @@ public class SimulProb {
 	public static float getVarTokenLoss(Map<String, List<Integer>> gold,
 			Map<String, List<Integer>> pred, boolean varNameSwap) {
 		float loss = 0.0f;
-		if(!varNameSwap && !gold.get("V1").contains(pred.get("V1").get(0))) {
-			loss += 1.0;
-		}
-		if(!varNameSwap && !gold.get("V2").contains(pred.get("V2").get(0))) {
-			loss += 1.0;
-		}
-		if(varNameSwap && !gold.get("V1").contains(pred.get("V2").get(0))) {
-			loss += 1.0;
-		}
-		if(varNameSwap && !gold.get("V2").contains(pred.get("V1").get(0))) {
-			loss += 1.0;
+		if(gold.keySet().size() != pred.keySet().size()) return 4.0f;
+		if(gold.keySet().size() == 1) {
+			if(!gold.get("V1").contains(pred.get("V1").get(0))) {
+				loss += 1.0;
+			}
+		} else {
+			if(!varNameSwap && !gold.get("V1").contains(pred.get("V1").get(0))) {
+				loss += 1.0;
+			}
+			if(!varNameSwap && !gold.get("V2").contains(pred.get("V2").get(0))) {
+				loss += 1.0;
+			}
+			if(varNameSwap && !gold.get("V1").contains(pred.get("V2").get(0))) {
+				loss += 1.0;
+			}
+			if(varNameSwap && !gold.get("V2").contains(pred.get("V1").get(0))) {
+				loss += 1.0;
+			}
 		}
 		return loss;
 	}
