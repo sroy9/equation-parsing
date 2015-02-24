@@ -73,7 +73,6 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				y.varTokens.get("V1").add(i);
 				beam1.add(new Pair<TreeY, Double>(y, 
 						1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(y))));
-				
 				for(int j=i; j<prob.ta.size(); ++j) {
 //					if(prob.posTags.get(j).getLabel().startsWith("N") || 
 //							prob.posTags.get(j).getLabel().startsWith("V") ||
@@ -96,7 +95,8 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				}
 //			}
 		}
-		
+		System.out.println("Beam size : "+beam1.size());
+		System.out.println("Problem index : "+prob.problemIndex +" Quantities "+prob.quantities.size());
 		// Relevant Quantity Detection
 		for(Pair<TreeY, Double> pair : beam1) {
 			for(int i=0; i<prob.quantities.size(); ++i) {
@@ -116,11 +116,13 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		beam1.clear();
 		beam1.addAll(beam2);
 		beam2.clear();
-		
+		System.out.println("Beam size : "+beam1.size());
+
 		// Equation generation
 		for(Pair<TreeY, Double> pair : beam1) {
 			beam2.add(getBottomUpBestParse(prob, pair, wv));
 		}
+		System.out.println("Beam size : "+beam2.size());
 		return beam2.element().getFirst();
 	}
 	
