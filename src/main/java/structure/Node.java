@@ -138,8 +138,8 @@ public class Node {
 		if(children.size() == 0) {
 			leaves.add(this);
 		} else {
-			leaves.add(children.get(0));
-			leaves.add(children.get(1));
+			leaves.addAll(children.get(0).getLeaves());
+			leaves.addAll(children.get(1).getLeaves());
 		}
 		return leaves;
 	}
