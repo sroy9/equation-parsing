@@ -1,5 +1,5 @@
-Tuition costs $704 more than room and board.
+Tuition costs 704 dollars more than room and board.
 
 V1=704+V2
 
-[(Tuition )(costs )($704 )][more ][than ][(room )and (board )]. 
+[(Tuition )(costs )704 (dollars )more ][than ][(room )and (board )]. 

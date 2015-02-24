@@ -498,13 +498,13 @@ V1=11+3*V2
 One integer is twice another.
 V1=2*V2
 # Wallace Book
-A collection of dimes and quarters is worth $15.25.
+A collection of dimes and quarters is worth 15.25 dollars.
 0.1*V1+0.25*V2=15.25
-A purse contains $3.90 made up of dimes and quarters.
+A purse contains 3.90 dollars made up of dimes and quarters.
 0.1*V1+0.25*V2=3.9
-A collection of half dollars and nickels is worth $13.40.
+A collection of half dollars and nickels is worth 13.40 dollars.
 0.5*V1+0.05*V2=13.4
-A boy has $2.25 in nickels and dimes.
+A boy has 2.25 dollars in nickels and dimes.
 0.1*V1+0.05*V2=2.25
 There are twice as many dimes as nickels.
 V1/2=V2
@@ -516,13 +516,13 @@ The number of 15-cent stamps is four less than three times the number of 18-cent
 V1=3*V2-4
 There are six more quarters than dimes. 
 V1=6+V2
-The total value of dimes and quarters in a bank is $6.05.
+The total value of dimes and quarters in a bank is 6.05 dollars.
 0.1*V1+0.25*V2=6.05
 The number of dimes is 10 less than twice the number of nickels. 
 V1=2*V2-10
 The number of 22-cent stamps is three more than four times the number of 40-cent stamps. 
 V1=3+4*V2
-A total of $50000 is invested, part of it at 5% and the rest at 7.5%. 
+A total of 50000 dollars is invested, part of it at 5% and the rest at 7.5%. 
 V1+V2=50000
 When five is added to three more than a certain number, the result is 19.
 5+3+V1=19
@@ -548,7 +548,7 @@ The length is 40 cm longer than the width.
 V1=40+V2
 The land cost 4 times as much as the cabin.
 V1=4*V2
-A bicycle and a bicycle helmet cost $240.
+A bicycle and a bicycle helmet cost 240 dollars.
 V1+V2=240
 The bicycle cost 5 times as much as the helmet.
 V1=5*V2
@@ -558,7 +558,7 @@ An electrician cuts a 30 feet piece of wire into two pieces.
 V1+V2=30
 One piece is 2 feet longer than the other.
 V1=2+V2
-Tuition costs $704 more than room and board.
+Tuition costs 704 dollars more than room and board.
 V1=704+V2
 In 4 years, he will be twice as old as his brother.
 V1+4=2*V2+2*4
@@ -573,7 +573,7 @@ V1-4=2*V2-2*4
 Four years ago, the father was 3 times as old as the son.
 V1-4=3*V2-3*4
 The sum of the ages of a china plate and a glass plate is 16 years. 
-v1+V2=16
+V1+V2=16
 Four years ago, the china plate was three times the age of the glass plate. 
 V1-4=3*V2-3*4
 Four years ago, the bronze plaque was one-half the age of the wood plaque.
@@ -631,7 +631,7 @@ Seven more than two times a certain number is 181.
 7+2*V1=181
 Nine more than two times a certain number is 137.
 9+2*V1=137
-The amount invested in the certificate of deposit is $3,000 more than 8 times the amount invested in the mutual fund.
+The amount invested in the certificate of deposit is 3,000 dollars more than 8 times the amount invested in the mutual fund.
 V1=3000+8*V2
 The second of two complementary angles is 42 degrees larger than 3 times the first angle.
 V1=42+3*V2
@@ -641,21 +641,21 @@ The length of the rectangle is 28 inches more than twice the width.
 V1=28+2*V2
 The length of the rectangle is 24 inches more than twice the width.
 V1=24+2*V2
-Maria has $6.35 in change in her pocket, all in nickels and quarters.
+Maria has 6.35 dollars in change in her pocket, all in nickels and quarters.
 0.05*V1+0.25*V2=6.35
-Amy has $5.05 in change in her pocket, all in nickels and quarters.
+Amy has 5.05 dollars in change in her pocket, all in nickels and quarters.
 0.05*V1+0.25*V2=5.05
-Roberto has $5.45 in change in his pocket, all in dimes and quarters.
+Roberto has 5.45 dollars in change in his pocket, all in dimes and quarters.
 0.1*V1+0.25*V2=5.45
-Benjamin has $7.40 in change in his pocket, all in dimes and quarters. 
+Benjamin has 7.40 dollars in change in his pocket, all in dimes and quarters. 
 0.1*V1+0.25*V2=7.4
 The second of two supplementary angles is 40 degrees larger than 3 times the first angle.
 V1=40+3*V2
 The second of two supplementary angles is 114 degrees larger than 2 times the first angle.
 V1=114+2*V2
-Eileen inherits $20,000 and decides to invest the money in two accounts, part in a certificate of deposit that pays 3% interest per year, and the rest in a mutual fund that pays 5% per year. 
+Eileen inherits 20,000 dollars and decides to invest the money in two accounts, part in a certificate of deposit that pays 3% interest per year, and the rest in a mutual fund that pays 5% per year. 
 V1+V2=20000
-Alice inherits $40,000 and decides to invest the money in two accounts, part in a certificate of deposit that pays 3% interest per year, and the rest in a mutual fund that pays 6% per year. 
+Alice inherits 40,000 dollars and decides to invest the money in two accounts, part in a certificate of deposit that pays 3% interest per year, and the rest in a mutual fund that pays 6% per year. 
 V1+V2=40000
 The length of the rectangle is 12 centimeters less than three times the width.
 V1=3*V2-12
