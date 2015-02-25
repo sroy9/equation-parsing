@@ -1,0 +1,60 @@
+  Understanding text used in algebra word problems involves
+  identifying key entities, and detecting the mathematical relations
+  among these entities. The problem statement often uses mathematical
+  jargon, and describes composition of mathematical expressions, which
+  require non-trivial reasoning. Consider the following sentence :
+  \noindent
+  \fbox{
+    \parbox{0.45\textwidth} {\small
+      \noindent
+      \textbf{Example $1$}
+      \newline
+      {\em The difference of twice a number and 3 is five more than
+        thrice another number. }
+      \newline
+    } } 
+  Here, we need to identify that ``difference'' is a math expression,
+  denoting a subtraction between its arguments, which are ``twice a
+  number'' and ``3''. Composition understanding is needed to know that
+  ``five'' is to be added after $3$ is multiplied with ``another
+  number''.
+
+  Grounding of variables to entities in text is necessary for deep
+  reasoning, as well as analysis across multiple sentences. However,
+  the text often does not mention explicitly what the variables in the
+  resulting equation represent. Consider the sentence-equation pair
+  below :
+  \noindent
+  \fbox{
+    \parbox{0.45\textwidth} {\small
+      \noindent
+      \textbf{Example $2$}
+      \newline
+      $\mathrm{Q}$:{\em Mrs. Lloyd plans on spending 370 dollars on 10
+        meals and 3 nights in a hotel.}
+      \newline
+      $\mathrm{A}$:{$10V_1+3V_2=370$ } } } 
+  The variables $V_1$ and $V_2$ represent the cost of a meal and the
+  cost of spending a night, respectively, none of which is explicitly
+  mentioned. We need to determine from ``spending'' that the relation
+  is related to currency.
+
+  Again, there are cases where irrelevant numbers are mentioned in the
+  text, as in
+  \noindent
+  \fbox{
+    \parbox{0.45\textwidth} {\small
+      \noindent
+      \textbf{Example $3$}
+      \newline
+      $\mathrm{Q}$:{\em Bob invested 22,000 dollars , part at 18 \%
+        and part at 14 \%.}
+      \newline
+      $\mathrm{A}$:{$V_1+V_2=22,000$ } } } 
+  Though the phrases ``part at 18\%'' and ``part at 14 \%'' assist in
+  grounding variables to the text, they mention quantities which are
+  not relevant to the relation mentioned, and we need to learn to
+  disregard them while generating equations.
+
+  In this paper, we develop a methodology to ... (dependent on
+  implementation)
