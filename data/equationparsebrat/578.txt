@@ -1,4 +1,4 @@
-Four years ago, the bronze plaque was one-half the age of the wood plaque.
+Four years ago, the bronze plaque was half the age of the wood plaque.
 
 V1=0.5*V2
 
