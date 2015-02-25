@@ -91,6 +91,8 @@ public class RelDriver {
 				incorrect.add(prob.problemIndex);
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
+				System.out.println("Quant of Interest: "+prob.quantities.get(prob.quantIndex));
+				System.out.println("Units: "+Tools.getUnit(prob.quantities.get(prob.quantIndex)));
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
@@ -102,7 +104,8 @@ public class RelDriver {
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
-		return (acc/sp.instanceList.size());
+		System.out.println("Strict Accuracy : ="+ (1-1.0*incorrect.size()/total.size()) + " incorrect "+ incorrect.size() + " out of "+total.size());
+		return (1-1.0*incorrect.size()/total.size());
 	}
 	
 	public static void trainModel(String modelPath, SLProblem train, int testFold) 
@@ -123,7 +126,7 @@ public class RelDriver {
 	}
 
 	public static void main(String args[]) throws Exception {
-		RelDriver.doTrainTest(0);
-//		SemDriver.crossVal();
+//		RelDriver.doTrainTest(0);
+		RelDriver.crossVal();
 	}
 }
