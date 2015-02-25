@@ -51,7 +51,9 @@ public class Node {
 		if(node1.children.size() != node2.children.size()) return 4.0f;
 		if(!node1.label.equals(node2.label)) return 4.0f;
 		if(node1.children.size() == 0) {
-			if(node1.label == "NUM" && !Tools.safeEquals(node1.value, node2.value)) return 1.0f;
+			if(node1.label == "NUM" && !Tools.safeEquals(node1.value, node2.value)) {
+				return 1.0f;
+			}
 			if(node1.label == "VAR") {
 				if(!varNameSwap && !node1.varId.equals(node2.varId)) return 1.0f;
 				if(varNameSwap && node1.varId.equals(node2.varId)) return 1.0f;
@@ -141,5 +143,25 @@ public class Node {
 			leaves.addAll(children.get(1).getLeaves());
 		}
 		return leaves;
+	}
+	
+	public IntPair getSpanningTokenIndices() {
+		List<Node> leaves = getLeaves();
+		int min = 1000, max = -1;
+		for(Node leaf : leaves) {
+			if(leaf.tokenIndex > max) max = leaf.tokenIndex;
+			if(leaf.tokenIndex < min) min = leaf.tokenIndex;
+		}
+		return new IntPair(min, max);
+	}
+	
+	public List<Node> getAllSubNodes() {
+		List<Node> all = new ArrayList<Node>();
+		all.add(this);
+		if(children.size() == 2) {
+			all.addAll(children.get(0).getAllSubNodes());
+			all.addAll(children.get(1).getAllSubNodes());
+		}
+		return all;
 	}
 }

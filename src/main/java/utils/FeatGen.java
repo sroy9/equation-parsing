@@ -34,6 +34,18 @@ public class FeatGen {
 		return fvb.toFeatureVector();
 	}
 	
+	public static List<String> getUnigrams(TextAnnotation ta) {
+		List<String> unigrams = new ArrayList<>();
+		for(int i=0; i<ta.size(); ++i) {
+			if(NumberUtils.isNumber(ta.getToken(i).toLowerCase().replace(",", ""))) {
+				unigrams.add("NUMBER");
+			} else {
+				unigrams.add(ta.getToken(i).toLowerCase());
+			}
+		}
+		return unigrams;
+	}
+	
 	public static List<String> getLemmatizedUnigrams(
 			List<Constituent> lemmas, int start, int end) {
 		List<String> unigrams = new ArrayList<String>();
@@ -78,130 +90,4 @@ public class FeatGen {
 		return conjunctions;
 	}
 	
-	public static IntPair getClosestMention(Set<IntPair> ipSet, IntPair key) {
-		int minDist = 1000; 
-		IntPair closest = null;
-		for(IntPair ip : ipSet) {
-			if(Math.abs(ip.getFirst()-key.getFirst()) < minDist) {
-				minDist = Math.abs(ip.getFirst()-key.getFirst());
-				closest = ip;
-			}
-		}
-		return closest;
-	}
-	
-	public static IntPair getSpanBetweenClosestMention(
-			Set<IntPair> ipSet1, Set<IntPair> ipSet2) {
-		int minDist = 1000; 
-		IntPair closest1 = null;
-		IntPair closest2 = null;
-		for(IntPair ip1 : ipSet1) {
-			for(IntPair ip2 : ipSet2) {
-				if(Math.abs(ip1.getFirst()-ip2.getFirst()) < minDist) {
-					minDist = Math.abs(ip1.getFirst()-ip2.getFirst());
-					closest1 = ip1;
-					closest2 = ip2;
-				}
-			}
-		}
-		return new IntPair(Math.min(closest1.getSecond(), closest2.getSecond()),
-				Math.max(closest1.getFirst(), closest2.getFirst()));
-	}
-	
-
-	public static List<Sentence> getQuestionSentences(TextAnnotation ta) {
-		List<Sentence> questionSentences = new ArrayList<>();
-		for(int i=0; i<ta.getNumberOfSentences(); i++) {
-			if(ta.getSentence(i).getText().contains("?")) {
-				questionSentences.add(ta.getSentence(i));
-			} 
-		}
-		return questionSentences;
-	}
-	
-	public static List<Constituent> getDependencyPath(
-			TextAnnotation ta, List<Constituent> dependencyParse, int index) {
-		List<Constituent> path = new ArrayList<>();
-		Constituent leaf = null;
-		for(Constituent cons : dependencyParse) {
-			if(Tools.doesIntersect(cons.getSpan(), new IntPair(index, index+1))) {
-				leaf = cons;
-				break;
-			}
-		}
-		path.add(leaf);
-		while(leaf.getIncomingRelations().size() > 0) {
-			leaf = leaf.getIncomingRelations().get(0).getSource();
-			path.add(leaf);
-		}
-		return path;
-	}
-	
-	public static List<Constituent> partialLemmas(
-			List<Constituent> lemmas, int startPos, int endPos) {
-		List<Constituent> partialLemmas = new ArrayList<>();
-		for(Constituent cons : lemmas) {
-			if(cons.getStartSpan()>=startPos && cons.getEndSpan()<=endPos) {
-				partialLemmas.add(cons);
-			}
-		}
-		return partialLemmas;
-	}
-	
-	public static List<String> neighboringTokens(
-			List<Constituent> lemmas, int pos, int window) {
-		List<String> features = new ArrayList<String>();
-		List<String> unigrams = getLemmatizedUnigrams(lemmas, 0, lemmas.size()-1);
-		int index = -1;
-		for(int i=0; i<lemmas.size(); i++) {
-			Constituent cons = lemmas.get(i);
-			if(pos >= cons.getStartSpan() && pos < cons.getEndSpan()) {
-				index = i;
-				break;
-			}
-		}
-		int start = Math.max(0, index-window);
-		int end = Math.min(index+window, lemmas.size()-1);
-		for(int ngram = 0; ngram <= 2; ngram++) {
-			for(int i=start; i<=end-ngram; i++) {
-				features.add((i-index)+"_"+(i+ngram-index)+"_"+unigrams.get(i)+"_"+unigrams.get(i+ngram));
-				features.add(unigrams.get(i)+"_"+unigrams.get(i+ngram));
-			}
-		}	
-		return features;
-	}
-	
-	public static List<Pair<String, IntPair>> getPartialSkeleton(
-			List<Pair<String, IntPair>> skeleton, int startPos, int endPos) {
-		List<Pair<String, IntPair>> partialSkeleton = new ArrayList<>();
-		for(Pair<String, IntPair> pair : skeleton) {
-			if(pair.getSecond().getFirst()>=startPos && pair.getSecond().getSecond()<=endPos) {
-				partialSkeleton.add(pair);
-			}
-		}
-		return partialSkeleton;
-	}
-	
- 	public static List<String> neighboringSkeletonTokens(
-			List<Pair<String, IntPair>> skeleton, int pos, int window) {
-		List<String> features = new ArrayList<>();
-		int index = -1;
-		for(int i=0; i<skeleton.size(); i++) {
-			Pair<String, IntPair> pair = skeleton.get(i);
-			if(pos >= pair.getSecond().getFirst() && pos < pair.getSecond().getSecond()) {
-				index = i;
-				break;
-			}
-		}
-		int start = Math.max(0, index-window);
-		int end = Math.min(index+window, skeleton.size()-1);
-		for(int ngram = 0; ngram <= 2; ngram++) {
-			for(int i=start; i<=end-ngram; i++) {
-				features.add((i-index)+"_"+(i+ngram-index)+"_"+skeleton.get(i).getFirst()+"_"+
-						skeleton.get(i+ngram).getFirst());
-				features.add(skeleton.get(i).getFirst()+"_"+skeleton.get(i+ngram).getFirst());
-			}
-		}	
-		return features;
-	}
 }

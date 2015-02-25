@@ -118,7 +118,7 @@ public class TreeDriver {
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
 //		model.wv = learner.train(train);
 		model.wv = latentSVMLearner(learner, train, 
-				(TreeInfSolver) model.infSolver, 50);
+				(TreeInfSolver) model.infSolver, 10);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}
@@ -129,15 +129,25 @@ public class TreeDriver {
 		WeightVector wv = new WeightVector(7000);
 		wv.setExtendable(true);
 		for(int i=0; i<maxIter; ++i) {
+			System.out.println("Latent SSVM : Iteration "+i);
 			SLProblem newProb = new SLProblem();
-			for(int j=0; j<sp.size(); ++j) {
-				TreeX prob = (TreeX) sp.instanceList.get(i);
-				TreeY gold = (TreeY) sp.goldStructureList.get(i);
+			for(int j=0; j<sp.goldStructureList.size(); ++j) {
+				TreeX prob = (TreeX) sp.instanceList.get(j);
+				TreeY gold = (TreeY) sp.goldStructureList.get(j);
+//				System.out.println("GetLatent : "+prob.problemIndex+" : "+gold);
 				TreeY bestLatent = infSolver.getLatentBestStructure(prob, gold, wv);
+//				System.out.println("BestLatent : "+bestLatent);
 				newProb.addExample(prob, bestLatent);
 			}
+//			System.out.println("Got all latent stuff");
+//			for(int j=0; j<newProb.size(); ++j) {
+//				TreeX prob = (TreeX) newProb.instanceList.get(j);
+//				TreeY gold = (TreeY) newProb.goldStructureList.get(j);
+//				System.out.println("X:"+prob.problemIndex+" Y:"+gold);
+//			}
+			System.out.println("Learning SSVM");
 			wv = learner.train(newProb, wv);
-			sp = newProb;
+			System.out.println("Done");
 		}
 		return wv;
 	}

@@ -49,16 +49,17 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
 		TreeX prob = (TreeX) x;
+//		System.out.println("Inference called with "+prob.problemIndex);
 		TreeY pred = new TreeY();
 		// Get best equation trees
 		PairComparator<TreeY> pairComparator = 
 				new PairComparator<TreeY>() {};
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator)
-				.maximumSize(200).create();
+				.maximumSize(50).create();
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator)
-				.maximumSize(200).create();
+				.maximumSize(50).create();
 //		System.out.println("InfSolver called for problem : "+prob.problemIndex);
 		
 		TreeY seed = new TreeY();
@@ -85,7 +86,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				y.varTokens.put("V1", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
 				beam1.add(new Pair<TreeY, Double>(y, 
-						1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(y))));
+						1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 				for(int j=i; j<prob.ta.size(); ++j) {
 					if(prob.posTags.get(j).getLabel().startsWith("N") || 
 							prob.posTags.get(j).getLabel().startsWith("V") ||
@@ -104,7 +105,8 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 						y.varTokens.get("V1").add(i);
 						y.varTokens.get("V2").add(j);
 						beam1.add(new Pair<TreeY, Double>(y, 
-								1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(y))));
+								1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(
+										prob, y))));
 					}
 				}
 			}
@@ -115,7 +117,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		for(Pair<TreeY, Double> pair : beam1) {
 			beam2.add(getBottomUpBestParse(prob, pair, wv));
 		}
-//		System.out.println("Beam size : "+beam2.size());
+//		System.out.println("Output from inference : "+beam2.element().getFirst());
 		return beam2.element().getFirst();
 	}
 	
@@ -139,7 +141,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 			dpMat.add(new ArrayList<MinMaxPriorityQueue<Pair<Node, Double>>>());
 			for(int j=0; j<=n; ++j) {
 				dpMat.get(i).add(MinMaxPriorityQueue.orderedBy(nodePairComparator)
-						.maximumSize(50).create());
+						.maximumSize(10).create());
 			}
 		}
 		
@@ -165,11 +167,10 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 								score += childrenPair.getSecond();
 								children.add(childrenPair.getFirst());
 							}
+							Node node = new Node(label, -1, children);
 							score += 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
-									x, y, y.nodes.get(i).tokenIndex, y.nodes.get(j-1).tokenIndex, 
-									children, label));
-							dpMat.get(i).get(j).add(new Pair<Node, Double>(
-									new Node(label, -1, children), score));
+									x, node));
+							dpMat.get(i).get(j).add(new Pair<Node, Double>(node, score));
 						}
 					}
 				}
@@ -220,6 +221,16 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 					if(node.label.equals("VAR")) {
 						node.tokenIndex = tokenIndex;
 					}
+					if(node.label.equals("NUM")) {
+						for(int i=0; i<x.quantities.size(); ++i) {
+							if(Tools.safeEquals(node.value, 
+									Tools.getValue(x.quantities.get(i)))) {
+								node.tokenIndex = x.ta.getTokenIdFromCharacterOffset(
+												x.quantities.get(i).start);
+								break;
+							}
+						}
+					}
 				}
 				double score = wv.dotProduct(
 						featGen.getFeatureVector(x, yNew));
@@ -243,6 +254,17 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 						if(node.label.equals("VAR") && node.varId.equals("V2")) {
 							node.tokenIndex = tokenIndex2;
 						}
+						if(node.label.equals("NUM")) {
+							for(int i=0; i<x.quantities.size(); ++i) {
+								if(Tools.safeEquals(node.value, 
+										Tools.getValue(x.quantities.get(i)))) {
+									node.tokenIndex = x.ta.getTokenIdFromCharacterOffset(
+													x.quantities.get(i).start);
+									break;
+								}
+							}
+						}
+						
 					}
 					double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
 					if(score > bestScore) {
