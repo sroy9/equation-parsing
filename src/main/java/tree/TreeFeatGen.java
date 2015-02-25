@@ -57,14 +57,14 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		IntPair span = node.getSpanningTokenIndices();
 		IntPair spanChild1 = node.children.get(0).getSpanningTokenIndices();
 		IntPair spanChild2 = node.children.get(1).getSpanningTokenIndices();
-		if(node.label.equals("SUB") || node.label.equals("DIV")) {
-			if(spanChild1.getFirst() == spanChild2.getFirst()) {
-				prefix += "_SAME";
-			} else if(spanChild1.getFirst() > spanChild2.getFirst()) {
-				prefix += "_DESC";
-			} else {
-				prefix += "_ASC";
-			}
+		int midStart = Math.min(spanChild1.getSecond(), spanChild2.getSecond());
+		int midEnd = Math.max(spanChild1.getFirst(), spanChild2.getFirst());
+		if(spanChild1.getFirst() == spanChild2.getFirst()) {
+			features.add(prefix + "_SAME");
+		} else if(spanChild1.getFirst() > spanChild2.getFirst()) {
+			features.add(prefix + "_DESC");
+		} else {
+			features.add(prefix + "_ASC");
 		}
 		// Mid token features
 		List<String> unigrams = FeatGen.getUnigrams(x.ta);
@@ -76,6 +76,13 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 				features.add(prefix+"_MidBigram_"+unigrams.get(i)+"_"+unigrams.get(i+1));
 			}
 		}
+		// Some tokens to the left
+		for(int i=Math.min(spanChild1.getFirst(), spanChild2.getFirst())-1;
+				i>Math.max(0, Math.min(spanChild1.getFirst(), spanChild2.getFirst())-5); 
+				--i) {
+			features.add(prefix+"_TokenLeft_"+unigrams.get(i));
+			features.add(prefix+"_TokenLeft_"+unigrams.get(i)+"_"+unigrams.get(i+1));
+		}
 		return features;
 	}
 
@@ -86,11 +93,12 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 
 	public static List<String> varTokenFeatures(TreeX x, TreeY y) {
 		List<String> features = new ArrayList<>();
+		List<String> unigrams = FeatGen.getUnigrams(x.ta);
 		for(String key : y.varTokens.keySet()) {
-			features.add("VarToken_"+x.ta.getToken(
-					y.varTokens.get(key).get(0)).toLowerCase());
+			int index = y.varTokens.get(key).get(0);
+			features.add("VarToken_"+unigrams.get(index));
+			if(index-1>0) features.add("VarToken_-1_"+unigrams.get(index-1)); 
 		}
-		features.add("VarTokenSize_"+y.varTokens.size());
 		if(y.varTokens.size() == 2) {
 			
 		}

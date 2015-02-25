@@ -167,6 +167,11 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 								score += childrenPair.getSecond();
 								children.add(childrenPair.getFirst());
 							}
+							if(label.equals("MUL") && children.size() == 2 && 
+									children.get(0).hasVariable() && 
+									children.get(1).hasVariable()) {
+								continue;
+							}
 							Node node = new Node(label, -1, children);
 							score += 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(
 									x, node));

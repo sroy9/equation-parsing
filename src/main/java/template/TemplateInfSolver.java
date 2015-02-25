@@ -22,9 +22,9 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private TemplateFeatGen featGen;
-	public List<Equation> templates;
+	public List<TemplateY> templates;
 
-	public TemplateInfSolver(TemplateFeatGen featGen, List< Equation> templates) 
+	public TemplateInfSolver(TemplateFeatGen featGen, List<TemplateY> templates) 
 			throws Exception {
 		this.featGen = featGen;
 		this.templates = templates;
