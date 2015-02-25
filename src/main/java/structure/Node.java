@@ -164,4 +164,10 @@ public class Node {
 		}
 		return all;
 	}
+	
+	public boolean hasVariable() {
+		if(label.equals("VAR")) return true;
+		else if(label.equals("NUM")) return false;
+		else return children.get(0).hasVariable() || children.get(1).hasVariable();
+	}
 }
