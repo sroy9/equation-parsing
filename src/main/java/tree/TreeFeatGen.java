@@ -54,10 +54,19 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 	public static List<String> expressionFeatures(TreeX x, Node node) {
 		List<String> features = new ArrayList<>();
 		String prefix = node.label;
-		// Mid token features
 		IntPair span = node.getSpanningTokenIndices();
 		IntPair spanChild1 = node.children.get(0).getSpanningTokenIndices();
 		IntPair spanChild2 = node.children.get(1).getSpanningTokenIndices();
+		if(node.label.equals("SUB") || node.label.equals("DIV")) {
+			if(spanChild1.getFirst() == spanChild2.getFirst()) {
+				prefix += "_SAME";
+			} else if(spanChild1.getFirst() > spanChild2.getFirst()) {
+				prefix += "_DESC";
+			} else {
+				prefix += "_ASC";
+			}
+		}
+		// Mid token features
 		List<String> unigrams = FeatGen.getUnigrams(x.ta);
 		for(int i=Math.min(spanChild1.getSecond(), spanChild2.getSecond())+1;
 				i<Math.max(spanChild1.getFirst(), spanChild2.getFirst()); 

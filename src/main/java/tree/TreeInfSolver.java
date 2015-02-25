@@ -160,7 +160,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				for(String label : labels) {
 					for(int k=i+1; k<j; ++k) {
 						for(List<Pair<Node, Double>> childrenPairList : 
-							enumerateChildrenPairs(dpMat, i, k, j)) {
+							enumerateChildrenPairs(dpMat, i, k, j, label)) {
 							double score = 0.0;
 							List<Node> children = new ArrayList<>();
 							for(Pair<Node, Double> childrenPair : childrenPairList) {
@@ -185,7 +185,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 
 	public List<List<Pair<Node, Double>>> enumerateChildrenPairs(
 			List<List<MinMaxPriorityQueue<Pair<Node, Double>>>> dpMat,
-			int i, int k, int j) {
+			int i, int k, int j, String label) {
 		List<List<Pair<Node, Double>>> childrenList = new ArrayList<>();
 		List<List<Pair<Node, Double>>> tmpList = new ArrayList<>();
 		List<IntPair> division = Arrays.asList(new IntPair(i, k), new IntPair(k, j));
@@ -204,6 +204,17 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 			childrenList.clear();
 			childrenList.addAll(tmpList);
 			tmpList.clear();
+		}
+		if(label.equals("SUB") || label.equals("DIV")) {
+			int n=childrenList.size();
+			for(int index=0; index<n; ++index) {
+				if(childrenList.get(index).size() == 2) {
+					List<Pair<Node, Double>> list = new ArrayList<>();
+					list.add(childrenList.get(index).get(1));
+					list.add(childrenList.get(index).get(0));
+					childrenList.add(list);
+				}
+			}
 		}
 		return childrenList;
 	}

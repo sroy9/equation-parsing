@@ -129,7 +129,7 @@ public class TreeDriver {
 		WeightVector wv = new WeightVector(7000);
 		wv.setExtendable(true);
 		for(int i=0; i<maxIter; ++i) {
-			System.out.println("Latent SSVM : Iteration "+i);
+			System.err.println("Latent SSVM : Iteration "+i);
 			SLProblem newProb = new SLProblem();
 			for(int j=0; j<sp.goldStructureList.size(); ++j) {
 				TreeX prob = (TreeX) sp.instanceList.get(j);
@@ -145,9 +145,9 @@ public class TreeDriver {
 //				TreeY gold = (TreeY) newProb.goldStructureList.get(j);
 //				System.out.println("X:"+prob.problemIndex+" Y:"+gold);
 //			}
-			System.out.println("Learning SSVM");
+			System.err.println("Learning SSVM");
 			wv = learner.train(newProb, wv);
-			System.out.println("Done");
+			System.err.println("Done");
 		}
 		return wv;
 	}
