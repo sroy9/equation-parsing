@@ -1,4 +1,4 @@
-Bob invested 6100 dollars in 2 funds , which pay 7 % and 6 % simple interest respectively.
+Bob invested 6100 dollars in two funds , which pay 7 % and 6 % simple interest respectively.
 
 V1+V2=6100
 
