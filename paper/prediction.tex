@@ -1,5 +1,17 @@
-1. extract Quantities
-2. Filtering Variables
-3. Modifier Detection and Scoping
-4. Tree Construction
-5.
+We now describe the algorithm for identifying the terms and expression of the equation from a sentence, and constructing a complete equation using them. We proceed as follows:
+\subsection{Quantities Extraction and Normalization}
+The natural first step towards identifying the terms participating in the equation is to find the quantities mentioned in the sentence. We use the Illinois Quantifier package (CITE) to detect all the quantity mentions.
+The quantifier extracts mention spans from the text, where each span identifies a mentions denoting a quantity. A shallow analysis of the mentions is also done, where quantities are normalized and their units are extracted. Note that all quantities identified by the quantifier may not be relevant to formulation of the equation. ADD EXAMPLE
+The quantity mentions identified fall into 3 categories:
+\begin{inparaenum}[\itshape a\upshape)]
+\item {\bf Tree Mention} - these are the mentions that are part of the final equationtree. REFER TO ABOVE
+\item {\bf Spurious Mention} - these are the mentions that are not part of the tree.
+  REF ABOVE
+\item {\bf Modifier Mention} - these are mentions which are not part of the tree, but modify the tree post construction. REF ABOVE
+\end{inparaenum}
+
+\subsection{Variable Filtering}
+As stated above, the quantifier extracts several spurious mention spans, which do not appear in the final equation. In this stage, we train a
+
+\subsection{Modifier Detection and Scoping}
+\subsection{Equation Tree Construction}
