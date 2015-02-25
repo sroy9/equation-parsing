@@ -1,5 +1,0 @@
-Maria has 6.35 dollars in change in her pocket, all in nickels and quarters.
-
-0.05*V1+0.25*V2=6.35
-
-[(Maria )][has ][6.35 (dollars )][in ][(change )][in ][her (pocket )], [all ][in ][(nickels )and (quarters )]. 

@@ -118,7 +118,7 @@ public class TreeDriver {
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
 //		model.wv = learner.train(train);
 		model.wv = latentSVMLearner(learner, train, 
-				(TreeInfSolver) model.infSolver, 10);
+				(TreeInfSolver) model.infSolver, 5);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}
