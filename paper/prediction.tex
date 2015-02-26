@@ -11,15 +11,16 @@ Note that all quantities identified by the quantifier may not be relevant to for
 
 \begin{figure}
   \centering
-\emph{Sum of two numbers is 5.}
+  \emph{If [10] is added to [two] numbers, the [first] becomes [3] times the [second].}
+  \label{fig:mention}
 \end{figure}
 
 The quantity mentions identified fall into 3 categories:
 \begin{inparaenum}[\itshape a\upshape)]
-\item {\bf Tree Mention} - these are the mentions that are part of the final equationtree. REFER TO ABOVE
+\item {\bf Tree Mention} - these are the mentions that are part of the final equationtree. In \ref{fig:mention}, 3 is a tree mention.
 \item {\bf Spurious Mention} - these are the mentions that are not part of the tree.
-  REF ABOVE
-\item {\bf Modifier Mention} - these are mentions which are not part of the tree, but modify the tree post construction. REF ABOVE
+In \ref{fig:mention}, second is a spurious mention, as the magnitude 2 plays no role here.
+\item {\bf Modifier Mention} - these are mentions which are not part of the tree, but modify the tree post construction. In \ref{fig:mention}, 10 is a modifier mention, as it modifies both the numbers in question. 
 \end{inparaenum}
 
 \subsection{Variable Filtering}
