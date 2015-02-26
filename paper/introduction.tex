@@ -1,60 +1,86 @@
-  Understanding text used in algebra word problems involves
-  identifying key entities, and detecting the mathematical relations
-  among these entities. The problem statement often uses mathematical
-  jargon, and describes composition of mathematical expressions, which
-  require non-trivial reasoning. Consider the following sentence :
-  \noindent
-  \fbox{
-    \parbox{0.45\textwidth} {\small
-      \noindent
-      \textbf{Example $1$}
-      \newline
-      {\em The difference of twice a number and 3 is five more than
-        thrice another number. }
-      \newline
-    } } 
-  Here, we need to identify that ``difference'' is a math expression,
-  denoting a subtraction between its arguments, which are ``twice a
-  number'' and ``3''. Composition understanding is needed to know that
-  ``five'' is to be added after $3$ is multiplied with ``another
-  number''.
+  Understanding mathematical relations in text involves identifying
+  key entities, and detecting the mathematical equation relating these
+  entities. Sentences often uses mathematical jargon, and describes
+  composition of mathematical expressions, which require non-trivial
+  reasoning. For example, in the sentence {\em``The difference of twice a
+  number and 3 is five more than thrice another number.''}, we need to
+  know the meaning of ``difference'', as well understand the
+  composition that ``five'' needs to be added after ``three'' is
+  multiplied with the number.
 
   Grounding of variables to entities in text is necessary for deep
   reasoning, as well as analysis across multiple sentences. However,
   the text often does not mention explicitly what the variables in the
-  resulting equation represent. Consider the sentence-equation pair
-  below :
-  \noindent
-  \fbox{
-    \parbox{0.45\textwidth} {\small
-      \noindent
-      \textbf{Example $2$}
-      \newline
-      $\mathrm{Q}$:{\em Mrs. Lloyd plans on spending 370 dollars on 10
-        meals and 3 nights in a hotel.}
-      \newline
-      $\mathrm{A}$:{$10V_1+3V_2=370$ } } } 
-  The variables $V_1$ and $V_2$ represent the cost of a meal and the
-  cost of spending a night, respectively, none of which is explicitly
-  mentioned. We need to determine from ``spending'' that the relation
-  is related to currency.
+  resulting equation represent. For example, the sentence {\em``Flying
+  with the wind , a bird was able to make 150 kilometers per hour.''}
+  describes a mathematical relation between the speed of bird and the
+  speed of wind, without mentioning ``speed'' explicitly. There is
+  also ambiguity regarding mention choice while grounding
+  variables. For example, in the following sentence-equation pair
 
-  Again, there are cases where irrelevant numbers are mentioned in the
-  text, as in
-  \noindent
-  \fbox{
-    \parbox{0.45\textwidth} {\small
-      \noindent
-      \textbf{Example $3$}
-      \newline
-      $\mathrm{Q}$:{\em Bob invested 22,000 dollars , part at 18 \%
-        and part at 14 \%.}
-      \newline
-      $\mathrm{A}$:{$V_1+V_2=22,000$ } } } 
-  Though the phrases ``part at 18\%'' and ``part at 14 \%'' assist in
-  grounding variables to the text, they mention quantities which are
-  not relevant to the relation mentioned, and we need to learn to
-  disregard them while generating equations.
+  \setlength{\tabcolsep}{6pt}
+  \begin{table}[H]
+   \centering \small
+   \begin{tabular}{|lp{5cm}|}
+     \hline Example 1 &  \\
+     \hline Sentence & {\em City Rentals rent an intermediate-size car
+  for 18.95 dollars plus 0.21 per mile.} \\
+     \hline Equation & $V_1=18.95+0.21*V_2$ \\
+     \hline 
+   \end{tabular}
+   \label{tab:example1}
+  \end{table}
+  
+  \noindent the variable $V_1$ could be grounded to ``City Rentals'',
+  ``rent'', or even ``City Rentals rent an intermediate-size car''.
 
-  In this paper, we develop a methodology to ... (dependent on
-  implementation)
+  In this paper, we introduce a task where given a sentence describing
+  a mathematical relation between entities, the goal is to predict an
+  equation representing the relation, and to determine what the
+  variables refer to. As seen in example 2, there are often multiple
+  spans of text which can be valid grounding of a variable. Here,
+  $V_1$ can be correctly grounded to both ``the first one'' or ``both
+  numbers''. Since exact segmentation of mentions can be ambiguous, we
+  ground variables to tokens in the sentence, which are either nouns,
+  verbs or adjectives. A grounding is said to be valid if the system
+  grounds to a token within a gold grounded span.
+  
+  \setlength{\tabcolsep}{6pt} 
+  \begin{table}[H] 
+         \centering 
+         \small 
+         \begin{tabular}{|lp{5cm}|} \hline
+         Example 2 & \\ \hline 
+         Sentence & {\em If 10 is added to two numbers,
+         the first one will be 5 more than thrice the second.} \\ \hline
+         Equation & $V_1+10=5+3*(V_2+10)$\\ \hline 
+         Grounding & $V_1= \{\text{``the first one'', ``two numbers''}\}$
+         $V_2= \{\text{``the second'', ``two numbers''}\}$\\ 
+        \hline 
+        \end{tabular} 
+        \label{tab:example2} 
+  \end{table}
+  
+  We propose a novel method for equation prediction and variable
+  grounding. First, we detect and normalize all quantities in the
+  sentence, and prune the irrelevant quantities, which do not take
+  part in the relation. Next we develop a structured prediction model
+  to jointly predict variable grounding and equation generation. Since
+  there can be multiple valid groundings for a problem, we model the
+  best grounding to be latent, and let the model figure out which
+  grounding is best for it, to generate equations.
+  
+  Our inference algorithm relies heavily on the idea of an equation
+  parse of a sentence. The parse can effectively capture
+  compositionality, can directly generate the necessary equation from
+  text, and provides a way to explore the space of all equations
+  efficiently.
+
+  We develop and annotate datasets for evaluation and show that our
+  method can handle the equation generation and ground task quite
+  well.
+
+  The next section presents some related work on mathematical
+  reasoning and automatic problem solvers. We then present our
+  equation parse representation, and
+  
