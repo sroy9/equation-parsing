@@ -1,30 +1,116 @@
-We now describe the algorithm for identifying the terms and expression of the equation from a sentence, and constructing a complete equation using them. We proceed as follows:
-\subsection{Quantities Extraction and Normalization}
-The natural first step towards identifying the terms participating in the equation is to find the quantities mentioned in the sentence. We use the Illinois Quantifier package (CITE) to detect all the quantity mentions.
-The quantifier extracts mention spans from the text, where each span identifies a quantity. Each such span is represented as a triple (v,u,c) where v denotes the value, u denotes the unit and c denotes the change in the quantity (if any).
-%A shallow analysis of the mentions is also done, where quantities are normalized and their units are extracted.
-Note that all quantities identified by the quantifier may not be relevant to formulation of the equation. For eg., in the following
+  We now describe the algorithm for identifying the terms and
+  expression of the equation from a sentence, and constructing a
+  complete equation using them. We use two modules in a pipeline. They
+  area s follows:
+  \begin{enumerate}
+    \item \textbf{Quantity Detector} : This module looks at a quantity
+      and decides whether it is relevant in the equation formed from
+      the sentence. Also, it is responsible for deciding whther the
+      quantity acts as a modifier in a sentence, and how it 
+      modifies the variables in the problem.
+      
+    \item \textbf{Equation Parse Generator} : This module jointly
+      grounds variables and generates an equation parse.
+  \end{enumerate}
 
-\begin{quote}
-  \emph{This is a block quote.}
-\end{quote}
+  We discuss the details of these modules in the following subsections.
+  
+  \subsection{Quantities Extraction and Normalization}
+    The natural first step towards identifying the terms participating
+    in the equation is to find the quantities mentioned in the
+    sentence. We use the Illinois Quantifier package \cite{Roy} to detect
+    all the quantity mentions.  The quantifier extracts mention spans
+    from the text, where each span identifies a quantity. Each such
+    span is represented as a triple $(v,u,c)$ where $v$ denotes the value,
+    $u$ denotes the unit and $c$ denotes the change in the quantity (if
+    any).
 
-\begin{figure}
-  \centering
-  \emph{If [10] is added to [two] numbers, the [first] becomes [3] times the [second].}
-  \label{fig:mention}
-\end{figure}
+    The quantity mentions identified fall into 3 categories:
+    \begin{enumerate}
+    \item {\bf Tree Mention} - These are the mentions that are part of
+      the final equation tree. In Fig \ref{fig:eqparse}, ``5'' is a tree
+      mention.
 
-The quantity mentions identified fall into 3 categories:
-\begin{inparaenum}[\itshape a\upshape)]
-\item {\bf Tree Mention} - these are the mentions that are part of the final equationtree. In \ref{fig:mention}, 3 is a tree mention.
-\item {\bf Spurious Mention} - these are the mentions that are not part of the tree.
-In \ref{fig:mention}, second is a spurious mention, as the magnitude 2 plays no role here.
-\item {\bf Modifier Mention} - these are mentions which are not part of the tree, but modify the tree post construction. In \ref{fig:mention}, 10 is a modifier mention, as it modifies both the numbers in question. 
-\end{inparaenum}
+    \item {\bf Spurious Mention} - These are quantities which are not
+      used in the equation.  In Fig \ref{fig:eqparse}, the quantity
+      ``two numbers'' is a spurious mention, as the magnitude $2$
+      plays no role in the final equation. This means that the
+      quantity triggers arising from this mention will not be part of
+      the equation tree.  Variable triggers generated using the same
+      span can still be relevant to the equation tree.
 
-\subsection{Variable Filtering}
-As stated above, the quantifier extracts several spurious mention spans, which do not appear in the final equation. In this stage, we train a
+    \item {\bf Modifier Mention} - These are quantities which play the
+      role of modifiers. In Fig \ref{fig:eqparse}, ``10'' is a
+      modifier mention, as it modifies both the variables in the
+      resulting equation.
+    \end{enumerate}
 
-\subsection{Modifier Detection and Scoping}
-\subsection{Equation Tree Construction}
+  \subsection{Quantity Classifier}
+    As stated above, the quantifier extracts three types of quantity
+    mentions : Tree Mention, Spurious Mention, and Modifier
+    Mention. This module identifies the type to which a mention
+    detected by the quantifier belongs. For the case of modifier
+    mentions, this module also tries to detect how the modifier
+    changes the variables in the problem. Since the number of outcomes
+    is few, we predict these properties of quantities
+    jointly. Specifically, we perform a multicalss classification to
+    classify each quantity to be a Tree mention, Spurious mention, or
+    a modifier conjoined with a type.
+
+    The features used for this module are ...
+    
+  \subsection{Equation Tree Generator}
+
+    This module receives the Tree mentions detected by the Quantity
+    classifier, and predicts an equation tree along with grounding of
+    variables. We formulate this problem as a structured prediction
+    task.  The input structure $x$ consists of the problem sentence,
+    as well as the tree mentions detected by the Quantity
+    classifier. Grounding of variables might be ambiguous, since
+    multiple groundings might be valid for any given
+    variable. Therefore, we model the grounding of variables to be a
+    latent variable $h$, and our system gets to decide which of the
+    valid groundings it will predict. The output structure $y$ now comprises
+    of an equation tree, whose leaves are formed either by the tree mentions
+    in $x$, or the grounded variable mentions $h$.
+
+    We want to have a scoring function to decide given $x$, the best
+    equation tree and the best grounding of variables. We assume our scoring 
+    function to be of the following form : 
+    \begin{align*}
+      f_w(h, y) &= w^T\phi(x, h, y) \\ 
+    \end{align*}  
+    where $\phi(x, h, y)$ is a feature vector extracted from $x, h,
+    y$. The prediction $(h^*, y^*)$ is then chosen as follows:
+    \begin{align*}
+      (h^*, y^*) &= \arg\max_{(h, y)\in H \times Y} f_w(h, y)
+    \end{align*}
+
+    \subsubsection{Learning}
+      We assume access to $N$ training examples of the form : $(x_1,
+      H_1, y_1), (x_2, H_2, y_2), \ldots, (x_N, H_N, y_N)$, where each
+      $H_i$ is a set of valid groundings possible for the variables in
+      the equation tree $y_i$. This is in contrast to most latent
+      variable structured learning problems in that, the domain of the
+      hidden variable is constrained by $H_i$. We optimize a modified
+      latent structural SVM objective to learn the weight vector
+      $w$. The objective is as follows:
+      \begin{multline}
+        \min_w \left[ \frac{1}{2}||w||^2
+          + C\sum_{i=1}^N \max_{(\hat{y}, \hat{h})\in Y \times H}
+          \left[w\cdot \phi(x_i, \hat{y}, \hat{h}) 
+            + \Delta(y_i, \hat{y}, \hat{h}) \right] \right] \\
+        - \left[ C\sum_{i=1}^N \max_{h \in H_i} 
+          w \cdot \phi(x_i, y_i, h) \right]
+      \end{multline}  
+
+
+
+
+    
+    
+
+
+
+
+
