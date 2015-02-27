@@ -50,8 +50,8 @@ public class TemplateDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/joint"+testFold+".save", train, testFold);
-		return testModel("models/joint"+testFold+".save", test);
+		trainModel("models/template"+testFold+".save", train, testFold);
+		return testModel("models/template"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
@@ -129,26 +129,29 @@ public class TemplateDriver {
 		TemplateDriver.doTrainTest(0);
 	}
 	
-	public static List<Equation> extractTemplates(SLProblem slProb) {
-		List<Equation> templates = new ArrayList<>();
+	public static List<TemplateY> extractTemplates(SLProblem slProb) {
+		List<TemplateY> templates = new ArrayList<>();
 		for(IStructure struct : slProb.goldStructureList) {
 			TemplateY gold = new TemplateY((TemplateY) struct);
-			for(int j=0; j<5; ++j) {
-				for(int k=0; k<gold.equation.terms.get(j).size(); ++k) {
-					gold.equation.terms.get(j).get(k).setSecond(null);
+			for(Node node : gold.equation.root.getLeaves()) {
+				if(node.label.equals("NUM")) {
+					node.value = 0.0;
 				}
 			}
 			boolean alreadyPresent = false;
 			for(int i=0; i< templates.size(); ++i) { 
-				TemplateY y = new TemplateY();
-				y.equation = templates.get(i); 
-				if(TemplateY.getEquationLoss(gold, y) < 0.0001) {
+				double loss = Math.min(Node.getLoss(gold.equation.root, 
+						templates.get(i).equation.root, true),
+						Node.getLoss(gold.equation.root, 
+								templates.get(i).equation.root, false));
+				if(Node.getLoss(gold.equation.root, 
+						templates.get(i).equation.root, true) < 0.0001) {
 					alreadyPresent = true;
 					break;
 				}
 			}
 			if(!alreadyPresent) {
-				templates.add(gold.equation);
+				templates.add(gold);
 			}
 		}
 		System.out.println("Number of templates : "+templates.size());
