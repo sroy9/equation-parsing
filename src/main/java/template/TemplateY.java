@@ -46,8 +46,9 @@ public class TemplateY implements IStructure, Serializable {
 		return Math.min(loss1, loss2);
 	}
 	
+	
 	@Override
 	public String toString() {
-		return ""+equation;
+		return "Equation : "+equation +" VarToken : "+Arrays.asList(varTokens);
 	}
 }

@@ -2,6 +2,7 @@ package template;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -10,6 +11,8 @@ import com.google.common.collect.MinMaxPriorityQueue;
 import structure.Equation;
 import structure.Node;
 import structure.PairComparator;
+import tree.TreeX;
+import tree.TreeY;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
@@ -49,7 +52,6 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 			IInstance x, IStructure goldStructure) throws Exception {
 		TemplateX prob = (TemplateX) x;
 		TemplateY gold = (TemplateY) goldStructure;
-		TemplateY pred = new TemplateY();
 		PairComparator<TemplateY> pairComparator = 
 				new PairComparator<TemplateY>() {};
 		MinMaxPriorityQueue<Pair<TemplateY, Double>> beam1 = 
@@ -90,19 +92,85 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 						TemplateY yNew = new TemplateY(y);
 						leaves = yNew.equation.root.getLeaves();
 						leaves.get(i).tokenIndex = j;
+						yNew.varTokens.put(leaves.get(i).varId, Arrays.asList(j));
 						beam2.add(new Pair<TemplateY, Double>(yNew, pair.getSecond() + 
 								wv.dotProduct(featGen.getAlignmentFeatureVector(
 										prob, yNew, i))));
 					}
-					
 				}
 			}
 			beam1.clear();
 			beam1.addAll(beam2);
 			beam2.clear();
 		}
-		pred.equation = beam1.element().getFirst().equation;
-		return pred;
+		return beam1.element().getFirst();
 	}
 	
+	public TemplateY getLatentBestStructure(
+			TemplateX x, TemplateY gold, WeightVector wv) {
+		TemplateY best = null;
+		double bestScore = -Double.MAX_VALUE;
+		if(gold.varTokens.keySet().size() == 1) {
+			for(Integer tokenIndex : gold.varTokens.get("V1")) {
+				TemplateY yNew = new TemplateY(gold);
+				yNew.varTokens.get("V1").clear();
+				yNew.varTokens.get("V1").add(tokenIndex);
+				for(Node node : yNew.equation.root.getLeaves()) {
+					if(node.label.equals("VAR")) {
+						node.tokenIndex = tokenIndex;
+					}
+					if(node.label.equals("NUM")) {
+						for(int i=0; i<x.quantities.size(); ++i) {
+							if(Tools.safeEquals(node.value, 
+									Tools.getValue(x.quantities.get(i)))) {
+								node.tokenIndex = x.ta.getTokenIdFromCharacterOffset(
+												x.quantities.get(i).start);
+								break;
+							}
+						}
+					}
+				}
+				double score = wv.dotProduct(
+						featGen.getFeatureVector(x, yNew));
+				if(score > bestScore) {
+					best = yNew;
+				}
+			}
+		}
+		if(gold.varTokens.keySet().size() == 2) {
+			for(Integer tokenIndex1 : gold.varTokens.get("V1")) {
+				for(Integer tokenIndex2 : gold.varTokens.get("V2")) {
+					TemplateY yNew = new TemplateY(gold);
+					yNew.varTokens.get("V1").clear();
+					yNew.varTokens.get("V1").add(tokenIndex1);
+					yNew.varTokens.get("V2").clear();
+					yNew.varTokens.get("V2").add(tokenIndex2);
+					for(Node node : yNew.equation.root.getLeaves()) {
+						if(node.label.equals("VAR") && node.varId.equals("V1")) {
+							node.tokenIndex = tokenIndex1;
+						}
+						if(node.label.equals("VAR") && node.varId.equals("V2")) {
+							node.tokenIndex = tokenIndex2;
+						}
+						if(node.label.equals("NUM")) {
+							for(int i=0; i<x.quantities.size(); ++i) {
+								if(Tools.safeEquals(node.value, 
+										Tools.getValue(x.quantities.get(i)))) {
+									node.tokenIndex = x.ta.getTokenIdFromCharacterOffset(
+													x.quantities.get(i).start);
+									break;
+								}
+							}
+						}
+						
+					}
+					double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
+					if(score > bestScore) {
+						best = yNew;
+					}
+				}
+			}
+		}
+		return best;
+	}
 }

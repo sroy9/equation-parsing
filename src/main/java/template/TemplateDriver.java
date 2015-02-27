@@ -24,6 +24,7 @@ import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
+import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
 public class TemplateDriver {
 	
@@ -120,6 +121,9 @@ public class TemplateDriver {
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
+//		model.wv = learner.train(train);
+		model.wv = latentSVMLearner(learner, train, 
+				(TemplateInfSolver) model.infSolver, 5);
 		model.wv = learner.train(train);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
@@ -138,14 +142,14 @@ public class TemplateDriver {
 					node.value = 0.0;
 				}
 			}
+			gold.varTokens.clear();
 			boolean alreadyPresent = false;
 			for(int i=0; i< templates.size(); ++i) { 
 				double loss = Math.min(Node.getLoss(gold.equation.root, 
 						templates.get(i).equation.root, true),
 						Node.getLoss(gold.equation.root, 
 								templates.get(i).equation.root, false));
-				if(Node.getLoss(gold.equation.root, 
-						templates.get(i).equation.root, true) < 0.0001) {
+				if(loss < 0.0001) {
 					alreadyPresent = true;
 					break;
 				}
@@ -157,4 +161,34 @@ public class TemplateDriver {
 		System.out.println("Number of templates : "+templates.size());
 		return templates;
 	}
+	
+	public static WeightVector latentSVMLearner(
+			Learner learner, SLProblem sp, TemplateInfSolver infSolver, 
+			int maxIter) throws Exception {
+		WeightVector wv = new WeightVector(7000);
+		wv.setExtendable(true);
+		for(int i=0; i<maxIter; ++i) {
+			System.err.println("Latent SSVM : Iteration "+i);
+			SLProblem newProb = new SLProblem();
+			for(int j=0; j<sp.goldStructureList.size(); ++j) {
+				TemplateX prob = (TemplateX) sp.instanceList.get(j);
+				TemplateY gold = (TemplateY) sp.goldStructureList.get(j);
+//				System.out.println("GetLatent : "+prob.problemIndex+" : "+gold);
+				TemplateY bestLatent = infSolver.getLatentBestStructure(prob, gold, wv);
+//				System.out.println("BestLatent : "+bestLatent);
+				newProb.addExample(prob, bestLatent);
+			}
+//			System.out.println("Got all latent stuff");
+//			for(int j=0; j<newProb.size(); ++j) {
+//				TreeX prob = (TreeX) newProb.instanceList.get(j);
+//				TreeY gold = (TreeY) newProb.goldStructureList.get(j);
+//				System.out.println("X:"+prob.problemIndex+" Y:"+gold);
+//			}
+			System.err.println("Learning SSVM");
+			wv = learner.train(newProb, wv);
+			System.err.println("Done");
+		}
+		return wv;
+	}
+	
 }

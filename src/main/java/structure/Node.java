@@ -1,5 +1,6 @@
 package structure;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,8 +8,9 @@ import java.util.List;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 
-public class Node {
+public class Node implements Serializable {
 	
+	private static final long serialVersionUID = -1127009463482561785L;
 	public String label;
 	public String varId;
 	public Double value;
