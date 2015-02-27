@@ -1,6 +1,6 @@
 \begin{figure*}
 \begin{center}
-  \begin{tikzpicture}
+  \begin{tikzpicture}[framed]
   \node[draw=none] (1) {If};
   \node[draw, right=0.1cm of 1] (2) {10};
   \node[draw=none, right=0.1cm of 2] (3) {is added to two numbers,};
@@ -27,6 +27,7 @@
   \draw[bend right,->]  (2) to node [auto] {Modifier} (9);
   \end{tikzpicture}
 \end{center}
+\caption{Example of an Equation parse}
 \label{fig:eqparse}
 \end{figure*}
 
@@ -65,20 +66,25 @@
   $Expr(n)$, and the label of the parent node determines how the
   expressions of its children need to be composed to construct its own
   expression. Let us denote the operation label for a non-leaf node
-  $n$ to be $OP(n)$, which can take values from $\{+, -, *, /, =\}$
+  $n$ to be $Op(n)$, which can take values from $\{+, -, *, /, =\}$
   and the order of a node $n$'s children by $Order(n)$, which takes
-  values ${left-right, right-left}$. For trigger node $n$, the
-  expression $Expr(n)$ represents the variable label, if $n$ is a
-  variable trigger, and the numeric value of the quantity, if its a
-  quantity trigger. The relation to generate the expression can then
-  be wriiten recursively as follows :
+  values ${lr, rl}$. For trigger node $n$, the expression $Expr(n)$
+  represents the variable label, if $n$ is a variable trigger, and the
+  numeric value of the quantity, if its a quantity trigger. Finally,
+  we use $lc(n)$ and $rc(n)$ to represent the left and the right child
+  of node $n$ respectively. The relation to generate the expression
+  can then be wriiten recursively as follows :
   
   For all non-leaf node $n$ of an equation tree, we have
-  \begin{align*}
-     Expr(n) &= Expr(left_child(n)) OP(n) Expr(right_child(n)) & &
-     \text{if } OP(n) = \{+,*,=\} \\
-  \end{align*}  
-
+  \begin{multline}
+    Expr(n) = \\
+    Expr(lc(n)) Op(n) Expr(rc(n)) \\
+    \mbox{if } Op(n) \in \{+,*, =\} \\
+    Expr(lc(n)) Op(n) Expr(rc(n)) \\
+    \mbox{if } Op(n) \in \{-,/\}, Order(n)=lr \\
+    Expr(rc(n)) Op(n) Expr(lc(n)) \\
+    \mbox{if } Op(n) \in \{-,/\}, Order(n)=rl \\
+  \end{multline}
 
   Referring to the equation tree in \ref{fig:eqparse}, the node marked
   ``*'' represents $3*V_2$, the node marked ``+'' represents

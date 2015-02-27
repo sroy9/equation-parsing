@@ -97,22 +97,23 @@
       is given in 
 
       \begin{algorithm}
-       \caption{Constrained Latent Structural SVM( $T$ )}
+       \caption{Constrained Latent Structural SVM}
        \label{lssvm}
        \begin{algorithmic}[1]
-         \REQUIRE Training data $T = (x_1, H_1, y_1), (x_2, H_2, y_2),
-         \ldots, (x_N, H_N, y_N)$ \ENSURE Trained weight vector $w$
-         \STATE w \leftarrow w_0
+         \REQUIRE Training data $T = \{(x_1, H_1, y_1), (x_2, H_2, y_2),
+         \ldots, (x_N, H_N, y_N)\}$ 
+         \ENSURE Trained weight vector $w$
+         \STATE $w \leftarrow w_0$
          \REPEAT 
-           \STATE T' \leftarrow \emptyset
-           \FORALL (x_i, y_i, H_i) \in T
-             \STATE h_i^* \leftarrow \argmax_{h \in H_i} w^T\phi(x_i, y_i, h)
-             \STATE T' \leftarrow T \cup \{x_i, (y_i, h_i^*)\}             
+           \STATE $T' \leftarrow \emptyset$
+           \FORALL {$(x_i, y_i, H_i) \in T$}
+             \STATE $h_i^* \leftarrow \arg\max_{h \in H_i} w^T\phi(x_i, y_i, h)$
+             \STATE $T' \leftarrow T \cup \{x_i, (y_i, h_i^*)\}$  
            \ENDFOR
            \STATE Update $w$ by running standard Structural SVM algorithm
-           on T'
+           on $T'$
          \UNTIL{convergence}
-         \RETURN w
+         \RETURN $w$
        \end{algorithmic}
       \end{algorithm}
 
@@ -133,13 +134,46 @@
 
       The distinction from standard latent structural SVM is in the latent
       variable completion problem, stated in Eq . In order to get the best 
-      latent variable instantiation $h_i$ for input tuple $(x_i, y_i, H_i)$, 
-      we search only inside $H_i$, instead of all possible values of $h_i$.
+      latent variable assignment $h_i^*$ for input tuple $(x_i, y_i, H_i)$, 
+      we search only inside $H_i$, instead of all possible values of $h_i$. 
 
+    \subsubsection{Inference}
+      We need to solve two inference algorithms to run the latent SSVM
+      algorithm.  The first is the label completion problem, where we
+      need to compute the best grounding $h^*$ given gold input $x_i$
+      and gold equation tree $y_i$. We also have access to the set of
+      valid groundings $H_i$, which reduces the search space
+      significantly, and allows us to do exhaustive
+      search. Specifically, we look at all nouns, verbs and
+      adjectives, which are valid groundings of the variables used in
+      $y_i$, and choose the one with the best score.
+
+      The second inference algorithm is the one used in the standard
+      structural SVM algorithm. Here we need to compute
+      \begin{align*}
+        (y^*, h^*) = \arg\max_{(y, h) \in Y \times H} w^T\phi(x, y, h)
+      \end{align*}  
+      Given an input sentence and the corresponding tree mentions, we
+      need to find the best grounding of the variables $h^*$ as well
+      as the best equation tree $y^*$. Here we also do not have access
+      to candidate gold groundings, and exhaustive search will entail
+      looking at exponential number of possibilities. Therefore, we
+      use a beam search procedure to approximately find the best
+      grounding and equation tree. First we enumerate all possible
+      groundings for both single variable and two variable problems,
+      and initialize our beam with top-k best groundings. Once the
+      groundings are available, we know what the leaves of the
+      equation tree are. Hence for each grounding in our beam, we now
+      employ a CKY algorithm to construct the trees in a bottom up
+      fashion. Since the independence assumptions needed for CKY are
+      not valid here, we still use beam search, maintaining the best k
+      parses at each cell of the CKY table. 
+      
+      
       
 
-   \subsubsection{Inference}
-     
+
+      
       
 
 
