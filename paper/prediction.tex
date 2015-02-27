@@ -75,15 +75,15 @@
     in $x$, or the grounded variable mentions $h$.
 
     We want to have a scoring function to decide given $x$, the best
-    equation tree and the best grounding of variables. We assume our scoring 
-    function to be of the following form : 
+    equation tree $y^*$ and the best grounding of variables $h^*$. We
+    assume our scoring function to be of the following form :
     \begin{align*}
-      f_w(h, y) &= w^T\phi(x, h, y) \\ 
+      f_w(y, h) &= w^T\phi(x, y, h) \\ 
     \end{align*}  
-    where $\phi(x, h, y)$ is a feature vector extracted from $x, h,
-    y$. The prediction $(h^*, y^*)$ is then chosen as follows:
+    where $\phi(x, y, h)$ is a feature vector extracted from $x, h,
+    y$. The prediction $(y^*, h^*)$ is then chosen as follows:
     \begin{align*}
-      (h^*, y^*) &= \arg\max_{(h, y)\in H \times Y} f_w(h, y)
+      (y^*, h^*) &= \arg\max_{(y, h)\in H \times Y} f_w(y, h)
     \end{align*}
 
     \subsubsection{Learning}
@@ -92,24 +92,55 @@
       $H_i$ is a set of valid groundings possible for the variables in
       the equation tree $y_i$. This is in contrast to most latent
       variable structured learning problems in that, the domain of the
-      hidden variable is constrained by $H_i$. We optimize a modified
-      latent structural SVM objective to learn the weight vector
-      $w$. The objective is as follows:
-      \begin{multline}
-        \min_w \left[ \frac{1}{2}||w||^2
-          + C\sum_{i=1}^N \max_{(\hat{y}, \hat{h})\in Y \times H}
-          \left[w\cdot \phi(x_i, \hat{y}, \hat{h}) 
-            + \Delta(y_i, \hat{y}, \hat{h}) \right] \right] \\
-        - \left[ C\sum_{i=1}^N \max_{h \in H_i} 
-          w \cdot \phi(x_i, y_i, h) \right]
-      \end{multline}  
+      hidden variable is constrained by $H_i$. We use a modified
+      latent structural SVM to learn the weight vector $w$. The algorithm 
+      is given in 
 
-      The above objective can be seen as the difference of two convex
-      functions, and hence we can use Concave-Convex Procedure (CCCP)
-      to optimize it. The distinction from a standard latent SSVM formulation 
-      is that the 
+      \begin{algorithm}
+       \caption{Constrained Latent Structural SVM( $T$ )}
+       \label{lssvm}
+       \begin{algorithmic}[1]
+         \REQUIRE Training data $T = (x_1, H_1, y_1), (x_2, H_2, y_2),
+         \ldots, (x_N, H_N, y_N)$ \ENSURE Trained weight vector $w$
+         \STATE w \leftarrow w_0
+         \REPEAT 
+           \STATE T' \leftarrow \emptyset
+           \FORALL (x_i, y_i, H_i) \in T
+             \STATE h_i^* \leftarrow \argmax_{h \in H_i} w^T\phi(x_i, y_i, h)
+             \STATE T' \leftarrow T \cup \{x_i, (y_i, h_i^*)\}             
+           \ENDFOR
+           \STATE Update $w$ by running standard Structural SVM algorithm
+           on T'
+         \UNTIL{convergence}
+         \RETURN w
+       \end{algorithmic}
+      \end{algorithm}
 
 
+%      \begin{multline}
+%        \min_w \left[ \frac{1}{2}||w||^2
+%          + C\sum_{i=1}^N \max_{(\hat{y}, \hat{h})\in Y \times H}
+%          \left[w\cdot \phi(x_i, \hat{y}, \hat{h}) 
+%            + \Delta(y_i, \hat{y}, \hat{h}) \right] \right] \\
+%        - \left[ C\sum_{i=1}^N \max_{h \in H_i} 
+%          w \cdot \phi(x_i, y_i, h) \right]
+%      \end{multline}
+      
+%      where $\Delta(y_i, \hat{y}, \hat{h})$ is a structured loss
+%      suffered when, instead of gold structure $y_i$, the system
+%      predicts equation tree $\hat{y}$, along with grounding
+%      $\hat{h}$. 
+
+      The distinction from standard latent structural SVM is in the latent
+      variable completion problem, stated in Eq . In order to get the best 
+      latent variable instantiation $h_i$ for input tuple $(x_i, y_i, H_i)$, 
+      we search only inside $H_i$, instead of all possible values of $h_i$.
+
+      
+
+   \subsubsection{Inference}
+     
+      
 
 
     
