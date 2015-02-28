@@ -69,9 +69,9 @@ public class DocReader {
 			FileUtils.writeStringToFile(
 					new File(Params.annotationDir+"/"+(i+999000)+".txt"), 
 					str);
-			FileUtils.writeStringToFile(
-					new File(Params.annotationDir+"/"+(i+999000)+".ann"), 
-					str);
+//			FileUtils.writeStringToFile(
+//					new File(Params.annotationDir+"/"+(i+999000)+".ann"), 
+//					"");
 			
 			++i;
 		}
