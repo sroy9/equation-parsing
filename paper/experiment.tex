@@ -1,1 +1,41 @@
- 
+  In this section, we describe our dataset, and evaluate our system's
+  performance on grounding variables and generating equations from
+  text. We also compare our results against a template based baseline.
+
+  \noindent \textbf{Dataset} We created a new dataset consisting of
+  $400$ sentences extracted from algebra word problems and financial
+  news headlines. For algebra word problems, we used a recently
+  released MIT dataset \cite{KushmanZeBa14}, and two high school
+  mathematics textbooks, Elementary Algebra (College of
+  Redwoods) \cite{Redwoods} and Beginning and Intermediate Algebra
+  (Tyler Wallace)\cite{Wallace}. Financial news headlines were The
+  Latest News feed of MarketWatch \cite{MarketWatch}, over the month
+  of February, 2014, was used a source of financial news
+  headlines. Some statistics of the dataset are provided in
+  Table \ref{tab:stats}
+
+  \setlength{\tabcolsep}{6pt}
+      \begin{table}[!ht]
+        \centering \small
+        \begin{tabular}{|c|c|}
+          \hline 
+           Source & \#Sentences \\\hline
+          \hline 
+           MIT & 250  \\
+           Redwoods & 25 \\
+           Wallace & 50 \\
+           MarketWatch & 75\\
+          \hline
+        \end{tabular}
+        \caption{\footnotesize Statistics of dataset}
+        \label{tab:stats}
+      \end{table}
+
+
+  Sentences were chosen such that each sentence has information
+  describing exactly one mathematical relation. We also ensured that
+  all quantities needed in the equation should be mentioned in the
+  sentence.  Each sentence was annotated with the final equation. For
+  each variable in the equation, we annotated spans of text which best
+  describes what the variable represents.  
+

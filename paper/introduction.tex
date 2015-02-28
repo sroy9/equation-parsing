@@ -1,5 +1,5 @@
   Understanding mathematical relations in text involves identifying
-  key entities, and detecting the mathematical equation relating these
+  key entities, and generating the mathematical equation relating these
   entities. Sentences often uses mathematical jargon, and describes
   composition of mathematical expressions, which require non-trivial
   reasoning. For example, in the sentence {\em``The difference of twice a
@@ -8,15 +8,17 @@
   composition that ``five'' needs to be added after ``three'' is
   multiplied with the number.
 
-  Grounding of variables to entities in text is necessary for deep
-  reasoning, as well as analysis across multiple sentences. However,
-  the text often does not mention explicitly what the variables in the
-  resulting equation represent. For example, the sentence {\em``Flying
-  with the wind , a bird was able to make 150 kilometers per hour.''}
-  describes a mathematical relation between the speed of bird and the
-  speed of wind, without mentioning ``speed'' explicitly. There is
-  also ambiguity regarding mention choice while grounding
-  variables. For example, in the following sentence-equation pair
+  Grounding of a variable involves detecting a span of text which
+  describes what the variable represents.  Grounding is necessary for
+  deep reasoning, as well as analysis across multiple
+  sentences. However, the text often does not mention explicitly what
+  the variables in the resulting equation represent. For example, the
+  sentence {\em``Flying with the wind , a bird was able to make 150
+  kilometers per hour.''}  describes a mathematical relation between
+  the speed of bird and the speed of wind, without mentioning
+  ``speed'' explicitly. There is also ambiguity regarding mention
+  choice while grounding variables. For example, in the following
+  sentence-equation pair
 
   \setlength{\tabcolsep}{6pt}
   \begin{table}[H]
@@ -74,10 +76,11 @@
   parse of a sentence. The parse can effectively capture
   compositionality, can directly generate the necessary equation from
   text, and provides a way to explore the space of all equations
-  efficiently.
+  efficiently. Our model also leverages a small knowledge base of
+  mathematical concepts as a source of domain knowledge.
 
   We develop and annotate datasets for evaluation and show that our
-  method can handle the equation generation and ground task quite
+  method can handle the equation generation and grounding task quite
   well.
 
   The next section presents some related work on mathematical

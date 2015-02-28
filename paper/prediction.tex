@@ -18,12 +18,12 @@
   \subsection{Quantities Extraction and Normalization}
     The natural first step towards identifying the terms participating
     in the equation is to find the quantities mentioned in the
-    sentence. We use the Illinois Quantifier package \cite{Roy} to detect
-    all the quantity mentions.  The quantifier extracts mention spans
-    from the text, where each span identifies a quantity. Each such
-    span is represented as a triple $(v,u,c)$ where $v$ denotes the value,
-    $u$ denotes the unit and $c$ denotes the change in the quantity (if
-    any).
+    sentence. We use the Illinois Quantifier package \cite{RoyViRo15}
+    to detect all the quantity mentions.  The quantifier extracts
+    mention spans from the text, where each span identifies a
+    quantity. Each such span is represented as a triple $(v,u,c)$
+    where $v$ denotes the value, $u$ denotes the unit and $c$ denotes
+    the change in the quantity (if any).
 
     The quantity mentions identified fall into 3 categories:
     \begin{enumerate}
@@ -132,10 +132,14 @@
 %      predicts equation tree $\hat{y}$, along with grounding
 %      $\hat{h}$. 
 
-      The distinction from standard latent structural SVM is in the latent
-      variable completion problem, stated in Eq . In order to get the best 
-      latent variable assignment $h_i^*$ for input tuple $(x_i, y_i, H_i)$, 
-      we search only inside $H_i$, instead of all possible values of $h_i$. 
+      The distinction from standard latent structural SVM is in the
+      latent variable completion problem, stated in Eq . In order to
+      get the best latent variable assignment $h_i^*$ for input tuple
+      $(x_i, y_i, H_i)$, we search only inside $H_i$, instead of all
+      possible values of $h_i$. A similar formulation can be found in
+      \cite{ZettlemoyerCo07,BjorkelundKu14}, but in both the cases,
+      the set $H_i$ can be computed deterministically from $y_i$. In
+      our case, we depend on explicit annotations for $H_i$.
 
     \subsubsection{Inference}
       We need to solve two inference algorithms to run the latent SSVM
@@ -169,7 +173,16 @@
       not valid here, we still use beam search, maintaining the best k
       parses at each cell of the CKY table. 
       
-      
+    \subsubsection{Knowledge Base} 
+      In language expressing mathematical relations, often the
+      information about the relation is hidden in a few key tokens or
+      expressions. A list of such indicator tokens can help the system
+      in extracting more meaningful features. Fortunately, for math
+      word problems, such a list is readily available. Various
+      coaching websites provide a list of tokens or phrases, which can
+      help students distinguish which type of problem it is. We computed 
+      a list of such indicator tokens or variables by combining the lists 
+      from two websites.
       
 
 

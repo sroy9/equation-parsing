@@ -1,4 +1,4 @@
-  Our work is related to main ares of research : semantic parsing and
+  Our work is related to two main ares of research : semantic parsing and
   automatic math word problem solving.
 
   \noindent
@@ -24,6 +24,17 @@
   transitions. Both these approaches searches a small space of
   equations, and can handle only simple syntax.
 
-  \noindent
-  \textbf{Sematic Parsing} 
-  
+  \noindent \textbf{Semantic Parsing} There has been a lot of work in
+  mapping natural language text to formal meaning
+  representation. Some \cite{ZettlemoyerCo05,GeMo06} assume access to
+  manually annotated formal representation for every sentence, whereas
+  others \cite{ECGR09,KateMo07,GoldwasserRo11,GRCR11} reduce the
+  amount of supervision using domain knowledge. Reinforcement learning
+  has also been used \cite{BCZB09,BranavanZeBa10,VogelJu10} to
+  automatically understand and execute instructions. All the above
+  approaches depend on a CCG-like parse of the entire sentence, and
+  restrict their domain to simple short sentences. In constrast, our
+  equation parse is only constructed on quantities mentioned in text,
+  and token spans which represent variable entities for the output
+  equation. This allows us to efficiently parse longer compositional
+  sentences.

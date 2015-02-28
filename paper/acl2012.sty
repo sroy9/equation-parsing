@@ -1,12 +1,11 @@
-% File acl2015.sty
-% December 2014
+% File acl2012.sty
+% October 11, 2004
+% Contact: oflazer@sabanciuniv.edu
 
-% This is the LaTeX style file for ACL 2015. It is nearly identical to
-% the style files for ACL 2014, EACL 2006, ACL2005, ACL 2002, ACL
-% 2001, ACL 2000, EACL 95 and EACL 99. 
+% This is the LaTeX style file for ACL 2005.  It is nearly identical to the
+% style files for ACL 2002, ACL 2001, ACL 2000, EACL 95 and EACL
+% 99. 
 %
-% Changes made include: adapt layout to A4 and centimeters, widen abstract
-
 % This is the LaTeX style file for ACL 2000.  It is nearly identical to the
 % style files for EACL 95 and EACL 99.  Minor changes include editing the
 % instructions to reflect use of \documentclass rather than \documentstyle
@@ -93,10 +92,11 @@
 
 % If the title and author information does not fit in the area allocated,
 % place \setlength\titlebox{<new height>} right after
-% \usepackage{acl2015}
-% where <new height> can be something larger than 5cm
+% \usepackage{acl2000}
+% where <new height> can be something larger than 2.25in
 
-\typeout{Conference Style for ACL 2015 -- released December 7, 2014}
+% \typeout{Conference Style for ACL 2000 -- released June 20, 2000}
+\typeout{Conference Style for ACL 2005 -- released Octobe 11, 2004}
 
 % NOTE:  Some laser printers have a serious problem printing TeX output.
 % These printing devices, commonly known as ``write-white'' laser
@@ -104,23 +104,32 @@
 % problem, a darker set of fonts must be created for these devices.
 %
 
+% Physical page layout - slightly modified from IJCAI by pj
+\setlength\topmargin{0.0in} \setlength\oddsidemargin{-0.0in}
+\setlength\textheight{9.0in} \setlength\textwidth{6.5in}
+\setlength\columnsep{0.2in}
+\newlength\titlebox
+\setlength\titlebox{2.25in}
+\setlength\headheight{0pt}   \setlength\headsep{0pt}
+%\setlength\footheight{0pt}
+\setlength\footskip{0pt}
+\thispagestyle{empty}      \pagestyle{empty}
+\flushbottom \twocolumn \sloppy
 
-
-% A4 modified by Eneko; again modified by Alexander for 5cm titlebox
-\setlength{\paperwidth}{21cm}   % A4
-\setlength{\paperheight}{29.7cm}% A4
-\setlength\topmargin{-0.5cm}    
-\setlength\oddsidemargin{0cm}   
-\setlength\textheight{24.7cm} 
-\setlength\textwidth{16.0cm}
-\setlength\columnsep{0.6cm}  
-\newlength\titlebox 
-\setlength\titlebox{5cm}
-\setlength\headheight{5pt}   
-\setlength\headsep{0pt}
-\thispagestyle{empty}        
-\pagestyle{empty}
-
+%% A4 version of page layout
+%\setlength\topmargin{-0.45cm}    % changed by Rz  -1.4
+%\setlength\oddsidemargin{.8mm}   % was -0cm, changed by Rz
+%\setlength\textheight{23.5cm} 
+%\setlength\textwidth{15.8cm}
+%\setlength\columnsep{0.6cm}  
+%\newlength\titlebox 
+%\setlength\titlebox{2.00in}
+%\setlength\headheight{5pt}   
+%\setlength\headsep{0pt}
+%%\setlength\footheight{0pt}
+%\setlength\footskip{0pt}
+%\thispagestyle{empty}        
+%\pagestyle{empty}
 
 \flushbottom \twocolumn \sloppy
 
@@ -154,18 +163,8 @@
     \hfil\hfil\egroup}
   \vskip 0.3in plus 2fil minus 0.1in
 }}
-
-% margins for abstract
-\renewenvironment{abstract}%
-		 {\centerline{\large\bf Abstract}%
-		  \begin{list}{}%
-		     {\setlength{\rightmargin}{0.6cm}%
-		      \setlength{\leftmargin}{0.6cm}}%
-		   \item[]\ignorespaces}%
-		 {\unskip\end{list}}
-		     
-%\renewenvironment{abstract}{\centerline{\large\bf  
-% Abstract}\vspace{0.5ex}\begin{quote}}{\par\end{quote}\vskip 1ex}
+\renewenvironment{abstract}{\centerline{\large\bf  
+ Abstract}\vspace{0.5ex}\begin{quote} \small}{\par\end{quote}\vskip 1ex}
 
 
 % bibliography
@@ -234,7 +233,7 @@
 
 % Don't put a label in the bibliography at all.  Just use the unlabeled format
 % instead.
-\def\thebibliography#1{\vskip\parskip%
+\def\thebibliography#1{\small\vskip\parskip%
 \vskip\baselineskip%
 \def\baselinestretch{1}%
 \ifx\@currsize\normalsize\@normalsize\else\@currsize\fi%
@@ -243,6 +242,7 @@
 \section*{References\@mkboth
  {References}{References}}\list
  {}{\setlength{\labelwidth}{0pt}\setlength{\leftmargin}{\parindent}
+ \setlength{\itemsep}{-0.5ex}
  \setlength{\itemindent}{-\parindent}}
  \def\newblock{\hskip .11em plus .33em minus -.07em}
  \sloppy\clubpenalty4000\widowpenalty4000
@@ -277,9 +277,8 @@
     -0.5ex minus -.2ex}{1.5ex plus 0.3ex minus .2ex}{\large\bf\raggedright}}
 \def\subsection{\@startsection{subsection}{2}{\z@}{-1.8ex plus
     -0.5ex minus -.2ex}{0.8ex plus .2ex}{\normalsize\bf\raggedright}}
-%% changed by KO to - values to get teh initial parindent right
-\def\subsubsection{\@startsection{subsubsection}{3}{\z@}{-1.5ex plus
-   -0.5ex minus -.2ex}{0.5ex plus .2ex}{\normalsize\bf\raggedright}}
+\def\subsubsection{\@startsection{subsubsection}{3}{\z@}{1.5ex plus
+   0.5ex minus .2ex}{0.5ex plus .2ex}{\normalsize\bf\raggedright}}
 \def\paragraph{\@startsection{paragraph}{4}{\z@}{1.5ex plus
    0.5ex minus .2ex}{-1em}{\normalsize\bf}}
 \def\subparagraph{\@startsection{subparagraph}{5}{\parindent}{1.5ex plus
@@ -327,13 +326,18 @@
 
 % Less leading in most fonts (due to the narrow columns)
 % The choices were between 1-pt and 1.5-pt leading
-\def\@normalsize{\@setsize\normalsize{11pt}\xpt\@xpt}
-\def\small{\@setsize\small{10pt}\ixpt\@ixpt}
-\def\footnotesize{\@setsize\footnotesize{10pt}\ixpt\@ixpt}
-\def\scriptsize{\@setsize\scriptsize{8pt}\viipt\@viipt}
-\def\tiny{\@setsize\tiny{7pt}\vipt\@vipt}
-\def\large{\@setsize\large{14pt}\xiipt\@xiipt}
-\def\Large{\@setsize\Large{16pt}\xivpt\@xivpt}
-\def\LARGE{\@setsize\LARGE{20pt}\xviipt\@xviipt}
-\def\huge{\@setsize\huge{23pt}\xxpt\@xxpt}
-\def\Huge{\@setsize\Huge{28pt}\xxvpt\@xxvpt}
+%\def\@normalsize{\@setsize\normalsize{11pt}\xpt\@xpt}
+%\def\small{\@setsize\small{10pt}\ixpt\@ixpt}
+%\def\footnotesize{\@setsize\footnotesize{10pt}\ixpt\@ixpt}
+%\def\scriptsize{\@setsize\scriptsize{8pt}\viipt\@viipt}
+%\def\tiny{\@setsize\tiny{7pt}\vipt\@vipt}
+%\def\large{\@setsize\large{14pt}\xiipt\@xiipt}
+%\def\Large{\@setsize\Large{16pt}\xivpt\@xivpt}
+%\def\LARGE{\@setsize\LARGE{20pt}\xviipt\@xviipt}
+%\def\huge{\@setsize\huge{23pt}\xxpt\@xxpt}
+%\def\Huge{\@setsize\Huge{28pt}\xxvpt\@xxvpt}
+
+\let\@@makecaption\@makecaption
+\renewcommand{\@makecaption}[1]{\@@makecaption{\small #1}}
+
+\newcommand{\Thanks}[1]{\thanks{\ #1}}
