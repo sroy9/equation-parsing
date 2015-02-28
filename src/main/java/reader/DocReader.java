@@ -19,6 +19,7 @@ import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
 import structure.Equation;
+import structure.Node;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
@@ -66,7 +67,10 @@ public class DocReader {
 				str += ta.getToken(j) + " ";
 			}
 			FileUtils.writeStringToFile(
-					new File(Params.annotationDir+"/"+i+".txt"), 
+					new File(Params.annotationDir+"/"+(i+999000)+".txt"), 
+					str);
+			FileUtils.writeStringToFile(
+					new File(Params.annotationDir+"/"+(i+999000)+".ann"), 
 					str);
 			
 			++i;
@@ -87,7 +91,7 @@ public class DocReader {
 		File dir = new File(bratDir);
 		for(File file : dir.listFiles()) {
 			if(file.getName().endsWith(".txt")) {
-//				System.out.println("Reading "+file.getName());
+				System.out.println("Reading "+file.getName());
 				int index = Integer.parseInt(file.getName().substring(
 								0, 
 								file.getName().length()-4));
@@ -95,7 +99,7 @@ public class DocReader {
 				simulProb.extractTextAndEquation();
 				simulProb.extractQuantities(quantifier);
 				simulProb.extractAnnotations();
-				simulProb.extractVarTokens();
+//				simulProb.extractVarTokens();
 				simulProbList.add(simulProb);
 			}
 		}
@@ -120,9 +124,28 @@ public class DocReader {
 		System.out.println("Equation : "+simulProb.equation);
 		System.out.println("Leaves : "+simulProb.equation.root.getLeaves());
 		System.out.println("VarTokens : "+simulProb.varTokens);
+		sanityCheck(simulProb);
 		System.out.println();
 		
 	}
+	
+	public static void sanityCheck(SimulProb prob) {
+		for(Node node : prob.equation.root.getLeaves()) {
+			if(node.label.equals("VAR")) continue;
+			boolean allow = false;
+			for(int i=0; i<prob.quantities.size(); ++i) {
+				if(Tools.safeEquals(Tools.getValue(
+						prob.quantities.get(i)), node.value)) {
+					allow = true;
+					break;
+				}
+			}
+			if(!allow) {
+				System.out.println("Not found : "+node.value);
+			}
+		}
+	}
+	
 	
 	public static List<List<Integer>> extractFolds() {
 		List<List<Integer>> folds = new ArrayList<>();

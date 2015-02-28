@@ -1,5 +1,0 @@
-A purse contains 3.90 dollars made up of dimes and quarters.
-
-0.1*V1+0.25*V2=3.9
-
-[A (purse )][contains ][3.90 (dollars )][made ][up ][of ][(dimes )and (quarters )]. 
