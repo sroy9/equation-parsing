@@ -100,10 +100,14 @@ public class TemplateFeatGen extends AbstractFeatureGenerator implements
 		return signature;
 	}
 
-	public static Node getParent(Node root, Node someChild) {
+	public static Node getParentOfLeaf(Node root, Node someChild) {
 		for(Node node : root.getAllSubNodes()) {
-			if(node.children.size() == 2 && (node.children.get(0).equals(someChild) || 
-					node.children.get(1).equals(someChild))) {
+			if(node.children.size() == 2 && (node.children.get(0).label.equals(someChild.label) && 
+					node.children.get(0).tokenIndex == someChild.tokenIndex)) {
+				return node;
+			}
+			if(node.children.size() == 2 && (node.children.get(1).label.equals(someChild.label) && 
+					node.children.get(1).tokenIndex == someChild.tokenIndex)) {
 				return node;
 			}
 		}
