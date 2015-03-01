@@ -9,6 +9,7 @@ import java.util.Set;
 import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Equation;
+import structure.KnowledgeBase;
 import structure.Node;
 import structure.PairComparator;
 import tree.TreeX;
@@ -85,17 +86,23 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 								prob.quantities.get(j).start);
 						beam2.add(new Pair<TemplateY, Double>(yNew, pair.getSecond() + 
 								wv.dotProduct(featGen.getAlignmentFeatureVector(
-										prob, yNew, i))));
+										prob, yNew, leaves, i))));
 					}
 				} else {
 					for(int j=0; j<prob.ta.size(); ++j) {
-						TemplateY yNew = new TemplateY(y);
-						leaves = yNew.equation.root.getLeaves();
-						leaves.get(i).tokenIndex = j;
-						yNew.varTokens.put(leaves.get(i).varId, Arrays.asList(j));
-						beam2.add(new Pair<TemplateY, Double>(yNew, pair.getSecond() + 
-								wv.dotProduct(featGen.getAlignmentFeatureVector(
-										prob, yNew, i))));
+						if(prob.posTags.get(j).getLabel().startsWith("N") || 
+								prob.posTags.get(j).getLabel().startsWith("V") ||
+								prob.posTags.get(j).getLabel().startsWith("J") ||
+								KnowledgeBase.specialVarTokens.contains(
+										prob.ta.getToken(j).toLowerCase())) {
+							TemplateY yNew = new TemplateY(y);
+							leaves = yNew.equation.root.getLeaves();
+							leaves.get(i).tokenIndex = j;
+							yNew.varTokens.put(leaves.get(i).varId, Arrays.asList(j));
+							beam2.add(new Pair<TemplateY, Double>(yNew, pair.getSecond() + 
+									wv.dotProduct(featGen.getAlignmentFeatureVector(
+											prob, yNew, leaves, i))));
+						}
 					}
 				}
 			}

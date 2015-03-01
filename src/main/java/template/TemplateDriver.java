@@ -89,6 +89,8 @@ public class TemplateDriver {
 				System.out.println("PROBLEM HERE");
 			}
 			if(TemplateY.getLoss(gold, pred) < 0.0001) {
+//			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.001 || 
+//					Equation.getLoss(gold.equation, pred.equation, false) < 0.001) {	
 				acc += 1;
 			} else {
 				incorrect.add(prob.problemIndex);
@@ -132,7 +134,8 @@ public class TemplateDriver {
 	public static List<TemplateY> extractTemplates(SLProblem slProb) {
 		List<TemplateY> templates = new ArrayList<>();
 		for(IStructure struct : slProb.goldStructureList) {
-			TemplateY gold = new TemplateY((TemplateY) struct);
+			TemplateY original = (TemplateY) struct;
+			TemplateY gold = new TemplateY(original);
 			for(Node node : gold.equation.root.getLeaves()) {
 				if(node.label.equals("NUM")) {
 					node.value = 0.0;
@@ -147,11 +150,27 @@ public class TemplateDriver {
 								templates.get(i).equation.root, false));
 				if(loss < 0.0001) {
 					alreadyPresent = true;
+					original.templateId = i;
 					break;
 				}
 			}
 			if(!alreadyPresent) {
 				gold.templateId = templates.size();
+				original.templateId = templates.size();
+				boolean firstVar = true;
+				boolean swap = false;
+				for(Node node : gold.equation.root.getLeaves()) {
+					if(node.label.equals("VAR") && swap && node.varId.equals("V1")) {
+						node.varId = "V2";
+					}
+					if(node.label.equals("VAR") && firstVar) {
+						firstVar = false;
+						if(node.varId.equals("V2")) {
+							swap = true;
+							node.varId = "V1";
+						}
+					}
+				}
 				templates.add(gold);
 			}
 		}
@@ -170,9 +189,9 @@ public class TemplateDriver {
 			for(int j=0; j<sp.goldStructureList.size(); ++j) {
 				TemplateX prob = (TemplateX) sp.instanceList.get(j);
 				TemplateY gold = (TemplateY) sp.goldStructureList.get(j);
-//				System.out.println("GetLatent : "+prob.problemIndex+" : "+gold);
+				System.out.println("GetLatent : "+prob.problemIndex+" : "+gold);
 				TemplateY bestLatent = infSolver.getLatentBestStructure(prob, gold, wv);
-//				System.out.println("BestLatent : "+bestLatent);
+				System.out.println("BestLatent : "+bestLatent);
 				newProb.addExample(prob, bestLatent);
 			}
 //			System.out.println("Got all latent stuff");

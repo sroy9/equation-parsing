@@ -174,7 +174,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 							}
 							Node node = new Node(label, -1, children);
 							score += 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(x, node))
-									+ 1.0*wv.dotProduct(featGen.getKBFeatureVector(x, y.varTokens, node))
+//									+ 1.0*wv.dotProduct(featGen.getKBFeatureVector(x, y.varTokens, node))
 									;
 							dpMat.get(i).get(j).add(new Pair<Node, Double>(node, score));
 						}

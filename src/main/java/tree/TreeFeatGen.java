@@ -62,7 +62,7 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		for(Node subNode : y.equation.root.getAllSubNodes()) {
 			if(subNode.children.size() == 2) {
 				features.addAll(expressionFeatures(x, subNode));
-				features.addAll(kbFeatures(x, y.varTokens, subNode));
+//				features.addAll(kbFeatures(x, y.varTokens, subNode));
 			}
 		}
 		return features;
@@ -74,6 +74,8 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		IntPair span = node.getSpanningTokenIndices();
 		IntPair spanChild1 = node.children.get(0).getSpanningTokenIndices();
 		IntPair spanChild2 = node.children.get(1).getSpanningTokenIndices();
+		int leftStart = Math.min(spanChild1.getFirst(), spanChild2.getFirst());
+		int rightEnd = Math.max(spanChild1.getSecond(), spanChild2.getSecond());
 		int midStart = Math.min(spanChild1.getSecond(), spanChild2.getSecond());
 		int midEnd = Math.max(spanChild1.getFirst(), spanChild2.getFirst());
 		
@@ -87,9 +89,7 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		
 		// Mid token features
 		List<String> unigrams = FeatGen.getUnigrams(x.ta);
-		for(int i=Math.min(spanChild1.getSecond(), spanChild2.getSecond())+1;
-				i<Math.max(spanChild1.getFirst(), spanChild2.getFirst()); 
-				++i) {
+		for(int i=midStart+1; i<midEnd; ++i) {
 			features.add(prefix+"_MidUnigram_"+unigrams.get(i));
 			if(i+1<Math.max(spanChild1.getFirst(), spanChild2.getFirst())) {
 				features.add(prefix+"_MidBigram_"+unigrams.get(i)+"_"+unigrams.get(i+1));
@@ -97,13 +97,13 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		}
 		
 		// Some tokens to the left
-		for(int i=midStart-1; i>Math.max(0, midStart-5); --i) {
+		for(int i=leftStart-1; i>Math.max(0, leftStart-5); --i) {
 			features.add(prefix+"_TokenLeft_"+unigrams.get(i));
 			features.add(prefix+"_TokenLeft_"+unigrams.get(i)+"_"+unigrams.get(i+1));
 		}
 		
 		// Some tokens to the right
-		for(int i=midEnd+1; i<Math.min(x.ta.size()-1, midEnd+3); ++i) {
+		for(int i=rightEnd+1; i<Math.min(x.ta.size()-1, rightEnd+3); ++i) {
 			features.add(prefix+"_TokenRight_"+unigrams.get(i));
 			features.add(prefix+"_TokenRight_"+unigrams.get(i)+"_"+unigrams.get(i+1));
 		}
