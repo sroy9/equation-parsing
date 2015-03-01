@@ -63,12 +63,12 @@
 
   An equation tree also gives a natural representation for an
   equation. Each node $n$ in an equation tree represents an expression
-  $Expr(n)$, and the label of the parent node determines how the
+  $\Expr(n)$, and the label of the parent node determines how the
   expressions of its children need to be composed to construct its own
   expression. Let us denote the operation label for a non-leaf node
-  $n$ to be $Op(n)$, which can take values from $\{+, -, *, /, =\}$
-  and the order of a node $n$'s children by $Order(n)$, which takes
-  values ${lr, rl}$. For trigger node $n$, the expression $Expr(n)$
+  $n$ to be $\Op(n)$, which can take values from $\{+, -, *, /, =\}$
+  and the order of a node $n$'s children by $\Order(n)$, which takes
+  values ${lr, rl}$. For trigger node $n$, the expression $\Expr(n)$
   represents the variable label, if $n$ is a variable trigger, and the
   numeric value of the quantity, if its a quantity trigger. Finally,
   we use $lc(n)$ and $rc(n)$ to represent the left and the right child
@@ -77,13 +77,14 @@
   
   For all non-leaf node $n$ of an equation tree, we have
   \begin{multline}
-    Expr(n) = \\
-    Expr(lc(n)) Op(n) Expr(rc(n)) \\
-    \mbox{if } Op(n) \in \{+,*, =\} \\
-    Expr(lc(n)) Op(n) Expr(rc(n)) \\
-    \mbox{if } Op(n) \in \{-,/\}, Order(n)=lr \\
-    Expr(rc(n)) Op(n) Expr(lc(n)) \\
-    \mbox{if } Op(n) \in \{-,/\}, Order(n)=rl \\
+    \Expr(n) = \\
+    \begin{cases}
+    \Expr(lc(n)) \Op(n) \Expr(rc(n)) & \mbox{if } \Op(n) \in \{+,*, =\} \\
+    \Expr(lc(n)) \Op(n) \Expr(rc(n)) &  \mbox{if } \Op(n) \in \{-,/\} \wedge\\
+    & \Order(n)=lr \\
+    \Expr(rc(n)) \Op(n) \Expr(lc(n)) &  \mbox{if } \Op(n) \in \{-,/\} \wedge\\
+    & \Order(n)=rl \\
+    \end{cases}
   \end{multline}
 
   Referring to the equation tree in \ref{fig:eqparse}, the node marked
