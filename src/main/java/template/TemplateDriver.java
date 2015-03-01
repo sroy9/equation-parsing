@@ -151,6 +151,7 @@ public class TemplateDriver {
 				}
 			}
 			if(!alreadyPresent) {
+				gold.templateId = templates.size();
 				templates.add(gold);
 			}
 		}
