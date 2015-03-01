@@ -3,10 +3,15 @@ package tree;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import structure.KnowledgeBase;
 import structure.Node;
 import utils.FeatGen;
+import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
@@ -38,7 +43,18 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = expressionFeatures(x, node);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
-		
+
+	public IFeatureVector getKBFeatureVector(
+			TreeX x, Map<String, List<Integer>> varTokens, Node node) {
+		List<String> features = kbFeatures(x, varTokens, node);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+
+	public IFeatureVector getVarTokenFeatureVector(TreeX x, TreeY y) {
+		List<String> features = varTokenFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+
 	public static List<String> getFeatures(TreeX x, TreeY y) {
 //		System.out.println("Features needed for "+y);
 		List<String> features = new ArrayList<>();
@@ -46,6 +62,7 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		for(Node subNode : y.equation.root.getAllSubNodes()) {
 			if(subNode.children.size() == 2) {
 				features.addAll(expressionFeatures(x, subNode));
+//				features.addAll(kbFeatures(x, y.varTokens, subNode));
 			}
 		}
 		return features;
@@ -57,40 +74,142 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		IntPair span = node.getSpanningTokenIndices();
 		IntPair spanChild1 = node.children.get(0).getSpanningTokenIndices();
 		IntPair spanChild2 = node.children.get(1).getSpanningTokenIndices();
+		int leftStart = Math.min(spanChild1.getFirst(), spanChild2.getFirst());
+		int rightEnd = Math.max(spanChild1.getSecond(), spanChild2.getSecond());
 		int midStart = Math.min(spanChild1.getSecond(), spanChild2.getSecond());
 		int midEnd = Math.max(spanChild1.getFirst(), spanChild2.getFirst());
-		if(spanChild1.getFirst() == spanChild2.getFirst()) {
-			features.add(prefix + "_SAME");
-		} else if(spanChild1.getFirst() > spanChild2.getFirst()) {
-			features.add(prefix + "_DESC");
-		} else {
-			features.add(prefix + "_ASC");
+		
+		if(node.label.equals("SUB") || node.label.equals("DIV")) {
+			if(spanChild1.getFirst() > spanChild2.getFirst()) {
+				prefix += "_DESC";
+			} else {
+				prefix += "_ASC";
+			}
 		}
+		
 		// Mid token features
 		List<String> unigrams = FeatGen.getUnigrams(x.ta);
-		for(int i=Math.min(spanChild1.getSecond(), spanChild2.getSecond())+1;
-				i<Math.max(spanChild1.getFirst(), spanChild2.getFirst()); 
-				++i) {
+		for(int i=midStart+1; i<midEnd; ++i) {
 			features.add(prefix+"_MidUnigram_"+unigrams.get(i));
 			if(i+1<Math.max(spanChild1.getFirst(), spanChild2.getFirst())) {
 				features.add(prefix+"_MidBigram_"+unigrams.get(i)+"_"+unigrams.get(i+1));
 			}
 		}
+		
 		// Some tokens to the left
-		for(int i=Math.min(spanChild1.getFirst(), spanChild2.getFirst())-1;
-				i>Math.max(0, Math.min(spanChild1.getFirst(), spanChild2.getFirst())-5); 
-				--i) {
+		for(int i=leftStart-1; i>Math.max(0, leftStart-5); --i) {
 			features.add(prefix+"_TokenLeft_"+unigrams.get(i));
 			features.add(prefix+"_TokenLeft_"+unigrams.get(i)+"_"+unigrams.get(i+1));
+		}
+		
+		// Some tokens to the right
+		for(int i=rightEnd+1; i<Math.min(x.ta.size()-1, rightEnd+3); ++i) {
+			features.add(prefix+"_TokenRight_"+unigrams.get(i));
+			features.add(prefix+"_TokenRight_"+unigrams.get(i)+"_"+unigrams.get(i+1));
+		}
+		
+		// Children features, whether they are number or variable, is a percentage or US$
+		if(node.children.get(0).label.equals("VAR") || 
+				node.children.get(1).label.equals("VAR")) {
+			features.add(prefix+"_OneChildIsVar");
+			if(node.children.get(0).label.equals("VAR")) {
+				features.add(prefix+"_OneChildIsVar_"+unigrams.get(span.getFirst()));
+			} else {
+				features.add(prefix+"_OneChildIsVar_"+unigrams.get(span.getSecond()));
+			}
+		}
+		if(node.children.get(0).label.equals("NUM") || 
+				node.children.get(1).label.equals("NUM")) {
+			features.add(prefix+"_OneChildIsNum");
+			Node numNode;
+			if(node.children.get(0).label.equals("NUM")) {
+				features.add(prefix+"_OneChildIsVar_"+unigrams.get(span.getFirst()));
+				numNode = node.children.get(0);
+			} else {
+				features.add(prefix+"_OneChildIsVar_"+unigrams.get(span.getSecond()));
+				numNode = node.children.get(1);
+			}
+			for(int i=0; i<x.quantities.size(); ++i) {
+				if(Tools.safeEquals(Tools.getValue(x.quantities.get(i)), numNode.value)) {
+					if(Tools.getUnit(x.quantities.get(i)).equals("percent")) {
+						features.add(prefix+"_Child_Percentage");
+					}
+					if(Tools.getUnit(x.quantities.get(i)).equals("US$")) {
+						features.add(prefix+"_Child_US$");
+					}
+					break;
+				}
+			}
+		}
+		
+		// Subtraction : which one is greater than the other
+		if(node.label.equals("SUB") && node.children.get(0).label.equals("NUM")
+				&& node.children.get(1).label.equals("NUM")) {
+			if(node.children.get(0).value > node.children.get(1).value) {
+				features.add(prefix+"_SubtractingGreaterFromSmaller");
+			} else {
+				features.add(prefix+"_SubtractingSmallerFromGreater");
+			}
 		}
 		return features;
 	}
 
-	public IFeatureVector getVarTokenFeatureVector(TreeX x, TreeY y) {
-		List<String> features = varTokenFeatures(x, y);
-		return FeatGen.getFeatureVectorFromList(features, lm);
+	public static List<String> kbFeatures(
+			TreeX x, Map<String, List<Integer>> varTokens, Node node) {
+		List<String> features = new ArrayList<>();
+		String prefix = node.label;
+		IntPair span = node.getSpanningTokenIndices();
+		IntPair spanChild1 = node.children.get(0).getSpanningTokenIndices();
+		IntPair spanChild2 = node.children.get(1).getSpanningTokenIndices();
+		int leftStart = Math.min(spanChild1.getFirst(), spanChild2.getFirst());
+		int rightEnd = Math.max(spanChild1.getSecond(), spanChild2.getSecond());
+		int midStart = Math.min(spanChild1.getSecond(), spanChild2.getSecond());
+		int midEnd = Math.max(spanChild1.getFirst(), spanChild2.getFirst());
+		Set<Integer> triggerLocs  = new HashSet<Integer>();
+		for(Integer index : x.relevantQuantIndices) {
+			triggerLocs.add(x.ta.getTokenIdFromCharacterOffset(
+					x.quantities.get(index).start));
+		}
+		for(String key : varTokens.keySet()) {
+			triggerLocs.addAll(varTokens.get(key));
+		}
+		
+		String midString = "";
+		for(int i=midStart+1; i<midEnd; ++i) {
+			if(triggerLocs.contains(i)) break;
+			midString += x.ta.getToken(i) + " ";
+		}
+		
+		String startString = "";
+		for(int i=leftStart-1; i>=0; --i) {
+			if(triggerLocs.contains(i)) break;
+			startString = x.ta.getToken(i) + " " + startString;
+		}
+		
+		String endString = "";
+		for(int i=rightEnd+1; i<x.ta.size(); ++i) {
+			if(triggerLocs.contains(i)) break;
+			endString += x.ta.getToken(i) + " ";
+		}
+		
+		for(String key : KnowledgeBase.mathNodeMap.keySet()) {
+			for(String term : KnowledgeBase.mathNodeMap.get(key)) {
+				if(startString.contains(term)) {
+					features.add(prefix+"_StartStringKB_"+key);
+				}
+				if(midString.contains(term)) {
+					features.add(prefix+"_MidStringKB_"+key);
+				}
+				if(endString.contains(term)) {
+					features.add(prefix+"_EndStringKB_"+key);
+				}
+			}
+		}
+		
+		return features;
 	}
-
+	
+	
 	public static List<String> varTokenFeatures(TreeX x, TreeY y) {
 		List<String> features = new ArrayList<>();
 		List<String> unigrams = FeatGen.getUnigrams(x.ta);

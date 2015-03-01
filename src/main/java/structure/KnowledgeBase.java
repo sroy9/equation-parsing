@@ -28,13 +28,18 @@ public class KnowledgeBase {
 	static {
 		// Math knowledge
 		mathNodeMap = new HashMap<String, List<String>>();
-		mathNodeMap.put("ADD", Arrays.asList("plus", "more", "sum", "exceeds", 
-				"added", "older", "faster", "greater", "longer", "increased"));
-		mathNodeMap.put("SUB", Arrays.asList("subtracted", "minus", "less", 
-				"short", "difference", "differs", "younger", "slower", "fewer", 
-				"shorter", "decreased"));
-		mathNodeMap.put("MUL", Arrays.asList("product"));
-		mathNodeMap.put("DIV", Arrays.asList("ratio"));
+		mathNodeMap.put("ADD", 
+				Arrays.asList("increased by", "more than",
+						"combined", "together",
+						"total of", "sum", "plus", "added to"));
+		mathNodeMap.put("SUB", 
+				Arrays.asList("decreased by", "minus", "less",
+						"difference between", "difference of",
+						"less than", "fewer than"));
+		mathNodeMap.put("MUL",
+				Arrays.asList("of", "times", "multiplied by", "product of"));
+		mathNodeMap.put("DIV", 
+				Arrays.asList("per", "ratio of", "quotient of"));
 		mathNodeSet = new HashSet<>();
 		mathNodeSet.addAll(mathNodeMap.get("ADD"));
 		mathNodeSet.addAll(mathNodeMap.get("SUB"));
@@ -42,13 +47,12 @@ public class KnowledgeBase {
 		mathNodeSet.addAll(mathNodeMap.get("DIV"));
 		mathIndicatorSet = new HashSet<>();
 		mathIndicatorSet.addAll(mathNodeSet);
-		mathIndicatorSet.addAll(Arrays.asList(
-				"times", "thrice", "triple", "twice", "double", "half"));
-		
 		// Variable Knowledge
 		specialVarTokens = new HashSet<String>();
-		specialVarTokens.addAll(Arrays.asList("one", "other", "another", "first", 
-				"second", "larger", "smaller", "greater", "lesser", "x", "this", "itself", "he"));
+		specialVarTokens.addAll(Arrays.asList(
+				"one", "other", "another", "first", 
+				"second", "larger", "smaller", "greater", 
+				"lesser", "x", "this", "itself", "he"));
 	}
 	
 	public static List<String> extractMathTokens(Double threshold) throws Exception {

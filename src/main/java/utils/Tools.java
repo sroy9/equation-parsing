@@ -144,6 +144,15 @@ public class Tools {
 		return relevantSpans;
 	}
 	
+//	public List<Constituent> getAllConsInPath(
+//			List<Constituent> dependencyCons, int leaf1, int leaf2) {
+//		List<Constituent> cons1 = new ArrayList<Constituent>();
+//		List<Constituent> cons2 = new ArrayList<Constituent>();
+//		Constituent cons = dependencyCons.get(leaf1);
+//		while(cons.getIncomingRelations().size()>0 && )
+//		
+//	}
+	
 	public static List<Pair<String, IntPair>> getSkeleton(
 			TextAnnotation ta, List<Constituent> lemmas, List<Constituent> parse, 
 			List<QuantSpan> quantities) {
@@ -155,7 +164,7 @@ public class Tools {
 			List<Constituent> parse, 
 			List<QuantSpan> quantities) {
 		List<Pair<String, IntPair>> skeleton = new ArrayList<>();
-		List<String> unigrams = FeatGen.getLemmatizedUnigrams(lemmas, 0, ta.size()-1);
+		List<String> unigrams = FeatGen.getLemmatizedUnigrams(lemmas, 0, ta.size());
 		int i=0;
 		while(i<ta.size()) {
 			Constituent npChunk = null;
@@ -208,26 +217,6 @@ public class Tools {
 		return str.trim();
 	}
 	
-	public static boolean isOneVar(List<String> relations) {
-		boolean r1 = false, r2 = false;
-		for(String relation : relations) {
-			if(relation.equals("R1") || relation.equals("BOTH")) r1 = true;
-			if(relation.equals("R2") || relation.equals("BOTH")) r2 = true;
-		}
-		if(r1 && r2) return false;
-		return true;
-	}
-	
-	public static int getBOTHcount(List<String> relations) {
-		int count = 0;
-		for(String relation : relations) {
-			if(relation.equals("BOTH")) {
-				count++;
-			}
-		}
-		return count;
-	}
-	
 	public static int getNONEcount(List<String> relations) {
 		int count = 0;
 		for(String relation : relations) {
@@ -262,22 +251,6 @@ public class Tools {
 		return true;
 	}
 	
-	// Can be called for R1 and R2, not applicable for NONE
-	public static List<Integer> getTokenIdsForRelation(
-			TextAnnotation ta, List<QuantSpan> quantities, List<String> relations,
-			String keyRelation) {
-		assert quantities.size() == relations.size();
-		List<Integer> tokenIds = new ArrayList<>();
-		for(int i=0; i<quantities.size(); ++i) {
-			String relation = relations.get(i);
-			QuantSpan qs = quantities.get(i);
-			if(relation.equals(keyRelation) || relation.equals("BOTH")) {
-				tokenIds.add(ta.getTokenIdFromCharacterOffset(qs.start));
-			}
-		}
-		return tokenIds;
-	}
-	
 	public static boolean areAllTokensInSameSentence(
 			TextAnnotation ta, List<Integer> tokenIds) {
 		Set<Integer> sentenceIds = new HashSet<>();
@@ -308,32 +281,6 @@ public class Tools {
 		return min;
 	}
 	
-	public static String getSententialForm(TextAnnotation ta, int first, int last) {
-		int start = first, end = last;
-		while(true) {
-			if(start == 0) break;
-			if(ta.getToken(start).equals(".") || ta.getToken(start).equals("and")) {
-				start++;
-				break;
-			}
-			start--;
-		}
-		while(true) {
-			if(end == ta.size()-1) break;
-			if(ta.getToken(end).equals(".")) break;
-			if(ta.getToken(end).equals("and") || ta.getToken(end).equals(",")) {
-				end--;
-				break;
-			}
-			end++;
-		}
-		String sentence = "";
-		for(int i=start; i<=end; ++i) {
-			sentence += ta.getToken(i) + " ";
-		}
-		return sentence.trim();
-	}
-
 	public static boolean isSkeletonIndex(
 			List<Pair<String, IntPair>> skeleton, int index) {
 		for(Pair<String, IntPair> pair : skeleton) {
@@ -355,4 +302,6 @@ public class Tools {
 		}
 		return false;
 	}
+	
+	
 }

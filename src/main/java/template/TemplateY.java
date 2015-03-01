@@ -16,6 +16,7 @@ public class TemplateY implements IStructure, Serializable {
 	private static final long serialVersionUID = 2399969922362221136L;
 	public Equation equation;
 	public Map<String, List<Integer>> varTokens;
+	public int templateId;
 	
 	public TemplateY() {
 		equation = new Equation();
@@ -35,10 +36,7 @@ public class TemplateY implements IStructure, Serializable {
 	}
 	
 	public static float getLoss(TemplateY gold, TemplateY pred) {
-		if(pred.varTokens.get("V1").size() > 1 || 
-				(pred.varTokens.containsKey("V2") && pred.varTokens.get("V2").size() > 1)) {
-			System.err.println("Error in TreeY getLoss() function");
-		}
+//		System.out.println("Gold : "+gold+" Pred : "+pred);
 		float loss1 = Equation.getLoss(gold.equation, pred.equation, true) + 
 				SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, true);
 		float loss2 = Equation.getLoss(gold.equation, pred.equation, false) + 

@@ -9,6 +9,7 @@ import java.util.Set;
 import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Equation;
+import structure.KnowledgeBase;
 import structure.Node;
 import structure.PairComparator;
 import tree.TreeX;
@@ -64,6 +65,15 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 		int maxNumSlots = 0;
 		for(TemplateY template : templates) {
 			beam1.add(new Pair<TemplateY, Double>(template, 0.0));
+			int quantCount = 0;
+			for(Node node : template.equation.root.getLeaves()) {
+				if(node.label.equals("NUM")) {
+					quantCount++;
+				}
+			}
+			if(quantCount > prob.quantities.size()) {
+				continue;
+			}
 			if(template.equation.root.getLeaves().size() > maxNumSlots) {
 				maxNumSlots = template.equation.root.getLeaves().size();
 			}
@@ -78,24 +88,40 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 					beam2.add(pair);
 				} else if(leaves.get(i).label.equals("NUM")) {
 					for(int j=0; j<prob.quantities.size(); ++j) {
-						TemplateY yNew = new TemplateY(y);
-						leaves = yNew.equation.root.getLeaves();
-						leaves.get(i).value = Tools.getValue(prob.quantities.get(j));
-						leaves.get(i).tokenIndex = prob.ta.getTokenIdFromCharacterOffset(
-								prob.quantities.get(j).start);
-						beam2.add(new Pair<TemplateY, Double>(yNew, pair.getSecond() + 
-								wv.dotProduct(featGen.getAlignmentFeatureVector(
-										prob, yNew, i))));
+						boolean allow = true;
+						for(int k=0; k<i; ++k) {
+							Node node = y.equation.root.getLeaves().get(k);
+							if(Tools.safeEquals(Tools.getValue(prob.quantities.get(j)), node.value)) {
+								allow = false;
+								break;
+							}
+						}
+						if(allow) {
+							TemplateY yNew = new TemplateY(y);
+							leaves = yNew.equation.root.getLeaves();
+							leaves.get(i).value = Tools.getValue(prob.quantities.get(j));
+							leaves.get(i).tokenIndex = prob.ta.getTokenIdFromCharacterOffset(
+									prob.quantities.get(j).start);
+							beam2.add(new Pair<TemplateY, Double>(yNew, pair.getSecond() + 
+									wv.dotProduct(featGen.getAlignmentFeatureVector(
+											prob, yNew, leaves, i))));
+						}
 					}
 				} else {
 					for(int j=0; j<prob.ta.size(); ++j) {
-						TemplateY yNew = new TemplateY(y);
-						leaves = yNew.equation.root.getLeaves();
-						leaves.get(i).tokenIndex = j;
-						yNew.varTokens.put(leaves.get(i).varId, Arrays.asList(j));
-						beam2.add(new Pair<TemplateY, Double>(yNew, pair.getSecond() + 
-								wv.dotProduct(featGen.getAlignmentFeatureVector(
-										prob, yNew, i))));
+						if(prob.posTags.get(j).getLabel().startsWith("N") || 
+								prob.posTags.get(j).getLabel().startsWith("V") ||
+								prob.posTags.get(j).getLabel().startsWith("J") ||
+								KnowledgeBase.specialVarTokens.contains(
+										prob.ta.getToken(j).toLowerCase())) {
+							TemplateY yNew = new TemplateY(y);
+							leaves = yNew.equation.root.getLeaves();
+							leaves.get(i).tokenIndex = j;
+							yNew.varTokens.put(leaves.get(i).varId, Arrays.asList(j));
+							beam2.add(new Pair<TemplateY, Double>(yNew, pair.getSecond() + 
+									wv.dotProduct(featGen.getAlignmentFeatureVector(
+											prob, yNew, leaves, i))));
+						}
 					}
 				}
 			}
@@ -173,4 +199,55 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 		}
 		return best;
 	}
+	
+	public List<TemplateY> enumerateInstantiations(TemplateX x, TemplateY y) {
+		List<TemplateY> instantiations = new ArrayList<TemplateY>();
+		instantiations.add(y);
+		List<TemplateY> tmpList = new ArrayList<TemplateY>();
+		List<Node> leaves = y.equation.root.getLeaves();
+		int numLeaves = leaves.size();
+		
+		for(int i=0; i<numLeaves; ++i) {
+			for(TemplateY template : instantiations) {
+				if(leaves.get(i).label.equals("VAR")) { 
+					for(int j=0; j<x.ta.size(); ++j) {
+						if(x.posTags.get(j).getLabel().startsWith("N") || 
+								x.posTags.get(j).getLabel().startsWith("V") ||
+								x.posTags.get(j).getLabel().startsWith("J") ||
+								KnowledgeBase.specialVarTokens.contains(
+										x.ta.getToken(j).toLowerCase())) {
+							TemplateY yNew = new TemplateY(template);
+							yNew.equation.root.getLeaves().get(i).tokenIndex = j;
+							tmpList.add(yNew);
+						}
+					}
+				}
+				if(leaves.get(i).label.equals("NUM")) {
+					for(int j=0; j<x.quantities.size(); ++j) {
+						TemplateY yNew = new TemplateY(template);
+						boolean allow = true;
+						for(int k=0; k<i; ++k) {
+							Node node = yNew.equation.root.getLeaves().get(k);
+							if(Tools.safeEquals(Tools.getValue(x.quantities.get(j)), node.value)) {
+								allow = false;
+								break;
+							}
+						}
+						if(allow) {
+							yNew.equation.root.getLeaves().get(i).tokenIndex = 
+									x.ta.getTokenIdFromCharacterOffset(x.quantities.get(j).start);
+							yNew.equation.root.getLeaves().get(i).value = 
+									Tools.getValue(x.quantities.get(j));
+							tmpList.add(yNew);
+						}
+					}
+				}
+			}
+			instantiations.clear();
+			instantiations.addAll(tmpList);
+			tmpList.clear();
+		}
+		return instantiations;
+	}
+	
 }

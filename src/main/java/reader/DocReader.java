@@ -91,7 +91,7 @@ public class DocReader {
 		File dir = new File(bratDir);
 		for(File file : dir.listFiles()) {
 			if(file.getName().endsWith(".txt")) {
-				System.out.println("Reading "+file.getName());
+//				System.out.println("Reading "+file.getName());
 				int index = Integer.parseInt(file.getName().substring(
 								0, 
 								file.getName().length()-4));
@@ -99,7 +99,7 @@ public class DocReader {
 				simulProb.extractTextAndEquation();
 				simulProb.extractQuantities(quantifier);
 				simulProb.extractAnnotations();
-//				simulProb.extractVarTokens();
+				simulProb.extractVarTokens();
 				simulProbList.add(simulProb);
 			}
 		}

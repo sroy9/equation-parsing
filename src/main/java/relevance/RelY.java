@@ -38,6 +38,41 @@ public class RelY implements IStructure, Serializable {
 				break;
 			}
 		}
+		// Annotation for modifiers, 2: Add-Mod, 3: Sub-From-Mod
+		if(prob.index == 562 && quantIndex == 0) {
+			decision = 2;
+		}
+		if(prob.index == 566 && quantIndex == 0) {
+			decision = 2;
+		}
+		if(prob.index == 568 && quantIndex == 0) {
+			decision = 2;
+		}
+		if(prob.index == 570 && quantIndex == 0) {
+			decision = 3;
+		}
+		if(prob.index == 572 && quantIndex == 0) {
+			decision = 3;
+		}
+		if(prob.index == 576 && quantIndex == 0) {
+			decision = 3;
+		}
+		if(prob.index == 578 && quantIndex == 0) {
+			decision = 3;
+		}
+		if(prob.index == 582 && quantIndex == 0) {
+			decision = 2;
+		}
+		if(prob.index == 588 && quantIndex == 0) {
+			decision = 2;
+		}
+		if(prob.index == 590 && quantIndex == 0) {
+			decision = 3;
+		}
+		if(prob.index == 592 && quantIndex == 0) {
+			decision = 3;
+		}
+		
 	}
 	
 	public static float getLoss(RelY gold, RelY pred) {
