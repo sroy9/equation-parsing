@@ -155,7 +155,7 @@ public class Tools {
 			List<Constituent> parse, 
 			List<QuantSpan> quantities) {
 		List<Pair<String, IntPair>> skeleton = new ArrayList<>();
-		List<String> unigrams = FeatGen.getLemmatizedUnigrams(lemmas, 0, ta.size()-1);
+		List<String> unigrams = FeatGen.getLemmatizedUnigrams(lemmas, 0, ta.size());
 		int i=0;
 		while(i<ta.size()) {
 			Constituent npChunk = null;

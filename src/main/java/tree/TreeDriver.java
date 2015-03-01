@@ -23,15 +23,15 @@ import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
 public class TreeDriver {
 	
-	public static void crossVal() throws Exception {
+	public static void crossVal(String suffix) throws Exception {
 		double acc = 0.0;
 		for(int i=0;i<5;i++) {
-			acc += doTrainTest(i);
+			acc += doTrainTest(i, suffix);
 		}
 		System.out.println("5-fold CV : " + (acc/5));
 	}
 	
-	public static double doTrainTest(int testFold) throws Exception {
+	public static double doTrainTest(int testFold, String suffix) throws Exception {
 		List<List<Integer>> folds = DocReader.extractFolds();
 		List<SimulProb> simulProbList = 
 				DocReader.readSimulProbFromBratDir(Params.annotationDir);
@@ -46,8 +46,8 @@ public class TreeDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/tree"+testFold+".save", train, testFold);
-		return testModel("models/tree"+testFold+".save", test);
+		trainModel("models/tree_"+testFold+"_"+suffix+".save", train, testFold);
+		return testModel("models/tree_"+testFold+"_"+suffix+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
@@ -153,7 +153,13 @@ public class TreeDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		TreeDriver.doTrainTest(0);
-//		SemDriver.crossVal();
+		String suffix = "";
+		if(args.length > 0) {
+			suffix = args[0];
+		} else {
+			System.out.println("1 parameter need");
+			System.exit(0);
+		}
+		TreeDriver.doTrainTest(0, suffix);
 	}
 }

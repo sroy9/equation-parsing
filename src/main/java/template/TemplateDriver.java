@@ -28,15 +28,15 @@ import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
 public class TemplateDriver {
 	
-	public static void crossVal() throws Exception {
+	public static void crossVal(String suffix) throws Exception {
 		double acc = 0.0;
 		for(int i=0;i<5;i++) {
-			acc += doTrainTest(i);
+			acc += doTrainTest(i, suffix);
 		}
 		System.out.println("5-fold CV : " + (acc/5));
 	}
 	
-	public static double doTrainTest(int testFold) throws Exception {
+	public static double doTrainTest(int testFold, String suffix) throws Exception {
 		List<List<Integer>> folds = DocReader.extractFolds();
 		List<SimulProb> simulProbList = 
 				DocReader.readSimulProbFromBratDir(Params.annotationDir);
@@ -51,8 +51,8 @@ public class TemplateDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/template"+testFold+".save", train, testFold);
-		return testModel("models/template"+testFold+".save", test);
+		trainModel("models/template_"+testFold+"_"+suffix+".save", train, testFold);
+		return testModel("models/template_"+testFold+"_"+suffix+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
@@ -129,10 +129,6 @@ public class TemplateDriver {
 		model.saveModel(modelPath);
 	}
 	
-	public static void main(String args[]) throws Exception {
-		TemplateDriver.doTrainTest(0);
-	}
-	
 	public static List<TemplateY> extractTemplates(SLProblem slProb) {
 		List<TemplateY> templates = new ArrayList<>();
 		for(IStructure struct : slProb.goldStructureList) {
@@ -189,6 +185,17 @@ public class TemplateDriver {
 			System.err.println("Done");
 		}
 		return wv;
+	}
+	
+	public static void main(String args[]) throws Exception {
+		String suffix = "";
+		if(args.length > 0) {
+			suffix = args[0];
+		} else {
+			System.out.println("1 parameter need");
+			System.exit(0);
+		}
+		TemplateDriver.doTrainTest(0, suffix);
 	}
 	
 }

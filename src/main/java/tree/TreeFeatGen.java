@@ -7,6 +7,7 @@ import java.util.List;
 
 import structure.Node;
 import utils.FeatGen;
+import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
@@ -38,7 +39,17 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = expressionFeatures(x, node);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
-		
+
+	public IFeatureVector getKBFeatureVector(TreeX x, Node node) {
+		List<String> features = kbFeatures(x, node);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+
+	public IFeatureVector getVarTokenFeatureVector(TreeX x, TreeY y) {
+		List<String> features = varTokenFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+
 	public static List<String> getFeatures(TreeX x, TreeY y) {
 //		System.out.println("Features needed for "+y);
 		List<String> features = new ArrayList<>();
@@ -46,6 +57,7 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		for(Node subNode : y.equation.root.getAllSubNodes()) {
 			if(subNode.children.size() == 2) {
 				features.addAll(expressionFeatures(x, subNode));
+				features.addAll(kbFeatures(x, subNode));
 			}
 		}
 		return features;
@@ -59,13 +71,15 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		IntPair spanChild2 = node.children.get(1).getSpanningTokenIndices();
 		int midStart = Math.min(spanChild1.getSecond(), spanChild2.getSecond());
 		int midEnd = Math.max(spanChild1.getFirst(), spanChild2.getFirst());
-		if(spanChild1.getFirst() == spanChild2.getFirst()) {
-			features.add(prefix + "_SAME");
-		} else if(spanChild1.getFirst() > spanChild2.getFirst()) {
-			features.add(prefix + "_DESC");
-		} else {
-			features.add(prefix + "_ASC");
+		
+		if(node.label.equals("SUB") || node.label.equals("DIV")) {
+			if(spanChild1.getFirst() > spanChild2.getFirst()) {
+				prefix += "_DESC";
+			} else {
+				prefix += "_ASC";
+			}
 		}
+		
 		// Mid token features
 		List<String> unigrams = FeatGen.getUnigrams(x.ta);
 		for(int i=Math.min(spanChild1.getSecond(), spanChild2.getSecond())+1;
@@ -76,6 +90,7 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 				features.add(prefix+"_MidBigram_"+unigrams.get(i)+"_"+unigrams.get(i+1));
 			}
 		}
+		
 		// Some tokens to the left
 		for(int i=Math.min(spanChild1.getFirst(), spanChild2.getFirst())-1;
 				i>Math.max(0, Math.min(spanChild1.getFirst(), spanChild2.getFirst())-5); 
@@ -83,14 +98,71 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 			features.add(prefix+"_TokenLeft_"+unigrams.get(i));
 			features.add(prefix+"_TokenLeft_"+unigrams.get(i)+"_"+unigrams.get(i+1));
 		}
+		
+		// Children features, whether they are number or variable, is a percentage or US$
+		if(node.children.get(0).label.equals("VAR") || 
+				node.children.get(1).label.equals("VAR")) {
+			features.add(prefix+"_OneChildIsVar");
+			if(node.children.get(0).label.equals("VAR")) {
+				features.add(prefix+"_OneChildIsVar_"+unigrams.get(span.getFirst()));
+			} else {
+				features.add(prefix+"_OneChildIsVar_"+unigrams.get(span.getSecond()));
+			}
+		}
+		if(node.children.get(0).label.equals("NUM") || 
+				node.children.get(1).label.equals("NUM")) {
+			features.add(prefix+"_OneChildIsNum");
+			Node numNode;
+			if(node.children.get(0).label.equals("NUM")) {
+				features.add(prefix+"_OneChildIsVar_"+unigrams.get(span.getFirst()));
+				numNode = node.children.get(0);
+			} else {
+				features.add(prefix+"_OneChildIsVar_"+unigrams.get(span.getSecond()));
+				numNode = node.children.get(1);
+			}
+			for(int i=0; i<x.quantities.size(); ++i) {
+				if(Tools.safeEquals(Tools.getValue(x.quantities.get(i)), numNode.value)) {
+					if(Tools.getUnit(x.quantities.get(i)).equals("percent")) {
+						features.add(prefix+"_Child_Percentage");
+					}
+					if(Tools.getUnit(x.quantities.get(i)).equals("US$")) {
+						features.add(prefix+"_Child_US$");
+					}
+					break;
+				}
+			}
+		}
+		
+		// Subtraction : which one is greater than the other
+		if(node.label.equals("SUB") && node.children.get(0).label.equals("NUM")
+				&& node.children.get(1).label.equals("NUM")) {
+			if(node.children.get(0).value > node.children.get(1).value) {
+				features.add(prefix+"_SubtractingGreaterFromSmaller");
+			} else {
+				features.add(prefix+"_SubtractingSmallerFromGreater");
+			}
+		}
+		
+		
+		
+		
 		return features;
 	}
 
-	public IFeatureVector getVarTokenFeatureVector(TreeX x, TreeY y) {
-		List<String> features = varTokenFeatures(x, y);
-		return FeatGen.getFeatureVectorFromList(features, lm);
+	public static List<String> kbFeatures(TreeX x, Node node) {
+		List<String> features = new ArrayList<>();
+		String prefix = node.label;
+		IntPair span = node.getSpanningTokenIndices();
+		IntPair spanChild1 = node.children.get(0).getSpanningTokenIndices();
+		IntPair spanChild2 = node.children.get(1).getSpanningTokenIndices();
+		int midStart = Math.min(spanChild1.getSecond(), spanChild2.getSecond());
+		int midEnd = Math.max(spanChild1.getFirst(), spanChild2.getFirst());
+		
+		
+		return features;
 	}
-
+	
+	
 	public static List<String> varTokenFeatures(TreeX x, TreeY y) {
 		List<String> features = new ArrayList<>();
 		List<String> unigrams = FeatGen.getUnigrams(x.ta);

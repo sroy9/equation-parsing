@@ -99,7 +99,7 @@ public class DocReader {
 				simulProb.extractTextAndEquation();
 				simulProb.extractQuantities(quantifier);
 				simulProb.extractAnnotations();
-//				simulProb.extractVarTokens();
+				simulProb.extractVarTokens();
 				simulProbList.add(simulProb);
 			}
 		}
