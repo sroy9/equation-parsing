@@ -8,11 +8,11 @@
   released MIT dataset \cite{KushmanZeBa14}, and two high school
   mathematics textbooks, Elementary Algebra (College of
   Redwoods) \cite{Redwoods} and Beginning and Intermediate Algebra
-  (Tyler Wallace)\cite{Wallace}. Financial news headlines were The
+  (Tyler Wallace)\cite{Wallace}. Financial news headlines from The
   Latest News feed of MarketWatch \cite{MarketWatch}, over the month
   of February, 2014, was used a source of financial news
   headlines. Some statistics of the dataset are provided in
-  Table \ref{tab:stats}
+  Table \ref{tab:stats}.
 
   \setlength{\tabcolsep}{6pt}
       \begin{table}[!ht]
@@ -33,9 +33,112 @@
 
 
   Sentences were chosen such that each sentence has information
-  describing exactly one mathematical relation. We also ensured that
-  all quantities needed in the equation should be mentioned in the
-  sentence.  Each sentence was annotated with the final equation. For
-  each variable in the equation, we annotated spans of text which best
-  describes what the variable represents.  
+  describing exactly one mathematical relation among at most two
+  variables, and all quantities needed in the equation should be
+  mentioned in the sentence.  Each sentence was annotated with the
+  final equation. For each variable in the equation, we annotated
+  spans of text which best describe what the variable
+  represents. Maximal span of tokens which describe or refer to the
+  variable in the sentence was annotated. For example, in the
+  sentence, {\em``City Rentals rent an intermediate-size car for 18.95
+  dollars plus 0.21 per mile.''}, the phrase {\em ``City Rentals rent
+  an intermediate-size car''} was annotated. We also allow
+  discontiguous spans, as in Example 2, we annotate both {\em``two
+  numbers''} and {\em``the second''} as representing variable
+  $V_2$. The inter-annotator agreement was $0.76$.
 
+  \noindent \textbf{Quantity Classifier} Table \ref{tab:quantity} shows
+  the performance of the Quantity Classifier in classifying quantity
+  mentions in text as Tree Mention, Spurious Mention or Modifier
+  conjoined with modification manner. We report two accuracies, one is
+  the fraction of quantities it classified correctly (Per quantity
+  accuracy), and second is the fraction of problems in which it
+  correctly classified all the mentioned quantities (Per problem
+  accuracy). The accuracy was reported using 5-fold cross-validation.
+
+  \setlength{\tabcolsep}{6pt}
+      \begin{table}[!ht]
+        \centering \small
+        \begin{tabular}{|c|c|}
+          \hline 
+           Type & Accuracy (\%) \\\hline
+          \hline 
+           Per Quantity & 93.64 \\
+           Per Problem & 87.88  \\ 
+          \hline
+        \end{tabular}
+        \caption{\footnotesize 5-fold cross validation accuracy of quantity classifier}
+        \label{tab:quantity}
+      \end{table}
+
+  
+  \noindent \textbf{Equation Tree Generator} In this section, we
+  evaluate the performance of the equation tree generator, which
+  jointly grounds variables and generates equation trees. We compute
+  two scores - Equation Accuracy, which is the fraction of equations
+  it correctly predicted, irrespective of the grounding, and
+  Equation+Grounding Accuracy, which is the fraction of sentences for
+  which it correctly grounded the variables and generated the correct
+  equation. 
+
+  We compare our system \textsc{EqTreeGen} against a template based
+  baseline algorithm \textsc{Template}, similar to the one used
+  in \cite{KushmanZeBa14}. \textsc{Template} is identical to our system,
+  except that instead of using equation trees to perform inference, it
+  learns to align numbers and strings to slots of equation templates.
+  The beam search in \textsc{Template} iteratively aligns slots in
+  templates to tokens or numbers from the text. We used the same
+  feature set for both the methods. We further augmented the feature
+  set of \textsc{Template} with a bias term for the template used, and
+  unigrams and bigrams conjoined with the template used.
+
+  We also evaluate the performance of the equation tree generation systems
+  based on gold and predicted Tree mentions. Overall, we evaluate the performance
+  of four systems :
+  \begin{enumerate}    
+    \item \textsc{Gold+Template} : Uses gold Tree mentions with \textsc{Template}.
+    \item \textsc{Gold+EqTreeGen} : Uses gold Tree mentions with \textsc{EqTreeGen}.
+    \item \textsc{Predict+Template} : Uses predicted Tree mentions returned by 
+          Quantity classifier, along with \textsc{Template}.
+    \item \textsc{Predict+EqTreeGen} : Uses predicted Tree mentions with \textsc{EqTreeGen}.
+  \end{enumerate}
+
+  \setlength{\tabcolsep}{6pt}
+      \begin{table}[!ht]
+        \centering \small
+        \begin{tabular}{|l|C{1.5cm}|C{1.5cm}|}
+          \hline 
+           System & Equation (\%) & Grounding+Equation (\%) \\\hline
+           \hline
+           \textsc{Gold+Template} & 54.5 & 14.5 \\
+           \textsc{Gold+EqTreeGen} & 74.6 & 66.4 \\
+           \textsc{Predict+Template} & 49.5 & 14.25 \\ 
+           \textsc{Predict+EqTreeGen} & 71.0 & 60.75 \\ 
+          \hline
+        \end{tabular}
+        \caption{\footnotesize 5-fold cross validation accuracy for equation parsing}
+        \label{tab:eqtree}
+      \end{table}
+
+  Table \ref{tab:eqtree} shows the performance of \textsc{Template}
+  and \textsc{EqTreeGen} on predicting correct groundings of variables
+  and the corresponding equation, with gold and predicted Tree
+  Mentions.  \textsc{Template} can predict equations reasonably well,
+  but fails to capture the understanding of what the variables
+  represent.
+   
+  \noindent \textbf{Qualitative Analysis} Since the quantity
+  classifier takes decisions independently for each quantity in a
+  sentence, it makes mistakes where decisions of neighboring
+  quantities affect each other.  For example, it does not detect that
+  the number ``20'' is spurious, for the relation in {\em``A bank
+  teller has 54 5-dollar and 20-dollar bills in her cash
+  drawer''}. The decision for the quantity ``20-dollar bills'' could
+  have been inferred from the decision for ``5-dollar'', since they
+  are used in a similar context. The equation tree generator find
+  difficulty extracting relations from sentences like ``There are 5
+  more boys than girls''.  Although the term ``more'' is frequently
+  used with addition, here ``5'' needs to be subtracted from the
+  number of boys, to get the number of girls.
+   
+  
