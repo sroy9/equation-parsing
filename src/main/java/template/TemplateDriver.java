@@ -51,7 +51,7 @@ public class TemplateDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/template_"+testFold+"_"+suffix+".save", train, testFold);
+//		trainModel("models/template_"+testFold+"_"+suffix+".save", train, testFold);
 		return testModel("models/template_"+testFold+"_"+suffix+".save", test);
 	}
 	
@@ -86,7 +86,7 @@ public class TemplateDriver {
 			double predWt = model.wv.dotProduct(
 					model.featureGenerator.getFeatureVector(prob, pred));
 			if(goldWt > predWt) {
-				System.out.println("PROBLEM HERE");
+				System.out.println("PROBLEM HERE GOLD");
 			}
 			if(TemplateY.getLoss(gold, pred) < 0.0001) {
 //			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.001 || 
@@ -95,7 +95,8 @@ public class TemplateDriver {
 			} else {
 				incorrect.add(prob.problemIndex);
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
-				System.out.println("Skeleton : "+Tools.skeletonString(prob.skeleton));
+				System.out.println("Gold Template : "+findTemplateId(
+						((TemplateInfSolver)model.infSolver).templates, gold));
 				System.out.println("Quantities : "+prob.quantities);
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Gold weight : "+model.wv.dotProduct(
@@ -143,7 +144,7 @@ public class TemplateDriver {
 			}
 			gold.varTokens.clear();
 			boolean alreadyPresent = false;
-			for(int i=0; i< templates.size(); ++i) { 
+			for(int i=0; i<templates.size(); ++i) { 
 				double loss = Math.min(Node.getLoss(gold.equation.root, 
 						templates.get(i).equation.root, true),
 						Node.getLoss(gold.equation.root, 
@@ -175,7 +176,33 @@ public class TemplateDriver {
 			}
 		}
 		System.out.println("Number of templates : "+templates.size());
+		System.out.println("Here are the templates : ");
+		for(TemplateY tmp : templates) {
+			System.out.println(tmp);
+		}
+		System.out.println("Done with templates, now the real stuff");
+		
 		return templates;
+	}
+	
+	public static int findTemplateId(List<TemplateY> templates, TemplateY y) {
+		TemplateY copy = new TemplateY(y);
+		for(Node node : copy.equation.root.getLeaves()) {
+			if(node.label.equals("NUM")) {
+				node.value = 0.0;
+			}
+		}
+		copy.varTokens.clear();
+		for(int i=0; i<templates.size(); ++i) { 
+			double loss = Math.min(Node.getLoss(copy.equation.root, 
+					templates.get(i).equation.root, true),
+					Node.getLoss(copy.equation.root, 
+							templates.get(i).equation.root, false));
+			if(loss < 0.0001) {
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 	public static WeightVector latentSVMLearner(
@@ -189,17 +216,11 @@ public class TemplateDriver {
 			for(int j=0; j<sp.goldStructureList.size(); ++j) {
 				TemplateX prob = (TemplateX) sp.instanceList.get(j);
 				TemplateY gold = (TemplateY) sp.goldStructureList.get(j);
-				System.out.println("GetLatent : "+prob.problemIndex+" : "+gold);
+//				System.out.println("GetLatent : "+prob.problemIndex+" : "+gold);
 				TemplateY bestLatent = infSolver.getLatentBestStructure(prob, gold, wv);
-				System.out.println("BestLatent : "+bestLatent);
+//				System.out.println("BestLatent : "+bestLatent);
 				newProb.addExample(prob, bestLatent);
 			}
-//			System.out.println("Got all latent stuff");
-//			for(int j=0; j<newProb.size(); ++j) {
-//				TreeX prob = (TreeX) newProb.instanceList.get(j);
-//				TreeY gold = (TreeY) newProb.goldStructureList.get(j);
-//				System.out.println("X:"+prob.problemIndex+" Y:"+gold);
-//			}
 			System.err.println("Learning SSVM");
 			wv = learner.train(newProb, wv);
 			System.err.println("Done");

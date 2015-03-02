@@ -21,12 +21,14 @@ public class TemplateY implements IStructure, Serializable {
 	public TemplateY() {
 		equation = new Equation();
 		varTokens = new HashMap<String, List<Integer>>();
+		templateId = -1;
 	}
 	
 	public TemplateY(TemplateY other) {
 		equation = new Equation(other.equation);
 		varTokens = new HashMap<String, List<Integer>>();
 		varTokens.putAll(other.varTokens);
+		templateId = other.templateId;
 	}
 	
 	public TemplateY(SimulProb prob) {
@@ -47,6 +49,6 @@ public class TemplateY implements IStructure, Serializable {
 	
 	@Override
 	public String toString() {
-		return "Equation : "+equation +" VarToken : "+Arrays.asList(varTokens);
+		return "TemplateID "+templateId+" Equation : "+equation +" VarToken : "+Arrays.asList(varTokens);
 	}
 }

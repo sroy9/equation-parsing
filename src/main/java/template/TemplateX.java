@@ -1,8 +1,11 @@
 package template;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import structure.Node;
 import structure.SimulProb;
+import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
@@ -19,6 +22,7 @@ public class TemplateX implements IInstance {
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
 	public List<Pair<String, IntPair>> skeleton;
+	public List<Integer> relevantQuantIndices;
 	
 	public TemplateX(SimulProb simulProb) {
 		quantities = simulProb.quantities;
@@ -28,5 +32,17 @@ public class TemplateX implements IInstance {
 		parse = simulProb.parse;
 		lemmas = simulProb.lemmas;
 		skeleton = simulProb.skeleton;
+		relevantQuantIndices = new ArrayList<Integer>();
+		for(Node leaf : simulProb.equation.root.getLeaves()) {
+			if(leaf.label.equals("NUM")) {
+				for(int i=0; i<simulProb.quantities.size(); ++i) {
+					if(Tools.safeEquals(leaf.value, Tools.getValue(
+							simulProb.quantities.get(i)))) {
+						relevantQuantIndices.add(i);
+						break;
+					}
+				}
+			}
+		}
 	}
 }

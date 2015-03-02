@@ -117,6 +117,10 @@ public class Tools {
 		return null;
 	}
 
+	public static int getTokenIndex(QuantSpan qs, TextAnnotation ta) {
+		return ta.getTokenIdFromCharacterOffset(qs.start);
+	}
+	
 	public static List<Double> uniqueNumbers(List<QuantSpan> quantSpans) {
 		List<Double> uniqueNos = new ArrayList<>();
 		for(int i=0; i<quantSpans.size(); i++) {
