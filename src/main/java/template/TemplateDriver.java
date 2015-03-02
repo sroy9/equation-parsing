@@ -51,7 +51,7 @@ public class TemplateDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-//		trainModel("models/template_"+testFold+"_"+suffix+".save", train, testFold);
+		trainModel("models/template_"+testFold+"_"+suffix+".save", train, testFold);
 		return testModel("models/template_"+testFold+"_"+suffix+".save", test);
 	}
 	
@@ -236,7 +236,7 @@ public class TemplateDriver {
 			System.out.println("1 parameter need");
 			System.exit(0);
 		}
-		TemplateDriver.doTrainTest(0, suffix);
+		TemplateDriver.crossVal(suffix);
 	}
 	
 }

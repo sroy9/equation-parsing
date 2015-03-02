@@ -76,7 +76,7 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 				continue;
 			}
 			beam1.add(new Pair<TemplateY, Double>(template, 0.0 
-					+ wv.dotProduct(featGen.getGlobalFeatureVector(prob, template))
+//					+ wv.dotProduct(featGen.getGlobalFeatureVector(prob, template))
 					));
 		}
 		

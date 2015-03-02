@@ -1,0 +1,423 @@
+65 : The difference of twice of one of them and the other one is 5.
+Quantities : [[= 2.0 Unit : Phrase: twice ]:(18, 23), [= 1.0 Unit :of them Phrase: one of them ]:(27, 38), [= 5.0 Unit :   Phrase: 5 ]:(60, 61)]
+Quant of Interest: [= 1.0 Unit :of them Phrase: one of them ]:(27, 38)
+Units: of them
+Gold : 
+0
+Gold weight : -0.09717343
+Pred : 
+1
+Pred weight : 0.021322496
+Loss : 1.0
+PROBLEM HERE
+588 : In four years, Wendy will be three times as old as Clyde.
+Quantities : [[= 4.0 Unit :years Phrase: four years ]:(3, 13), [= 3.0 Unit :times Phrase: three times ]:(29, 40)]
+Quant of Interest: [= 4.0 Unit :years Phrase: four years ]:(3, 13)
+Units: years
+Gold : 
+2
+Gold weight : 0.53913474
+Pred : 
+1
+Pred weight : -0.15475881
+Loss : 1.0
+PROBLEM HERE
+590 : Two years ago, the age of the older ship was three times the age of the newer ship. 
+Quantities : [[= 2.0 Unit :years ago Phrase: two years ago ]:(0, 13), [= 3.0 Unit :times Phrase: three times ]:(45, 56)]
+Quant of Interest: [= 2.0 Unit :years ago Phrase: two years ago ]:(0, 13)
+Units: years ago
+Gold : 
+3
+Gold weight : 0.5265554
+Pred : 
+0
+Pred weight : -0.112365864
+Loss : 1.0
+Accuracy : = 158.0 / 161 = 0.9813664596273292
+Strict Accuracy : =0.9620253164556962 incorrect 3 out of 79
+Mistakes : [[65, 588, 590]]
+365 : One piece is 2 times the length of the other.
+Quantities : [[= 1.0 Unit :piece Phrase: one piece ]:(0, 9), [= 2.0 Unit : times   Phrase: 2 times ]:(13, 20)]
+Quant of Interest: [= 2.0 Unit : times   Phrase: 2 times ]:(13, 20)
+Units:  times  
+Gold : 
+1
+Gold weight : -0.04393709
+Pred : 
+0
+Pred weight : -0.028412454
+Loss : 1.0
+999004 : U.S. fourth-quarter GDP chopped to 2.2% from 2.6%.
+Quantities : [[= 0.022000000000000002 Unit :percent Phrase: 2.2 % ]:(35, 39), [= 0.026000000000000002 Unit :percent Phrase: 2.6 % ]:(45, 49)]
+Quant of Interest: [= 0.026000000000000002 Unit :percent Phrase: 2.6 % ]:(45, 49)
+Units: percent
+Gold : 
+1
+Gold weight : -0.12651008
+Pred : 
+0
+Pred weight : 0.10009681
+Loss : 1.0
+514 : The number of 15-cent stamps is four less than three times the number of 18-cent stamps.
+Quantities : [[= 15.0 Unit : - cent stamps   Phrase: 15 - cent stamps ]:(14, 28), [< 4.0 Unit : Phrase: four less ]:(32, 41), [= 3.0 Unit :times Phrase: three times ]:(47, 58), [= 18.0 Unit : - cent stamps   Phrase: 18 - cent stamps ]:(73, 87)]
+Quant of Interest: [= 15.0 Unit : - cent stamps   Phrase: 15 - cent stamps ]:(14, 28)
+Units:  - cent stamps  
+Gold : 
+0
+Gold weight : -0.05752048
+Pred : 
+1
+Pred weight : -0.03649208
+Loss : 1.0
+534 : Sixty more than nine times a number is the same as two less than ten times the number.
+Quantities : [[> 60.0 Unit : Phrase: sixty more ]:(0, 10), [= 9.0 Unit :times Phrase: nine times ]:(16, 26), [< 2.0 Unit : Phrase: two less ]:(51, 59), [= 10.0 Unit :times Phrase: ten times ]:(65, 74)]
+Quant of Interest: [< 2.0 Unit : Phrase: two less ]:(51, 59)
+Units: 
+Gold : 
+1
+Gold weight : -0.05473436
+Pred : 
+0
+Pred weight : 0.05473437
+Loss : 1.0
+558 : One piece is 2 feet longer than the other.
+Quantities : [[= 1.0 Unit :piece Phrase: one piece ]:(0, 9), [= 2.0 Unit : feet   Phrase: 2 feet ]:(13, 19)]
+Quant of Interest: [= 2.0 Unit : feet   Phrase: 2 feet ]:(13, 19)
+Units:  feet  
+Gold : 
+1
+Gold weight : -0.042199012
+Pred : 
+0
+Pred weight : -0.03015054
+Loss : 1.0
+PROBLEM HERE
+568 : In 6 years, Diane will be twice as old as Amy.
+Quantities : [[= 6.0 Unit : years   Phrase: 6 years ]:(3, 10), [= 2.0 Unit :as old Phrase: twice as old ]:(26, 38)]
+Quant of Interest: [= 6.0 Unit : years   Phrase: 6 years ]:(3, 10)
+Units:  years  
+Gold : 
+2
+Gold weight : 0.5891022
+Pred : 
+1
+Pred weight : -0.10399554
+Loss : 1.0
+PROBLEM HERE
+572 : Four years ago, the father was 3 times as old as the son.
+Quantities : [[= 4.0 Unit :years ago Phrase: four years ago ]:(0, 14), [= 3.0 Unit : times   Phrase: 3 times ]:(31, 38)]
+Quant of Interest: [= 4.0 Unit :years ago Phrase: four years ago ]:(0, 14)
+Units: years ago
+Gold : 
+3
+Gold weight : 0.7066463
+Pred : 
+1
+Pred weight : -0.15611687
+Loss : 1.0
+999024 : Japan January jobless rate rises to 3.6% from 3.4%.
+Quantities : [[= 0.036000000000000004 Unit :percent Phrase: 3.6 % ]:(36, 40), [= 0.034 Unit :percent Phrase: 3.4 % ]:(46, 50)]
+Quant of Interest: [= 0.034 Unit :percent Phrase: 3.4 % ]:(46, 50)
+Units: percent
+Gold : 
+1
+Gold weight : -0.08209587
+Pred : 
+0
+Pred weight : 0.055682562
+Loss : 1.0
+Accuracy : = 157.0 / 165 = 0.9515151515151515
+Strict Accuracy : =0.8987341772151899 incorrect 8 out of 79
+Mistakes : [[534, 999024, 514, 558, 999004, 365, 572, 568]]
+125 : Find the number whose double is 45 greater than its half.
+Quantities : [[= 2.0 Unit :times Phrase: double ]:(22, 28), [> 45.0 Unit :  Phrase: 45 greater ]:(32, 42), [= 0.5 Unit : Phrase: half ]:(52, 56)]
+Quant of Interest: [= 2.0 Unit :times Phrase: double ]:(22, 28)
+Units: times
+Gold : 
+1
+Gold weight : -0.013533788
+Pred : 
+0
+Pred weight : 0.013533782
+Loss : 1.0
+147 : Freeport McMoran projects that in 2010 the world grain supply will be 1800000 metric tons and the supply will be only 0.75 of the world grain demand.
+Quantities : [[= 1800000.0 Unit : metric tons   Phrase: 1800000 metric tons ]:(70, 89), [= 0.75 Unit : of world grain demand   Phrase: 0.75 of the world grain demand ]:(118, 148)]
+Quant of Interest: [= 0.75 Unit : of world grain demand   Phrase: 0.75 of the world grain demand ]:(118, 148)
+Units:  of world grain demand  
+Gold : 
+1
+Gold weight : -0.19440642
+Pred : 
+0
+Pred weight : 0.13377556
+Loss : 1.0
+155 : In a basketball game , Will scored 26 points , consisting only of 3-point shots and 2-point shots.
+Quantities : [[= 26.0 Unit : points   Phrase: 26 points ]:(35, 44), [= 3.0 Unit : - point shots   Phrase: 3 - point shots ]:(66, 79), [= 2.0 Unit : - point shots   Phrase: 2 - point shots ]:(84, 97)]
+Quant of Interest: [= 2.0 Unit : - point shots   Phrase: 2 - point shots ]:(84, 97)
+Units:  - point shots  
+Gold : 
+1
+Gold weight : -0.23828235
+Pred : 
+0
+Pred weight : 0.17765112
+Loss : 1.0
+281 : The product of 10 and a number is the same as 36 less twice that same number.
+Quantities : [[= 10.0 Unit :   Phrase: 10 ]:(15, 17), [< 36.0 Unit :   Phrase: 36 less ]:(46, 53), [= 2.0 Unit : Phrase: twice ]:(54, 59)]
+Quant of Interest: [= 2.0 Unit : Phrase: twice ]:(54, 59)
+Units: 
+Gold : 
+1
+Gold weight : -0.26269445
+Pred : 
+0
+Pred weight : 0.2142708
+Loss : 1.0
+443 : The number of grocery items on two grocery lists differs by 7.
+Quantities : [[= 2.0 Unit :grocery lists Phrase: two grocery lists ]:(31, 48), [= 7.0 Unit :   Phrase: 7 ]:(60, 61)]
+Quant of Interest: [= 2.0 Unit :grocery lists Phrase: two grocery lists ]:(31, 48)
+Units: grocery lists
+Gold : 
+0
+Gold weight : -0.2383803
+Pred : 
+1
+Pred weight : 0.1777492
+Loss : 1.0
+463 : Mrs.Martin bought 3 cups of coffee and 2 bagels and spent 12.75 dollars.
+Quantities : [[= 3.0 Unit : cups   Phrase: 3 cups ]:(18, 24), [= 2.0 Unit : bagels   Phrase: 2 bagels ]:(39, 47), [= 12.75 Unit :US$ Phrase: 12.75 dollars ]:(58, 71)]
+Quant of Interest: [= 2.0 Unit : bagels   Phrase: 2 bagels ]:(39, 47)
+Units:  bagels  
+Gold : 
+1
+Gold weight : -0.034698162
+Pred : 
+0
+Pred weight : -0.016119234
+Loss : 1.0
+PROBLEM HERE
+562 : In 4 years, he will be twice as old as his brother.
+Quantities : [[= 4.0 Unit : years   Phrase: 4 years ]:(3, 10), [= 2.0 Unit :as old Phrase: twice as old ]:(23, 35)]
+Quant of Interest: [= 4.0 Unit : years   Phrase: 4 years ]:(3, 10)
+Units:  years  
+Gold : 
+2
+Gold weight : 0.40483215
+Pred : 
+1
+Pred weight : -0.10087912
+Loss : 1.0
+PROBLEM HERE
+566 : In 20 years, the father will be twice as old as his son.
+Quantities : [[= 20.0 Unit : years   Phrase: 20 years ]:(3, 11), [= 2.0 Unit :as old Phrase: twice as old ]:(32, 44)]
+Quant of Interest: [= 20.0 Unit : years   Phrase: 20 years ]:(3, 11)
+Units:  years  
+Gold : 
+2
+Gold weight : 0.24341978
+Pred : 
+1
+Pred weight : 0.11781652
+Loss : 1.0
+PROBLEM HERE
+570 : Four years ago, John was twice as old as Mary. 
+Quantities : [[= 4.0 Unit :years ago Phrase: four years ago ]:(0, 14), [= 2.0 Unit :as old Phrase: twice as old ]:(25, 37)]
+Quant of Interest: [= 4.0 Unit :years ago Phrase: four years ago ]:(0, 14)
+Units: years ago
+Gold : 
+3
+Gold weight : 0.6642752
+Pred : 
+1
+Pred weight : -0.08197229
+Loss : 1.0
+PROBLEM HERE
+578 : Four years ago, the bronze plaque was half the age of the wood plaque.
+Quantities : [[= 4.0 Unit :years ago Phrase: four years ago ]:(0, 14), [= 0.5 Unit : Phrase: half ]:(38, 42)]
+Quant of Interest: [= 4.0 Unit :years ago Phrase: four years ago ]:(0, 14)
+Units: years ago
+Gold : 
+3
+Gold weight : 0.7057129
+Pred : 
+1
+Pred weight : -0.10474763
+Loss : 1.0
+PROBLEM HERE
+582 : In 12 years, the limestone will be three times as old as the marble statue.
+Quantities : [[= 12.0 Unit : years   Phrase: 12 years ]:(3, 11), [= 3.0 Unit :times Phrase: three times ]:(35, 46)]
+Quant of Interest: [= 12.0 Unit : years   Phrase: 12 years ]:(3, 11)
+Units:  years  
+Gold : 
+2
+Gold weight : 0.24341978
+Pred : 
+1
+Pred weight : 0.13642281
+Loss : 1.0
+Accuracy : = 138.0 / 149 = 0.9261744966442953
+Strict Accuracy : =0.8607594936708861 incorrect 11 out of 79
+Mistakes : [[463, 566, 578, 443, 155, 562, 582, 281, 125, 147, 570]]
+25 : Each week he earns 190 dollars plus commission equal to 4 % of his sales.
+Quantities : [[= 190.0 Unit :US$ Phrase: 190 dollars plus commission equal ]:(19, 52), [= 0.04 Unit :percent Phrase: 4 % ]:(56, 59)]
+Quant of Interest: [= 0.04 Unit :percent Phrase: 4 % ]:(56, 59)
+Units: percent
+Gold : 
+1
+Gold weight : -0.17389351
+Pred : 
+0
+Pred weight : 0.17389339
+Loss : 1.0
+273 : 0.40 of one part exceeds 0.625 of the other part by 10.
+Quantities : [[= 0.4 Unit :   Phrase: 0.40 ]:(0, 4), [= 1.0 Unit :part Phrase: one part ]:(8, 16), [= 0.625 Unit :   Phrase: 0.625 ]:(25, 30), [= 10.0 Unit :   Phrase: 10 ]:(52, 54)]
+Quant of Interest: [= 1.0 Unit :part Phrase: one part ]:(8, 16)
+Units: part
+Gold : 
+0
+Gold weight : -0.014237689
+Pred : 
+1
+Pred weight : -0.012550192
+Loss : 1.0
+405 : Jordan 's salary is 1250 dollars a month plus a 5 % commission on all of his sales.
+Quantities : [[= 1250.0 Unit :US$ Phrase: 1250 dollars a month ]:(20, 40), [= 0.05 Unit :percent Phrase: 5 % commission ]:(48, 62)]
+Quant of Interest: [= 0.05 Unit :percent Phrase: 5 % commission ]:(48, 62)
+Units: percent
+Gold : 
+1
+Gold weight : -0.14818408
+Pred : 
+0
+Pred weight : 0.14818406
+Loss : 1.0
+999074 : T.Rowe Price raises regular quarterly dividend by 18% to 52 cents a share.
+Quantities : [[= 0.18 Unit :percent Phrase: 18 % ]:(50, 53), [= 0.52 Unit :US$ Phrase: 52 cents a share ]:(57, 73)]
+Quant of Interest: [= 0.18 Unit :percent Phrase: 18 % ]:(50, 53)
+Units: percent
+Gold : 
+1
+Gold weight : -0.09516321
+Pred : 
+0
+Pred weight : 0.09516324
+Loss : 1.0
+Accuracy : = 152.0 / 156 = 0.9743589743589743
+Strict Accuracy : =0.9493670886075949 incorrect 4 out of 79
+Mistakes : [[273, 999074, 25, 405]]
+41 : A bank teller has 54 5-dollar and 20-dollar bills in her cash drawer.
+Quantities : [[= 54.0 Unit :   Phrase: 54 ]:(18, 20), [= 5.0 Unit :US$ Phrase: 5 - dollar ]:(21, 29), [= 20.0 Unit :US$ Phrase: 20 - dollar ]:(34, 43)]
+Quant of Interest: [= 5.0 Unit :US$ Phrase: 5 - dollar ]:(21, 29)
+Units: US$
+Gold : 
+0
+Gold weight : -0.3955116
+Pred : 
+1
+Pred weight : 0.30850458
+Loss : 1.0
+41 : A bank teller has 54 5-dollar and 20-dollar bills in her cash drawer.
+Quantities : [[= 54.0 Unit :   Phrase: 54 ]:(18, 20), [= 5.0 Unit :US$ Phrase: 5 - dollar ]:(21, 29), [= 20.0 Unit :US$ Phrase: 20 - dollar ]:(34, 43)]
+Quant of Interest: [= 20.0 Unit :US$ Phrase: 20 - dollar ]:(34, 43)
+Units: US$
+Gold : 
+0
+Gold weight : -0.70705223
+Pred : 
+1
+Pred weight : 0.5960915
+Loss : 1.0
+57 : An investor will invest a total of 15000 dollars in 2 accounts , one paying 4 % annual simple interest and the other 3 %.
+Quantities : [[= 15000.0 Unit :US$ Phrase: 15000 dollars ]:(35, 48), [= 2.0 Unit : accounts   Phrase: 2 accounts ]:(52, 62), [= 0.04 Unit :percent Phrase: 4 % ]:(76, 79), [= 0.03 Unit :percent Phrase: 3 % ]:(117, 120)]
+Quant of Interest: [= 2.0 Unit : accounts   Phrase: 2 accounts ]:(52, 62)
+Units:  accounts  
+Gold : 
+0
+Gold weight : -0.06822519
+Pred : 
+1
+Pred weight : -0.047457136
+Loss : 1.0
+57 : An investor will invest a total of 15000 dollars in 2 accounts , one paying 4 % annual simple interest and the other 3 %.
+Quantities : [[= 15000.0 Unit :US$ Phrase: 15000 dollars ]:(35, 48), [= 2.0 Unit : accounts   Phrase: 2 accounts ]:(52, 62), [= 0.04 Unit :percent Phrase: 4 % ]:(76, 79), [= 0.03 Unit :percent Phrase: 3 % ]:(117, 120)]
+Quant of Interest: [= 0.03 Unit :percent Phrase: 3 % ]:(117, 120)
+Units: percent
+Gold : 
+0
+Gold weight : -0.040259324
+Pred : 
+1
+Pred weight : 0.040259313
+Loss : 1.0
+237 : One is 4 greater than 0.375 of the other.
+Quantities : [[= 1.0 Unit : Phrase: one ]:(0, 3), [> 4.0 Unit :  Phrase: 4 greater ]:(7, 16), [= 0.375 Unit :   Phrase: 0.375 ]:(22, 27)]
+Quant of Interest: [= 1.0 Unit : Phrase: one ]:(0, 3)
+Units: 
+Gold : 
+0
+Gold weight : -0.020686887
+Pred : 
+1
+Pred weight : -0.0032669343
+Loss : 1.0
+247 : Think of a number , half it and the result is 9.
+Quantities : [[= 0.5 Unit :it Phrase: half it ]:(20, 27), [= 9.0 Unit :   Phrase: 9 ]:(46, 47)]
+Quant of Interest: [= 0.5 Unit :it Phrase: half it ]:(20, 27)
+Units: it
+Gold : 
+1
+Gold weight : -0.10657847
+Pred : 
+0
+Pred weight : 0.10155189
+Loss : 1.0
+311 : 3 footballs and 1 soccer ball cost 155 dollars.
+Quantities : [[= 3.0 Unit : footballs   Phrase: 3 footballs ]:(0, 11), [= 1.0 Unit : soccer ball   Phrase: 1 soccer ball ]:(16, 29), [= 155.0 Unit :US$ Phrase: 155 dollars ]:(35, 46)]
+Quant of Interest: [= 1.0 Unit : soccer ball   Phrase: 1 soccer ball ]:(16, 29)
+Units:  soccer ball  
+Gold : 
+0
+Gold weight : -0.33844042
+Pred : 
+1
+Pred weight : 0.22275805
+Loss : 1.0
+PROBLEM HERE
+576 : Four years ago, the china plate was three times the age of the glass plate. 
+Quantities : [[= 4.0 Unit :years ago Phrase: four years ago ]:(0, 14), [= 3.0 Unit :times Phrase: three times ]:(36, 47)]
+Quant of Interest: [= 4.0 Unit :years ago Phrase: four years ago ]:(0, 14)
+Units: years ago
+Gold : 
+3
+Gold weight : 0.64712405
+Pred : 
+1
+Pred weight : -0.18121645
+Loss : 1.0
+PROBLEM HERE
+592 : Four years ago, Elli was 3 times as old as Dan. 
+Quantities : [[= 4.0 Unit :years ago Phrase: four years ago ]:(0, 14), [= 3.0 Unit : times   Phrase: 3 times ]:(25, 32)]
+Quant of Interest: [= 4.0 Unit :years ago Phrase: four years ago ]:(0, 14)
+Units: years ago
+Gold : 
+3
+Gold weight : 0.610481
+Pred : 
+1
+Pred weight : -0.15266837
+Loss : 1.0
+999082 : Four-week claims average declines 6,500 to 283,250.
+Quantities : [[= 4.0 Unit :week claims Phrase: four - week claims ]:(0, 16), [= 6500.0 Unit :   Phrase: 6500 ]:(34, 39), [= 283250.0 Unit :   Phrase: 283250 ]:(34, 39)]
+Quant of Interest: [= 4.0 Unit :week claims Phrase: four - week claims ]:(0, 16)
+Units: week claims
+Gold : 
+0
+Gold weight : -0.41433308
+Pred : 
+1
+Pred weight : 0.32732603
+Loss : 1.0
+Accuracy : = 167.0 / 177 = 0.943502824858757
+Strict Accuracy : =0.9 incorrect 8 out of 80
+Mistakes : [[999082, 576, 592, 237, 311, 247, 57, 41]]
+5-fold CV : 0.9141772151898735

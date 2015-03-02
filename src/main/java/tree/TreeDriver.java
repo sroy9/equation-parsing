@@ -1,6 +1,7 @@
 package tree;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,7 +47,7 @@ public class TreeDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/tree_"+testFold+"_"+suffix+".save", train, testFold);
+//		trainModel("models/tree_"+testFold+"_"+suffix+".save", train, testFold);
 		return testModel("models/tree_"+testFold+"_"+suffix+".save", test);
 	}
 	
@@ -101,6 +102,7 @@ public class TreeDriver {
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
+		System.out.println("Mistakes : "+Arrays.asList(incorrect));
 		return (acc/sp.instanceList.size());
 	}
 	
@@ -160,6 +162,6 @@ public class TreeDriver {
 			System.out.println("1 parameter need");
 			System.exit(0);
 		}
-		TreeDriver.doTrainTest(0, suffix);
+		TreeDriver.crossVal(suffix);
 	}
 }
