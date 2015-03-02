@@ -1,6 +1,7 @@
 package template;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class TemplateDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/template_"+testFold+"_"+suffix+".save", train, testFold);
+//		trainModel("models/template_"+testFold+"_"+suffix+".save", train, testFold);
 		return testModel("models/template_"+testFold+"_"+suffix+".save", test);
 	}
 	
@@ -109,6 +110,7 @@ public class TemplateDriver {
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
+		System.out.println("Mistakes : "+Arrays.asList(incorrect));
 		return (acc/sp.instanceList.size());
 	}
 	

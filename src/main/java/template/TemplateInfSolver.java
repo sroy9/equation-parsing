@@ -57,10 +57,10 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<TemplateY>() {};
 		MinMaxPriorityQueue<Pair<TemplateY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator)
-				.maximumSize(2000000).create();
+				.maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<TemplateY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator)
-				.maximumSize(2000000).create();
+				.maximumSize(200).create();
 //		MinMaxPriorityQueue<Pair<TemplateY, Double>> shortBeam = 
 //				MinMaxPriorityQueue.orderedBy(pairComparator)
 //				.maximumSize(10).create();
@@ -76,7 +76,7 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 				continue;
 			}
 			beam1.add(new Pair<TemplateY, Double>(template, 0.0 
-//					+ wv.dotProduct(featGen.getGlobalFeatureVector(prob, template))
+					+ wv.dotProduct(featGen.getGlobalFeatureVector(prob, template))
 					));
 		}
 		

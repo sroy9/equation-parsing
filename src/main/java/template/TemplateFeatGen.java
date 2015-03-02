@@ -53,7 +53,7 @@ public class TemplateFeatGen extends AbstractFeatureGenerator implements
 //		System.out.println("X : "+x.problemIndex + " Quants : "+Arrays.asList(x.quantities));
 //		System.out.println("Y : "+y);
 		List<String> features = new ArrayList<>();
-//		features.addAll(globalFeatures(x, y));
+		features.addAll(globalFeatures(x, y));
 		features.addAll(varTokenFeatures(x, y));
 		features.addAll(numFeatures(x, y));
 		return features;
@@ -75,18 +75,18 @@ public class TemplateFeatGen extends AbstractFeatureGenerator implements
 	public static List<String> varTokenFeatures(TemplateX x, TemplateY y) {
 		List<String> features = new ArrayList<>();
 		List<String> unigrams = FeatGen.getUnigrams(x.ta);
-		for(String key : y.varTokens.keySet()) {
-			int index = y.varTokens.get(key).get(0);
-			features.add("VarToken_"+unigrams.get(index));
-			if(index-1>0) {
-				features.add("VarToken_-1_"+unigrams.get(index-1)); 
-				features.add("VarToken_"+unigrams.get(index-1)+"_"+unigrams.get(index));
-			}
-			if(index+1<x.ta.size()) {
-				features.add("VarToken_+1_"+unigrams.get(index+1)); 
-				features.add("VarToken_"+unigrams.get(index)+"_"+unigrams.get(index+1));
-			}
-		}
+//		for(String key : y.varTokens.keySet()) {
+//			int index = y.varTokens.get(key).get(0);
+//			features.add("VarToken_"+unigrams.get(index));
+//			if(index-1>0) {
+//				features.add("VarToken_-1_"+unigrams.get(index-1)); 
+//				features.add("VarToken_"+unigrams.get(index-1)+"_"+unigrams.get(index));
+//			}
+//			if(index+1<x.ta.size()) {
+//				features.add("VarToken_+1_"+unigrams.get(index+1)); 
+//				features.add("VarToken_"+unigrams.get(index)+"_"+unigrams.get(index+1));
+//			}
+//		}
 		features.addAll(varTokenFeaturesCopy(x, y));
 		return features;
 		
@@ -94,7 +94,7 @@ public class TemplateFeatGen extends AbstractFeatureGenerator implements
 	
 	public static List<String> numFeatures(TemplateX x, TemplateY y) {
 		List<String> features = new ArrayList<>();
-//		List<String> unigrams = FeatGen.getUnigrams(x.ta);
+		List<String> unigrams = FeatGen.getUnigrams(x.ta);
 		for(Node leaf : y.equation.root.getLeaves()) {
 			if(leaf.label.equals("VAR")) continue;
 			QuantSpan qs = null;
@@ -122,12 +122,12 @@ public class TemplateFeatGen extends AbstractFeatureGenerator implements
 			if(Tools.getUnit(qs).contains("US$")) {
 				features.add(prefix+"_Unit_US$");
 			}
-			// Some tokens to the left
+////			 Some tokens to the left
 //			for(int i=leaf.tokenIndex-1; i>Math.max(0, leaf.tokenIndex-5); --i) {
 //				features.add(prefix+"_TokenLeft_"+unigrams.get(i));
 //				features.add(prefix+"_TokenLeft_"+unigrams.get(i)+"_"+unigrams.get(i+1));
 //			}
-			// Some tokens to the right
+////			 Some tokens to the right
 //			for(int i=leaf.tokenIndex+1; i<Math.min(x.ta.size()-1, leaf.tokenIndex+3); ++i) {
 //				features.add(prefix+"_TokenRight_"+unigrams.get(i));
 //				features.add(prefix+"_TokenRight_"+unigrams.get(i)+"_"+unigrams.get(i+1));

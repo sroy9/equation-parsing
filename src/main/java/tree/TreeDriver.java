@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import reader.DocReader;
+import structure.Equation;
 import structure.Node;
 import structure.SimulProb;
 import utils.Params;
@@ -85,7 +86,9 @@ public class TreeDriver {
 			if(goldWt > predWt) {
 				System.out.println("PROBLEM HERE");
 			}
-			if(TreeY.getLoss(gold, pred) < 0.0001) {
+//			if(TreeY.getLoss(gold, pred) < 0.0001) {
+			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.001 || 
+				Equation.getLoss(gold.equation, pred.equation, false) < 0.001) {
 				acc += 1;
 			} else {
 				incorrect.add(prob.problemIndex);
