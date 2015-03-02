@@ -49,10 +49,16 @@ public class RelInfSolver extends AbstractInferenceSolver implements
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
 		RelX prob = (RelX) x;
-		double score0 = wv.dotProduct(featGen.getFeatureVector(prob, new RelY(0)));
-		double score1 = wv.dotProduct(featGen.getFeatureVector(prob, new RelY(1)));
-		if(score0 > score1) return new RelY(0);
-		else return new RelY(1);
+		double bestScore = -Double.MAX_VALUE;
+		int relation = -1;
+		for(int i=0; i<4; ++i) {
+			double score = wv.dotProduct(featGen.getFeatureVector(prob, new RelY(i)));
+			if(score > bestScore) {
+				bestScore = score;
+				relation = i;
+			}
+		}
+		return new RelY(relation);
 	}
 	
 }
