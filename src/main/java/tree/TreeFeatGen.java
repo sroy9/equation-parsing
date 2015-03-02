@@ -56,7 +56,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 	}
 
 	public static List<String> getFeatures(TreeX x, TreeY y) {
-//		System.out.println("Features needed for "+y);
 		List<String> features = new ArrayList<>();
 		features.addAll(varTokenFeatures(x, y));
 		for(Node subNode : y.equation.root.getAllSubNodes()) {

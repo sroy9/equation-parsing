@@ -1,6 +1,7 @@
 package tree;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import reader.DocReader;
+import structure.Equation;
 import structure.Node;
 import structure.SimulProb;
 import utils.Params;
@@ -46,7 +48,7 @@ public class TreeDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/tree_"+testFold+"_"+suffix+".save", train, testFold);
+//		trainModel("models/tree_"+testFold+"_"+suffix+".save", train, testFold);
 		return testModel("models/tree_"+testFold+"_"+suffix+".save", test);
 	}
 	
@@ -84,7 +86,9 @@ public class TreeDriver {
 			if(goldWt > predWt) {
 				System.out.println("PROBLEM HERE");
 			}
-			if(TreeY.getLoss(gold, pred) < 0.0001) {
+//			if(TreeY.getLoss(gold, pred) < 0.0001) {
+			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.001 || 
+				Equation.getLoss(gold.equation, pred.equation, false) < 0.001) {
 				acc += 1;
 			} else {
 				incorrect.add(prob.problemIndex);
@@ -101,6 +105,7 @@ public class TreeDriver {
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
+		System.out.println("Mistakes : "+Arrays.asList(incorrect));
 		return (acc/sp.instanceList.size());
 	}
 	
@@ -160,6 +165,6 @@ public class TreeDriver {
 			System.out.println("1 parameter need");
 			System.exit(0);
 		}
-		TreeDriver.doTrainTest(0, suffix);
+		TreeDriver.crossVal(suffix);
 	}
 }

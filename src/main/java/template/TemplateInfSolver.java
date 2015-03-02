@@ -61,75 +61,50 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 		MinMaxPriorityQueue<Pair<TemplateY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator)
 				.maximumSize(200).create();
+//		MinMaxPriorityQueue<Pair<TemplateY, Double>> shortBeam = 
+//				MinMaxPriorityQueue.orderedBy(pairComparator)
+//				.maximumSize(10).create();
 		
-		int maxNumSlots = 0;
 		for(TemplateY template : templates) {
-			beam1.add(new Pair<TemplateY, Double>(template, 0.0));
 			int quantCount = 0;
 			for(Node node : template.equation.root.getLeaves()) {
 				if(node.label.equals("NUM")) {
 					quantCount++;
 				}
 			}
-			if(quantCount > prob.quantities.size()) {
+			if(quantCount != prob.relevantQuantIndices.size()) {
 				continue;
 			}
-			if(template.equation.root.getLeaves().size() > maxNumSlots) {
-				maxNumSlots = template.equation.root.getLeaves().size();
-			}
+			beam1.add(new Pair<TemplateY, Double>(template, 0.0 
+					+ wv.dotProduct(featGen.getGlobalFeatureVector(prob, template))
+					));
 		}
 		
-		// Fill up remaining slots
-		for(int i=0; i<maxNumSlots; ++i) {
-			for(Pair<TemplateY, Double> pair : beam1) {
-				TemplateY y = pair.getFirst();
-				List<Node> leaves = y.equation.root.getLeaves();
-				if(leaves.size() <= i) {
-					beam2.add(pair);
-				} else if(leaves.get(i).label.equals("NUM")) {
-					for(int j=0; j<prob.quantities.size(); ++j) {
-						boolean allow = true;
-						for(int k=0; k<i; ++k) {
-							Node node = y.equation.root.getLeaves().get(k);
-							if(Tools.safeEquals(Tools.getValue(prob.quantities.get(j)), node.value)) {
-								allow = false;
-								break;
-							}
-						}
-						if(allow) {
-							TemplateY yNew = new TemplateY(y);
-							leaves = yNew.equation.root.getLeaves();
-							leaves.get(i).value = Tools.getValue(prob.quantities.get(j));
-							leaves.get(i).tokenIndex = prob.ta.getTokenIdFromCharacterOffset(
-									prob.quantities.get(j).start);
-							beam2.add(new Pair<TemplateY, Double>(yNew, pair.getSecond() + 
-									wv.dotProduct(featGen.getAlignmentFeatureVector(
-											prob, yNew, leaves, i))));
-						}
-					}
-				} else {
-					for(int j=0; j<prob.ta.size(); ++j) {
-						if(prob.posTags.get(j).getLabel().startsWith("N") || 
-								prob.posTags.get(j).getLabel().startsWith("V") ||
-								prob.posTags.get(j).getLabel().startsWith("J") ||
-								KnowledgeBase.specialVarTokens.contains(
-										prob.ta.getToken(j).toLowerCase())) {
-							TemplateY yNew = new TemplateY(y);
-							leaves = yNew.equation.root.getLeaves();
-							leaves.get(i).tokenIndex = j;
-							yNew.varTokens.put(leaves.get(i).varId, Arrays.asList(j));
-							beam2.add(new Pair<TemplateY, Double>(yNew, pair.getSecond() + 
-									wv.dotProduct(featGen.getAlignmentFeatureVector(
-											prob, yNew, leaves, i))));
-						}
-					}
-				}
+//		System.out.println("After just adding : "+beam1.size());
+		for(Pair<TemplateY, Double> pair : beam1) {
+			for(TemplateY y : enumerateInstantiationsVars(prob, pair.getFirst())) {
+				beam2.add(new Pair<TemplateY, Double>(y, pair.getSecond() 
+						+ wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))
+						));
 			}
-			beam1.clear();
-			beam1.addAll(beam2);
-			beam2.clear();
+//			beam2.addAll(shortBeam);
+//			shortBeam.clear();
 		}
-		return beam1.element().getFirst();
+//		System.out.println("After vars : "+beam2.size());
+		beam1.clear();
+		beam1.addAll(beam2);
+		beam2.clear();
+		for(Pair<TemplateY, Double> pair : beam1) {
+			for(TemplateY y : enumerateInstantiationsNums(prob, pair.getFirst())) {
+				beam2.add(new Pair<TemplateY, Double>(y, pair.getSecond() + 
+						wv.dotProduct(featGen.getNumFeatureVector(prob, y))));
+			}
+//			beam2.addAll(shortBeam);
+//			shortBeam.clear();
+		}
+//		System.out.println("Inference returns : "+beam2.element().getFirst());
+		if(goldStructure == null && beam2.isEmpty()) return new TemplateY();
+		return beam2.element().getFirst();
 	}
 	
 	public TemplateY getLatentBestStructure(
@@ -156,8 +131,7 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 						}
 					}
 				}
-				double score = wv.dotProduct(
-						featGen.getFeatureVector(x, yNew));
+				double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
 				if(score > bestScore) {
 					best = yNew;
 				}
@@ -200,30 +174,77 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 		return best;
 	}
 	
-	public List<TemplateY> enumerateInstantiations(TemplateX x, TemplateY y) {
+	public List<TemplateY> enumerateInstantiationsVars(TemplateX x, TemplateY seed) {
 		List<TemplateY> instantiations = new ArrayList<TemplateY>();
-		instantiations.add(y);
-		List<TemplateY> tmpList = new ArrayList<TemplateY>();
-		List<Node> leaves = y.equation.root.getLeaves();
-		int numLeaves = leaves.size();
+		List<Integer> varIndex = new ArrayList<Integer>();
+		for(int i=0; i<seed.equation.root.getLeaves().size(); ++i) {
+			Node node = seed.equation.root.getLeaves().get(i);
+			if(node.label.equals("VAR")) {
+				varIndex.add(i);
+			}
+		}
+		if(varIndex.size()!=1 && varIndex.size()!=2) {
+			System.out.println("ISSUE IN EnumerateInstNum");
+		}
 		
-		for(int i=0; i<numLeaves; ++i) {
-			for(TemplateY template : instantiations) {
-				if(leaves.get(i).label.equals("VAR")) { 
-					for(int j=0; j<x.ta.size(); ++j) {
+		if(varIndex.size() == 1) {
+			for(int i=0; i<x.ta.size(); ++i) {
+				if(x.posTags.get(i).getLabel().startsWith("N") || 
+						x.posTags.get(i).getLabel().startsWith("V") ||
+						x.posTags.get(i).getLabel().startsWith("J") ||
+					KnowledgeBase.specialVarTokens.contains(
+							x.ta.getToken(i).toLowerCase())) {
+					TemplateY yNew = new TemplateY(seed);
+					yNew.varTokens.put("V1", new ArrayList<Integer>());
+					yNew.varTokens.get("V1").add(i);
+					instantiations.add(yNew);
+				}
+			}
+		}
+		
+		if(varIndex.size() == 2) {
+			for(int i=0; i<x.ta.size(); ++i) {
+				if(x.posTags.get(i).getLabel().startsWith("N") || 
+						x.posTags.get(i).getLabel().startsWith("V") ||
+						x.posTags.get(i).getLabel().startsWith("J") ||
+						KnowledgeBase.specialVarTokens.contains(
+								x.ta.getToken(i).toLowerCase())) {
+					for(int j=i; j<x.ta.size(); ++j) {
 						if(x.posTags.get(j).getLabel().startsWith("N") || 
 								x.posTags.get(j).getLabel().startsWith("V") ||
 								x.posTags.get(j).getLabel().startsWith("J") ||
 								KnowledgeBase.specialVarTokens.contains(
 										x.ta.getToken(j).toLowerCase())) {
-							TemplateY yNew = new TemplateY(template);
-							yNew.equation.root.getLeaves().get(i).tokenIndex = j;
-							tmpList.add(yNew);
+							TemplateY yNew = new TemplateY(seed);
+							yNew.varTokens.put("V1", new ArrayList<Integer>());
+							yNew.varTokens.put("V2", new ArrayList<Integer>());
+							yNew.varTokens.get("V1").add(i);
+							yNew.varTokens.get("V2").add(j);
+							instantiations.add(yNew);
 						}
 					}
 				}
-				if(leaves.get(i).label.equals("NUM")) {
-					for(int j=0; j<x.quantities.size(); ++j) {
+			}
+		}
+//		System.out.println("EnumerateVar returns "+instantiations.size());
+		return instantiations;
+	}
+ 	
+	
+	
+	public List<TemplateY> enumerateInstantiationsNums(TemplateX x, TemplateY y) {
+		List<TemplateY> instantiations = new ArrayList<TemplateY>();
+		instantiations.add(y);
+		List<TemplateY> tmpList = new ArrayList<TemplateY>();
+		List<Node> leaves = y.equation.root.getLeaves();
+		int numLeaves = leaves.size();
+//		System.out.println("Enumerate template : "+y);
+		
+		for(int i=0; i<numLeaves; ++i) {
+			if(leaves.get(i).label.equals("NUM")) {
+				for(TemplateY template : instantiations) {
+//					for(int j=0; j<x.quantities.size(); ++j) {
+					for(Integer j : x.relevantQuantIndices) {
 						TemplateY yNew = new TemplateY(template);
 						boolean allow = true;
 						for(int k=0; k<i; ++k) {
@@ -239,14 +260,16 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 							yNew.equation.root.getLeaves().get(i).value = 
 									Tools.getValue(x.quantities.get(j));
 							tmpList.add(yNew);
+//							System.out.println("Enumerated : "+yNew);
 						}
 					}
 				}
+				instantiations.clear();
+				instantiations.addAll(tmpList);
+				tmpList.clear();
 			}
-			instantiations.clear();
-			instantiations.addAll(tmpList);
-			tmpList.clear();
 		}
+//		System.out.println("EnumerateNum returns "+instantiations.size());
 		return instantiations;
 	}
 	

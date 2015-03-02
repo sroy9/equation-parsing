@@ -1,6 +1,7 @@
 package relevance;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,8 +46,8 @@ public class RelDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/tree"+testFold+".save", train, testFold);
-		return testModel("models/tree"+testFold+".save", test);
+//		trainModel("models/rel"+testFold+".save", train, testFold);
+		return testModel("models/rel"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
@@ -105,6 +106,7 @@ public class RelDriver {
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
 		System.out.println("Strict Accuracy : ="+ (1-1.0*incorrect.size()/total.size()) + " incorrect "+ incorrect.size() + " out of "+total.size());
+		System.out.println("Mistakes : "+Arrays.asList(incorrect));
 		return (1-1.0*incorrect.size()/total.size());
 	}
 	
