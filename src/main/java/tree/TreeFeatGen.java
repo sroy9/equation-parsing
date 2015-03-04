@@ -44,12 +44,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 
-	public IFeatureVector getKBFeatureVector(
-			TreeX x, Map<String, List<Integer>> varTokens, Node node) {
-		List<String> features = kbFeatures(x, varTokens, node);
-		return FeatGen.getFeatureVectorFromList(features, lm);
-	}
-
 	public IFeatureVector getVarTokenFeatureVector(TreeX x, TreeY y) {
 		List<String> features = varTokenFeatures(x, y);
 		return FeatGen.getFeatureVectorFromList(features, lm);
@@ -152,62 +146,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		}
 		return features;
 	}
-
-	public static List<String> kbFeatures(
-			TreeX x, Map<String, List<Integer>> varTokens, Node node) {
-		List<String> features = new ArrayList<>();
-		String prefix = node.label;
-		IntPair span = node.getSpanningTokenIndices();
-		IntPair spanChild1 = node.children.get(0).getSpanningTokenIndices();
-		IntPair spanChild2 = node.children.get(1).getSpanningTokenIndices();
-		int leftStart = Math.min(spanChild1.getFirst(), spanChild2.getFirst());
-		int rightEnd = Math.max(spanChild1.getSecond(), spanChild2.getSecond());
-		int midStart = Math.min(spanChild1.getSecond(), spanChild2.getSecond());
-		int midEnd = Math.max(spanChild1.getFirst(), spanChild2.getFirst());
-		Set<Integer> triggerLocs  = new HashSet<Integer>();
-		for(Integer index : x.relevantQuantIndices) {
-			triggerLocs.add(x.ta.getTokenIdFromCharacterOffset(
-					x.quantities.get(index).start));
-		}
-		for(String key : varTokens.keySet()) {
-			triggerLocs.addAll(varTokens.get(key));
-		}
-		
-		String midString = "";
-		for(int i=midStart+1; i<midEnd; ++i) {
-			if(triggerLocs.contains(i)) break;
-			midString += x.ta.getToken(i) + " ";
-		}
-		
-		String startString = "";
-		for(int i=leftStart-1; i>=0; --i) {
-			if(triggerLocs.contains(i)) break;
-			startString = x.ta.getToken(i) + " " + startString;
-		}
-		
-		String endString = "";
-		for(int i=rightEnd+1; i<x.ta.size(); ++i) {
-			if(triggerLocs.contains(i)) break;
-			endString += x.ta.getToken(i) + " ";
-		}
-		
-		for(String key : KnowledgeBase.mathNodeMap.keySet()) {
-			for(String term : KnowledgeBase.mathNodeMap.get(key)) {
-				if(startString.contains(term)) {
-					features.add(prefix+"_StartStringKB_"+key);
-				}
-				if(midString.contains(term)) {
-					features.add(prefix+"_MidStringKB_"+key);
-				}
-				if(endString.contains(term)) {
-					features.add(prefix+"_EndStringKB_"+key);
-				}
-			}
-		}
-		
-		return features;
-	}
-	
 	
 	public static List<String> varTokenFeatures(TreeX x, TreeY y) {
 		List<String> features = new ArrayList<>();
