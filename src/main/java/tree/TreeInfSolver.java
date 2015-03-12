@@ -26,6 +26,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	private TreeFeatGen featGen;
+	public MinMaxPriorityQueue<Pair<TreeY, Double>> beam2;
 
 	public TreeInfSolver(TreeFeatGen featGen) 
 			throws Exception {
@@ -57,8 +58,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator)
 				.maximumSize(50).create();
-		MinMaxPriorityQueue<Pair<TreeY, Double>> beam2 = 
-				MinMaxPriorityQueue.orderedBy(pairComparator)
+		beam2 = MinMaxPriorityQueue.orderedBy(pairComparator)
 				.maximumSize(50).create();
 //		System.out.println("InfSolver called for problem : "+prob.problemIndex);
 		

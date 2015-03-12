@@ -15,6 +15,7 @@ import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLParameters;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
@@ -72,7 +73,7 @@ public class TreeDriver {
 		SLModel model = SLModel.loadModel(modelPath);
 		Set<Integer> incorrect = new HashSet<>();
 		Set<Integer> total = new HashSet<>();
-		double acc = 0.0;
+		double acc = 0.0, beamAcc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			TreeX prob = (TreeX) sp.instanceList.get(i);
 			TreeY gold = (TreeY) sp.goldStructureList.get(i);
@@ -86,9 +87,18 @@ public class TreeDriver {
 			if(goldWt > predWt) {
 				System.out.println("PROBLEM HERE");
 			}
-//			if(TreeY.getLoss(gold, pred) < 0.0001) {
-			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.001 || 
-				Equation.getLoss(gold.equation, pred.equation, false) < 0.001) {
+			// Testing if correct answer is in top k
+			for(int j=0; j<20; ++j) {
+				Pair<TreeY, Double> pair = ((TreeInfSolver)model.infSolver).beam2.poll();
+				if(pair == null) break;
+				if(TreeY.getLoss(gold, pair.getFirst()) < 0.0001) {
+					beamAcc += 1.0;
+					break;
+				}
+			}
+			if(TreeY.getLoss(gold, pred) < 0.0001) {
+//			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.001 || 
+//				Equation.getLoss(gold.equation, pred.equation, false) < 0.001) {
 				acc += 1;
 			} else {
 				incorrect.add(prob.problemIndex);
@@ -105,6 +115,8 @@ public class TreeDriver {
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
+		System.out.println("Beam Accuracy : = " + beamAcc + " / " + sp.instanceList.size() 
+				+ " = " + (beamAcc/sp.instanceList.size()));
 		System.out.println("Mistakes : "+Arrays.asList(incorrect));
 		return (acc/sp.instanceList.size());
 	}
