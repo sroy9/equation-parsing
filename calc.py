@@ -19,10 +19,11 @@ def infixToPrefix(infixexpr):
         else:
             mystr.append(c)
     # print "reverse is ",''.join(mystr)
-    pp=infixToPostfix(''.join(mystr))
+    pp=infixToPostfix(mystr)
+    # print "pp",pp
     return pp[::-1]
 
-def infixToPostfix(infixexpr):
+def infixToPostfix(tokenList):
     # print "infix was", infixexpr
     prec = {}
     prec["*"] = 3
@@ -33,7 +34,7 @@ def infixToPostfix(infixexpr):
     prec["="]=0
     opStack = Stack()
     postfixList = []
-    tokenList = infixexpr.split()
+    # tokenList = infixexpr.split()
 
     for token in tokenList:
         if token not in prec and token!=')':
@@ -55,12 +56,11 @@ def infixToPostfix(infixexpr):
 
     while not opStack.isEmpty():
         postfixList.append(opStack.pop())
-    return " ".join(postfixList)
+    return postfixList
 
 def make_lambda(expr):
-    print "input is",expr
-    expr=expr.replace(""," ")[1:-1]
-    prefixExpr=infixToPrefix(expr)    
+    print "input is"," ".join(expr)
+    # expr=expr.replace(""," ")[1:-1]
     prec = {}
     prec["*"] = 3
     prec["/"] = 3
@@ -68,7 +68,13 @@ def make_lambda(expr):
     prec["-"] = 2
     prec["("] = 1
     prec["="]=0
-    tokenList = prefixExpr.split()
+    name={}
+    name["*"]="lambda.mult "
+    name["+"]="lambda.add "
+    name["-"]="lambda.sub "
+    name["/"]="lambda.div "
+    name["="]="lambda.eq "
+    tokenList = infixToPrefix(expr)
     opStack = Stack(tokenList)
     bufferSt = Stack()
     while not opStack.isEmpty():
@@ -76,37 +82,35 @@ def make_lambda(expr):
         if tok in prec:
             arg1=bufferSt.pop()
             arg2=bufferSt.pop()
-            bufferSt.push(" ("+tok+arg1+" "+arg2+") ")
+            bufferSt.push(" ("+name[tok]+arg1+" "+arg2+") ")
         else:
             bufferSt.push(tok)
     out = bufferSt[0]
-    out = out.replace("*","lambda.mult ")
-    out = out.replace("+","lambda.add ")
-    out = out.replace("-","lambda.sub ")
-    out = out.replace("/","lambda.div ")
-    out = out.replace("=","lambda.eq ")
     print out
-            # print(infixToPostfix("A * B + C * D"))
+
+
+# print(infixToPostfix("A * B + C * D"))
+
 # print(infixToPostfix("( A + B ) * C - ( D - E ) * ( F + G )"))
 # print(infixToPrefix("A + ( B * C - ( D / E - F ) * G ) * H"))
 # print(infixToPrefix("A * B = C * D"))
 # print(infixToPrefix("A * B + C * D"))
 # print(infixToPrefix("( A + B ) * C - ( D - E ) * ( F + G )"))
 # print(infixToPrefix("( A + B ) * C = ( D - E ) * ( F + G )"))
-make_lambda("A * B = C * D")
-make_lambda("( A + B ) * C = ( D - E ) * ( F + G )")
-make_lambda("X=2*Y-1")
-# make_lambda("2*X-(-8)=(-12)")
 
 if __name__=="__main__":
-    lines=open("equationparse1.txt").readlines()
-    print len(lines)
+    make_lambda("A * B = C * D".split())
+    make_lambda("( A + B ) * C = ( D - E ) * ( F + G )".split())
+    make_lambda("X = 2 * Y - 1".split())
+    make_lambda("2 * X - ( -8 ) = ( -12 )".split())
+    # lines=open("data/equationparse1.txt").readlines()
+    # print len(lines)
     # lines=lines[1:]
     # for i in islice(lines,0,len(lines),2):
     #     print i,
-    for line in lines:
-        if "=" in line:
-            line=line.strip()
-            line=line.replace("V1","x")
-            line=line.replace("V2","y")
-            make_lambda(line)
+    # for line in lines:
+    #     if "=" in line:
+    #         line=line.strip()
+    #         line=line.replace("V1","x")
+    #         line=line.replace("V2","y")
+    #         make_lambda(line)
