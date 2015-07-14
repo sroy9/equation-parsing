@@ -1,16 +1,6 @@
 package structure;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.core.datastructures.Pair;
-import utils.Tools;
-
 // Holds canonical equations
 // Ax +/- By +/- C = 0
 // where A = \product A_i, B = \product B_i and C = \product C_i
@@ -32,6 +22,10 @@ public class Equation implements Serializable {
 	// Assumes no bracketed addition 2*(x+y)
 	public Equation(String eqString) {
 		root = Node.parseNode(eqString);
+	}
+	
+	public String getLambdaExpression() {
+		return root.getLambdaExpression();
 	}
 	
 	public String toString() {

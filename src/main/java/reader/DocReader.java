@@ -1,24 +1,20 @@
 package reader;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.io.FileUtils;
 
-import curator.NewCachingCurator;
-import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
-import structure.Equation;
 import structure.Node;
 import structure.SimulProb;
 import utils.Params;
@@ -28,7 +24,6 @@ public class DocReader {
 	
 	public static void createBratFiles(String eqParseFile) throws Exception {
 		String lines[] = FileUtils.readFileToString(new File(eqParseFile)).split("\n");
-		
 		for(int i=0; i<lines.length; ++i) {
 			if(lines[i].startsWith("#")) continue;
 			TextAnnotation ta = Tools.curator.getTextAnnotationWithSingleView(
@@ -170,6 +165,24 @@ public class DocReader {
 			folds.add(fold);
 		}
 		return folds;
+	}
+	
+	public static void createLambdaExpForSPF() throws Exception {
+		List<SimulProb> simulProbList = 
+				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
+		List<List<Integer>> folds = extractFolds();
+		int count = 0;
+		for(List<Integer> fold : folds) {
+			BufferedWriter bw = new BufferedWriter(new FileWriter(
+					new File("fold"+(count++)+".ccg")));
+			for(SimulProb prob : simulProbList) {
+				if(fold.contains(prob.index)) {
+					bw.write(prob.text+"\n");
+					bw.write(prob.equation.getLambdaExpression()+"\n\n");
+				}
+			}
+			bw.close();
+		}
 	}
 	
 	public static void main(String args[]) throws Exception {
