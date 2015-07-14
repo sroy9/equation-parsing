@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
@@ -21,6 +23,8 @@ import utils.Params;
 import utils.Tools;
 
 public class DocReader {
+	
+	public static Set<String> preds = new HashSet<>();
 	
 	public static void createBratFiles(String eqParseFile) throws Exception {
 		String lines[] = FileUtils.readFileToString(new File(eqParseFile)).split("\n");
@@ -183,6 +187,12 @@ public class DocReader {
 			}
 			bw.close();
 		}
+		BufferedWriter bw = new BufferedWriter(new FileWriter(
+				new File("geo.consts.ont")));
+		for(String cons : DocReader.preds) {
+			bw.write(cons.trim()+"\n");
+		}
+		bw.close();
 	}
 	
 	public static void main(String args[]) throws Exception {

@@ -3,8 +3,10 @@ package structure;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
+import reader.DocReader;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 
@@ -41,7 +43,11 @@ public class Node implements Serializable {
 	}
 	
 	public String getLambdaExpression() {
-		if(children.size() == 0) return (label.equals("NUM") ? value : varId)+":n";
+		if(children.size() == 0) {
+			if(DocReader.preds == null) DocReader.preds = new HashSet<>();
+			DocReader.preds.add((label.equals("NUM") ? value : varId)+":n");
+			return (label.equals("NUM") ? value : varId)+":n";
+		}
 		if(label.equals("ADD")) return "(add:<n,<n,n>> "+ children.get(0).getLambdaExpression()
 				+ " " + children.get(1).getLambdaExpression() + ")";
 		if(label.equals("SUB")) return "(sub:<n,<n,n>> "+ children.get(0).getLambdaExpression() 

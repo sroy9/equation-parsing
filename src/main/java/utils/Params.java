@@ -20,7 +20,6 @@ public class Params {
 //					"/shared/shelley/wieting2/output_text/ltw_text.txt",
 //					"/shared/shelley/wieting2/output_text/nyt_text.txt",  
 					"/shared/shelley/wieting2/output_text/xin_text.txt");
-
 	
 	public static void main(String args[]) {
 		
