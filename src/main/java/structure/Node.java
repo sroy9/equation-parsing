@@ -42,16 +42,16 @@ public class Node implements Serializable {
 	
 	public String getLambdaExpression() {
 		if(children.size() == 0) return (label.equals("NUM") ? value : varId)+":n";
-		if(label.equals("ADD")) return "(add:<n,<n,n>> "+ children.get(0).toString() 
-				+ " " + children.get(1).toString() + ")";
-		if(label.equals("SUB")) return "(sub:<n,<n,n>> "+ children.get(0).toString() 
-				+ " " + children.get(1).toString() + ")";
-		if(label.equals("MUL")) return "(mul:<n,<n,n>> "+ children.get(0).toString() 
-				+ " " + children.get(1).toString() + ")";
-		if(label.equals("DIV")) return "(div:<n,<n,n>> "+ children.get(0).toString() 
-				+ " " + children.get(1).toString() + ")";
-		if(label.equals("EQ")) return "(eq:<n,<n,t>> "+ children.get(0).toString() 
-				+ " " + children.get(1).toString() + ")";
+		if(label.equals("ADD")) return "(add:<n,<n,n>> "+ children.get(0).getLambdaExpression()
+				+ " " + children.get(1).getLambdaExpression() + ")";
+		if(label.equals("SUB")) return "(sub:<n,<n,n>> "+ children.get(0).getLambdaExpression() 
+				+ " " + children.get(1).getLambdaExpression() + ")";
+		if(label.equals("MUL")) return "(mul:<n,<n,n>> "+ children.get(0).getLambdaExpression() 
+				+ " " + children.get(1).getLambdaExpression() + ")";
+		if(label.equals("DIV")) return "(div:<n,<n,n>> "+ children.get(0).getLambdaExpression() 
+				+ " " + children.get(1).getLambdaExpression() + ")";
+		if(label.equals("EQ")) return "(eq:<n,<n,t>> "+ children.get(0).getLambdaExpression() 
+				+ " " + children.get(1).getLambdaExpression() + ")";
 		return null;
 	}
 	
