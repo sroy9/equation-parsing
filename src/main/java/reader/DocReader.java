@@ -187,7 +187,7 @@ public class DocReader {
 					int tokenId = prob.ta.getTokenIdFromCharacterOffset(
 							prob.quantities.get(i).start);
 					npList.write(prob.ta.getToken(tokenId).toLowerCase()+
-							" :- NP : NUM_"+Tools.getValue(prob.quantities.get(i))+":n\n");		
+							" :- NP : "+Tools.getValue(prob.quantities.get(i))+":n\n");		
 				}
 				if(fold.contains(prob.index)) {
 					// Add the questions of the fold
@@ -211,9 +211,11 @@ public class DocReader {
 		}
 		BufferedWriter bw = new BufferedWriter(new FileWriter(
 				new File("geo.consts.ont")));
+		bw.write("(\n");
 		for(String cons : DocReader.preds) {
 			bw.write(cons.trim()+"\n");
 		}
+		bw.write(")\n");
 		bw.close();
 	}
 	
