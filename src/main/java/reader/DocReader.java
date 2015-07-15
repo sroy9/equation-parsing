@@ -178,14 +178,36 @@ public class DocReader {
 		int count = 0;
 		for(List<Integer> fold : folds) {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(
-					new File("fold"+(count++)+".ccg")));
+					new File("fold"+(count)+".ccg")));
+			BufferedWriter npList = new BufferedWriter(new FileWriter(
+					new File("nplist"+(count++)+".ont")));
 			for(SimulProb prob : simulProbList) {
+				// All numbers should always be available
+				for(int i=0; i<prob.quantities.size(); ++i) {
+					int tokenId = prob.ta.getTokenIdFromCharacterOffset(
+							prob.quantities.get(i).start);
+					npList.write(prob.ta.getToken(tokenId).toLowerCase()+
+							" :- NP : NUM_"+Tools.getValue(prob.quantities.get(i))+":n\n");		
+				}
 				if(fold.contains(prob.index)) {
-					bw.write(prob.text+"\n");
+					// Add the questions of the fold
+					for(String token : prob.ta.getTokens()) {
+						bw.write(token.toLowerCase()+" ");
+					}
+					bw.write("\n");
 					bw.write(prob.equation.getLambdaExpression()+"\n\n");
+				} else {
+					// Variable phrases for all other folds added
+					for(String key : prob.varTokens.keySet()) {
+						for(Integer loc : prob.varTokens.get(key)) {
+							npList.write(prob.ta.getToken(loc).toLowerCase()+
+									" :- NP : "+key+":n\n");
+						}
+					}
 				}
 			}
 			bw.close();
+			npList.close();
 		}
 		BufferedWriter bw = new BufferedWriter(new FileWriter(
 				new File("geo.consts.ont")));
