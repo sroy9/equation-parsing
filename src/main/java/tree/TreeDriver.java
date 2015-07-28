@@ -49,7 +49,7 @@ public class TreeDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-//		trainModel("models/tree_"+testFold+"_"+suffix+".save", train, testFold);
+		trainModel("models/tree_"+testFold+"_"+suffix+".save", train, testFold);
 		return testModel("models/tree_"+testFold+"_"+suffix+".save", test);
 	}
 	

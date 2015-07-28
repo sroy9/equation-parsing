@@ -1,17 +1,22 @@
 package reader;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
@@ -197,11 +202,12 @@ public class DocReader {
 					bw.write("\n");
 					bw.write(prob.equation.getLambdaExpression()+"\n\n");
 				} else {
-					// Variable phrases for all other folds added
-					for(String key : prob.varTokens.keySet()) {
-						for(Integer loc : prob.varTokens.get(key)) {
-							npList.write(prob.ta.getToken(loc).toLowerCase()+
-									" :- NP : "+key+":n\n");
+					for(String label : prob.varTokens.keySet()) {
+						for(IntPair ip : getContiguousSpans(prob.varTokens.get(label))) {
+							for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
+								npList.write(prob.ta.getToken(i).toLowerCase()+" ");
+							}
+							npList.write(":- NP : "+label+":n\n");
 						}
 					}
 				}
@@ -219,6 +225,64 @@ public class DocReader {
 		bw.close();
 	}
 	
+	public static List<IntPair> getContiguousSpans(List<Integer> list) {
+		List<IntPair> ips = new ArrayList<>();
+		int min = Integer.MAX_VALUE;
+		int max = Integer.MIN_VALUE;
+		for(int num : list) {
+			if(num > max) max = num;
+			if(num < min) min = num;
+		}
+		int j=min;
+		for(int i=min; i<max; ++i) {
+			if(list.contains(i) && !list.contains(i+1)) {
+				ips.add(new IntPair(j, i+1));
+			}
+			if(!list.contains(i) && list.contains(i+1)) {
+				j=i+1;
+			}
+		}
+		ips.add(new IntPair(j, max+1));
+		return ips;
+	}
+
+	public static void createGizaProbTable() throws Exception {
+		for(int i=0; i<5; ++i) {
+			Map<Integer, String> srcVcb = new HashMap<>();
+			Map<Integer, String> targetVcb = new HashMap<>();
+			String str;
+			BufferedReader br = new BufferedReader(new FileReader(
+					"/Users/subhroroy/Desktop/parallel/A"+i+".vcb"));
+			while((str=br.readLine())!=null) {
+				String strArr[] = str.split(" ");
+				srcVcb.put(Integer.parseInt(strArr[0].trim()), 
+						strArr[1].replace("(", "").replace(")", "").trim());
+			}
+			br.close();
+			br = new BufferedReader(new FileReader(
+					"/Users/subhroroy/Desktop/parallel/B"+i+".vcb"));
+			while((str=br.readLine())!=null) {
+				String strArr[] = str.split(" ");
+				targetVcb.put(Integer.parseInt(strArr[0].trim()), 
+						strArr[1].replace("(", "").replace(")", "").trim());
+			}
+			br.close();
+			br = new BufferedReader(new FileReader(
+					"/Users/subhroroy/Desktop/parallel/A"+i+"_B"+i+"_prob"));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(
+					"/Users/subhroroy/Desktop/parallel/A"+i+"_B"+i+"_wordprob"));
+			while((str=br.readLine())!=null) {
+				String strArr[] = str.split(" ");
+				bw.write(targetVcb.get(Integer.parseInt(strArr[1].trim()))+"  ::  "+
+						srcVcb.get(Integer.parseInt(strArr[0].trim()))+"  ::  "+
+						strArr[2].trim()+"\n");
+				
+			}
+			br.close();
+			bw.close();
+		}
+	}
+	
 	public static void main(String args[]) throws Exception {
 //		List<SimulProb> simulProbList = 
 //				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
@@ -227,6 +291,7 @@ public class DocReader {
 //		}
 //		DocReader.createBratFiles("data/equationparse.txt");
 		DocReader.createLambdaExpForSPF();
+//		DocReader.createGizaProbTable();
 		
 	}
 }
