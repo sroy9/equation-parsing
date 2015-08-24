@@ -284,13 +284,12 @@ public class DocReader {
 	}
 	
 	public static void main(String args[]) throws Exception {
-//		List<SimulProb> simulProbList = 
-//				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
-//		for(SimulProb prob : simulProbList) {
-//			print(prob);
-//		}
-//		DocReader.createBratFiles("data/equationparse.txt");
-		DocReader.createLambdaExpForSPF();
+		List<SimulProb> simulProbList = 
+				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
+		for(SimulProb prob : simulProbList) {
+			print(prob);
+		}
+//		DocReader.createLambdaExpForSPF();
 //		DocReader.createGizaProbTable();
 		
 	}
