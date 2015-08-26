@@ -103,6 +103,7 @@ public class DocReader {
 				simulProb.extractTextAndEquation();
 				simulProb.extractQuantities(quantifier);
 				simulProb.extractAnnotations();
+				simulProb.createCandidateVars();
 				simulProb.extractVarTokens();
 				simulProbList.add(simulProb);
 			}

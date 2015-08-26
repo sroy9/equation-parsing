@@ -5,17 +5,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 
 import utils.Params;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
@@ -37,7 +34,8 @@ public class SimulProb {
 	public List<Constituent> lemmas;
 	public List<Constituent> chunks;
 	public List<Constituent> parse;
-	public List<Pair<String, IntPair>> skeleton;
+	public List<IntPair> candidateVars;
+//	public List<Pair<String, IntPair>> skeleton;
   	
 	public SimulProb(int index) {
 		this.index = index;
@@ -59,6 +57,7 @@ public class SimulProb {
 	public void extractTextAndEquation() throws Exception {
 		String fileName = Params.annotationDir + index + ".txt";
 		List<String> lines = FileUtils.readLines(new File(fileName));
+		System.out.println("Index : "+index+" EqString : "+lines.get(2));
 		text = lines.get(0);
 		equation = new Equation(lines.get(2));
 	}	
@@ -87,9 +86,17 @@ public class SimulProb {
 		parse = Tools.curator.getTextAnnotationWithSingleView(
 				text, ViewNames.PARSE_STANFORD, false)
 				.getView(ViewNames.PARSE_STANFORD).getConstituents();
-		skeleton = Tools.getSkeleton(ta, lemmas, parse, quantities);
 	}
-
+	
+	public void createCandidateVars() {
+		candidateVars = new ArrayList<>();
+		for(Constituent cons : chunks) {
+			if(cons.getLabel().equals("NP")) {
+				candidateVars.add(cons.getSpan());
+			}
+		}
+	}
+	
 	public void extractVarTokens() throws IOException {
 		String annFile = Params.annotationDir+"/"+index+".ann";
 		List<String> lines = FileUtils.readLines(new File(annFile));
@@ -103,17 +110,32 @@ public class SimulProb {
 			if(!varTokens.containsKey(label)) {
 				varTokens.put(label, new ArrayList<Integer>());
 			}
-			for(int i=start; i<end; ++i) {
-				if(posTags.get(i).getLabel().startsWith("N") || 
-						posTags.get(i).getLabel().startsWith("V") ||
-						posTags.get(i).getLabel().startsWith("J") ||
-						KnowledgeBase.specialVarTokens.contains(
-								ta.getToken(i).toLowerCase())) {
+//			for(int i=start; i<end; ++i) {
+//				if(posTags.get(i).getLabel().startsWith("N") || 
+//						posTags.get(i).getLabel().startsWith("V") ||
+//						posTags.get(i).getLabel().startsWith("J") ||
+//						KnowledgeBase.specialVarTokens.contains(
+//								ta.getToken(i).toLowerCase())) {
+//					varTokens.get(label).add(i);
+//				}
+//			}
+			boolean foundNP = false;
+			for(int i=0; i<candidateVars.size(); ++i) {
+				IntPair ip = candidateVars.get(i);
+				if(Tools.doesIntersect(ip, new IntPair(start, end))) {
 					varTokens.get(label).add(i);
+					foundNP = true;
+					break;
 				}
+			}
+			if(!foundNP) {
+				System.out.println("Problem : "+text);
+				System.out.println("Shallow parse : "+Arrays.asList(chunks));
+				System.out.println("NP not found for "+line.split("\t")[2]);
 			}
 		}
 	}
+	
 	
 	public static float getVarTokenLoss(Map<String, List<Integer>> gold,
 			Map<String, List<Integer>> pred, boolean varNameSwap) {

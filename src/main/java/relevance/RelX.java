@@ -1,14 +1,8 @@
 package relevance;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import structure.Node;
 import structure.SimulProb;
-import utils.Tools;
-import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
@@ -22,7 +16,6 @@ public class RelX implements IInstance {
 	public List<Constituent> lemmas;
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
-	public List<Pair<String, IntPair>> skeleton;
 	public int quantIndex;
 	
 	public RelX(SimulProb simulProb, int quantIndex) {
@@ -32,7 +25,6 @@ public class RelX implements IInstance {
 		posTags = simulProb.posTags;
 		parse = simulProb.parse;
 		lemmas = simulProb.lemmas;
-		skeleton = simulProb.skeleton;
 		this.quantIndex = quantIndex;
 	}
 	

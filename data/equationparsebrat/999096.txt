@@ -1,5 +1,5 @@
 Stoxx Europe opens 0.4% lower at 379.03.
 
-V1-0.004*V2=379.03
+V1-(0.004*V2)=379.03
 
 [(Stoxx )(Europe )][opens ][0.4 (% )][lower ][at ][379.03 ]. 

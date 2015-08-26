@@ -1,5 +1,5 @@
 Twice a number equals 25 less than triple the same number.
 
-2*V1=3*V2-25
+2*V1=(3*V2)-25
 
 [Twice a (number )][equals ][25 ][less ][than ][triple the same (number )]. 

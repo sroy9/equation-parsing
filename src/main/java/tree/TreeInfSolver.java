@@ -10,7 +10,6 @@ import java.util.List;
 import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Equation;
-import structure.KnowledgeBase;
 import structure.Node;
 import structure.PairComparator;
 import utils.Tools;

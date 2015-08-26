@@ -6,8 +6,6 @@ import java.util.List;
 import structure.Node;
 import structure.SimulProb;
 import utils.Tools;
-import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
@@ -21,7 +19,6 @@ public class TemplateX implements IInstance {
 	public List<Constituent> lemmas;
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
-	public List<Pair<String, IntPair>> skeleton;
 	public List<Integer> relevantQuantIndices;
 	
 	public TemplateX(SimulProb simulProb) {
@@ -31,7 +28,6 @@ public class TemplateX implements IInstance {
 		posTags = simulProb.posTags;
 		parse = simulProb.parse;
 		lemmas = simulProb.lemmas;
-		skeleton = simulProb.skeleton;
 		relevantQuantIndices = new ArrayList<Integer>();
 		for(Node leaf : simulProb.equation.root.getLeaves()) {
 			if(leaf.label.equals("NUM")) {

@@ -98,7 +98,7 @@ public class Node implements Serializable {
 	
 	public static Node parseNode(String eqString) {
 		eqString = eqString.trim();
-//		System.out.println("EqString : "+eqString);
+		System.out.println("EqString : "+eqString);
 		int index = eqString.indexOf("=");
 		if(index != -1) {
 			Node node = new Node();
@@ -107,54 +107,50 @@ public class Node implements Serializable {
 			node.children.add(parseNode(eqString.substring(index+1)));
 			return node;
 		}
-		int loc = -1;
-		while(true) {
-			index = indexOfMathOp(eqString, Arrays.asList('+','-'), loc+1);
-			if(index == -1) break;
-			if(eqString.charAt(index) != '-' || eqString.charAt(index-1) != '(') break;
-			loc = index+1;
+		if(eqString.charAt(0)=='(' && eqString.charAt(eqString.length()-1)==')') {
+			eqString = eqString.substring(1, eqString.length()-1);
 		}
-		if(index != -1) {
-			Node node = new Node();
-			if(eqString.charAt(index) == '+') node.label = "ADD";
-			else node.label = "SUB";
-			node.children.add(parseNode(eqString.substring(0, index)));
-			node.children.add(parseNode(eqString.substring(index+1)));
-			return node;
-		}
-		index = indexOfMathOp(eqString, Arrays.asList('*','/'), 0);
-		if(index != -1) {
-			Node node = new Node();
-			if(eqString.charAt(index) == '*') node.label = "MUL";
-			else node.label = "DIV";
-			node.children.add(parseNode(eqString.substring(0, index)));
-			node.children.add(parseNode(eqString.substring(index+1)));
-			return node;
-		}
+		index = indexOfMathOp(eqString, Arrays.asList('+', '-', '*', '/'));
 		Node node = new Node();
-		if(eqString.contains("V")) {
-			node.label = "VAR";
-			node.varId = eqString.trim();
+		if(index > 0) {
+			if(eqString.charAt(index) == '+') node.label = "ADD";
+			else if(eqString.charAt(index) == '-') node.label = "SUB";
+			else if(eqString.charAt(index) == '*') node.label = "MUL";
+			else if(eqString.charAt(index) == '/') node.label = "DIV";
+			node.children.add(parseNode(eqString.substring(0, index)));
+			node.children.add(parseNode(eqString.substring(index+1)));
+			return node;
 		} else {
-			node.label = "NUM";
-			node.value = Double.parseDouble(eqString.replaceAll("\\(|\\)", ""));
+			if(eqString.contains("V")) {
+				node.label = "VAR";
+				node.varId = eqString.trim();
+			} else {
+				node.label = "NUM";
+				node.value = Double.parseDouble(eqString.trim());
+			}
 		}
 		return node;
 	}
 	
 	public static int indexOfMathOp(
-			String equationString, List<Character> keys, int start) {
-		int finalIndex = -1, index;
+			String equationString, List<Character> keys) {
+		int index = -1;
 		for(Character key : keys) {
-			index = equationString.indexOf(key, start);
-			if(index >= 0 && finalIndex >= 0 && index < finalIndex) {
-				finalIndex = index;
-			}
-			if(finalIndex < 0 && index >= 0) {
-				finalIndex = index;
+			index = equationString.indexOf(key);
+			if(index >= 0) {
+				boolean inBracket = false;
+				for(int i=index; i>=0; --i) {
+					if(equationString.charAt(i) == ')') return index;
+					if(equationString.charAt(i) == '(') {
+						inBracket = true;
+						break; 
+					}
+				}
+				if(inBracket) continue;
+				return index;
 			}
 		}
-		return finalIndex;
+		return index;
 	}
 	
 	public List<Node> getLeaves() {

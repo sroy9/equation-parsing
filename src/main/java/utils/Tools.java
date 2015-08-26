@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import structure.KnowledgeBase;
 import structure.Operation;
 import curator.NewCachingCurator;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
@@ -156,62 +155,6 @@ public class Tools {
 //		while(cons.getIncomingRelations().size()>0 && )
 //		
 //	}
-	
-	public static List<Pair<String, IntPair>> getSkeleton(
-			TextAnnotation ta, List<Constituent> lemmas, List<Constituent> parse, 
-			List<QuantSpan> quantities) {
-		return getSkeleton(ta, lemmas, null, parse, quantities);
-	}
-	
-	public static List<Pair<String, IntPair>> getSkeleton(
-			TextAnnotation ta, List<Constituent> lemmas, List<Constituent> posTags,
-			List<Constituent> parse, 
-			List<QuantSpan> quantities) {
-		List<Pair<String, IntPair>> skeleton = new ArrayList<>();
-		List<String> unigrams = FeatGen.getLemmatizedUnigrams(lemmas, 0, ta.size());
-		int i=0;
-		while(i<ta.size()) {
-			Constituent npChunk = null;
-			int chunkWidth = 0; 
-			for(Constituent cons : parse) {
-				if(cons.getStartSpan() == i && cons.getLabel().equals("NP")) {
-					boolean allow = true;
-					for(QuantSpan qs : quantities) {
-						int tokenId = ta.getTokenIdFromCharacterOffset(qs.start);
-						if(tokenId >= cons.getStartSpan() && tokenId < cons.getEndSpan()) {
-							allow = false;
-							break;
-						}
-					}
-					for(int k=cons.getStartSpan(); k<cons.getEndSpan(); ++k) {
-						if(KnowledgeBase.mathNodeSet.contains(unigrams.get(k))) {
-							allow = false;
-							break;
-						}
-					}
-					if(allow && cons.getEndSpan() - cons.getStartSpan() > chunkWidth) {
-						npChunk = cons;
-						chunkWidth = cons.getEndSpan() - cons.getStartSpan();
-					}
-				}
-			}
-			if(npChunk != null) {
-				skeleton.add(new Pair<String, IntPair>("NP", new IntPair(
-						npChunk.getStartSpan(), npChunk.getEndSpan())));
-				i = npChunk.getEndSpan();
-				continue;
-			}
-			if(posTags == null || (!posTags.get(i).getLabel().startsWith("NN") && 
-					!posTags.get(i).getLabel().startsWith("VB"))) {
-				skeleton.add(new Pair<String, IntPair>(unigrams.get(i), new IntPair(i, i+1)));
-			} else {
-				skeleton.add(new Pair<String, IntPair>(posTags.get(i).getLabel().substring(0, 2), 
-						new IntPair(i, i+1)));
-			}
-			i++;
-		}
-		return skeleton;
-	}
 	
 	public static String skeletonString(List<Pair<String, IntPair>> skeleton) {
 		String str = "";

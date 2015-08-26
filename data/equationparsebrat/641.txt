@@ -1,5 +1,5 @@
 The length of the rectangle is 24 inches more than twice the width.
 
-V1=24+2*V2
+V1=24+(2*V2)
 
 [The (length )][of ][the (rectangle )][is ][24 (inches )][more ][than ][twice the (width )]. 
