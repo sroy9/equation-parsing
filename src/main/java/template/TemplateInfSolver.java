@@ -9,7 +9,6 @@ import java.util.Set;
 import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Equation;
-import structure.KnowledgeBase;
 import structure.Node;
 import structure.PairComparator;
 import tree.TreeX;
@@ -118,13 +117,13 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 				yNew.varTokens.get("V1").add(tokenIndex);
 				for(Node node : yNew.equation.root.getLeaves()) {
 					if(node.label.equals("VAR")) {
-						node.tokenIndex = tokenIndex;
+						node.index = tokenIndex;
 					}
 					if(node.label.equals("NUM")) {
 						for(int i=0; i<x.quantities.size(); ++i) {
 							if(Tools.safeEquals(node.value, 
 									Tools.getValue(x.quantities.get(i)))) {
-								node.tokenIndex = x.ta.getTokenIdFromCharacterOffset(
+								node.index = x.ta.getTokenIdFromCharacterOffset(
 												x.quantities.get(i).start);
 								break;
 							}
@@ -147,16 +146,16 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 					yNew.varTokens.get("V2").add(tokenIndex2);
 					for(Node node : yNew.equation.root.getLeaves()) {
 						if(node.label.equals("VAR") && node.varId.equals("V1")) {
-							node.tokenIndex = tokenIndex1;
+							node.index = tokenIndex1;
 						}
 						if(node.label.equals("VAR") && node.varId.equals("V2")) {
-							node.tokenIndex = tokenIndex2;
+							node.index = tokenIndex2;
 						}
 						if(node.label.equals("NUM")) {
 							for(int i=0; i<x.quantities.size(); ++i) {
 								if(Tools.safeEquals(node.value, 
 										Tools.getValue(x.quantities.get(i)))) {
-									node.tokenIndex = x.ta.getTokenIdFromCharacterOffset(
+									node.index = x.ta.getTokenIdFromCharacterOffset(
 													x.quantities.get(i).start);
 									break;
 								}
@@ -255,7 +254,7 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 							}
 						}
 						if(allow) {
-							yNew.equation.root.getLeaves().get(i).tokenIndex = 
+							yNew.equation.root.getLeaves().get(i).index = 
 									x.ta.getTokenIdFromCharacterOffset(x.quantities.get(j).start);
 							yNew.equation.root.getLeaves().get(i).value = 
 									Tools.getValue(x.quantities.get(j));

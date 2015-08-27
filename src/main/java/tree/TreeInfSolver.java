@@ -9,11 +9,9 @@ import java.util.List;
 
 import com.google.common.collect.MinMaxPriorityQueue;
 
-import structure.Equation;
 import structure.Node;
 import structure.PairComparator;
 import utils.Tools;
-import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
@@ -24,7 +22,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		Serializable {
 
 	private static final long serialVersionUID = 5253748728743334706L;
-	private TreeFeatGen featGen;
+	public TreeFeatGen featGen;
 	public MinMaxPriorityQueue<Pair<TreeY, Double>> beam2;
 
 	public TreeInfSolver(TreeFeatGen featGen) 
@@ -50,7 +48,6 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 			IInstance x, IStructure goldStructure) throws Exception {
 		TreeX prob = (TreeX) x;
 //		System.out.println("Inference called with "+prob.problemIndex);
-		TreeY pred = new TreeY();
 		// Get best equation trees
 		PairComparator<TreeY> pairComparator = 
 				new PairComparator<TreeY>() {};
@@ -72,42 +69,29 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		}
 		
 		// Grounding of variables
-		for(int i=0; i<prob.ta.size(); ++i) {
-			if(prob.posTags.get(i).getLabel().startsWith("N") || 
-					prob.posTags.get(i).getLabel().startsWith("V") ||
-					prob.posTags.get(i).getLabel().startsWith("J") ||
-					KnowledgeBase.specialVarTokens.contains(
-							prob.ta.getToken(i).toLowerCase())) {
-				TreeY y = new TreeY(seed);
-				Node node = new Node("VAR", i, new ArrayList<Node>());
+		for(int i=0; i<prob.candidateVars.size(); ++i) {
+			TreeY y = new TreeY(seed);
+			Node node = new Node("VAR", i, new ArrayList<Node>());
+			node.varId = "V1";
+			y.nodes.add(node);
+			y.varTokens.put("V1", new ArrayList<Integer>());
+			y.varTokens.get("V1").add(i);
+			beam1.add(new Pair<TreeY, Double>(y, 
+					1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+			for(int j=i; j<prob.candidateVars.size(); ++j) {
+				y = new TreeY(seed);
+				node = new Node("VAR", i, new ArrayList<Node>());
 				node.varId = "V1";
 				y.nodes.add(node);
+				node = new Node("VAR", j, new ArrayList<Node>());
+				node.varId = "V2";
+				y.nodes.add(node);
 				y.varTokens.put("V1", new ArrayList<Integer>());
+				y.varTokens.put("V2", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
+				y.varTokens.get("V2").add(j);
 				beam1.add(new Pair<TreeY, Double>(y, 
 						1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
-				for(int j=i; j<prob.ta.size(); ++j) {
-					if(prob.posTags.get(j).getLabel().startsWith("N") || 
-							prob.posTags.get(j).getLabel().startsWith("V") ||
-							prob.posTags.get(j).getLabel().startsWith("J") ||
-							KnowledgeBase.specialVarTokens.contains(
-									prob.ta.getToken(j).toLowerCase())) {
-						y = new TreeY(seed);
-						node = new Node("VAR", i, new ArrayList<Node>());
-						node.varId = "V1";
-						y.nodes.add(node);
-						node = new Node("VAR", j, new ArrayList<Node>());
-						node.varId = "V2";
-						y.nodes.add(node);
-						y.varTokens.put("V1", new ArrayList<Integer>());
-						y.varTokens.put("V2", new ArrayList<Integer>());
-						y.varTokens.get("V1").add(i);
-						y.varTokens.get("V2").add(j);
-						beam1.add(new Pair<TreeY, Double>(y, 
-								1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(
-										prob, y))));
-					}
-				}
 			}
 		}
 //		System.out.println("Beam size : "+beam1.size());
@@ -126,102 +110,96 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		Collections.sort(y.nodes, new Comparator<Node>() {
 		    @Override
 		    public int compare(Node a, Node b) {
-		    		return (int) Math.signum(a.tokenIndex - b.tokenIndex);
+		    		return (int) Math.signum(a.index - b.index);
 		    }
 		});
+		PairComparator<List<Node>> nodePairComparator = 
+				new PairComparator<List<Node>>() {};
+		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
+				MinMaxPriorityQueue.orderedBy(nodePairComparator)
+				.maximumSize(200).create();
+		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
+				MinMaxPriorityQueue.orderedBy(nodePairComparator)
+				.maximumSize(200).create();
+		int n = y.nodes.size();
+		List<Node> init = new ArrayList<>();
+		init.addAll(y.nodes);
 		
-		// Initializing of CKY beam
-		PairComparator<Node> nodePairComparator = 
-				new PairComparator<Node>() {};
-		List<List<MinMaxPriorityQueue<Pair<Node, Double>>>> dpMat = 
-				new ArrayList<>();
-		int n = y.nodes.size();		
-		for(int i=0; i<=n; i++) {
-			dpMat.add(new ArrayList<MinMaxPriorityQueue<Pair<Node, Double>>>());
-			for(int j=0; j<=n; ++j) {
-				dpMat.get(i).add(MinMaxPriorityQueue.orderedBy(nodePairComparator)
-						.maximumSize(10).create());
+		beam1.add(new Pair<List<Node>, Double>(init, pair.getSecond()));
+		for(int i=1; i<=n-2; ++i) {
+			for(Pair<List<Node>, Double> state : beam1) {
+				beam2.addAll(enumerateSingleMerge(state, wv, x));
+			}
+			beam1.clear();
+			beam1.addAll(beam2);
+			beam2.clear();
+		}
+		for(Pair<List<Node>, Double> state : beam1) {
+			Node node = new Node("EQ", -1, Arrays.asList(
+					state.getFirst().get(0), state.getFirst().get(1)));
+			beam2.add(new Pair<List<Node>, Double>(Arrays.asList(node), 
+					state.getSecond()+wv.dotProduct(featGen.getExpressionFeatureVector(x, node))));
+		}
+		List<Node> nodes = beam2.element().getFirst();
+		double finalScore = beam2.element().getSecond(); 
+		assert nodes.size() == 1;
+		y.equation.root = nodes.get(0);
+		return new Pair<TreeY, Double>(y, finalScore);
+	}
+	
+	public List<Pair<List<Node>, Double>> enumerateSingleMerge(
+			Pair<List<Node>, Double> state, WeightVector wv, TreeX x) {
+		List<Pair<List<Node>, Double>> nextStates = new ArrayList<>();
+		List<Node> nodeList = state.getFirst();
+		if(nodeList.size() == 1) {
+			List<Pair<List<Node>, Double>> tmpNodeList = 
+					new ArrayList<Pair<List<Node>, Double>>();
+			tmpNodeList.add(state);
+			return tmpNodeList;
+		}
+		double initScore = state.getSecond();
+		for(int i=0; i<nodeList.size(); ++i) {
+			for(int j=i+1; j<nodeList.size(); ++j) {
+				List<Node> tmpNodeList = new ArrayList<Node>();
+				tmpNodeList.addAll(nodeList);
+				tmpNodeList.remove(i);
+				tmpNodeList.remove(j-1);
+				for(Pair<Node, Double> pair : enumerateMerge(
+						nodeList.get(i), nodeList.get(j), wv, x)) {
+					List<Node> newNodeList = new ArrayList<Node>();
+					newNodeList.addAll(tmpNodeList);
+					newNodeList.add(pair.getFirst());
+					nextStates.add(new Pair<List<Node>, Double>(newNodeList, 
+							initScore + pair.getSecond()));
+				}
 			}
 		}
-		
-		// CKY Beam Search
-		for(int j=1; j<=n; ++j) {
-			for(int i=j-1; i>=0; --i) {
-				List<String> labels = new ArrayList<>();
-				if(i+1 == j) {
-					dpMat.get(i).get(j).add(new Pair<Node, Double>(y.nodes.get(i), 0.0));
-					continue;
-				} else if(i == 0 && j == n) {
-					labels.add("EQ");
-				} else {
-					labels.addAll(Arrays.asList("ADD", "SUB", "MUL", "DIV"));
-				}
-				for(String label : labels) {
-					for(int k=i+1; k<j; ++k) {
-						for(List<Pair<Node, Double>> childrenPairList : 
-							enumerateChildrenPairs(dpMat, i, k, j, label)) {
-							double score = 0.0;
-							List<Node> children = new ArrayList<>();
-							for(Pair<Node, Double> childrenPair : childrenPairList) {
-								score += childrenPair.getSecond();
-								children.add(childrenPair.getFirst());
-							}
-							if(label.equals("MUL") && children.size() == 2 && 
-									children.get(0).hasVariable() && 
-									children.get(1).hasVariable()) {
-								continue;
-							}
-							Node node = new Node(label, -1, children);
-							score += 1.0*wv.dotProduct(featGen.getExpressionFeatureVector(x, node))
-//									+ 1.0*wv.dotProduct(featGen.getKBFeatureVector(x, y.varTokens, node))
-									;
-							dpMat.get(i).get(j).add(new Pair<Node, Double>(node, score));
-						}
-					}
-				}
+		return nextStates;
+	}
+	
+	public List<Pair<Node, Double>> enumerateMerge(
+			Node node1, Node node2, WeightVector wv, TreeX x) {
+		List<Pair<Node, Double>> nextStates = new ArrayList<>();
+		List<String> labels = Arrays.asList(
+				"ADD", "SUB", "SUB_REV","MUL", "DIV", "DIV_REV");
+		double mergeScore;
+		for(String label : labels) {
+			if(label.endsWith("REV")) {
+				label = label.substring(0,3);
+				Node node = new Node(label, -1, Arrays.asList(node2, node1));
+				mergeScore = getScore(node, wv, x);
+				nextStates.add(new Pair<Node, Double>(node, mergeScore));
+			} else {
+				Node node = new Node(label, -1, Arrays.asList(node1, node2));
+				mergeScore = getScore(node, wv, x);
+				nextStates.add(new Pair<Node, Double>(node, mergeScore));
 			}
 		}
-		TreeY pred = new TreeY(pair.getFirst());
-		pred.equation = new Equation();
-		pred.equation.root = dpMat.get(0).get(n).element().getFirst();
-		return new Pair<TreeY, Double>(pred, pair.getSecond() + 
-				dpMat.get(0).get(n).element().getSecond());
+		return nextStates;
 	}
 
-	public List<List<Pair<Node, Double>>> enumerateChildrenPairs(
-			List<List<MinMaxPriorityQueue<Pair<Node, Double>>>> dpMat,
-			int i, int k, int j, String label) {
-		List<List<Pair<Node, Double>>> childrenList = new ArrayList<>();
-		List<List<Pair<Node, Double>>> tmpList = new ArrayList<>();
-		List<IntPair> division = Arrays.asList(new IntPair(i, k), new IntPair(k, j));
-		childrenList.add(new ArrayList<Pair<Node, Double>>());
-		
-		for(IntPair ip : division) {
-			for(Pair<Node, Double> pair : dpMat.get(ip.getFirst())
-					.get(ip.getSecond())) {
-				for(List<Pair<Node, Double>> list : childrenList) {
-					List<Pair<Node, Double>> newList = new ArrayList<>();
-					newList.addAll(list);
-					newList.add(pair);
-					tmpList.add(newList);
-				}
-			}
-			childrenList.clear();
-			childrenList.addAll(tmpList);
-			tmpList.clear();
-		}
-		if(label.equals("SUB") || label.equals("DIV")) {
-			int n=childrenList.size();
-			for(int index=0; index<n; ++index) {
-				if(childrenList.get(index).size() == 2) {
-					List<Pair<Node, Double>> list = new ArrayList<>();
-					list.add(childrenList.get(index).get(1));
-					list.add(childrenList.get(index).get(0));
-					childrenList.add(list);
-				}
-			}
-		}
-		return childrenList;
+	public double getScore(Node node, WeightVector wv, TreeX x) {
+		return wv.dotProduct(featGen.getExpressionFeatureVector(x, node));
 	}
 	
 	public TreeY getLatentBestStructure(
@@ -235,13 +213,13 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				yNew.varTokens.get("V1").add(tokenIndex);
 				for(Node node : yNew.equation.root.getLeaves()) {
 					if(node.label.equals("VAR")) {
-						node.tokenIndex = tokenIndex;
+						node.index = tokenIndex;
 					}
 					if(node.label.equals("NUM")) {
 						for(int i=0; i<x.quantities.size(); ++i) {
 							if(Tools.safeEquals(node.value, 
 									Tools.getValue(x.quantities.get(i)))) {
-								node.tokenIndex = x.ta.getTokenIdFromCharacterOffset(
+								node.index = x.ta.getTokenIdFromCharacterOffset(
 												x.quantities.get(i).start);
 								break;
 							}
@@ -265,16 +243,16 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 					yNew.varTokens.get("V2").add(tokenIndex2);
 					for(Node node : yNew.equation.root.getLeaves()) {
 						if(node.label.equals("VAR") && node.varId.equals("V1")) {
-							node.tokenIndex = tokenIndex1;
+							node.index = tokenIndex1;
 						}
 						if(node.label.equals("VAR") && node.varId.equals("V2")) {
-							node.tokenIndex = tokenIndex2;
+							node.index = tokenIndex2;
 						}
 						if(node.label.equals("NUM")) {
 							for(int i=0; i<x.quantities.size(); ++i) {
 								if(Tools.safeEquals(node.value, 
 										Tools.getValue(x.quantities.get(i)))) {
-									node.tokenIndex = x.ta.getTokenIdFromCharacterOffset(
+									node.index = x.ta.getTokenIdFromCharacterOffset(
 													x.quantities.get(i).start);
 									break;
 								}

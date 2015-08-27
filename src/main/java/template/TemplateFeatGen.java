@@ -258,11 +258,11 @@ public class TemplateFeatGen extends AbstractFeatureGenerator implements
 	public static Node getParentOfLeaf(Node root, Node someChild) {
 		for(Node node : root.getAllSubNodes()) {
 			if(node.children.size() == 2 && (node.children.get(0).label.equals(someChild.label) && 
-					node.children.get(0).tokenIndex == someChild.tokenIndex)) {
+					node.children.get(0).index == someChild.index)) {
 				return node;
 			}
 			if(node.children.size() == 2 && (node.children.get(1).label.equals(someChild.label) && 
-					node.children.get(1).tokenIndex == someChild.tokenIndex)) {
+					node.children.get(1).index == someChild.index)) {
 				return node;
 			}
 		}

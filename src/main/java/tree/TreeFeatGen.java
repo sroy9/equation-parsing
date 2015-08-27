@@ -50,7 +50,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		for(Node subNode : y.equation.root.getAllSubNodes()) {
 			if(subNode.children.size() == 2) {
 				features.addAll(expressionFeatures(x, subNode));
-//				features.addAll(kbFeatures(x, y.varTokens, subNode));
 			}
 		}
 		return features;

@@ -14,11 +14,12 @@ public class Node implements Serializable {
 	
 	private static final long serialVersionUID = -1127009463482561785L;
 	public String label;
-	public String varId;
+	public String varId; // V1 or V2
 	public Double value;
-	public IntPair span;
 	public List<Node> children;
-	public int tokenIndex;
+	// For quantities : index of quantities list
+	// For variables : index of candidate variables list
+	public int index;
 	
 	public Node() {
 		children = new ArrayList<>();
@@ -26,15 +27,15 @@ public class Node implements Serializable {
 	
 	public Node(String label, int index, List<Node> children) {
 		this.label = label;
-		this.tokenIndex = index;
+		this.index = index;
 		this.children = children;
 	}
 	
 	public Node(Node other) {
 		this();
 		this.label = other.label;
-		this.span = other.span;
-		this.tokenIndex = other.tokenIndex;
+//		this.span = other.span;
+		this.index = other.index;
 		this.value = other.value;
 		this.varId = other.varId;
 		for(Node child : other.children) {
@@ -168,8 +169,8 @@ public class Node implements Serializable {
 		List<Node> leaves = getLeaves();
 		int min = 1000, max = -1;
 		for(Node leaf : leaves) {
-			if(leaf.tokenIndex > max) max = leaf.tokenIndex;
-			if(leaf.tokenIndex < min) min = leaf.tokenIndex;
+			if(leaf.index > max) max = leaf.index;
+			if(leaf.index < min) min = leaf.index;
 		}
 		return new IntPair(min, max);
 	}
