@@ -144,6 +144,7 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 	public static List<String> varTokenFeatures(TreeX x, TreeY y) {
 		List<String> features = new ArrayList<>();
 		List<String> unigrams = FeatGen.getUnigrams(x.ta);
+		System.out.println("Extracting features for "+y);
 		for(String key : y.varTokens.keySet()) {
 			int index = y.varTokens.get(key).get(0);
 			features.add("VarToken_"+unigrams.get(index));
