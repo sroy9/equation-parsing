@@ -2,18 +2,11 @@ package utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
 
-import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
-import edu.illinois.cs.cogcomp.edison.sentences.Sentence;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
-import edu.illinois.cs.cogcomp.edison.sentences.TokenLabelView;
-import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
-import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.util.FeatureVectorBuffer;
 import edu.illinois.cs.cogcomp.sl.util.IFeatureVector;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;

@@ -9,7 +9,6 @@ import java.util.Set;
 import reader.DocReader;
 import structure.SimulProb;
 import utils.Params;
-import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLParameters;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
@@ -81,18 +80,7 @@ public class TreeDriver {
 			if(goldWt > predWt) {
 				System.out.println("PROBLEM HERE");
 			}
-			// Testing if correct answer is in top k
-			for(int j=0; j<20; ++j) {
-				Pair<TreeY, Double> pair = ((TreeInfSolver)model.infSolver).beam2.poll();
-				if(pair == null) break;
-				if(TreeY.getLoss(gold, pair.getFirst()) < 0.0001) {
-					beamAcc += 1.0;
-					break;
-				}
-			}
 			if(TreeY.getLoss(gold, pred) < 0.0001) {
-//			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.001 || 
-//				Equation.getLoss(gold.equation, pred.equation, false) < 0.001) {
 				acc += 1;
 			} else {
 				incorrect.add(prob.problemIndex);

@@ -28,7 +28,7 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
 		TreeX x = (TreeX) arg0;
 		TreeY y = (TreeY) arg1;
-//		System.out.println("Feature being extracted");
+//		System.out.println("Feature being extracted "+y);
 		List<String> features = getFeatures(x, y);
 //		System.out.println("Feature already extracted");
 		return FeatGen.getFeatureVectorFromList(features, lm);
@@ -144,11 +144,12 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 	public static List<String> varTokenFeatures(TreeX x, TreeY y) {
 		List<String> features = new ArrayList<>();
 		List<String> unigrams = FeatGen.getUnigrams(x.ta);
-		System.out.println("Extracting features for "+y);
+//		System.out.println("Text : "+x.problemIndex+" : "+x.ta.getText());
+//		System.out.println("Extracting features for "+y);
 		for(String key : y.varTokens.keySet()) {
-			int index = y.varTokens.get(key).get(0);
-			features.add("VarToken_"+unigrams.get(index));
-			if(index-1>0) features.add("VarToken_-1_"+unigrams.get(index-1)); 
+//			int index = y.varTokens.get(key).get(0);
+//			features.add("VarToken_"+unigrams.get(index));
+//			if(index-1>0) features.add("VarToken_-1_"+unigrams.get(index-1)); 
 		}
 		if(y.varTokens.size() == 2) {
 			

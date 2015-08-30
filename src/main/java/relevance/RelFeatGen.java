@@ -2,16 +2,12 @@ package relevance;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import structure.Node;
 import utils.FeatGen;
 import utils.Tools;
-import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.edison.sentences.Sentence;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;

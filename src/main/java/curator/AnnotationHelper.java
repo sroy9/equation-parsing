@@ -14,7 +14,6 @@ import edu.illinois.cs.cogcomp.core.algorithms.Sorters;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.edison.sentences.AbstractEdisonSerializer;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
-import edu.illinois.cs.cogcomp.edison.sentences.EdisonSerializationHelper;
 import edu.illinois.cs.cogcomp.edison.sentences.Relation;
 import edu.illinois.cs.cogcomp.edison.sentences.Sentence;
 import edu.illinois.cs.cogcomp.edison.sentences.SpanLabelView;

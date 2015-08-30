@@ -13,19 +13,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import javax.xml.ws.handler.Handler;
-
-import edu.illinois.cs.cogcomp.core.io.LineIO;
 import edu.illinois.cs.cogcomp.edison.data.curator.CuratorClient;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;

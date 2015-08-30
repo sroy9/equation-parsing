@@ -99,7 +99,7 @@ public class Node implements Serializable {
 	
 	public static Node parseNode(String eqString) {
 		eqString = eqString.trim();
-		System.out.println("EqString : "+eqString);
+//		System.out.println("EqString : "+eqString);
 		int index = eqString.indexOf("=");
 		if(index != -1) {
 			Node node = new Node();

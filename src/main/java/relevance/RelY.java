@@ -1,19 +1,10 @@
 package relevance;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import structure.Equation;
 import structure.Node;
 import structure.SimulProb;
 import utils.Tools;
-import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
 public class RelY implements IStructure, Serializable {
