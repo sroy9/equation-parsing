@@ -1,7 +1,6 @@
 package tree;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -66,7 +65,7 @@ public class TreeDriver {
 		SLModel model = SLModel.loadModel(modelPath);
 		Set<Integer> incorrect = new HashSet<>();
 		Set<Integer> total = new HashSet<>();
-		double acc = 0.0, beamAcc = 0.0;
+		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			TreeX prob = (TreeX) sp.instanceList.get(i);
 			TreeY gold = (TreeY) sp.goldStructureList.get(i);
@@ -97,9 +96,6 @@ public class TreeDriver {
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
-		System.out.println("Beam Accuracy : = " + beamAcc + " / " + sp.instanceList.size() 
-				+ " = " + (beamAcc/sp.instanceList.size()));
-		System.out.println("Mistakes : "+Arrays.asList(incorrect));
 		return (acc/sp.instanceList.size());
 	}
 	
@@ -117,7 +113,7 @@ public class TreeDriver {
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
 //		model.wv = learner.train(train);
 		model.wv = latentSVMLearner(learner, train, 
-				(TreeInfSolver) model.infSolver, 5);
+				(TreeInfSolver) model.infSolver, 2);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}

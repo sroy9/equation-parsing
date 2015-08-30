@@ -23,7 +23,6 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 
 	private static final long serialVersionUID = 5253748728743334706L;
 	public TreeFeatGen featGen;
-//	public MinMaxPriorityQueue<Pair<TreeY, Double>> beam2;
 
 	public TreeInfSolver(TreeFeatGen featGen) 
 			throws Exception {
@@ -47,7 +46,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
 		TreeX prob = (TreeX) x;
-		System.out.println("Inference called with "+prob.problemIndex);
+//		System.out.println("Inference called with "+prob.problemIndex);
 		// Get best equation trees
 		PairComparator<TreeY> pairComparator = 
 				new PairComparator<TreeY>() {};
@@ -101,7 +100,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		for(Pair<TreeY, Double> pair : beam1) {
 			beam2.add(getBottomUpBestParse(prob, pair, wv));
 		}
-		System.out.println("Output from inference : "+beam2.element().getFirst());
+//		System.out.println("Output from inference : "+beam2.element().getFirst());
 		return beam2.element().getFirst();
 	}
 	

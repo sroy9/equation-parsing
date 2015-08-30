@@ -57,7 +57,6 @@ public class SimulProb {
 	public void extractTextAndEquation() throws Exception {
 		String fileName = Params.annotationDir + index + ".txt";
 		List<String> lines = FileUtils.readLines(new File(fileName));
-		System.out.println("Index : "+index+" EqString : "+lines.get(2));
 		text = lines.get(0);
 		equation = new Equation(lines.get(2));
 	}	
