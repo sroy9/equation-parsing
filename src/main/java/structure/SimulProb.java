@@ -48,6 +48,11 @@ public class SimulProb {
 		List<QuantSpan> spanArray = quantifier.getSpans(text, true);
 		quantities = new ArrayList<QuantSpan>();
 		for(QuantSpan span : spanArray){
+			if(text.substring(span.start, span.end).contains("several") ||
+					text.substring(span.start, span.end).contains("Several")) {
+				// Quantities arising out of "several" not needed in math problems
+				continue;
+			}
 			if(span.object instanceof Quantity || span.object instanceof Ratio) {
 				quantities.add(span);
 			}

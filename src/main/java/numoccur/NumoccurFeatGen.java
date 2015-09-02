@@ -1,4 +1,4 @@
-package relevance;
+package numoccur;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,47 +15,75 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.util.IFeatureVector;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
-public class RelFeatGen extends AbstractFeatureGenerator implements
+public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 		Serializable {
 	
 	private static final long serialVersionUID = 1810851154558168679L;
 	public Lexiconer lm = null;
 	private static int lexWindow=5;
 	private static int posWindow=3;
-	public RelFeatGen(Lexiconer lm) {
+	public NumoccurFeatGen(Lexiconer lm) {
 		this.lm = lm;
 	}
 	
 	@Override
 	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
-		RelX x = (RelX) arg0;
-		RelY y = (RelY) arg1;
+		NumoccurX x = (NumoccurX) arg0;
+		NumoccurY y = (NumoccurY) arg1;
 		List<String> features = getFeatures(x, y);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 		
-	public static List<String> getFeatures(RelX x, RelY y) {
+	public static List<String> getFeatures(NumoccurX x, NumoccurY y) {
 		List<String> features = new ArrayList<>();
-		addPOSfeatures(features,x,y,x.quantIndex);
-		addLexfeatures(features,x,y,x.quantIndex);
-		addUnitfeatures(features,x,y,x.quantIndex);
-//		IsOneAnotherFeature(features,x,y,x.quantIndex);
-		GreaterThan2features(features,x,y,x.quantIndex);
+		addPOSfeatures(features,x,y);
+		addLexfeatures(features,x,y);
+		addUnitfeatures(features,x,y);
+		addOneOrTwoFeatures(features,x,y);
+		addQuantPhraseFeatures(features,x,y);
+		addGlobalFeatures(features,x,y);
 		return features;
 	}
+	
+	private static void addGlobalFeatures(List<String> features, NumoccurX x, NumoccurY y) {
+		if(x.quantities.size() == 1) {
+			addFeature("OneQuantityPresent", y, features);
+		}
+	}
 
-	private static void GreaterThan2features(List<String> features, RelX x,
-			RelY y, int quantIndex) {
-		Double val= Tools.getValue(x.quantities.get(quantIndex));
-		if(val>2)
+	private static void addOneOrTwoFeatures(List<String> features, NumoccurX x, NumoccurY y) {
+		Double val= Tools.getValue(x.quantities.get(x.quantIndex));
+		if(Tools.safeEquals(val, 1.0))
 		{
-			addFeature("GREATERTHAN2_", y, features);
+			addFeature("One", y, features);
+		}
+		if(Tools.safeEquals(val, 2.0))
+		{
+			addFeature("Two", y, features);
+			QuantSpan qs = x.quantities.get(x.quantIndex);
+			String quantPhrase = x.ta.getText().substring(qs.start, qs.end);
+			if(quantPhrase.contains("twice") || quantPhrase.contains("Twice") || 
+					quantPhrase.contains("times")) {
+				addFeature("TwicePresent", y, features);
+			}
 		}
 		
 	}
+	
+	private static void addQuantPhraseFeatures(List<String> features, NumoccurX x, NumoccurY y) {
+		QuantSpan qs = x.quantities.get(x.quantIndex);
+		String quantPhrase = x.ta.getText().substring(qs.start, qs.end);
+		String quantTokens[] = quantPhrase.split(" ");
+		for(String str : quantTokens) {
+			addFeature("QuantUnigram_"+str, y, features);
+		}
+		for(int i=0; i<quantTokens.length-1; ++i) {
+			addFeature("QuantBigram_"+quantTokens[i]+"_"+quantTokens[i+1], y, features);
+		}
+		if(quantPhrase.contains("-")) addFeature("HyphenWord", y, features);
+	}
 
-	private static void addUnitfeatures(List<String> features, RelX x, RelY y,
-			int quantIndex) {
+	private static void addUnitfeatures(List<String> features, NumoccurX x, NumoccurY y) {
 		String unit = Tools.getUnit(x.quantities.get(x.quantIndex));
 		if(unit.length()!=0)
 		{
@@ -71,9 +99,8 @@ public class RelFeatGen extends AbstractFeatureGenerator implements
 		}
 	}
 
-	private static void addLexfeatures(List<String> features, RelX x, RelY y,
-			int quant_index) {
-		QuantSpan quant = x.quantities.get(quant_index);
+	private static void addLexfeatures(List<String> features, NumoccurX x, NumoccurY y) {
+		QuantSpan quant = x.quantities.get(x.quantIndex);
 		int tok_index=x.ta.getTokenIdFromCharacterOffset(quant.start);
 		
 		String[] tokens = x.ta.getTokens();
@@ -106,9 +133,9 @@ public class RelFeatGen extends AbstractFeatureGenerator implements
 		}
 	}
 
-	private static void addPOSfeatures(List<String> features, RelX x, RelY y, int quant_index) {
+	private static void addPOSfeatures(List<String> features, NumoccurX x, NumoccurY y) {
 		
-		QuantSpan quant = x.quantities.get(quant_index);
+		QuantSpan quant = x.quantities.get(x.quantIndex);
 		int tok_index=x.ta.getTokenIdFromCharacterOffset(quant.start);
 		
 		int window = posWindow;
@@ -143,7 +170,7 @@ public class RelFeatGen extends AbstractFeatureGenerator implements
 	}
 
 	private static void addFeature(String string,
-			RelY y, List<String> features) {
-		features.add(string+"_L"+y.decision);
+			NumoccurY y, List<String> features) {
+		features.add(string+"_L"+y.numOccur);
 	}
 }

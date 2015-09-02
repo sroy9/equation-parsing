@@ -185,46 +185,6 @@ public class TemplateInfSolver extends AbstractInferenceSolver implements
 		if(varIndex.size()!=1 && varIndex.size()!=2) {
 			System.out.println("ISSUE IN EnumerateInstNum");
 		}
-		
-		if(varIndex.size() == 1) {
-			for(int i=0; i<x.ta.size(); ++i) {
-				if(x.posTags.get(i).getLabel().startsWith("N") || 
-						x.posTags.get(i).getLabel().startsWith("V") ||
-						x.posTags.get(i).getLabel().startsWith("J") ||
-					KnowledgeBase.specialVarTokens.contains(
-							x.ta.getToken(i).toLowerCase())) {
-					TemplateY yNew = new TemplateY(seed);
-					yNew.varTokens.put("V1", new ArrayList<Integer>());
-					yNew.varTokens.get("V1").add(i);
-					instantiations.add(yNew);
-				}
-			}
-		}
-		
-		if(varIndex.size() == 2) {
-			for(int i=0; i<x.ta.size(); ++i) {
-				if(x.posTags.get(i).getLabel().startsWith("N") || 
-						x.posTags.get(i).getLabel().startsWith("V") ||
-						x.posTags.get(i).getLabel().startsWith("J") ||
-						KnowledgeBase.specialVarTokens.contains(
-								x.ta.getToken(i).toLowerCase())) {
-					for(int j=i; j<x.ta.size(); ++j) {
-						if(x.posTags.get(j).getLabel().startsWith("N") || 
-								x.posTags.get(j).getLabel().startsWith("V") ||
-								x.posTags.get(j).getLabel().startsWith("J") ||
-								KnowledgeBase.specialVarTokens.contains(
-										x.ta.getToken(j).toLowerCase())) {
-							TemplateY yNew = new TemplateY(seed);
-							yNew.varTokens.put("V1", new ArrayList<Integer>());
-							yNew.varTokens.put("V2", new ArrayList<Integer>());
-							yNew.varTokens.get("V1").add(i);
-							yNew.varTokens.get("V2").add(j);
-							instantiations.add(yNew);
-						}
-					}
-				}
-			}
-		}
 //		System.out.println("EnumerateVar returns "+instantiations.size());
 		return instantiations;
 	}

@@ -1,4 +1,4 @@
-package relevance;
+package numoccur;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
-public class RelDriver {
+public class NumoccurDriver {
 	
 	public static void crossVal() throws Exception {
 		double acc = 0.0;
@@ -42,8 +42,8 @@ public class RelDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-//		trainModel("models/rel"+testFold+".save", train, testFold);
-		return testModel("models/rel"+testFold+".save", test);
+		trainModel("models/numoccur"+testFold+".save", train, testFold);
+		return testModel("models/numoccur"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
@@ -55,8 +55,8 @@ public class RelDriver {
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
 			for(int i=0; i<simulProb.quantities.size(); ++i) {
-				RelX x = new RelX(simulProb, i);
-				RelY y = new RelY(simulProb, i);
+				NumoccurX x = new NumoccurX(simulProb, i);
+				NumoccurY y = new NumoccurY(simulProb, i);
 				problem.addExample(x, y);
 			}
 		}
@@ -70,9 +70,9 @@ public class RelDriver {
 		Set<Integer> total = new HashSet<>();
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			RelX prob = (RelX) sp.instanceList.get(i);
-			RelY gold = (RelY) sp.goldStructureList.get(i);
-			RelY pred = (RelY) model.infSolver.getBestStructure(
+			NumoccurX prob = (NumoccurX) sp.instanceList.get(i);
+			NumoccurY gold = (NumoccurY) sp.goldStructureList.get(i);
+			NumoccurY pred = (NumoccurY) model.infSolver.getBestStructure(
 					model.wv, prob);
 			total.add(prob.problemIndex);
 			double goldWt = model.wv.dotProduct(
@@ -82,7 +82,7 @@ public class RelDriver {
 			if(goldWt > predWt) {
 				System.out.println("PROBLEM HERE");
 			}
-			if(RelY.getLoss(gold, pred) < 0.0001) {
+			if(NumoccurY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else {
 				incorrect.add(prob.problemIndex);
@@ -96,12 +96,13 @@ public class RelDriver {
 				System.out.println("Pred : \n"+pred);
 				System.out.println("Pred weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, pred)));
-				System.out.println("Loss : "+RelY.getLoss(gold, pred));
+				System.out.println("Loss : "+NumoccurY.getLoss(gold, pred));
 			}
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
-		System.out.println("Strict Accuracy : ="+ (1-1.0*incorrect.size()/total.size()) + " incorrect "+ incorrect.size() + " out of "+total.size());
+		System.out.println("Strict Accuracy : ="+ (1-1.0*incorrect.size()/total.size()) + 
+				" incorrect "+ incorrect.size() + " out of "+total.size());
 		System.out.println("Mistakes : "+Arrays.asList(incorrect));
 		return (1-1.0*incorrect.size()/total.size());
 	}
@@ -112,9 +113,9 @@ public class RelDriver {
 		Lexiconer lm = new Lexiconer();
 		lm.setAllowNewFeatures(true);
 		model.lm = lm;
-		RelFeatGen fg = new RelFeatGen(lm);
+		NumoccurFeatGen fg = new NumoccurFeatGen(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new RelInfSolver(fg);
+		model.infSolver = new NumoccurInfSolver(fg);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
@@ -124,7 +125,6 @@ public class RelDriver {
 	}
 
 	public static void main(String args[]) throws Exception {
-//		RelDriver.doTrainTest(0);
-		RelDriver.crossVal();
+		NumoccurDriver.crossVal();
 	}
 }

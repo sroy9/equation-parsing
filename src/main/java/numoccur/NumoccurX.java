@@ -1,4 +1,4 @@
-package relevance;
+package numoccur;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 
-public class RelX implements IInstance {
+public class NumoccurX implements IInstance {
 
 	public int problemIndex;
 	public TextAnnotation ta;
@@ -18,7 +18,7 @@ public class RelX implements IInstance {
 	public List<QuantSpan> quantities;
 	public int quantIndex;
 	
-	public RelX(SimulProb simulProb, int quantIndex) {
+	public NumoccurX(SimulProb simulProb, int quantIndex) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;

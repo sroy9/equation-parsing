@@ -1,5 +1,5 @@
-The age of the older of two boys is twice that of the younger.
+The age of the older of two boys is thrice that of the younger.
 
-V1=2*V2
+V1=3*V2
 
-[The (age )][of ][the older ][of ][two (boys )][is ][twice that ][of ][the younger ]. 
+[The (age )][of ][the older ][of ][two (boys )][is ][thrice that ][of ][the younger ]. 
