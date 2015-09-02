@@ -1,6 +1,9 @@
 package lca;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -34,16 +37,17 @@ public class LcaInfSolver extends AbstractInferenceSolver implements
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
 		LcaX prob = (LcaX) x;
+		List<String> operations = Arrays.asList("ADD", "SUB", "SUB_REV", "MUL", "DIV", "DIV_REV");
 		double bestScore = -Double.MAX_VALUE;
-		int relation = -1;
-		for(int i=0; i<3; ++i) {
-			double score = wv.dotProduct(featGen.getFeatureVector(prob, new LcaY(i)));
+		String bestOp = null;
+		for(String op : operations) {
+			double score = wv.dotProduct(featGen.getFeatureVector(prob, new LcaY(op)));
 			if(score > bestScore) {
 				bestScore = score;
-				relation = i;
+				bestOp = op;
 			}
 		}
-		return new LcaY(relation);
+		return new LcaY(bestOp);
 	}
 	
 }

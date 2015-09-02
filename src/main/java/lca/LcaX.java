@@ -2,6 +2,7 @@ package lca;
 
 import java.util.List;
 
+import structure.Node;
 import structure.SimulProb;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
@@ -16,16 +17,17 @@ public class LcaX implements IInstance {
 	public List<Constituent> lemmas;
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
-	public int quantIndex;
+	public Node leaf1, leaf2;
 	
-	public LcaX(SimulProb simulProb, int quantIndex) {
+	public LcaX(SimulProb simulProb, Node leaf1, Node leaf2) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;
 		posTags = simulProb.posTags;
 		parse = simulProb.parse;
 		lemmas = simulProb.lemmas;
-		this.quantIndex = quantIndex;
+		this.leaf1 = leaf1;
+		this.leaf2 = leaf2;
 	}
 	
 }

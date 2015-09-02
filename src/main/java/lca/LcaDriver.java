@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Set;
 
 import reader.DocReader;
+import structure.Node;
 import structure.SimulProb;
 import utils.Params;
-import utils.Tools;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLParameters;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
@@ -54,10 +54,12 @@ public class LcaDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			for(int i=0; i<simulProb.quantities.size(); ++i) {
-				LcaX x = new LcaX(simulProb, i);
-				LcaY y = new LcaY(simulProb, i);
-				problem.addExample(x, y);
+			for(Node leaf1 : simulProb.equation.root.getLeaves()) {
+				for(Node leaf2 : simulProb.equation.root.getLeaves()) {
+					LcaX x = new LcaX(simulProb, leaf1, leaf2);
+					LcaY y = new LcaY(simulProb, leaf1, leaf2);
+					problem.addExample(x, y);
+				}
 			}
 		}
 		return problem;
@@ -88,8 +90,7 @@ public class LcaDriver {
 				incorrect.add(prob.problemIndex);
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
-				System.out.println("Quant of Interest: "+prob.quantities.get(prob.quantIndex));
-				System.out.println("Units: "+Tools.getUnit(prob.quantities.get(prob.quantIndex)));
+				System.out.println("Nodes of interest : "+prob.leaf1+" : "+prob.leaf2);
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
