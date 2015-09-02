@@ -1,11 +1,8 @@
 package var;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import structure.Node;
 import structure.SimulProb;
-import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
@@ -21,9 +18,9 @@ public class VarX implements IInstance {
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
 	public List<IntPair> candidateVars;
-	public List<Integer> relevantQuantIndices;
+	int candidateVarIndex;
 	
-	public VarX(SimulProb simulProb) {
+	public VarX(SimulProb simulProb, int candidateVarIndex) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;
@@ -31,18 +28,6 @@ public class VarX implements IInstance {
 		parse = simulProb.parse;
 		lemmas = simulProb.lemmas;
 		candidateVars = simulProb.candidateVars;
-		relevantQuantIndices = new ArrayList<Integer>();
-		for(Node leaf : simulProb.equation.root.getLeaves()) {
-			if(leaf.label.equals("NUM")) {
-				for(int i=0; i<simulProb.quantities.size(); ++i) {
-					if(Tools.safeEquals(leaf.value, Tools.getValue(
-							simulProb.quantities.get(i)))) {
-						relevantQuantIndices.add(i);
-						break;
-					}
-				}
-			}
-		}
 	}
 	
 }

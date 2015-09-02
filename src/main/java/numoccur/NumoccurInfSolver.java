@@ -36,7 +36,7 @@ public class NumoccurInfSolver extends AbstractInferenceSolver implements
 		NumoccurX prob = (NumoccurX) x;
 		double bestScore = -Double.MAX_VALUE;
 		int relation = -1;
-		for(int i=0; i<4; ++i) {
+		for(int i=0; i<3; ++i) {
 			double score = wv.dotProduct(featGen.getFeatureVector(prob, new NumoccurY(i)));
 			if(score > bestScore) {
 				bestScore = score;
