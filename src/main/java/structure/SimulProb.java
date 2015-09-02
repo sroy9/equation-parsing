@@ -114,22 +114,12 @@ public class SimulProb {
 			if(!varTokens.containsKey(label)) {
 				varTokens.put(label, new ArrayList<Integer>());
 			}
-//			for(int i=start; i<end; ++i) {
-//				if(posTags.get(i).getLabel().startsWith("N") || 
-//						posTags.get(i).getLabel().startsWith("V") ||
-//						posTags.get(i).getLabel().startsWith("J") ||
-//						KnowledgeBase.specialVarTokens.contains(
-//								ta.getToken(i).toLowerCase())) {
-//					varTokens.get(label).add(i);
-//				}
-//			}
 			boolean foundNP = false;
 			for(int i=0; i<candidateVars.size(); ++i) {
 				IntPair ip = candidateVars.get(i);
 				if(Tools.doesIntersect(ip, new IntPair(start, end))) {
 					varTokens.get(label).add(i);
 					foundNP = true;
-					break;
 				}
 			}
 			if(!foundNP) {
