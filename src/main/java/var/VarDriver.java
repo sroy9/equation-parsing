@@ -14,6 +14,7 @@ import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
+import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
 public class VarDriver {
 	
@@ -52,11 +53,9 @@ public class VarDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			for(int i=0; i<simulProb.candidateVars.size(); ++i) {
-				VarX x = new VarX(simulProb, i);
-				VarY y = new VarY(simulProb, i);
-				problem.addExample(x, y);
-			}
+			VarX x = new VarX(simulProb);
+			VarY y = new VarY(simulProb);
+			problem.addExample(x, y);
 		}
 		return problem;
 	}
@@ -112,9 +111,40 @@ public class VarDriver {
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
-		model.wv = learner.train(train);
+//		model.wv = learner.train(train);
+		model.wv = latentSVMLearner(learner, train, 
+				(VarInfSolver) model.infSolver, 5);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
+	}
+
+	public static WeightVector latentSVMLearner(
+			Learner learner, SLProblem sp, VarInfSolver infSolver, 
+			int maxIter) throws Exception {
+		WeightVector wv = new WeightVector(7000);
+		wv.setExtendable(true);
+		for(int i=0; i<maxIter; ++i) {
+			System.err.println("Latent SSVM : Iteration "+i);
+			SLProblem newProb = new SLProblem();
+			for(int j=0; j<sp.goldStructureList.size(); ++j) {
+				VarX prob = (VarX) sp.instanceList.get(j);
+				VarY gold = (VarY) sp.goldStructureList.get(j);
+//				System.out.println("GetLatent : "+prob.problemIndex+" : "+gold);
+				VarY bestLatent = infSolver.getLatentBestStructure(prob, gold, wv);
+//				System.out.println("BestLatent : "+bestLatent);
+				newProb.addExample(prob, bestLatent);
+			}
+//			System.out.println("Got all latent stuff");
+//			for(int j=0; j<newProb.size(); ++j) {
+//				TreeX prob = (TreeX) newProb.instanceList.get(j);
+//				TreeY gold = (TreeY) newProb.goldStructureList.get(j);
+//				System.out.println("X:"+prob.problemIndex+" Y:"+gold);
+//			}
+			System.err.println("Learning SSVM");
+			wv = learner.train(newProb, wv);
+			System.err.println("Done");
+		}
+		return wv;
 	}
 	
 	public static void main(String args[]) throws Exception {

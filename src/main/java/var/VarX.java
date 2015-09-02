@@ -18,9 +18,8 @@ public class VarX implements IInstance {
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
 	public List<IntPair> candidateVars;
-	int candidateVarIndex;
 	
-	public VarX(SimulProb simulProb, int candidateVarIndex) {
+	public VarX(SimulProb simulProb) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;

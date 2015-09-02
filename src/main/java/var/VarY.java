@@ -1,6 +1,10 @@
 package var;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import structure.SimulProb;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -8,33 +12,34 @@ import edu.illinois.cs.cogcomp.sl.core.IStructure;
 public class VarY implements IStructure, Serializable {
 	
 	private static final long serialVersionUID = 2399969922362221136L;
-	public boolean relevant;
+	public Map<String, List<Integer>> varTokens;
+	
+	public VarY() {
+		varTokens = new HashMap<String, List<Integer>>();
+	}
 	
 	public VarY(VarY other) {
-		relevant = other.relevant;
+		varTokens = new HashMap<String, List<Integer>>();
+		varTokens.putAll(other.varTokens);
 	}
 	
-	public VarY(boolean relevant) {
-		this.relevant = relevant;
-	}
-	
-	public VarY(SimulProb prob, int candidateVarIndex) {
-		for(String key : prob.varTokens.keySet()) {
-			if(prob.varTokens.get(key).contains(candidateVarIndex)) {
-				relevant = true;
-				return;
-			}
-		}
-		relevant = false;
+	public VarY(SimulProb prob) {
+		varTokens = new HashMap<String, List<Integer>>();
+		varTokens.putAll(prob.varTokens);
 	}
 	
 	public static float getLoss(VarY gold, VarY pred) {
-		if(gold.relevant == pred.relevant) return 0.0f;
-		return 1.0f;
+		if(pred.varTokens.get("V1").size() > 1 || 
+				(pred.varTokens.containsKey("V2") && pred.varTokens.get("V2").size() > 1)) {
+			System.err.println("Error in TreeY getLoss() function");
+		}
+		float loss1 = SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, true);
+		float loss2 = SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, false);
+		return Math.min(loss1, loss2);
 	}
 	
 	@Override
 	public String toString() {
-		return ""+relevant;
+		return "VarTokens : "+Arrays.asList(varTokens);
 	}
 }

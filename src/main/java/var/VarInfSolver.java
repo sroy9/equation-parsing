@@ -1,6 +1,12 @@
 package var;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+
+import com.google.common.collect.MinMaxPriorityQueue;
+
+import structure.PairComparator;
+import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -10,7 +16,7 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 		Serializable {
 
 	private static final long serialVersionUID = 5253748728743334706L;
-	private VarFeatGen featGen;
+	public VarFeatGen featGen;
 
 	public VarInfSolver(VarFeatGen featGen) 
 			throws Exception {
@@ -34,13 +40,63 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
 		VarX prob = (VarX) x;
-		double scoreTrue = wv.dotProduct(featGen.getFeatureVector(prob, new VarY(true)));
-		double scoreFalse = wv.dotProduct(featGen.getFeatureVector(prob, new VarY(false)));
-		if(scoreTrue > scoreFalse) {
-			return new VarY(true);
-		} else {
-			return new VarY(false);
+		PairComparator<VarY> pairComparator = new PairComparator<VarY>() {};
+		MinMaxPriorityQueue<Pair<VarY, Double>> beam = 
+				MinMaxPriorityQueue.orderedBy(pairComparator)
+				.maximumSize(50).create();
+		// Grounding of variables
+		for(int i=0; i<prob.candidateVars.size(); ++i) {
+			VarY y = new VarY();
+			y.varTokens.put("V1", new ArrayList<Integer>());
+			y.varTokens.get("V1").add(i);
+			beam.add(new Pair<VarY, Double>(y, 
+					1.0*wv.dotProduct(featGen.getFeatureVector(prob, y))));
+			for(int j=i; j<prob.candidateVars.size(); ++j) {
+				y = new VarY();
+				y.varTokens.put("V1", new ArrayList<Integer>());
+				y.varTokens.put("V2", new ArrayList<Integer>());
+				y.varTokens.get("V1").add(i);
+				y.varTokens.get("V2").add(j);
+				beam.add(new Pair<VarY, Double>(y, 
+						1.0*wv.dotProduct(featGen.getFeatureVector(prob, y))));
+			}
 		}
+		return beam.element().getFirst();
+	}
+		
+	public VarY getLatentBestStructure(
+			VarX x, VarY gold, WeightVector wv) {
+		VarY best = null;
+		double bestScore = -Double.MAX_VALUE;
+		if(gold.varTokens.keySet().size() == 1) {
+			for(Integer tokenIndex : gold.varTokens.get("V1")) {
+				VarY yNew = new VarY(gold);
+				yNew.varTokens.get("V1").clear();
+				yNew.varTokens.get("V1").add(tokenIndex);
+				double score = wv.dotProduct(
+						featGen.getFeatureVector(x, yNew));
+				if(score > bestScore) {
+					best = yNew;
+				}
+			}
+		}
+		if(gold.varTokens.keySet().size() == 2) {
+			for(Integer tokenIndex1 : gold.varTokens.get("V1")) {
+				for(Integer tokenIndex2 : gold.varTokens.get("V2")) {
+					VarY yNew = new VarY(gold);
+					yNew.varTokens.get("V1").clear();
+					yNew.varTokens.get("V1").add(tokenIndex1);
+					yNew.varTokens.get("V2").clear();
+					yNew.varTokens.get("V2").add(tokenIndex2);
+					double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
+					if(score > bestScore) {
+						best = yNew;
+					}
+				}
+			}
+		}
+		if(best == null) return gold;
+		return best;
 	}
 	
 }
