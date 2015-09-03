@@ -54,18 +54,9 @@ public class LcaDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			for(Node leaf1 : simulProb.equation.root.getLeaves()) {
-				for(Node node1 : enumerateVariableInstantiations(simulProb, leaf1)) {
-					for(Node leaf2 : simulProb.equation.root.getLeaves()) {
-						if(leaf1 == leaf2) continue;
-						for(Node node2 : enumerateVariableInstantiations(simulProb, leaf2)) {
-							LcaX x = new LcaX(simulProb, node1, node2);
-							LcaY y = new LcaY(simulProb, node1, node2);
-							problem.addExample(x, y);
-						}
-					}
-				}
-			}
+			LcaX x = new LcaX(simulProb);
+			LcaY y = new LcaY(simulProb);
+			problem.addExample(x, y);
 		}
 		return problem;
 	}
@@ -118,7 +109,6 @@ public class LcaDriver {
 				incorrect.add(prob.problemIndex);
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
-				System.out.println("Nodes of interest : "+prob.leaf1+" : "+prob.leaf2);
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));

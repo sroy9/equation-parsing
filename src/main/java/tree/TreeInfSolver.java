@@ -46,8 +46,6 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
 		TreeX prob = (TreeX) x;
-//		System.out.println("Inference called with "+prob.problemIndex);
-		// Get best equation trees
 		PairComparator<TreeY> pairComparator = 
 				new PairComparator<TreeY>() {};
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam1 = 
@@ -56,7 +54,6 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator)
 				.maximumSize(50).create();
-//		System.out.println("InfSolver called for problem : "+prob.problemIndex);
 		
 		TreeY seed = new TreeY();
 		for(Integer i : prob.relevantQuantIndices) {
