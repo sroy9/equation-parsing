@@ -34,7 +34,6 @@ public class Node implements Serializable {
 	public Node(Node other) {
 		this();
 		this.label = other.label;
-//		this.span = other.span;
 		this.index = other.index;
 		this.value = other.value;
 		this.varId = other.varId;
@@ -189,5 +188,40 @@ public class Node implements Serializable {
 		if(label.equals("VAR")) return true;
 		else if(label.equals("NUM")) return false;
 		else return children.get(0).hasVariable() || children.get(1).hasVariable();
+	}
+	
+	public boolean hasLeaf(Node leaf) {
+		if(label.equals("VAR") && leaf.label.equals("VAR")) {
+			if(varId.equals(leaf.varId)) return true;
+		}
+		if(label.equals("NUM") && leaf.label.equals("NUM")) {
+			if(Tools.safeEquals(leaf.value, value)) return true;
+		}
+		if(label.equals("VAR") || label.equals("NUM")) return false;
+		return children.get(0).hasLeaf(leaf) || children.get(1).hasLeaf(leaf);
+	}
+	
+	public String findLabelofLCA(Node leaf1, Node leaf2) {
+		String label = "NONE";
+		int subtreeSize = 1000;
+		boolean reverse = false;
+		for(Node node : getAllSubNodes()) {
+			if(node.children.size() == 0) continue;
+			if(node.children.get(0).hasLeaf(leaf1) && node.children.get(1).hasLeaf(leaf2)
+					&& node.getAllSubNodes().size() < subtreeSize) {
+				label = node.label;
+				subtreeSize = node.getAllSubNodes().size();
+			}
+			if(node.children.get(0).hasLeaf(leaf2) && node.children.get(1).hasLeaf(leaf1)
+					&& node.getAllSubNodes().size() < subtreeSize) {
+				label = node.label;
+				subtreeSize = node.getAllSubNodes().size();
+				reverse = true;
+			}
+		}
+		if((label.equals("SUB") || label.equals("DIV")) && reverse) {
+			return label+"_REV";
+		}
+		return label;
 	}
 }

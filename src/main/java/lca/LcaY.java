@@ -20,7 +20,7 @@ public class LcaY implements IStructure, Serializable {
 	}
 	
 	public LcaY(SimulProb prob, Node leaf1, Node leaf2) {
-		
+		operation = prob.equation.root.findLabelofLCA(leaf1, leaf2);
 	}
 	
 	public static float getLoss(LcaY gold, LcaY pred) {

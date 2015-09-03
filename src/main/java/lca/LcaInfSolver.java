@@ -37,7 +37,7 @@ public class LcaInfSolver extends AbstractInferenceSolver implements
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
 		LcaX prob = (LcaX) x;
-		List<String> operations = Arrays.asList("ADD", "SUB", "SUB_REV", "MUL", "DIV", "DIV_REV");
+		List<String> operations = Arrays.asList("EQ", "ADD", "SUB", "SUB_REV", "MUL", "DIV", "DIV_REV");
 		double bestScore = -Double.MAX_VALUE;
 		String bestOp = null;
 		for(String op : operations) {

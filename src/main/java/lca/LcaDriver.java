@@ -1,7 +1,6 @@
 package lca;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +9,8 @@ import reader.DocReader;
 import structure.Node;
 import structure.SimulProb;
 import utils.Params;
+import utils.Tools;
+import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLParameters;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
@@ -42,27 +43,54 @@ public class LcaDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/numoccur"+testFold+".save", train, testFold);
-		return testModel("models/numoccur"+testFold+".save", test);
+		trainModel("models/lca"+testFold+".save", train, testFold);
+		return testModel("models/lca"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
 			throws Exception {
 		if(simulProbList == null) {
-			simulProbList = 
-					DocReader.readSimulProbFromBratDir(Params.annotationDir);
+			simulProbList = DocReader.readSimulProbFromBratDir(Params.annotationDir);
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
 			for(Node leaf1 : simulProb.equation.root.getLeaves()) {
-				for(Node leaf2 : simulProb.equation.root.getLeaves()) {
-					LcaX x = new LcaX(simulProb, leaf1, leaf2);
-					LcaY y = new LcaY(simulProb, leaf1, leaf2);
-					problem.addExample(x, y);
+				for(Node node1 : enumerateVariableInstantiations(simulProb, leaf1)) {
+					for(Node leaf2 : simulProb.equation.root.getLeaves()) {
+						if(leaf1 == leaf2) continue;
+						for(Node node2 : enumerateVariableInstantiations(simulProb, leaf2)) {
+							LcaX x = new LcaX(simulProb, node1, node2);
+							LcaY y = new LcaY(simulProb, node1, node2);
+							problem.addExample(x, y);
+						}
+					}
 				}
 			}
 		}
 		return problem;
+	}
+	
+	public static List<Node> enumerateVariableInstantiations(SimulProb simulProb, Node leaf) {
+		List<Node> nodeList = new ArrayList<>();
+		if(leaf.label.equals("VAR")) {
+			for(int id : simulProb.varTokens.get(leaf.varId)) {
+				Node node = new Node(leaf);
+				node.index = id;
+				nodeList.add(node);
+			}
+		}
+		if(leaf.label.equals("NUM")) {
+			for(int i=0; i<simulProb.quantities.size(); ++i) {
+				QuantSpan qs  = simulProb.quantities.get(i);
+				if(Tools.safeEquals(Tools.getValue(qs), leaf.value)) {
+					Node node = new Node(leaf);
+					node.index = i;
+					nodeList.add(node);
+					break;
+				}
+			}
+		}
+		return nodeList;
 	}
 
 	public static double testModel(String modelPath, SLProblem sp)
@@ -104,7 +132,6 @@ public class LcaDriver {
 				+ " = " + (acc/sp.instanceList.size()));
 		System.out.println("Strict Accuracy : ="+ (1-1.0*incorrect.size()/total.size()) + 
 				" incorrect "+ incorrect.size() + " out of "+total.size());
-		System.out.println("Mistakes : "+Arrays.asList(incorrect));
 		return (1-1.0*incorrect.size()/total.size());
 	}
 	

@@ -4,6 +4,7 @@ import java.util.List;
 
 import structure.Node;
 import structure.SimulProb;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
@@ -17,6 +18,7 @@ public class LcaX implements IInstance {
 	public List<Constituent> lemmas;
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
+	public List<IntPair> candidateVars;
 	public Node leaf1, leaf2;
 	
 	public LcaX(SimulProb simulProb, Node leaf1, Node leaf2) {
@@ -26,6 +28,7 @@ public class LcaX implements IInstance {
 		posTags = simulProb.posTags;
 		parse = simulProb.parse;
 		lemmas = simulProb.lemmas;
+		candidateVars = simulProb.candidateVars;
 		this.leaf1 = leaf1;
 		this.leaf2 = leaf2;
 	}
