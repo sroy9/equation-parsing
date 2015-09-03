@@ -1,8 +1,8 @@
 package lca;
 
 import java.util.List;
-import java.util.Map;
 
+import structure.Node;
 import structure.SimulProb;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
@@ -19,9 +19,9 @@ public class LcaX implements IInstance {
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
 	public List<IntPair> candidateVars;
-	public Map<String, List<Integer>> varTokens;
- 	
-	public LcaX(SimulProb simulProb) {
+	public Node leaf1, leaf2;
+	
+	public LcaX(SimulProb simulProb, Node leaf1, Node leaf2) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;
@@ -29,7 +29,8 @@ public class LcaX implements IInstance {
 		parse = simulProb.parse;
 		lemmas = simulProb.lemmas;
 		candidateVars = simulProb.candidateVars;
-		varTokens = simulProb.varTokens;
+		this.leaf1 = leaf1;
+		this.leaf2 = leaf2;
 	}
 	
 }

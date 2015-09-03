@@ -2,33 +2,34 @@ package lca;
 
 import java.io.Serializable;
 
-import structure.Equation;
+import structure.Node;
 import structure.SimulProb;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
 public class LcaY implements IStructure, Serializable {
 	
 	private static final long serialVersionUID = 2399969922362221136L;
-	public Equation equation;
+	public String operation;
 	
-	public LcaY() {
-		equation = new Equation();
+	public LcaY(String op) {
+		operation = op;
 	}
 	
 	public LcaY(LcaY other) {
-		equation = new Equation(other.equation);
+		operation = other.operation;
 	}
 	
-	public LcaY(SimulProb prob) {
-		equation = new Equation(prob.equation);
+	public LcaY(SimulProb prob, Node leaf1, Node leaf2) {
+		operation = prob.equation.root.findLabelofLCA(leaf1, leaf2);
 	}
 	
 	public static float getLoss(LcaY gold, LcaY pred) {
-		return Equation.getLoss(gold.equation, pred.equation, true);
+		if(gold.operation.equals(pred.operation)) return 0.0f;
+		else return 1.0f;
 	}
 	
 	@Override
 	public String toString() {
-		return "Equation : "+equation;
+		return operation;
 	}
 }

@@ -8,7 +8,6 @@ import java.util.List;
 
 import reader.DocReader;
 import utils.Tools;
-import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 
 public class Node implements Serializable {
 	
@@ -65,8 +64,8 @@ public class Node implements Serializable {
 	public String toString() {
 		if(children.size() == 0) return label + "_" + 
 				(label.equals("NUM") ? value : varId);
-		return children.get(0).toString() + " " + label + " " + 
-				children.get(1).toString();
+		return "("+children.get(0).toString() + " " + label + " " + 
+				children.get(1).toString()+")";
 	}
 	
 	public static float getLoss(Node node1, Node node2, boolean varNameSwap) {
@@ -74,10 +73,10 @@ public class Node implements Serializable {
 		if(node1.children.size() != node2.children.size()) return 4.0f;
 		if(!node1.label.equals(node2.label)) return 4.0f;
 		if(node1.children.size() == 0) {
-			if(node1.label == "NUM" && !Tools.safeEquals(node1.value, node2.value)) {
+			if(node1.label.equals("NUM") && !Tools.safeEquals(node1.value, node2.value)) {
 				return 1.0f;
 			}
-			if(node1.label == "VAR") {
+			if(node1.label.equals("VAR")) {
 				if(!varNameSwap && !node1.varId.equals(node2.varId)) return 1.0f;
 				if(varNameSwap && node1.varId.equals(node2.varId)) return 1.0f;
 			}
@@ -162,16 +161,6 @@ public class Node implements Serializable {
 			leaves.addAll(children.get(1).getLeaves());
 		}
 		return leaves;
-	}
-	
-	public IntPair getSpanningTokenIndices() {
-		List<Node> leaves = getLeaves();
-		int min = 1000, max = -1;
-		for(Node leaf : leaves) {
-			if(leaf.index > max) max = leaf.index;
-			if(leaf.index < min) min = leaf.index;
-		}
-		return new IntPair(min, max);
 	}
 	
 	public List<Node> getAllSubNodes() {
