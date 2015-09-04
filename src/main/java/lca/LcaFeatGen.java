@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import utils.FeatGen;
+import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
@@ -48,14 +49,69 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements
 			ip2 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
 					x.ta.getTokenIdFromCharacterOffset(qs.end));
 		}
+		String prefix = "";
+		if(ip1.getFirst() > ip2.getFirst()) prefix += "REV";
+		if(ip1.getFirst() == ip2.getFirst() && ip1.getSecond() > ip2.getSecond()) prefix += "REV";
+//		if(Tools.doesContainNotEqual(ip1, ip2) || Tools.doesContainNotEqual(ip2, ip1)) {
+//			prefix += "Contained";
+//		}
+//		if(ip1 == ip2) {
+//			prefix += "Same";
+//		}
 		int min = Math.min(ip1.getSecond(), ip2.getSecond());
 		int max = Math.max(ip1.getFirst(), ip2.getFirst());
+		int left = Math.min(ip1.getFirst(), ip2.getFirst());
+		int right = Math.max(ip1.getSecond(), ip2.getSecond());
 		for(int i=min; i<max; ++i) {
-			addFeature("MidUnigram_"+x.ta.getToken(i).toLowerCase(), y, features);
+			addFeature(prefix+"_MidUnigram_"+x.ta.getToken(i).toLowerCase(), y, features);
 		}
 		for(int i=min; i<max-1; ++i) {
-			addFeature("MidBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+			addFeature(prefix+"_MidBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
 					x.ta.getToken(i+1).toLowerCase(), y, features);
+			addFeature(prefix+"_MidLexPosBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.posTags.get(i+1).getLabel(), y, features);
+			addFeature(prefix+"_MidPosLexBigram_"+x.posTags.get(i).getLabel()+"_"+
+					x.ta.getToken(i+1).toLowerCase(), y, features);
+		}
+		for(int i=ip1.getFirst(); i<ip1.getSecond(); ++i) {
+			addFeature(prefix+"_FirstUnigram_"+x.ta.getToken(i).toLowerCase(), y, features);
+		}
+		for(int i=ip1.getFirst(); i<ip1.getSecond()-1; ++i) {
+			addFeature(prefix+"_FirstBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.ta.getToken(i+1).toLowerCase(), y, features);
+			addFeature(prefix+"_FirstLexPosBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.posTags.get(i+1).getLabel(), y, features);
+			addFeature(prefix+"_FirstPosLexBigram_"+x.posTags.get(i).getLabel()+"_"+
+					x.ta.getToken(i+1).toLowerCase(), y, features);
+		}
+		for(int i=ip2.getFirst(); i<ip2.getSecond(); ++i) {
+			addFeature(prefix+"_SecondUnigram_"+x.ta.getToken(i).toLowerCase(), y, features);
+		}
+		for(int i=ip2.getFirst(); i<ip2.getSecond()-1; ++i) {
+			addFeature(prefix+"_SecondBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.ta.getToken(i+1).toLowerCase(), y, features);
+			addFeature(prefix+"_SecondLexPosBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.posTags.get(i+1).getLabel(), y, features);
+			addFeature(prefix+"_SecondPosLexBigram_"+x.posTags.get(i).getLabel()+"_"+
+					x.ta.getToken(i+1).toLowerCase(), y, features);
+		}
+		for(int i=Math.max(0, left-2); i<left; ++i) {
+			addFeature(prefix+"_LeftUnigram_"+x.ta.getToken(i).toLowerCase(), y, features);
+			addFeature(prefix+"_LeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.ta.getToken(i+1).toLowerCase(), y, features);
+//			addFeature(prefix+"_LeftLexPosBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+//					x.posTags.get(i+1).getLabel(), y, features);
+//			addFeature(prefix+"_LeftPosLexBigram_"+x.posTags.get(i).getLabel()+"_"+
+//					x.ta.getToken(i+1).toLowerCase(), y, features);
+		}
+		for(int i=right; i<Math.min(x.ta.size()-1, right+2); ++i) {
+			addFeature(prefix+"_RightUnigram_"+x.ta.getToken(i).toLowerCase(), y, features);
+			addFeature(prefix+"_RightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.ta.getToken(i+1).toLowerCase(), y, features);
+//			addFeature(prefix+"_RightLexPosBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+//					x.posTags.get(i+1).getLabel(), y, features);
+//			addFeature(prefix+"_RightPosLexBigram_"+x.posTags.get(i).getLabel()+"_"+
+//					x.ta.getToken(i+1).toLowerCase(), y, features);
 		}
 		return features;
 	}
