@@ -22,6 +22,7 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 	public Lexiconer lm = null;
 	private static int lexWindow=5;
 	private static int posWindow=3;
+	
 	public NumoccurFeatGen(Lexiconer lm) {
 		this.lm = lm;
 	}

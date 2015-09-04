@@ -1,12 +1,14 @@
 package tree;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import structure.Equation;
+import structure.Node;
 import structure.SimulProb;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
@@ -15,10 +17,12 @@ public class TreeY implements IStructure, Serializable {
 	private static final long serialVersionUID = 2399969922362221136L;
 	public Equation equation;
 	public Map<String, List<Integer>> varTokens;
+	public List<Node> nodes;
 	
 	public TreeY() {
 		equation = new Equation();
 		varTokens = new HashMap<String, List<Integer>>();
+		nodes = new ArrayList<>();  
 	}
 	
 	public TreeY(TreeY other) {

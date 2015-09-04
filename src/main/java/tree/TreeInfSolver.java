@@ -7,6 +7,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import numoccur.NumoccurInfSolver;
+import numoccur.NumoccurX;
+import numoccur.NumoccurY;
+
 import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Node;
@@ -49,21 +53,22 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		PairComparator<TreeY> pairComparator = 
 				new PairComparator<TreeY>() {};
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam1 = 
-				MinMaxPriorityQueue.orderedBy(pairComparator)
-				.maximumSize(50).create();
+				MinMaxPriorityQueue.orderedBy(pairComparator).
+				maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam2 = 
-				MinMaxPriorityQueue.orderedBy(pairComparator)
-				.maximumSize(50).create();
-		
-		TreeY seed = new TreeY();
-		for(Integer i : prob.relevantQuantIndices) {
-			Node node = new Node("NUM", 
-					prob.ta.getTokenIdFromCharacterOffset(
-							prob.quantities.get(i).start), 
-							new ArrayList<Node>());
-			node.value = Tools.getValue(prob.quantities.get(i));
-			seed.nodes.add(node);
+				MinMaxPriorityQueue.orderedBy(pairComparator).
+				maximumSize(200).create();
+		// Numoccur
+		for(int i=0; i<prob.quantities.size(); ++i) {
+			NumoccurX numX = new NumoccurX(prob, i);
+			for(int j=0; j<3; ++j) {
+				double score = wv.dotProduct(featGen.getFeatureVector(
+						prob, new NumoccurY(j)));
+				beam.add(new Pair<NumoccurY, Double>(new NumoccurY(i), score));
+			}
+			List<Pair<NumoccurY, Double>> numYlist = NumoccurInfSolver.
 		}
+		
 		
 		// Grounding of variables
 		for(int i=0; i<prob.candidateVars.size(); ++i) {
