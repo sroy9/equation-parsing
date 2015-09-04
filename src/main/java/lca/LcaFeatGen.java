@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import utils.FeatGen;
-import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
@@ -35,29 +34,28 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements
 	public static List<String> getFeatures(LcaX x, LcaY y) {
 		List<String> features = new ArrayList<>();
 		IntPair ip1, ip2;
+		String prefix = "";
 		if(x.leaf1.label.equals("VAR")) {
+			prefix+="VAR";
 			ip1 = x.candidateVars.get(x.leaf1.index);
 		} else {
+			prefix+="NUM";
 			QuantSpan qs = x.quantities.get(x.leaf1.index);
 			ip1 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
 					x.ta.getTokenIdFromCharacterOffset(qs.end));
 		}
 		if(x.leaf2.label.equals("VAR")) {
+			prefix+="VAR";
 			ip2 = x.candidateVars.get(x.leaf2.index);
 		} else {
+			prefix+="NUM";
 			QuantSpan qs = x.quantities.get(x.leaf2.index);
 			ip2 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
 					x.ta.getTokenIdFromCharacterOffset(qs.end));
 		}
-		String prefix = "";
 		if(ip1.getFirst() > ip2.getFirst()) prefix += "REV";
 		if(ip1.getFirst() == ip2.getFirst() && ip1.getSecond() > ip2.getSecond()) prefix += "REV";
-//		if(Tools.doesContainNotEqual(ip1, ip2) || Tools.doesContainNotEqual(ip2, ip1)) {
-//			prefix += "Contained";
-//		}
-//		if(ip1 == ip2) {
-//			prefix += "Same";
-//		}
+		
 		int min = Math.min(ip1.getSecond(), ip2.getSecond());
 		int max = Math.max(ip1.getFirst(), ip2.getFirst());
 		int left = Math.min(ip1.getFirst(), ip2.getFirst());
@@ -112,6 +110,13 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements
 //					x.posTags.get(i+1).getLabel(), y, features);
 //			addFeature(prefix+"_RightPosLexBigram_"+x.posTags.get(i).getLabel()+"_"+
 //					x.ta.getToken(i+1).toLowerCase(), y, features);
+		}
+		if(prefix.contains("NUMNUM")) {
+			if(x.leaf1.value > x.leaf2.value) {
+				addFeature(prefix+"_Desc", y, features);
+			} else {
+				addFeature(prefix+"_Asc", y, features);
+			}
 		}
 		return features;
 	}
