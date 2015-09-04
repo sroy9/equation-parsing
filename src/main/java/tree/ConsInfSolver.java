@@ -1,49 +1,32 @@
 package tree;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.google.common.collect.MinMaxPriorityQueue;
-
+import lca.LcaFeatGen;
+import lca.LcaX;
+import lca.LcaY;
+import numoccur.NumoccurX;
+import numoccur.NumoccurY;
 import structure.Node;
 import structure.PairComparator;
+import utils.FeatGen;
 import utils.Tools;
+import var.VarX;
+import var.VarY;
+
+import com.google.common.collect.MinMaxPriorityQueue;
+
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
-import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
-import edu.illinois.cs.cogcomp.sl.core.IInstance;
-import edu.illinois.cs.cogcomp.sl.core.IStructure;
-import edu.illinois.cs.cogcomp.sl.util.WeightVector;
+import edu.illinois.cs.cogcomp.sl.core.SLModel;
 
-public class TreeInfSolver extends AbstractInferenceSolver implements
-		Serializable {
-
-	private static final long serialVersionUID = 5253748728743334706L;
-	public TreeFeatGen featGen;
-
-	public TreeInfSolver(TreeFeatGen featGen) 
-			throws Exception {
-		this.featGen = featGen;
-	}
-
-	@Override
-	public IStructure getBestStructure(WeightVector wv, IInstance x)
-			throws Exception {
-		return getLossAugmentedBestStructure(wv, x, null);
-	}
-		
-	@Override
-	public float getLoss(IInstance arg0, IStructure arg1, IStructure arg2) {
-		TreeY r1 = (TreeY) arg1;
-		TreeY r2 = (TreeY) arg2;
-		return TreeY.getLoss(r1, r2);
-	}
-
-	@Override
-	public IStructure getLossAugmentedBestStructure(WeightVector wv,
-			IInstance x, IStructure goldStructure) throws Exception {
-		TreeX prob = (TreeX) x;
+public class ConsInfSolver {
+	
+	public static double numOccurScale, varScale;
+	
+	public static TreeY getBestStructure(TreeX prob, SLModel numOccurModel, 
+			SLModel varModel, SLModel lcaModel) throws Exception {
 		PairComparator<TreeY> pairComparator = 
 				new PairComparator<TreeY>() {};
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam1 = 
@@ -59,8 +42,10 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		for(int i=0; i<prob.quantities.size(); ++i) {
 			for(Pair<TreeY, Double> pair : beam1) {
 				for(int j=0; j<3; ++j) {
-					double score = wv.dotProduct(
-							featGen.getNumoccurFeatureVector(prob, i, j));
+					double score = numOccurScale*numOccurModel.wv.dotProduct(
+							numOccurModel.featureGenerator.getFeatureVector(
+									new NumoccurX(prob, i),
+									new NumoccurY(j)));
 					TreeY y = new TreeY(pair.getFirst());
 					for(int k=0; k<j; ++k) {
 						Node node = new Node("NUM", i, new ArrayList<Node>());
@@ -74,7 +59,6 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 			beam1.addAll(beam2);
 			beam2.clear();
 		}
-//		System.out.println("Beam size after num occur : "+beam1.size());
 		
 		// Grounding of variables
 		for(Pair<TreeY, Double> pair : beam1) {
@@ -85,8 +69,8 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				y.nodes.add(node);
 				y.varTokens.put("V1", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
-				beam2.add(new Pair<TreeY, Double>(y, 
-						1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+				beam2.add(new Pair<TreeY, Double>(y, varScale*varModel.wv.dotProduct(
+						varModel.featureGenerator.getFeatureVector(new VarX(prob), new VarY(y)))));
 				for(int j=i; j<prob.candidateVars.size(); ++j) {
 					y = new TreeY(pair.getFirst());
 					node = new Node("VAR", i, new ArrayList<Node>());
@@ -99,26 +83,25 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.put("V2", new ArrayList<Integer>());
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
-					beam2.add(new Pair<TreeY, Double>(y, 
-							1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+					beam2.add(new Pair<TreeY, Double>(y, varScale*varModel.wv.dotProduct(
+							varModel.featureGenerator.getFeatureVector(new VarX(prob), new VarY(y)))));
 				}
 			}
 		}
 		beam1.clear();
 		beam1.addAll(beam2);
 		beam2.clear();
-//		System.out.println("Beam size after var token : "+beam1.size());
 		
 		// Equation generation
 		for(Pair<TreeY, Double> pair : beam1) {
-			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
+			beam2.addAll(getBottomUpBestParse(prob, pair, lcaModel));
 		}
-//		System.out.println("Beam size after equation : "+beam2.size());
+		
 		return beam2.element().getFirst();
 	}
 	
-	public List<Pair<TreeY, Double>> getBottomUpBestParse(
-			TreeX x, Pair<TreeY, Double> pair, WeightVector wv) {
+	public static List<Pair<TreeY, Double>> getBottomUpBestParse(
+			TreeX x, Pair<TreeY, Double> pair, SLModel lcaModel) {
 		TreeY y = pair.getFirst();
 		PairComparator<List<Node>> nodePairComparator = 
 				new PairComparator<List<Node>>() {};
@@ -134,7 +117,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		beam1.add(new Pair<List<Node>, Double>(init, pair.getSecond()));
 		for(int i=1; i<=n-2; ++i) {
 			for(Pair<List<Node>, Double> state : beam1) {
-				beam2.addAll(enumerateSingleMerge(state, wv, x));
+				beam2.addAll(enumerateSingleMerge(state, lcaModel, x));
 			}
 			beam1.clear();
 			beam1.addAll(beam2);
@@ -145,7 +128,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 			Node node = new Node("EQ", -1, Arrays.asList(
 					state.getFirst().get(0), state.getFirst().get(1)));
 			beam2.add(new Pair<List<Node>, Double>(Arrays.asList(node), 
-					state.getSecond()+ getLcaScore(node, wv, x)));
+					state.getSecond()+getLcaScore(node, lcaModel, x)));
 		}
 		List<Pair<TreeY, Double>> results = new ArrayList<Pair<TreeY,Double>>();
 		for(Pair<List<Node>, Double> b : beam2) {
@@ -157,8 +140,8 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		return results;
 	}
 	
-	public List<Pair<List<Node>, Double>> enumerateSingleMerge(
-			Pair<List<Node>, Double> state, WeightVector wv, TreeX x) {
+	public static List<Pair<List<Node>, Double>> enumerateSingleMerge(
+			Pair<List<Node>, Double> state, SLModel lcaModel, TreeX x) {
 		List<Pair<List<Node>, Double>> nextStates = new ArrayList<>();
 		List<Node> nodeList = state.getFirst();
 		if(nodeList.size() == 1) {
@@ -175,7 +158,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				tmpNodeList.remove(i);
 				tmpNodeList.remove(j-1);
 				for(Pair<Node, Double> pair : enumerateMerge(
-						nodeList.get(i), nodeList.get(j), wv, x)) {
+						nodeList.get(i), nodeList.get(j), lcaModel, x)) {
 					List<Node> newNodeList = new ArrayList<Node>();
 					newNodeList.addAll(tmpNodeList);
 					newNodeList.add(pair.getFirst());
@@ -187,8 +170,8 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		return nextStates;
 	}
 	
-	public List<Pair<Node, Double>> enumerateMerge(
-			Node node1, Node node2, WeightVector wv, TreeX x) {
+	public static List<Pair<Node, Double>> enumerateMerge(
+			Node node1, Node node2, SLModel lcaModel, TreeX x) {
 		List<Pair<Node, Double>> nextStates = new ArrayList<>();
 		List<String> labels = Arrays.asList(
 				"ADD", "SUB", "SUB_REV","MUL", "DIV", "DIV_REV");
@@ -197,86 +180,35 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 			if(label.endsWith("REV")) {
 				label = label.substring(0,3);
 				Node node = new Node(label, -1, Arrays.asList(node2, node1));
-				mergeScore = getLcaScore(node, wv, x);
+				mergeScore = getLcaScore(node, lcaModel, x);
 				nextStates.add(new Pair<Node, Double>(node, mergeScore));
 			} else {
 				Node node = new Node(label, -1, Arrays.asList(node1, node2));
-				mergeScore = getLcaScore(node, wv, x);
+				mergeScore = getLcaScore(node, lcaModel, x);
 				nextStates.add(new Pair<Node, Double>(node, mergeScore));
 			}
 		}
 		return nextStates;
 	}
 
-	public double getLcaScore(Node node, WeightVector wv, TreeX x) {
-		return wv.dotProduct(featGen.getLcaFeatureVector(x, node));
-	}
-	
-	public TreeY getLatentBestStructure(
-			TreeX x, TreeY gold, WeightVector wv) {
-		TreeY best = null;
-		double bestScore = -Double.MAX_VALUE;
-		if(gold.varTokens.keySet().size() == 1) {
-			for(Integer tokenIndex : gold.varTokens.get("V1")) {
-				TreeY yNew = new TreeY(gold);
-				yNew.varTokens.get("V1").clear();
-				yNew.varTokens.get("V1").add(tokenIndex);
-				for(Node node : yNew.equation.root.getLeaves()) {
-					if(node.label.equals("VAR")) {
-						node.index = tokenIndex;
-					}
-					if(node.label.equals("NUM")) {
-						for(int i=0; i<x.quantities.size(); ++i) {
-							if(Tools.safeEquals(node.value, 
-									Tools.getValue(x.quantities.get(i)))) {
-								node.index = i;
-								break;
-							}
-						}
-					}
-				}
-				double score = wv.dotProduct(
-						featGen.getFeatureVector(x, yNew));
-				if(score > bestScore) {
-					best = yNew;
+	public static double getLcaScore(Node node, SLModel lcaModel, TreeX x) {
+		List<String> features = new ArrayList<String>();
+		if(node.children.size() == 2) {
+			for(Node leaf1 : node.children.get(0).getLeaves()) {
+				for(Node leaf2 : node.children.get(1).getLeaves()) {
+					LcaX lcaX = new LcaX(x, leaf1, leaf2);
+					LcaY lcaY = new LcaY(node.label);
+					features.addAll(LcaFeatGen.getFeatures(lcaX, lcaY));
+					String label = node.label;
+					if(label.equals("SUB") || label.equals("DIV")) label += "_REV";
+					lcaX = new LcaX(x, leaf2, leaf1);
+					lcaY = new LcaY(label);
+					features.addAll(LcaFeatGen.getFeatures(lcaX, lcaY));
 				}
 			}
 		}
-		if(gold.varTokens.keySet().size() == 2) {
-			for(Integer tokenIndex1 : gold.varTokens.get("V1")) {
-				for(Integer tokenIndex2 : gold.varTokens.get("V2")) {
-					TreeY yNew = new TreeY(gold);
-					yNew.varTokens.get("V1").clear();
-					yNew.varTokens.get("V1").add(tokenIndex1);
-					yNew.varTokens.get("V2").clear();
-					yNew.varTokens.get("V2").add(tokenIndex2);
-					for(Node node : yNew.equation.root.getLeaves()) {
-						if(node.label.equals("VAR") && node.varId.equals("V1")) {
-							node.index = tokenIndex1;
-						}
-						if(node.label.equals("VAR") && node.varId.equals("V2")) {
-							node.index = tokenIndex2;
-						}
-						if(node.label.equals("NUM")) {
-							for(int i=0; i<x.quantities.size(); ++i) {
-								if(Tools.safeEquals(node.value, 
-										Tools.getValue(x.quantities.get(i)))) {
-									node.index = i;
-									break;
-								}
-							}
-						}
-						
-					}
-					double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
-					if(score > bestScore) {
-						best = yNew;
-					}
-				}
-			}
-		}
-		if(best == null) return gold;
-		return best;
+		return lcaModel.wv.dotProduct(FeatGen.getFeatureVectorFromList(
+				features, lcaModel.lm));
 	}
 	
 }

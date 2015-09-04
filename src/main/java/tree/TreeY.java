@@ -29,12 +29,15 @@ public class TreeY implements IStructure, Serializable {
 		equation = new Equation(other.equation);
 		varTokens = new HashMap<String, List<Integer>>();
 		varTokens.putAll(other.varTokens);
+		nodes = new ArrayList<>();
+		nodes.addAll(other.nodes);
 	}
 	
 	public TreeY(SimulProb prob) {
 		equation = new Equation(prob.equation);
 		varTokens = new HashMap<String, List<Integer>>();
 		varTokens.putAll(prob.varTokens);
+		nodes = new ArrayList<Node>();
 	}
 	
 	public static float getLoss(TreeY gold, TreeY pred) {

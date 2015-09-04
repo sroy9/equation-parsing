@@ -41,8 +41,8 @@ public class VarDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/var_"+testFold+".save", train, testFold);
-		return testModel("models/var_"+testFold+".save", test);
+		trainModel("models/var"+testFold+".save", train, testFold);
+		return testModel("models/var"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 

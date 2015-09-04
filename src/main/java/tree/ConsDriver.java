@@ -1,32 +1,28 @@
 package tree;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import reader.DocReader;
 import structure.SimulProb;
 import utils.Params;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
-import edu.illinois.cs.cogcomp.sl.core.SLParameters;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.learner.Learner;
-import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
-import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
-public class TreeDriver {
+public class ConsDriver {
 	
-	public static void crossVal() throws Exception {
+	public static double crossVal() throws Exception {
 		double acc = 0.0;
 		for(int i=0;i<5;i++) {
-			acc += doTrainTest(i);
+			acc += doTuneTest(i);
 		}
 		System.out.println("5-fold CV : " + (acc/5));
+		return (acc/5);
 	}
 	
-	public static double doTrainTest(int testFold) throws Exception {
+	public static double doTuneTest(int testFold) throws Exception {
 		List<List<Integer>> folds = DocReader.extractFolds();
 		List<SimulProb> simulProbList = 
 				DocReader.readSimulProbFromBratDir(Params.annotationDir);
@@ -39,10 +35,14 @@ public class TreeDriver {
 				trainProbs.add(simulProb);
 			}
 		}
+		SLModel numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
+		SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
+		SLModel lcaModel = SLModel.loadModel("models/lca"+testFold+".save");
+		
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/tree"+testFold+".save", train, testFold);
-		return testModel("models/tree"+testFold+".save", test);
+		tuneModel(numOccurModel, varModel, lcaModel, train);
+		return testModel(numOccurModel, varModel, lcaModel, test, true);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
@@ -60,37 +60,22 @@ public class TreeDriver {
 		return problem;
 	}
 
-	public static double testModel(String modelPath, SLProblem sp)
-			throws Exception {
-		SLModel model = SLModel.loadModel(modelPath);
-		Set<Integer> incorrect = new HashSet<>();
-		Set<Integer> total = new HashSet<>();
+	public static double testModel(SLModel numOccurModel, SLModel varModel, 
+			SLModel lcaModel, SLProblem sp, boolean printMistakes) throws Exception {
+		System.out.println("Testing with params : NumOccurScale "+ConsInfSolver.numOccurScale+
+				" : VarScale "+ConsInfSolver.varScale);
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			TreeX prob = (TreeX) sp.instanceList.get(i);
 			TreeY gold = (TreeY) sp.goldStructureList.get(i);
-			TreeY pred = (TreeY) model.infSolver.getBestStructure(
-					model.wv, prob);
-			total.add(prob.problemIndex);
-			double goldWt = model.wv.dotProduct(
-					model.featureGenerator.getFeatureVector(prob, gold));
-			double predWt = model.wv.dotProduct(
-					model.featureGenerator.getFeatureVector(prob, pred));
-			if(goldWt > predWt) {
-				System.out.println("PROBLEM HERE");
-			}
+			TreeY pred = ConsInfSolver.getBestStructure(prob, numOccurModel, varModel, lcaModel);
 			if(TreeY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
-			} else {
-				incorrect.add(prob.problemIndex);
+			} else if(printMistakes) {
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
 				System.out.println("Gold : \n"+gold);
-				System.out.println("Gold weight : "+model.wv.dotProduct(
-						model.featureGenerator.getFeatureVector(prob, gold)));
 				System.out.println("Pred : \n"+pred);
-				System.out.println("Pred weight : "+model.wv.dotProduct(
-						model.featureGenerator.getFeatureVector(prob, pred)));
 				System.out.println("Loss : "+TreeY.getLoss(gold, pred));
 			}
 		}
@@ -99,22 +84,24 @@ public class TreeDriver {
 		return (acc/sp.instanceList.size());
 	}
 	
-	public static void trainModel(String modelPath, SLProblem train, int testFold) 
-			throws Exception {
-		SLModel model = new SLModel();
-		Lexiconer lm = new Lexiconer();
-		lm.setAllowNewFeatures(true);
-		model.lm = lm;
-		TreeFeatGen fg = new TreeFeatGen(lm);
-		model.featureGenerator = fg;
-		model.infSolver = new TreeInfSolver(fg);
-		SLParameters para = new SLParameters();
-		para.loadConfigFile(Params.spConfigFile);
-		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
-		model.wv = latentSVMLearner(learner, train, 
-				(TreeInfSolver) model.infSolver, 5);
-		lm.setAllowNewFeatures(false);
-		model.saveModel(modelPath);
+	public static void tuneModel(SLModel numOccurModel, SLModel varModel, 
+			SLModel lcaModel, SLProblem sp) throws Exception {
+		double vals[] = {1.0, 100.0, 10000.0};
+		double bestAccuracy = 0.0, bestNumOccurScale = 0.0, bestVarScale = 0.0;
+		for(Double val1 : vals) {
+			for(Double val2 : vals) {
+				ConsInfSolver.numOccurScale = val1;
+				ConsInfSolver.varScale = val2;
+				double accuracy = testModel(numOccurModel, varModel, lcaModel, sp, false);
+				if(accuracy > bestAccuracy) {
+					bestAccuracy = accuracy;
+					bestNumOccurScale = val1;
+					bestVarScale = val2;
+				}
+			}
+		}
+		ConsInfSolver.numOccurScale = bestNumOccurScale;
+		ConsInfSolver.varScale = bestVarScale;
 	}
 
 	public static WeightVector latentSVMLearner(
@@ -139,6 +126,6 @@ public class TreeDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		TreeDriver.crossVal();
+		ConsDriver.doTuneTest(0);
 	}
 }

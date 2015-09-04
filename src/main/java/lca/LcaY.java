@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import structure.Node;
 import structure.SimulProb;
+import tree.TreeY;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
 public class LcaY implements IStructure, Serializable {
@@ -20,6 +21,10 @@ public class LcaY implements IStructure, Serializable {
 	}
 	
 	public LcaY(SimulProb prob, Node leaf1, Node leaf2) {
+		operation = prob.equation.root.findLabelofLCA(leaf1, leaf2);
+	}
+	
+	public LcaY(TreeY prob, Node leaf1, Node leaf2) {
 		operation = prob.equation.root.findLabelofLCA(leaf1, leaf2);
 	}
 	

@@ -3,6 +3,7 @@ package var;
 import java.util.List;
 
 import structure.SimulProb;
+import tree.TreeX;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
@@ -22,6 +23,16 @@ public class VarX implements IInstance {
 	public VarX(SimulProb simulProb) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
+		ta = simulProb.ta;
+		posTags = simulProb.posTags;
+		parse = simulProb.parse;
+		lemmas = simulProb.lemmas;
+		candidateVars = simulProb.candidateVars;
+	}
+	
+	public VarX(TreeX simulProb) {
+		quantities = simulProb.quantities;
+		problemIndex = simulProb.problemIndex;
 		ta = simulProb.ta;
 		posTags = simulProb.posTags;
 		parse = simulProb.parse;
