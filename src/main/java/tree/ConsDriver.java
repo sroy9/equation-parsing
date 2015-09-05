@@ -45,6 +45,25 @@ public class ConsDriver {
 		return testModel(numOccurModel, varModel, lcaModel, test, true);
 	}
 	
+	public static double doTest(int testFold) throws Exception {
+		List<List<Integer>> folds = DocReader.extractFolds();
+		List<SimulProb> simulProbList = 
+				DocReader.readSimulProbFromBratDir(Params.annotationDir);
+		List<SimulProb> trainProbs = new ArrayList<>();
+		List<SimulProb> testProbs = new ArrayList<>();
+		for(SimulProb simulProb : simulProbList) {
+			if(folds.get(testFold).contains(simulProb.index)) {
+				testProbs.add(simulProb);
+			}
+		}
+		SLModel numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
+		SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
+		SLModel lcaModel = SLModel.loadModel("models/lca"+testFold+".save");
+		
+		SLProblem test = getSP(testProbs);
+		return testModel(numOccurModel, varModel, lcaModel, test, true);
+	}
+	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
 			throws Exception {
 		if(simulProbList == null) {
@@ -126,6 +145,8 @@ public class ConsDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		ConsDriver.doTuneTest(0);
+		ConsInfSolver.numOccurScale = 1000000.0;
+		ConsInfSolver.varScale = 1000000.0;
+		ConsDriver.doTest(0);
 	}
 }

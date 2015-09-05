@@ -1,4 +1,4 @@
-package numoccur;
+package struct.numoccur;
 
 import java.util.List;
 
@@ -17,36 +17,23 @@ public class NumoccurX implements IInstance {
 	public List<Constituent> lemmas;
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
-	public int quantIndex;
 	
-	public NumoccurX(SimulProb simulProb, int quantIndex) {
+	public NumoccurX(SimulProb simulProb) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;
 		posTags = simulProb.posTags;
 		parse = simulProb.parse;
 		lemmas = simulProb.lemmas;
-		this.quantIndex = quantIndex;
 	}
 	
-	public NumoccurX(TreeX x, int quantIndex) {
+	public NumoccurX(TreeX x) {
 		quantities = x.quantities;
 		problemIndex = x.problemIndex;
 		ta = x.ta;
 		posTags = x.posTags;
 		parse = x.parse;
 		lemmas = x.lemmas;
-		this.quantIndex = quantIndex;
-	}
-	
-	public NumoccurX(struct.numoccur.NumoccurX x, int quantIndex) {
-		quantities = x.quantities;
-		problemIndex = x.problemIndex;
-		ta = x.ta;
-		posTags = x.posTags;
-		parse = x.parse;
-		lemmas = x.lemmas;
-		this.quantIndex = quantIndex;
 	}
 	
 }
