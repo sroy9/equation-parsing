@@ -5,6 +5,7 @@ import java.util.Map;
 
 import structure.Node;
 import structure.SimulProb;
+import tree.TreeX;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
@@ -27,6 +28,19 @@ public class LcaX implements IInstance {
 			List<Node> nodes) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
+		ta = simulProb.ta;
+		posTags = simulProb.posTags;
+		parse = simulProb.parse;
+		lemmas = simulProb.lemmas;
+		candidateVars = simulProb.candidateVars;
+		this.varTokens = varTokens;
+		this.nodes = nodes;
+	}
+	
+	public LcaX(TreeX simulProb, Map<String, List<Integer>> varTokens,
+			List<Node> nodes) {
+		quantities = simulProb.quantities;
+		problemIndex = simulProb.problemIndex;
 		ta = simulProb.ta;
 		posTags = simulProb.posTags;
 		parse = simulProb.parse;

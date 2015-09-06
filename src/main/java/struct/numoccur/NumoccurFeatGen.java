@@ -54,9 +54,9 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 	
 	public static List<String> getGlobalFeatures(NumoccurX x, NumoccurY y) {
 		List<String> features = new ArrayList<>();
-		for(int i=0; i<x.ta.size(); ++i) {
-			features.add(y+"_Unigram_"+x.ta.getToken(i).toLowerCase());
-		}
+//		for(int i=0; i<x.ta.size(); ++i) {
+//			features.add(y+"_Unigram_"+x.ta.getToken(i).toLowerCase());
+//		}
 		return features;
 	}
 	

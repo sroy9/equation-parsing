@@ -85,8 +85,8 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				y.nodes.add(node);
 				y.varTokens.put("V1", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
-				beam2.add(new Pair<TreeY, Double>(y, 
-						1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+				beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+
+						wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 				for(int j=i; j<prob.candidateVars.size(); ++j) {
 					y = new TreeY(pair.getFirst());
 					node = new Node("VAR", i, new ArrayList<Node>());
@@ -99,8 +99,8 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.put("V2", new ArrayList<Integer>());
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
-					beam2.add(new Pair<TreeY, Double>(y, 
-							1.0*wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+					beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+
+							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 				}
 			}
 		}

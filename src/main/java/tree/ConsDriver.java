@@ -121,8 +121,8 @@ public class ConsDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		ConsInfSolver.numOccurScale = 1000000.0;
-		ConsInfSolver.varScale = 1000000.0;
+		ConsInfSolver.numOccurScale = 1000000000.0;
+		ConsInfSolver.varScale = 1000.0;
 		ConsDriver.doTest(0);
 	}
 }

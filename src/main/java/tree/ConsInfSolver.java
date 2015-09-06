@@ -3,6 +3,7 @@ package tree;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import lca.LcaFeatGen;
 import lca.LcaX;
@@ -24,7 +25,7 @@ import edu.illinois.cs.cogcomp.sl.core.SLModel;
 public class ConsInfSolver {
 	
 	public static double numOccurScale, varScale;
-	public static boolean useSPforNumOccur = false, useSPforLCA = false;
+	public static boolean useSPforNumOccur = true, useSPforLCA = false;
 	
 	public static TreeY getBestStructure(TreeX prob, SLModel numOccurModel, 
 			SLModel varModel, SLModel lcaModel) throws Exception {
@@ -43,10 +44,19 @@ public class ConsInfSolver {
 		for(int i=0; i<prob.quantities.size(); ++i) {
 			for(Pair<TreeY, Double> pair : beam1) {
 				for(int j=0; j<3; ++j) {
-					double score = numOccurScale*numOccurModel.wv.dotProduct(
-							numOccurModel.featureGenerator.getFeatureVector(
-									new NumoccurX(prob, i),
-									new NumoccurY(j)));
+					double score = 0.0;
+					if(useSPforNumOccur) {
+						score = numOccurScale*numOccurModel.wv.dotProduct(
+								((struct.numoccur.NumoccurFeatGen) numOccurModel.featureGenerator).
+								getIndividualFeatureVector(
+										new NumoccurX(prob, i),
+										new NumoccurY(j)));
+					} else {
+						score = numOccurScale*numOccurModel.wv.dotProduct(
+								numOccurModel.featureGenerator.getFeatureVector(
+										new NumoccurX(prob, i),
+										new NumoccurY(j)));
+					}
 					TreeY y = new TreeY(pair.getFirst());
 					for(int k=0; k<j; ++k) {
 						Node node = new Node("NUM", i, new ArrayList<Node>());
@@ -57,7 +67,7 @@ public class ConsInfSolver {
 				}
 			}
 			beam1.clear();
-			beam1.add(beam2.element());
+			beam1.addAll(beam2);
 			beam2.clear();
 		}
 		
@@ -70,7 +80,7 @@ public class ConsInfSolver {
 				y.nodes.add(node);
 				y.varTokens.put("V1", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
-				beam2.add(new Pair<TreeY, Double>(y, varScale*varModel.wv.dotProduct(
+				beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+varScale*varModel.wv.dotProduct(
 						varModel.featureGenerator.getFeatureVector(new VarX(prob), new VarY(y)))));
 				for(int j=i; j<prob.candidateVars.size(); ++j) {
 					y = new TreeY(pair.getFirst());
@@ -84,7 +94,7 @@ public class ConsInfSolver {
 					y.varTokens.put("V2", new ArrayList<Integer>());
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
-					beam2.add(new Pair<TreeY, Double>(y, varScale*varModel.wv.dotProduct(
+					beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+varScale*varModel.wv.dotProduct(
 							varModel.featureGenerator.getFeatureVector(new VarX(prob), new VarY(y)))));
 				}
 			}
@@ -118,7 +128,8 @@ public class ConsInfSolver {
 		beam1.add(new Pair<List<Node>, Double>(init, pair.getSecond()));
 		for(int i=1; i<=n-2; ++i) {
 			for(Pair<List<Node>, Double> state : beam1) {
-				beam2.addAll(enumerateSingleMerge(state, lcaModel, x));
+				beam2.addAll(enumerateSingleMerge(state, lcaModel, x, 
+						pair.getFirst().varTokens, pair.getFirst().nodes));
 			}
 			beam1.clear();
 			beam1.addAll(beam2);
@@ -129,7 +140,8 @@ public class ConsInfSolver {
 			Node node = new Node("EQ", -1, Arrays.asList(
 					state.getFirst().get(0), state.getFirst().get(1)));
 			beam2.add(new Pair<List<Node>, Double>(Arrays.asList(node), 
-					state.getSecond()+getLcaScore(node, lcaModel, x)));
+					state.getSecond()+getLcaScore(node, lcaModel, x, 
+							pair.getFirst().varTokens, pair.getFirst().nodes)));
 		}
 		List<Pair<TreeY, Double>> results = new ArrayList<Pair<TreeY,Double>>();
 		for(Pair<List<Node>, Double> b : beam2) {
@@ -142,7 +154,8 @@ public class ConsInfSolver {
 	}
 	
 	public static List<Pair<List<Node>, Double>> enumerateSingleMerge(
-			Pair<List<Node>, Double> state, SLModel lcaModel, TreeX x) {
+			Pair<List<Node>, Double> state, SLModel lcaModel, TreeX x, 
+			Map<String, List<Integer>> varTokens, List<Node> nodes) {
 		List<Pair<List<Node>, Double>> nextStates = new ArrayList<>();
 		List<Node> nodeList = state.getFirst();
 		if(nodeList.size() == 1) {
@@ -159,7 +172,7 @@ public class ConsInfSolver {
 				tmpNodeList.remove(i);
 				tmpNodeList.remove(j-1);
 				for(Pair<Node, Double> pair : enumerateMerge(
-						nodeList.get(i), nodeList.get(j), lcaModel, x)) {
+						nodeList.get(i), nodeList.get(j), lcaModel, x, varTokens, nodes)) {
 					List<Node> newNodeList = new ArrayList<Node>();
 					newNodeList.addAll(tmpNodeList);
 					newNodeList.add(pair.getFirst());
@@ -172,7 +185,8 @@ public class ConsInfSolver {
 	}
 	
 	public static List<Pair<Node, Double>> enumerateMerge(
-			Node node1, Node node2, SLModel lcaModel, TreeX x) {
+			Node node1, Node node2, SLModel lcaModel, TreeX x, 
+			Map<String, List<Integer>> varTokens, List<Node> nodes) {
 		List<Pair<Node, Double>> nextStates = new ArrayList<>();
 		List<String> labels = Arrays.asList(
 				"ADD", "SUB", "SUB_REV","MUL", "DIV", "DIV_REV");
@@ -181,35 +195,43 @@ public class ConsInfSolver {
 			if(label.endsWith("REV")) {
 				label = label.substring(0,3);
 				Node node = new Node(label, -1, Arrays.asList(node2, node1));
-				mergeScore = getLcaScore(node, lcaModel, x);
+				mergeScore = getLcaScore(node, lcaModel, x, varTokens, nodes);
 				nextStates.add(new Pair<Node, Double>(node, mergeScore));
 			} else {
 				Node node = new Node(label, -1, Arrays.asList(node1, node2));
-				mergeScore = getLcaScore(node, lcaModel, x);
+				mergeScore = getLcaScore(node, lcaModel, x, varTokens, nodes);
 				nextStates.add(new Pair<Node, Double>(node, mergeScore));
 			}
 		}
 		return nextStates;
 	}
 
-	public static double getLcaScore(Node node, SLModel lcaModel, TreeX x) {
+	public static double getLcaScore(Node node, SLModel lcaModel, TreeX x, 
+			Map<String, List<Integer>> varTokens, List<Node> nodes) {
 		List<String> features = new ArrayList<String>();
-		if(node.children.size() == 2) {
-			for(Node leaf1 : node.children.get(0).getLeaves()) {
-				for(Node leaf2 : node.children.get(1).getLeaves()) {
-					LcaX lcaX = new LcaX(x, leaf1, leaf2);
-					LcaY lcaY = new LcaY(node.label);
-					features.addAll(LcaFeatGen.getFeatures(lcaX, lcaY));
-					String label = node.label;
-					if(label.equals("SUB") || label.equals("DIV")) label += "_REV";
-					lcaX = new LcaX(x, leaf2, leaf1);
-					lcaY = new LcaY(label);
-					features.addAll(LcaFeatGen.getFeatures(lcaX, lcaY));
+		if(useSPforLCA) {
+			struct.lca.LcaX lcaX = new struct.lca.LcaX(x, varTokens, nodes);
+			return lcaModel.wv.dotProduct(((struct.lca.LcaFeatGen)lcaModel.featureGenerator).
+					getNodeFeatureVector(lcaX, node));
+		} else {
+			if(node.children.size() == 2) {
+				for(Node leaf1 : node.children.get(0).getLeaves()) {
+					for(Node leaf2 : node.children.get(1).getLeaves()) {
+						LcaX lcaX = new LcaX(x, leaf1, leaf2);
+						LcaY lcaY = new LcaY(node.label);
+						features.addAll(LcaFeatGen.getFeatures(lcaX, lcaY));
+						String label = node.label;
+						if(label.equals("SUB") || label.equals("DIV")) label += "_REV";
+						lcaX = new LcaX(x, leaf2, leaf1);
+						lcaY = new LcaY(label);
+						features.addAll(LcaFeatGen.getFeatures(lcaX, lcaY));
+					}
 				}
 			}
+			return lcaModel.wv.dotProduct(FeatGen.getFeatureVectorFromList(
+					features, lcaModel.lm));
 		}
-		return lcaModel.wv.dotProduct(FeatGen.getFeatureVectorFromList(
-				features, lcaModel.lm));
+		
 	}
 	
 }

@@ -43,10 +43,10 @@ public class NumoccurInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<NumoccurY>() {};
 		MinMaxPriorityQueue<Pair<NumoccurY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(1000).create();
+				maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<NumoccurY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(1000).create();
+				maximumSize(200).create();
 		NumoccurX prob = (NumoccurX) x;
 		beam1.add(new Pair<NumoccurY, Double>(new NumoccurY(new ArrayList<Integer>()), 0.0));
 		// Predict number of occurrences of each quantity
