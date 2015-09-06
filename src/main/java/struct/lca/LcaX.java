@@ -1,10 +1,10 @@
-package lca;
+package struct.lca;
 
 import java.util.List;
+import java.util.Map;
 
 import structure.Node;
 import structure.SimulProb;
-import tree.TreeX;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
 import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
@@ -20,9 +20,11 @@ public class LcaX implements IInstance {
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
 	public List<IntPair> candidateVars;
-	public Node leaf1, leaf2;
+	public Map<String, List<Integer>> varTokens;
+	public List<Node> nodes;
 	
-	public LcaX(SimulProb simulProb, Node leaf1, Node leaf2) {
+	public LcaX(SimulProb simulProb, Map<String, List<Integer>> varTokens,
+			List<Node> nodes) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;
@@ -30,34 +32,8 @@ public class LcaX implements IInstance {
 		parse = simulProb.parse;
 		lemmas = simulProb.lemmas;
 		candidateVars = simulProb.candidateVars;
-		this.leaf1 = leaf1;
-		this.leaf2 = leaf2;
+		this.varTokens = varTokens;
+		this.nodes = nodes;
 	}
-	
-	public LcaX(TreeX simulProb, Node leaf1, Node leaf2) {
-		quantities = simulProb.quantities;
-		problemIndex = simulProb.problemIndex;
-		ta = simulProb.ta;
-		posTags = simulProb.posTags;
-		parse = simulProb.parse;
-		lemmas = simulProb.lemmas;
-		candidateVars = simulProb.candidateVars;
-		this.leaf1 = leaf1;
-		this.leaf2 = leaf2;
-	}
-	
-	public LcaX(struct.lca.LcaX simulProb, Node leaf1, Node leaf2) {
-		quantities = simulProb.quantities;
-		problemIndex = simulProb.problemIndex;
-		ta = simulProb.ta;
-		posTags = simulProb.posTags;
-		parse = simulProb.parse;
-		lemmas = simulProb.lemmas;
-		candidateVars = simulProb.candidateVars;
-		this.leaf1 = leaf1;
-		this.leaf2 = leaf2;
-	}
-	
-	
 	
 }

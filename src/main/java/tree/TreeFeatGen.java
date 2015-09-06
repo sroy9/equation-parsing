@@ -39,14 +39,12 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public IFeatureVector getLcaFeatureVector(TreeX x, Node leaf1, Node leaf2, String op) {
-		LcaX lcaX = new LcaX(x, leaf1, leaf2);
-		LcaY lcaY = new LcaY(op);
-		List<String> features = LcaFeatGen.getFeatures(lcaX, lcaY);
+	public IFeatureVector getLcaFeatureVector(TreeX x, Node node) {
+		List<String> features = getLcaFeatures(x, node);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public IFeatureVector getLcaFeatureVector(TreeX x, Node node) {
+	public static List<String> getLcaFeatures(TreeX x, Node node) {
 		List<String> features = new ArrayList<String>();
 		if(node.children.size() == 2) {
 			for(Node leaf1 : node.children.get(0).getLeaves()) {
@@ -62,7 +60,7 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 				}
 			}
 		}
-		return FeatGen.getFeatureVectorFromList(features, lm);
+		return features;
 	}
 
 	public IFeatureVector getVarTokenFeatureVector(TreeX x, TreeY y) {
@@ -89,12 +87,9 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		VarX varX = new VarX(x);
 		VarY varY = new VarY(y);
 		features.addAll(VarFeatGen.getFeatures(varX, varY));
-		for(Node leaf1 : y.equation.root.getLeaves()) {
-			for(Node leaf2 : y.equation.root.getLeaves()) {
-				if(leaf1 == leaf2) continue;
-				LcaX lcaX = new LcaX(x, leaf1, leaf2);
-				LcaY lcaY = new LcaY(y.equation.root.findLabelofLCA(leaf1, leaf2));
-				features.addAll(LcaFeatGen.getFeatures(lcaX, lcaY));
+		for(Node node : y.equation.root.getLeaves()) {
+			if(node.children.size() == 2) {
+				features.addAll(getLcaFeatures(x, node));
 			}
 		}
 		return features;

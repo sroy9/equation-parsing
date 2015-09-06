@@ -213,4 +213,10 @@ public class Node implements Serializable {
 		}
 		return label;
 	}
+	
+	public String getSignature() {
+		if(children.size() == 0) return label;
+		return "("+children.get(0).getSignature() + " " + label + " " + 
+				children.get(1).getSignature()+")";
+	}
 }

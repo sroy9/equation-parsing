@@ -8,8 +8,6 @@ import structure.SimulProb;
 import utils.Params;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
-import edu.illinois.cs.cogcomp.sl.learner.Learner;
-import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
 public class ConsDriver {
 	
@@ -49,7 +47,6 @@ public class ConsDriver {
 		List<List<Integer>> folds = DocReader.extractFolds();
 		List<SimulProb> simulProbList = 
 				DocReader.readSimulProbFromBratDir(Params.annotationDir);
-		List<SimulProb> trainProbs = new ArrayList<>();
 		List<SimulProb> testProbs = new ArrayList<>();
 		for(SimulProb simulProb : simulProbList) {
 			if(folds.get(testFold).contains(simulProb.index)) {
@@ -121,27 +118,6 @@ public class ConsDriver {
 		}
 		ConsInfSolver.numOccurScale = bestNumOccurScale;
 		ConsInfSolver.varScale = bestVarScale;
-	}
-
-	public static WeightVector latentSVMLearner(
-			Learner learner, SLProblem sp, TreeInfSolver infSolver, 
-			int maxIter) throws Exception {
-		WeightVector wv = new WeightVector(7000);
-		wv.setExtendable(true);
-		for(int i=0; i<maxIter; ++i) {
-			System.err.println("Latent SSVM : Iteration "+i);
-			SLProblem newProb = new SLProblem();
-			for(int j=0; j<sp.goldStructureList.size(); ++j) {
-				TreeX prob = (TreeX) sp.instanceList.get(j);
-				TreeY gold = (TreeY) sp.goldStructureList.get(j);
-				TreeY bestLatent = infSolver.getLatentBestStructure(prob, gold, wv);
-				newProb.addExample(prob, bestLatent);
-			}
-			System.err.println("Learning SSVM");
-			wv = learner.train(newProb, wv);
-			System.err.println("Done");
-		}
-		return wv;
 	}
 	
 	public static void main(String args[]) throws Exception {
