@@ -156,6 +156,6 @@ public class LcaInfSolver extends AbstractInferenceSolver implements
 	}
 
 	public double getLcaScore(Node node, WeightVector wv, LcaX x) {
-		return wv.dotProduct(featGen.getNodeFeatureVector(x, node));
+		return wv.dotProduct(featGen.getPairFeatureVector(x, node));
 	}	
 }

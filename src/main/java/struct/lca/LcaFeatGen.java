@@ -27,19 +27,19 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements
 		this.lm = lm;
 	}
 	
-	@Override
-	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
-		LcaX x = (LcaX) arg0;
-		LcaY y = (LcaY) arg1;
-		List<String> features = new ArrayList<String>();
-		features.addAll(getGlobalFeatures(x, y));
-		for(Node node : y.equation.root.getAllSubNodes()) {
-			if(node.children.size() == 2) {
-				features.addAll(getNodeFeatures(x, node));
-			}
-		}
-		return FeatGen.getFeatureVectorFromList(features, lm);
-	}
+//	@Override
+//	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
+//		LcaX x = (LcaX) arg0;
+//		LcaY y = (LcaY) arg1;
+//		List<String> features = new ArrayList<String>();
+//		features.addAll(getGlobalFeatures(x, y));
+//		for(Node node : y.equation.root.getAllSubNodes()) {
+//			if(node.children.size() == 2) {
+//				features.addAll(getNodeFeatures(x, node));
+//			}
+//		}
+//		return FeatGen.getFeatureVectorFromList(features, lm);
+//	}
 	
 	public IFeatureVector getGlobalFeatureVector(LcaX x, LcaY y) {
 		List<String> features = getGlobalFeatures(x, y);
@@ -60,124 +60,122 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 	
-	public static List<String> getNodeFeatures(LcaX x, Node node) {
-		List<String> features = new ArrayList<String>();
-		Node child1 = node.children.get(0);
-		Node child2 = node.children.get(1);
-		IntPair ip1 = getSpan(x, node.children.get(0));
-		IntPair ip2 = getSpan(x, node.children.get(1));
-		String prefix = "";
-		int start, end;
-		if(!Tools.doesIntersect(ip1, ip2)) {
-			start = Math.min(ip1.getSecond(), ip2.getSecond());
-			end = Math.max(ip1.getFirst(), ip2.getFirst());
-			for(int i=start; i<=end; ++i) {
-				features.add(node.label+"_MidUnigram_"+x.ta.getToken(i).toLowerCase());
-				if(i<end-1) {
-					features.add(node.label+"_MidBigram_"+x.ta.getToken(i).toLowerCase()+
-							"_"+x.ta.getToken(i+1).toLowerCase());
-				}
-			}
-		}
-		if(Tools.doesContainNotEqual(ip1, ip2) || Tools.doesContainNotEqual(ip2, ip1)) {
-			if(Tools.doesContain(ip1, ip2)) {
-				start = ip2.getFirst();
-				end = ip2.getSecond();
-			} else {
-				start = ip1.getFirst();
-				end = ip1.getSecond();
-			}
-			for(int i=start; i<end; ++i) {
-				features.add(node.label+"_ContainedUnigram_"+x.ta.getToken(i).toLowerCase());
-				if(i<end-1) {
-					features.add(node.label+"_ContainedBigram_"+x.ta.getToken(i).toLowerCase()+
-							"_"+x.ta.getToken(i+1).toLowerCase());
-				}
-			}
-		}
-		if(ip1 == ip2) {
-			for(int i=ip1.getFirst(); i<ip1.getSecond(); ++i) {
-				features.add(node.label+"_SameUnigram_"+x.ta.getToken(i).toLowerCase());
-				if(i<ip1.getSecond()-1) {
-					features.add(node.label+"_SameBigram_"+x.ta.getToken(i).toLowerCase()+
-							"_"+x.ta.getToken(i+1).toLowerCase());
-				}
-			}
-		}
-		return features;
-	}
-
-	public IFeatureVector getNodeFeatureVector(LcaX x, Node node) {
-		List<String> features = getNodeFeatures(x, node);
-		return FeatGen.getFeatureVectorFromList(features, lm);
-	}
-	
-	public static IntPair getSpan(LcaX x, Node node) {
-		Set<IntPair> spans = new HashSet<IntPair>();
-		for(Node leaf : node.getLeaves()) {
-			if(leaf.label.equals("VAR")) spans.add(x.candidateVars.get(leaf.index));
-			if(leaf.label.equals("NUM")) {
-				QuantSpan qs = x.quantities.get(leaf.index);
-				spans.add(new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
-						x.ta.getTokenIdFromCharacterOffset(qs.end)));
-			}
-		}
-		int min = 1000, max = 0;
-		for(IntPair span : spans) {
-			if(span.getFirst() < min) {
-				min = span.getFirst();
-			}
-			if(span.getSecond() > max) {
-				max = span.getSecond();
-			}
-		}
-		return new IntPair(min, max);
-	}
-	
-//	@Override
-//	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
-//		LcaX x = (LcaX) arg0;
-//		LcaY y = (LcaY) arg1;
+//	public static List<String> getNodeFeatures(LcaX x, Node node) {
 //		List<String> features = new ArrayList<String>();
-//		features.addAll(getGlobalFeatures(x, y));
-//		for(Node node : y.equation.root.getAllSubNodes()) {
-//			if(node.children.size() == 2) {
-//				features.addAll(getPairFeatures(x, node));
-//			}
-//		}
-//		return FeatGen.getFeatureVectorFromList(features, lm);
-//	}
-//	
-//	
-//	
-//	public List<String> getPairFeatures(LcaX x, Node node) {
-//		List<String> features = new ArrayList<String>();
-//		if(node.children.size() == 2) {
-//			for(Node leaf1 : node.children.get(0).getLeaves()) {
-//				for(Node leaf2 : node.children.get(1).getLeaves()) {
-//					lca.LcaX lcaX = new lca.LcaX(x, leaf1, leaf2);
-//					lca.LcaY lcaY = new lca.LcaY(node.label);
-//					features.addAll(LcaFeatGen.getPairFeatures(lcaX, lcaY));
-//					String label = node.label;
-//					if(label.equals("SUB") || label.equals("DIV")) label += "_REV";
-//					lcaX = new lca.LcaX(x, leaf2, leaf1);
-//					lcaY = new lca.LcaY(label);
-//					features.addAll(LcaFeatGen.getPairFeatures(lcaX, lcaY));
+//		Node child1 = node.children.get(0);
+//		Node child2 = node.children.get(1);
+//		IntPair ip1 = getSpan(x, node.children.get(0));
+//		IntPair ip2 = getSpan(x, node.children.get(1));
+//		String prefix = "";
+//		int start, end;
+//		if(!Tools.doesIntersect(ip1, ip2)) {
+//			start = Math.min(ip1.getSecond(), ip2.getSecond());
+//			end = Math.max(ip1.getFirst(), ip2.getFirst());
+//			for(int i=start; i<=end; ++i) {
+//				features.add(node.label+"_MidUnigram_"+x.ta.getToken(i).toLowerCase());
+//				if(i<end-1) {
+//					features.add(node.label+"_MidBigram_"+x.ta.getToken(i).toLowerCase()+
+//							"_"+x.ta.getToken(i+1).toLowerCase());
 //				}
 //			}
 //		}
-//		List<String> newFeats = new ArrayList<String>();
-//		for(String feat : features) {
-//			newFeats.add(feat+"_"+node.getSignature());
+//		if(Tools.doesContainNotEqual(ip1, ip2) || Tools.doesContainNotEqual(ip2, ip1)) {
+//			if(Tools.doesContain(ip1, ip2)) {
+//				start = ip2.getFirst();
+//				end = ip2.getSecond();
+//			} else {
+//				start = ip1.getFirst();
+//				end = ip1.getSecond();
+//			}
+//			for(int i=start; i<end; ++i) {
+//				features.add(node.label+"_ContainedUnigram_"+x.ta.getToken(i).toLowerCase());
+//				if(i<end-1) {
+//					features.add(node.label+"_ContainedBigram_"+x.ta.getToken(i).toLowerCase()+
+//							"_"+x.ta.getToken(i+1).toLowerCase());
+//				}
+//			}
 //		}
-//		return newFeats;
+//		if(ip1 == ip2) {
+//			for(int i=ip1.getFirst(); i<ip1.getSecond(); ++i) {
+//				features.add(node.label+"_SameUnigram_"+x.ta.getToken(i).toLowerCase());
+//				if(i<ip1.getSecond()-1) {
+//					features.add(node.label+"_SameBigram_"+x.ta.getToken(i).toLowerCase()+
+//							"_"+x.ta.getToken(i+1).toLowerCase());
+//				}
+//			}
+//		}
+//		return features;
 //	}
-//	
-//	public IFeatureVector getPairFeatureVector(LcaX x, Node node) {
-//		List<String> features = getPairFeatures(x, node);
+
+//	public IFeatureVector getNodeFeatureVector(LcaX x, Node node) {
+//		List<String> features = getNodeFeatures(x, node);
 //		return FeatGen.getFeatureVectorFromList(features, lm);
 //	}
-//	
+	
+//	public static IntPair getSpan(LcaX x, Node node) {
+//		Set<IntPair> spans = new HashSet<IntPair>();
+//		for(Node leaf : node.getLeaves()) {
+//			if(leaf.label.equals("VAR")) spans.add(x.candidateVars.get(leaf.index));
+//			if(leaf.label.equals("NUM")) {
+//				QuantSpan qs = x.quantities.get(leaf.index);
+//				spans.add(new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
+//						x.ta.getTokenIdFromCharacterOffset(qs.end)));
+//			}
+//		}
+//		int min = 1000, max = 0;
+//		for(IntPair span : spans) {
+//			if(span.getFirst() < min) {
+//				min = span.getFirst();
+//			}
+//			if(span.getSecond() > max) {
+//				max = span.getSecond();
+//			}
+//		}
+//		return new IntPair(min, max);
+//	}
+	
+	@Override
+	public IFeatureVector getFeatureVector(IInstance arg0, IStructure arg1) {
+		LcaX x = (LcaX) arg0;
+		LcaY y = (LcaY) arg1;
+		List<String> features = new ArrayList<String>();
+		features.addAll(getGlobalFeatures(x, y));
+		for(Node node : y.equation.root.getAllSubNodes()) {
+			if(node.children.size() == 2) {
+				features.addAll(getPairFeatures(x, node));
+			}
+		}
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+	
+	public List<String> getPairFeatures(LcaX x, Node node) {
+		List<String> features = new ArrayList<String>();
+		if(node.children.size() == 2) {
+			for(Node leaf1 : node.children.get(0).getLeaves()) {
+				for(Node leaf2 : node.children.get(1).getLeaves()) {
+					lca.LcaX lcaX = new lca.LcaX(x, leaf1, leaf2);
+					lca.LcaY lcaY = new lca.LcaY(node.label);
+					features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));
+					String label = node.label;
+					if(label.equals("SUB") || label.equals("DIV")) label += "_REV";
+					lcaX = new lca.LcaX(x, leaf2, leaf1);
+					lcaY = new lca.LcaY(label);
+					features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));
+				}
+			}
+		}
+		List<String> newFeats = new ArrayList<String>();
+		for(String feat : features) {
+			newFeats.add(feat+"_"+node.getSignature());
+		}
+		return newFeats;
+	}
+	
+	public IFeatureVector getPairFeatureVector(LcaX x, Node node) {
+		List<String> features = getPairFeatures(x, node);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+	
 //	public static List<String> getPairFeatures(lca.LcaX x, lca.LcaY y) {
 //		List<String> features = new ArrayList<>();
 //		IntPair ip1, ip2;

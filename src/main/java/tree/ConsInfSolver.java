@@ -212,7 +212,7 @@ public class ConsInfSolver {
 		if(useSPforLCA) {
 			struct.lca.LcaX lcaX = new struct.lca.LcaX(x, varTokens, nodes);
 			return lcaModel.wv.dotProduct(((struct.lca.LcaFeatGen)lcaModel.featureGenerator).
-					getNodeFeatureVector(lcaX, node));
+					getPairFeatureVector(lcaX, node));
 		} else {
 			if(node.children.size() == 2) {
 				for(Node leaf1 : node.children.get(0).getLeaves()) {
