@@ -22,7 +22,7 @@ import edu.illinois.cs.cogcomp.sl.core.SLModel;
 public class ConsInfSolver {
 	
 	public static double numOccurScale, varScale;
-	public static boolean useSPforNumOccur = true, useSPforLCA = false;
+	public static boolean useSPforNumOccur = true, useSPforLCA = true;
 	
 	public static TreeY getBestStructure(TreeX prob, SLModel numOccurModel, 
 			SLModel varModel, SLModel lcaModel) throws Exception {
