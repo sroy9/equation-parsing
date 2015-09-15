@@ -116,6 +116,7 @@ public class Node implements Serializable {
 			else if(eqString.charAt(index) == '-') node.label = "SUB";
 			else if(eqString.charAt(index) == '*') node.label = "MUL";
 			else if(eqString.charAt(index) == '/') node.label = "DIV";
+			else node.label = "ISSUE";
 			node.children.add(parseNode(eqString.substring(0, index)));
 			node.children.add(parseNode(eqString.substring(index+1)));
 			return node;

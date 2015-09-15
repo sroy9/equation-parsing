@@ -41,8 +41,8 @@ public class NumoccurDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/numoccur"+testFold+".save", train, testFold);
-		return testModel("models/numoccur"+testFold+".save", test);
+		trainModel("models/numoccurStruct"+testFold+".save", train, testFold);
+		return testModel("models/numoccurStruct"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 

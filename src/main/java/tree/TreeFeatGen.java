@@ -1,15 +1,12 @@
 package tree;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
-import lca.LcaFeatGen;
-import lca.LcaX;
-import lca.LcaY;
-import numoccur.NumoccurFeatGen;
-import numoccur.NumoccurX;
-import numoccur.NumoccurY;
+import struct.lca.LcaX;
+import struct.lca.LcaY;
+import struct.numoccur.NumoccurX;
+import struct.numoccur.NumoccurY;
 import structure.Node;
 import utils.FeatGen;
 import var.VarFeatGen;
@@ -39,30 +36,13 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public IFeatureVector getLcaFeatureVector(TreeX x, Node node) {
-		List<String> features = getLcaFeatures(x, node);
+	public IFeatureVector getLcaFeatureVector(TreeX x, TreeY y) {
+		struct.lca.LcaX lcaX = new struct.lca.LcaX(x, y.varTokens, y.nodes);
+		struct.lca.LcaY lcaY = new struct.lca.LcaY(y);
+		List<String> features = struct.lca.LcaFeatGen.getFeatures(lcaX, lcaY);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public static List<String> getLcaFeatures(TreeX x, Node node) {
-		List<String> features = new ArrayList<String>();
-		if(node.children.size() == 2) {
-			for(Node leaf1 : node.children.get(0).getLeaves()) {
-				for(Node leaf2 : node.children.get(1).getLeaves()) {
-					LcaX lcaX = new LcaX(x, leaf1, leaf2);
-					LcaY lcaY = new LcaY(node.label);
-					features.addAll(LcaFeatGen.getFeatures(lcaX, lcaY));
-					String label = node.label;
-					if(label.equals("SUB") || label.equals("DIV")) label += "_REV";
-					lcaX = new LcaX(x, leaf2, leaf1);
-					lcaY = new LcaY(label);
-					features.addAll(LcaFeatGen.getFeatures(lcaX, lcaY));
-				}
-			}
-		}
-		return features;
-	}
-
 	public IFeatureVector getVarTokenFeatureVector(TreeX x, TreeY y) {
 		VarX varX = new VarX(x);
 		VarY varY = new VarY(y);
@@ -70,28 +50,46 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public IFeatureVector getNumoccurFeatureVector(TreeX prob, int quantIndex, int numOccur) {
-		NumoccurX numX = new NumoccurX(prob, quantIndex);
-		NumoccurY numY = new NumoccurY(numOccur);
-		List<String> features = NumoccurFeatGen.getFeatures(numX, numY);
+	public IFeatureVector getNumoccurFeatureVector(TreeX x, TreeY y) {
+		struct.numoccur.NumoccurX numX = new struct.numoccur.NumoccurX(x);
+		struct.numoccur.NumoccurY numY = new struct.numoccur.NumoccurY(x, y);
+		List<String> features = struct.numoccur.NumoccurFeatGen.getFeatures(numX, numY);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 
 	public static List<String> getFeatures(TreeX x, TreeY y) {
-		List<String> features = new ArrayList<>();
-		for(int i=0; i<x.quantities.size(); ++i) {
-			NumoccurX numX = new NumoccurX(x, i);
-			NumoccurY numY = new NumoccurY(x, y, i);
-			features.addAll(NumoccurFeatGen.getFeatures(numX, numY));
-		}
+		struct.numoccur.NumoccurX numX = new struct.numoccur.NumoccurX(x);
+		struct.numoccur.NumoccurY numY = new struct.numoccur.NumoccurY(x, y);
+		List<String> features = struct.numoccur.NumoccurFeatGen.getFeatures(numX, numY);
 		VarX varX = new VarX(x);
 		VarY varY = new VarY(y);
 		features.addAll(VarFeatGen.getFeatures(varX, varY));
-		for(Node node : y.equation.root.getLeaves()) {
-			if(node.children.size() == 2) {
-				features.addAll(getLcaFeatures(x, node));
-			}
-		}
+		struct.lca.LcaX lcaX = new struct.lca.LcaX(x, y.varTokens, y.nodes);
+		struct.lca.LcaY lcaY = new struct.lca.LcaY(y);
+		features.addAll(struct.lca.LcaFeatGen.getFeatures(lcaX, lcaY));
 		return features;
-	}	
+	}
+	
+	public IFeatureVector getGlobalFeatureVector(NumoccurX x, NumoccurY y) {
+		List<String> features = struct.numoccur.NumoccurFeatGen.getGlobalFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+	
+	public IFeatureVector getIndividualFeatureVector(numoccur.NumoccurX x, 
+			numoccur.NumoccurY y) {
+		List<String> features = struct.numoccur.NumoccurFeatGen.getIndividualFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+	
+	public IFeatureVector getPairFeatureVector(LcaX x, Node node) {
+		List<String> features = struct.lca.LcaFeatGen.getPairFeatures(x, node);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+
+	public IFeatureVector getGlobalFeatureVector(LcaX x, LcaY y) {
+		List<String> features = struct.lca.LcaFeatGen.getGlobalFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+	
+	
 }

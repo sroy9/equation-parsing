@@ -45,8 +45,8 @@ public class LcaDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/lca"+testFold+".save", train, testFold);
-		return testModel("models/lca"+testFold+".save", test);
+		trainModel("models/lcaStruct"+testFold+".save", train, testFold);
+		return testModel("models/lcaStruct"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 

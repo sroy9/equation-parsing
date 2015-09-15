@@ -54,6 +54,6 @@ public class TreeY implements IStructure, Serializable {
 	
 	@Override
 	public String toString() {
-		return "Equation : "+equation + " VarTokens : "+Arrays.asList(varTokens);
+		return " VarTokens : "+Arrays.asList(varTokens) + "Nodes : "+Arrays.asList(nodes);
 	}
 }

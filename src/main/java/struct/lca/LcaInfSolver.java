@@ -47,10 +47,10 @@ public class LcaInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<LcaY>() {};
 		MinMaxPriorityQueue<Pair<LcaY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(1000).create();
+				maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<LcaY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(1000).create();
+				maximumSize(200).create();
 		LcaY seed = new LcaY();
 		beam1.add(new Pair<LcaY, Double>(seed, 0.0));
 		for(Pair<LcaY, Double> pair : beam1) {
@@ -71,10 +71,10 @@ public class LcaInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<List<Node>>() {};
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(1000).create();
+				.maximumSize(50).create();
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(1000).create();
+				.maximumSize(50).create();
 		int n = x.nodes.size();
 		List<Node> init = new ArrayList<>();
 		init.addAll(x.nodes);

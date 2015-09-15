@@ -44,10 +44,25 @@ public class NumoccurY implements IStructure, Serializable {
 		}
 	}
 	
-	public NumoccurY(TreeX x, TreeY y, int quantIndex) {
+	public NumoccurY(TreeX x, TreeY y) {
+		numOccurList = new ArrayList<Integer>();
 		for(int i=0; i<x.quantities.size(); ++i) {
 			int numOccur = 0;
 			for(Node leaf : y.equation.root.getLeaves()) {
+				if(leaf.label.equals("NUM") && Tools.safeEquals(
+						leaf.value, Tools.getValue(x.quantities.get(i)))) {
+					numOccur++;
+				}
+			}
+			numOccurList.add(numOccur);
+		}
+	}
+	
+	public NumoccurY(TreeX x, List<Node> leaves) {
+		numOccurList = new ArrayList<Integer>();
+		for(int i=0; i<x.quantities.size(); ++i) {
+			int numOccur = 0;
+			for(Node leaf : leaves) {
 				if(leaf.label.equals("NUM") && Tools.safeEquals(
 						leaf.value, Tools.getValue(x.quantities.get(i)))) {
 					numOccur++;

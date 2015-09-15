@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import structure.Equation;
 import structure.SimulProb;
+import tree.TreeY;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
 public class LcaY implements IStructure, Serializable {
@@ -21,6 +22,11 @@ public class LcaY implements IStructure, Serializable {
 	
 	public LcaY(SimulProb prob) {
 		equation = new Equation(prob.equation);
+	}
+	
+	public LcaY(TreeY prob) {
+		equation = new Equation(prob.equation);
+		
 	}
 	
 	public static float getLoss(LcaY gold, LcaY pred) {

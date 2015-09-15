@@ -14,7 +14,7 @@ public class ConsDriver {
 	public static double crossVal() throws Exception {
 		double acc = 0.0;
 		for(int i=0;i<5;i++) {
-			acc += doTuneTest(i);
+			acc += doTest(i);
 		}
 		System.out.println("5-fold CV : " + (acc/5));
 		return (acc/5);
@@ -33,10 +33,18 @@ public class ConsDriver {
 				trainProbs.add(simulProb);
 			}
 		}
-		SLModel numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
+		SLModel numOccurModel = null, lcaModel = null;
 		SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
-		SLModel lcaModel = SLModel.loadModel("models/lca"+testFold+".save");
-		
+		if(ConsInfSolver.useSPforNumOccur) {
+			numOccurModel = SLModel.loadModel("models/numoccurStruct"+testFold+".save");
+		} else {
+			numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
+		}
+		if(ConsInfSolver.useSPforLCA) {
+			lcaModel = SLModel.loadModel("models/lcaStruct"+testFold+".save");
+		} else {
+			lcaModel = SLModel.loadModel("models/lca"+testFold+".save");
+		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
 		tuneModel(numOccurModel, varModel, lcaModel, train);
@@ -53,9 +61,18 @@ public class ConsDriver {
 				testProbs.add(simulProb);
 			}
 		}
-		SLModel numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
+		SLModel numOccurModel = null, lcaModel = null;
 		SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
-		SLModel lcaModel = SLModel.loadModel("models/lca"+testFold+".save");
+		if(ConsInfSolver.useSPforNumOccur) {
+			numOccurModel = SLModel.loadModel("models/numoccurStruct"+testFold+".save");
+		} else {
+			numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
+		}
+		if(ConsInfSolver.useSPforLCA) {
+			lcaModel = SLModel.loadModel("models/lcaStruct"+testFold+".save");
+		} else {
+			lcaModel = SLModel.loadModel("models/lca"+testFold+".save");
+		}
 		
 		SLProblem test = getSP(testProbs);
 		return testModel(numOccurModel, varModel, lcaModel, test, true);
@@ -121,8 +138,8 @@ public class ConsDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		ConsInfSolver.numOccurScale = 1000000000.0;
+		ConsInfSolver.numOccurScale = 1000000.0;
 		ConsInfSolver.varScale = 1000.0;
-		ConsDriver.doTest(0);
+		ConsDriver.crossVal();
 	}
 }

@@ -5,9 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import lca.LcaFeatGen;
-import lca.LcaX;
-import lca.LcaY;
 import numoccur.NumoccurX;
 import numoccur.NumoccurY;
 import structure.Node;
@@ -70,6 +67,18 @@ public class ConsInfSolver {
 			beam1.addAll(beam2);
 			beam2.clear();
 		}
+		if(useSPforNumOccur) {
+			for(Pair<TreeY, Double> pair : beam1) {
+				double score = numOccurScale*numOccurModel.wv.dotProduct(
+						((struct.numoccur.NumoccurFeatGen) numOccurModel.featureGenerator).
+						getGlobalFeatureVector(new struct.numoccur.NumoccurX(prob), 
+								new struct.numoccur.NumoccurY(prob, pair.getFirst().nodes)));
+				beam2.add(new Pair<TreeY, Double>(pair.getFirst(), pair.getSecond()+score));
+			}
+			beam1.clear();
+			beam1.addAll(beam2);
+			beam2.clear();
+		}
 		
 		// Grounding of variables
 		for(Pair<TreeY, Double> pair : beam1) {
@@ -107,7 +116,22 @@ public class ConsInfSolver {
 		for(Pair<TreeY, Double> pair : beam1) {
 			beam2.addAll(getBottomUpBestParse(prob, pair, lcaModel));
 		}
-		
+		beam1.clear();
+		beam1.addAll(beam2);
+		beam2.clear();
+		if(useSPforLCA) {
+			for(Pair<TreeY, Double> pair : beam1) {
+				double score = lcaModel.wv.dotProduct(
+						((struct.lca.LcaFeatGen) lcaModel.featureGenerator).
+						getGlobalFeatureVector(new struct.lca.LcaX(
+								prob, pair.getFirst().varTokens, pair.getFirst().nodes),
+								new struct.lca.LcaY(pair.getFirst())));
+				beam2.add(new Pair<TreeY, Double>(pair.getFirst(), pair.getSecond()+score));
+			}
+			beam1.clear();
+			beam1.addAll(beam2);
+			beam2.clear();
+		}
 		return beam2.element().getFirst();
 	}
 	
@@ -209,29 +233,9 @@ public class ConsInfSolver {
 	public static double getLcaScore(Node node, SLModel lcaModel, TreeX x, 
 			Map<String, List<Integer>> varTokens, List<Node> nodes) {
 		List<String> features = new ArrayList<String>();
-		if(useSPforLCA) {
-			struct.lca.LcaX lcaX = new struct.lca.LcaX(x, varTokens, nodes);
-			return lcaModel.wv.dotProduct(((struct.lca.LcaFeatGen)lcaModel.featureGenerator).
-					getPairFeatureVector(lcaX, node));
-		} else {
-			if(node.children.size() == 2) {
-				for(Node leaf1 : node.children.get(0).getLeaves()) {
-					for(Node leaf2 : node.children.get(1).getLeaves()) {
-						LcaX lcaX = new LcaX(x, leaf1, leaf2);
-						LcaY lcaY = new LcaY(node.label);
-						features.addAll(LcaFeatGen.getFeatures(lcaX, lcaY));
-						String label = node.label;
-						if(label.equals("SUB") || label.equals("DIV")) label += "_REV";
-						lcaX = new LcaX(x, leaf2, leaf1);
-						lcaY = new LcaY(label);
-						features.addAll(LcaFeatGen.getFeatures(lcaX, lcaY));
-					}
-				}
-			}
-			return lcaModel.wv.dotProduct(FeatGen.getFeatureVectorFromList(
-					features, lcaModel.lm));
-		}
-		
+		struct.lca.LcaX lcaX = new struct.lca.LcaX(x, varTokens, nodes);
+		features.addAll(struct.lca.LcaFeatGen.getPairFeatures(lcaX, node));
+		return lcaModel.wv.dotProduct(FeatGen.getFeatureVectorFromList(features, lcaModel.lm));
 	}
 	
 }
