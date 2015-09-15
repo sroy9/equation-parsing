@@ -134,7 +134,7 @@ public class ConsInfSolver {
 //			beam1.addAll(beam2);
 //			beam2.clear();
 //		}
-		return beam2.element().getFirst();
+		return beam1.element().getFirst();
 	}
 	
 	public static List<Pair<TreeY, Double>> getBottomUpBestParse(
