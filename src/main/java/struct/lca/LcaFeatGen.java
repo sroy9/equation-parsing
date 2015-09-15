@@ -34,13 +34,13 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements Serializable
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 
-	public IFeatureVector getGlobalFeatureVector(LcaX x, LcaY y) {
-		List<String> features = getGlobalFeatures(x, y);
-		return FeatGen.getFeatureVectorFromList(features, lm);
-	}
-	
-	public static List<String> getGlobalFeatures(LcaX x, LcaY y) {
-		List<String> features = new ArrayList<>();
+//	public IFeatureVector getGlobalFeatureVector(LcaX x, LcaY y) {
+//		List<String> features = getGlobalFeatures(x, y);
+//		return FeatGen.getFeatureVectorFromList(features, lm);
+//	}
+//	
+//	public static List<String> getGlobalFeatures(LcaX x, LcaY y) {
+//		List<String> features = new ArrayList<>();
 //		for(int i=0; i<x.ta.size(); ++i) {
 //			features.add(y.equation.root.getSignature()+"_Unigram_"+
 //					x.ta.getToken(i).toLowerCase());
@@ -50,13 +50,12 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements Serializable
 //						x.ta.getToken(i+1).toLowerCase());
 //			}
 //		}
-		return features;
-	}
+//		return features;
+//	}
 	
 	
 	public static List<String> getFeatures(LcaX x, LcaY y) {
 		List<String> features = new ArrayList<String>();
-		features.addAll(getGlobalFeatures(x, y));
 		for(Node node : y.equation.root.getAllSubNodes()) {
 			if(node.children.size() == 2) {
 				features.addAll(getPairFeatures(x, node));

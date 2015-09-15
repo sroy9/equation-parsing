@@ -49,10 +49,10 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<TreeY>() {};
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(20).create();
+				maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(20).create();
+				maximumSize(200).create();
 		TreeY seed = new TreeY();
 		beam1.add(new Pair<TreeY, Double>(seed, 0.0));
 		
@@ -124,10 +124,10 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<List<Node>>() {};
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(5).create();
+				.maximumSize(50).create();
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(5).create();
+				.maximumSize(50).create();
 		int n = y.nodes.size();
 		List<Node> init = new ArrayList<>();
 		init.addAll(y.nodes);
@@ -243,8 +243,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 						}
 					}
 				}
-				double score = wv.dotProduct(
-						featGen.getFeatureVector(x, yNew));
+				double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
 				if(score > bestScore) {
 					best = yNew;
 				}

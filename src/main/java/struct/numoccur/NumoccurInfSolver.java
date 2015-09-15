@@ -66,10 +66,10 @@ public class NumoccurInfSolver extends AbstractInferenceSolver implements
 			beam1.add(beam2.element());
 			beam2.clear();
 		}
-		for(Pair<NumoccurY, Double> pair : beam1) {
-			beam2.add(new Pair<NumoccurY, Double>(pair.getFirst(), pair.getSecond() + 
-					wv.dotProduct(featGen.getGlobalFeatureVector(prob, pair.getFirst()))));
-		}
+//		for(Pair<NumoccurY, Double> pair : beam1) {
+//			beam2.add(new Pair<NumoccurY, Double>(pair.getFirst(), pair.getSecond() + 
+//					wv.dotProduct(featGen.getGlobalFeatureVector(prob, pair.getFirst()))));
+//		}
 		return beam2.element().getFirst();
 	}
 	

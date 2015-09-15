@@ -56,12 +56,12 @@ public class LcaInfSolver extends AbstractInferenceSolver implements
 		for(Pair<LcaY, Double> pair : beam1) {
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
-		beam1.clear();
-		for(Pair<LcaY, Double> pair : beam2) {
-			beam1.add(new Pair<LcaY, Double>(pair.getFirst(), pair.getSecond()+
-					1.0*wv.dotProduct(featGen.getGlobalFeatureVector(prob, pair.getFirst()))));
-		}
-		return beam1.element().getFirst();
+//		beam1.clear();
+//		for(Pair<LcaY, Double> pair : beam2) {
+//			beam1.add(new Pair<LcaY, Double>(pair.getFirst(), pair.getSecond()+
+//					1.0*wv.dotProduct(featGen.getGlobalFeatureVector(prob, pair.getFirst()))));
+//		}
+		return beam2.element().getFirst();
 	}
 	
 	public List<Pair<LcaY, Double>> getBottomUpBestParse(

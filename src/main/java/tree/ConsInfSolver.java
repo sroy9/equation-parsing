@@ -67,18 +67,18 @@ public class ConsInfSolver {
 			beam1.addAll(beam2);
 			beam2.clear();
 		}
-		if(useSPforNumOccur) {
-			for(Pair<TreeY, Double> pair : beam1) {
-				double score = numOccurScale*numOccurModel.wv.dotProduct(
-						((struct.numoccur.NumoccurFeatGen) numOccurModel.featureGenerator).
-						getGlobalFeatureVector(new struct.numoccur.NumoccurX(prob), 
-								new struct.numoccur.NumoccurY(prob, pair.getFirst().nodes)));
-				beam2.add(new Pair<TreeY, Double>(pair.getFirst(), pair.getSecond()+score));
-			}
-			beam1.clear();
-			beam1.addAll(beam2);
-			beam2.clear();
-		}
+//		if(useSPforNumOccur) {
+//			for(Pair<TreeY, Double> pair : beam1) {
+//				double score = numOccurScale*numOccurModel.wv.dotProduct(
+//						((struct.numoccur.NumoccurFeatGen) numOccurModel.featureGenerator).
+//						getGlobalFeatureVector(new struct.numoccur.NumoccurX(prob), 
+//								new struct.numoccur.NumoccurY(prob, pair.getFirst().nodes)));
+//				beam2.add(new Pair<TreeY, Double>(pair.getFirst(), pair.getSecond()+score));
+//			}
+//			beam1.clear();
+//			beam1.addAll(beam2);
+//			beam2.clear();
+//		}
 		
 		// Grounding of variables
 		for(Pair<TreeY, Double> pair : beam1) {
@@ -103,8 +103,10 @@ public class ConsInfSolver {
 					y.varTokens.put("V2", new ArrayList<Integer>());
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
-					beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+varScale*varModel.wv.dotProduct(
-							varModel.featureGenerator.getFeatureVector(new VarX(prob), new VarY(y)))));
+					beam2.add(new Pair<TreeY, Double>(y, 
+							pair.getSecond()+varScale*varModel.wv.dotProduct(
+							varModel.featureGenerator.getFeatureVector(
+									new VarX(prob), new VarY(y)))));
 				}
 			}
 		}
@@ -119,19 +121,19 @@ public class ConsInfSolver {
 		beam1.clear();
 		beam1.addAll(beam2);
 		beam2.clear();
-		if(useSPforLCA) {
-			for(Pair<TreeY, Double> pair : beam1) {
-				double score = lcaModel.wv.dotProduct(
-						((struct.lca.LcaFeatGen) lcaModel.featureGenerator).
-						getGlobalFeatureVector(new struct.lca.LcaX(
-								prob, pair.getFirst().varTokens, pair.getFirst().nodes),
-								new struct.lca.LcaY(pair.getFirst())));
-				beam2.add(new Pair<TreeY, Double>(pair.getFirst(), pair.getSecond()+score));
-			}
-			beam1.clear();
-			beam1.addAll(beam2);
-			beam2.clear();
-		}
+//		if(useSPforLCA) {
+//			for(Pair<TreeY, Double> pair : beam1) {
+//				double score = lcaModel.wv.dotProduct(
+//						((struct.lca.LcaFeatGen) lcaModel.featureGenerator).
+//						getGlobalFeatureVector(new struct.lca.LcaX(
+//								prob, pair.getFirst().varTokens, pair.getFirst().nodes),
+//								new struct.lca.LcaY(pair.getFirst())));
+//				beam2.add(new Pair<TreeY, Double>(pair.getFirst(), pair.getSecond()+score));
+//			}
+//			beam1.clear();
+//			beam1.addAll(beam2);
+//			beam2.clear();
+//		}
 		return beam2.element().getFirst();
 	}
 	

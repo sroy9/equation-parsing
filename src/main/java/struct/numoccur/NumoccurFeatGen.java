@@ -31,7 +31,6 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 	
 	public static List<String> getFeatures(NumoccurX x, NumoccurY y) {
 		List<String> features = new ArrayList<>();
-		features.addAll(getGlobalFeatures(x, y));
 		for(int i=0; i<x.quantities.size(); ++i) {
 			numoccur.NumoccurX numX = new numoccur.NumoccurX(x, i);
 			numoccur.NumoccurY numY = new numoccur.NumoccurY(y.numOccurList.get(i));
@@ -40,10 +39,10 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 	
-	public IFeatureVector getGlobalFeatureVector(NumoccurX x, NumoccurY y) {
-		List<String> features = getGlobalFeatures(x, y);
-		return FeatGen.getFeatureVectorFromList(features, lm);
-	}
+//	public IFeatureVector getGlobalFeatureVector(NumoccurX x, NumoccurY y) {
+//		List<String> features = getGlobalFeatures(x, y);
+//		return FeatGen.getFeatureVectorFromList(features, lm);
+//	}
 	
 	public IFeatureVector getIndividualFeatureVector(numoccur.NumoccurX x, 
 			numoccur.NumoccurY y) {
@@ -51,13 +50,13 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
-	public static List<String> getGlobalFeatures(NumoccurX x, NumoccurY y) {
-		List<String> features = new ArrayList<>();
-		for(int i=0; i<x.ta.size(); ++i) {
-			features.add(y+"_Unigram_"+x.ta.getToken(i).toLowerCase());
-		}
-		return features;
-	}
+//	public static List<String> getGlobalFeatures(NumoccurX x, NumoccurY y) {
+//		List<String> features = new ArrayList<>();
+//		for(int i=0; i<x.ta.size(); ++i) {
+//			features.add(y+"_Unigram_"+x.ta.getToken(i).toLowerCase());
+//		}
+//		return features;
+//	}
 	
 	public static List<String> getIndividualFeatures(
 			numoccur.NumoccurX x, numoccur.NumoccurY y) {
