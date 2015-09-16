@@ -22,7 +22,6 @@ import edu.illinois.cs.cogcomp.sl.core.SLModel;
 public class ConsInfSolver {
 	
 	public static double numOccurScale, varScale;
-	public static boolean useSPforNumOccur = true, useSPforLCA = true;
 	
 	public static TreeY getBestStructure(TreeX prob, SLModel numOccurModel, 
 			SLModel varModel, SLModel lcaModel, TreeY gold) throws Exception {
@@ -35,13 +34,6 @@ public class ConsInfSolver {
 				MinMaxPriorityQueue.orderedBy(pairComparator).
 				maximumSize(200).create();
 		TreeY seed = new TreeY();
-//		for(Node leaf : gold.equation.root.getLeaves()) {
-//			if(leaf.label.equals("NUM")) {
-//				seed.nodes.add(leaf);
-//			}
-//		}
-//		seed.varTokens.putAll(gold.varTokens);
-//		
 		beam1.add(new Pair<TreeY, Double>(seed, 0.0));
 		
 		// Predict number of occurrences of each quantity
@@ -66,23 +58,21 @@ public class ConsInfSolver {
 			beam1.addAll(beam2);
 			beam2.clear();
 		}
-		beam2.add(beam1.element());
+//		beam2.add(beam1.element());
+//		beam1.clear();
+//		beam1.addAll(beam2);
+//		beam2.clear();
+		
+		for(Pair<TreeY, Double> pair : beam1) {
+			double score = numOccurScale*numOccurModel.wv.dotProduct(
+					((struct.numoccur.NumoccurFeatGen) numOccurModel.featureGenerator).
+					getGlobalFeatureVector(new struct.numoccur.NumoccurX(prob), 
+							new struct.numoccur.NumoccurY(prob, pair.getFirst().nodes)));
+			beam2.add(new Pair<TreeY, Double>(pair.getFirst(), pair.getSecond()+score));
+		}
 		beam1.clear();
 		beam1.addAll(beam2);
 		beam2.clear();
-		
-//		if(useSPforNumOccur) {
-//			for(Pair<TreeY, Double> pair : beam1) {
-//				double score = numOccurScale*numOccurModel.wv.dotProduct(
-//						((struct.numoccur.NumoccurFeatGen) numOccurModel.featureGenerator).
-//						getGlobalFeatureVector(new struct.numoccur.NumoccurX(prob), 
-//								new struct.numoccur.NumoccurY(prob, pair.getFirst().nodes)));
-//				beam2.add(new Pair<TreeY, Double>(pair.getFirst(), pair.getSecond()+score));
-//			}
-//			beam1.clear();
-//			beam1.addAll(beam2);
-//			beam2.clear();
-//		}
 		
 		// Grounding of variables
 		for(Pair<TreeY, Double> pair : beam1) {
@@ -130,19 +120,6 @@ public class ConsInfSolver {
 		beam1.clear();
 		beam1.addAll(beam2);
 		beam2.clear();
-//		if(useSPforLCA) {
-//			for(Pair<TreeY, Double> pair : beam1) {
-//				double score = lcaModel.wv.dotProduct(
-//						((struct.lca.LcaFeatGen) lcaModel.featureGenerator).
-//						getGlobalFeatureVector(new struct.lca.LcaX(
-//								prob, pair.getFirst().varTokens, pair.getFirst().nodes),
-//								new struct.lca.LcaY(pair.getFirst())));
-//				beam2.add(new Pair<TreeY, Double>(pair.getFirst(), pair.getSecond()+score));
-//			}
-//			beam1.clear();
-//			beam1.addAll(beam2);
-//			beam2.clear();
-//		}
 		return beam1.element().getFirst();
 	}
 	

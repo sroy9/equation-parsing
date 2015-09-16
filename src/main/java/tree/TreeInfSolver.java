@@ -77,6 +77,16 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 			beam1.addAll(beam2);
 			beam2.clear();
 		}
+		for(Pair<TreeY, Double> pair : beam1) {
+			struct.numoccur.NumoccurX numX = new struct.numoccur.NumoccurX(prob);
+			struct.numoccur.NumoccurY numY = new struct.numoccur.NumoccurY(
+					prob, pair.getFirst());
+			beam2.add(new Pair<TreeY, Double>(pair.getFirst(), pair.getSecond() + 
+					wv.dotProduct(featGen.getGlobalFeatureVector(numX, numY))));
+		}
+		beam1.clear();
+		beam1.addAll(beam2);
+		beam2.clear();
 		
 		// Grounding of variables
 		for(Pair<TreeY, Double> pair : beam1) {

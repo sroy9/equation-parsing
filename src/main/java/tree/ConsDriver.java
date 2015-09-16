@@ -35,16 +35,8 @@ public class ConsDriver {
 		}
 		SLModel numOccurModel = null, lcaModel = null;
 		SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
-		if(ConsInfSolver.useSPforNumOccur) {
-			numOccurModel = SLModel.loadModel("models/numoccurStruct"+testFold+".save");
-		} else {
-			numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
-		}
-		if(ConsInfSolver.useSPforLCA) {
-			lcaModel = SLModel.loadModel("models/lcaStruct"+testFold+".save");
-		} else {
-			lcaModel = SLModel.loadModel("models/lca"+testFold+".save");
-		}
+		numOccurModel = SLModel.loadModel("models/numoccurStruct"+testFold+".save");
+		lcaModel = SLModel.loadModel("models/lcaStruct"+testFold+".save");
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
 		tuneModel(numOccurModel, varModel, lcaModel, train);
@@ -63,16 +55,8 @@ public class ConsDriver {
 		}
 		SLModel numOccurModel = null, lcaModel = null;
 		SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
-		if(ConsInfSolver.useSPforNumOccur) {
-			numOccurModel = SLModel.loadModel("models/numoccurStruct"+testFold+".save");
-		} else {
-			numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
-		}
-		if(ConsInfSolver.useSPforLCA) {
-			lcaModel = SLModel.loadModel("models/lcaStruct"+testFold+".save");
-		} else {
-			lcaModel = SLModel.loadModel("models/lca"+testFold+".save");
-		}
+		numOccurModel = SLModel.loadModel("models/numoccurStruct"+testFold+".save");
+		lcaModel = SLModel.loadModel("models/lcaStruct"+testFold+".save");
 		
 		SLProblem test = getSP(testProbs);
 		return testModel(numOccurModel, varModel, lcaModel, test, true);

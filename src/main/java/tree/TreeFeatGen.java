@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import struct.lca.LcaX;
+import struct.numoccur.NumoccurX;
+import struct.numoccur.NumoccurY;
 import structure.Node;
 import utils.FeatGen;
 import var.VarFeatGen;
@@ -67,10 +69,10 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		return features;
 	}
 	
-//	public IFeatureVector getGlobalFeatureVector(NumoccurX x, NumoccurY y) {
-//		List<String> features = struct.numoccur.NumoccurFeatGen.getGlobalFeatures(x, y);
-//		return FeatGen.getFeatureVectorFromList(features, lm);
-//	}
+	public IFeatureVector getGlobalFeatureVector(NumoccurX x, NumoccurY y) {
+		List<String> features = struct.numoccur.NumoccurFeatGen.getGlobalFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
 	
 	public IFeatureVector getIndividualFeatureVector(numoccur.NumoccurX x, 
 			numoccur.NumoccurY y) {
@@ -82,11 +84,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = struct.lca.LcaFeatGen.getPairFeatures(x, node);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
-
-//	public IFeatureVector getGlobalFeatureVector(LcaX x, LcaY y) {
-//		List<String> features = struct.lca.LcaFeatGen.getGlobalFeatures(x, y);
-//		return FeatGen.getFeatureVectorFromList(features, lm);
-//	}
 	
 	
 }
