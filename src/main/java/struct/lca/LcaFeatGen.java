@@ -80,11 +80,11 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements Serializable
 				}
 			}
 		}
-		List<String> newFeats = new ArrayList<String>();
-		for(String feat : features) {
-			newFeats.add(feat+"_"+node.getSignature());
-		}
-		return newFeats;
+//		List<String> newFeats = new ArrayList<String>();
+//		for(String feat : features) {
+//			newFeats.add(feat+"_"+node.getSignature());
+//		}
+		return features;
 	}
 	
 }
