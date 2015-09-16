@@ -31,6 +31,7 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 	
 	public static List<String> getFeatures(NumoccurX x, NumoccurY y) {
 		List<String> features = new ArrayList<>();
+		features.addAll(getGlobalFeatures(x, y));
 		for(int i=0; i<x.quantities.size(); ++i) {
 			numoccur.NumoccurX numX = new numoccur.NumoccurX(x, i);
 			numoccur.NumoccurY numY = new numoccur.NumoccurY(y.numOccurList.get(i));

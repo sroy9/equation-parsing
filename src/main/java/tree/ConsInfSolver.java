@@ -108,10 +108,10 @@ public class ConsInfSolver {
 		beam2.clear();
 		
 
-		beam2.add(beam1.element());
-		beam1.clear();
-		beam1.addAll(beam2);
-		beam2.clear();
+//		beam2.add(beam1.element());
+//		beam1.clear();
+//		beam1.addAll(beam2);
+//		beam2.clear();
 		
 		// Equation generation
 		for(Pair<TreeY, Double> pair : beam1) {
