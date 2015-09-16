@@ -11,6 +11,7 @@ import struct.lca.LcaX;
 import struct.lca.LcaY;
 import structure.Node;
 import structure.PairComparator;
+import structure.SimulProb;
 import utils.FeatGen;
 import utils.Tools;
 import var.VarX;
@@ -77,31 +78,6 @@ public class ConsInfSolver {
 		beam1.addAll(beam2);
 		beam2.clear();
 		
-		// Get the right order
-		struct.numoccur.NumoccurY numPred = new struct.numoccur.NumoccurY(prob, beam1.element().getFirst());
-		struct.numoccur.NumoccurY numGold = new struct.numoccur.NumoccurY(prob, gold);
-		if(struct.numoccur.NumoccurY.getLoss(numGold, numPred) < 0.001) {
-			List<Node> nodes = beam1.element().getFirst().nodes;
-			nodes.clear();
-			for(Node leaf : gold.equation.root.getLeaves()) {
-				Node node = new Node(leaf);
-				if(node.label.equals("VAR") && gold.varTokens.containsKey(node.varId) &&
-						gold.varTokens.get(node.varId).size()>0) {
-					node.index = gold.varTokens.get(node.varId).get(0);
-				}
-				if(node.label.equals("NUM")) {
-					for(int i=0; i<prob.quantities.size(); ++i) {
-						if(Tools.safeEquals(Tools.getValue(
-								prob.quantities.get(i)), node.value)) {
-							node.index = i;
-							break;
-						}
-					}
-				}
-				nodes.add(node);
-			}
-		}
-		
 		// Grounding of variables
 		for(Pair<TreeY, Double> pair : beam1) {
 			for(int i=0; i<prob.candidateVars.size(); ++i) {
@@ -140,11 +116,44 @@ public class ConsInfSolver {
 		beam1.addAll(beam2);
 		beam2.clear();
 		
+		
+		// Get the right order
+		struct.numoccur.NumoccurY numPred = new struct.numoccur.NumoccurY(
+				prob, beam1.element().getFirst());
+		struct.numoccur.NumoccurY numGold = new struct.numoccur.NumoccurY(prob, gold);
+		VarY varGold = new VarY(gold);
+		VarY varPred = new VarY(beam1.element().getFirst());
+		if(struct.numoccur.NumoccurY.getLoss(numGold, numPred) < 0.001 &&
+				SimulProb.getVarTokenLoss(varGold.varTokens, varPred.varTokens, false) < 0.001) {
+			List<Node> nodes = beam1.element().getFirst().nodes;
+			nodes.clear();
+			for(Node leaf : gold.equation.root.getLeaves()) {
+				Node node = new Node(leaf);
+				if(node.label.equals("VAR") && gold.varTokens.containsKey(node.varId) &&
+						gold.varTokens.get(node.varId).size()>0) {
+					node.index = gold.varTokens.get(node.varId).get(0);
+				}
+				if(node.label.equals("NUM")) {
+					for(int i=0; i<prob.quantities.size(); ++i) {
+						if(Tools.safeEquals(Tools.getValue(
+								prob.quantities.get(i)), node.value)) {
+							node.index = i;
+							break;
+						}
+					}
+				}
+				nodes.add(node);
+			}
+		}
+		
 		// Equation generation
 //		struct.lca.LcaX x = new LcaX(prob, beam1.element().getFirst().varTokens, 
 //				beam1.element().getFirst().nodes);
 //		struct.lca.LcaY y = (struct.lca.LcaY) lcaModel.infSolver.getBestStructure(lcaModel.wv, x); 
 //		struct.lca.LcaY Gy = new LcaY(gold); 
+		
+		
+		
 		for(Pair<TreeY, Double> pair : beam1) {
 			beam2.addAll(getBottomUpBestParse(prob, pair, lcaModel));
 		}
