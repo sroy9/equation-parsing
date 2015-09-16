@@ -77,6 +77,31 @@ public class ConsInfSolver {
 		beam1.addAll(beam2);
 		beam2.clear();
 		
+		// Get the right order
+		struct.numoccur.NumoccurY numPred = new struct.numoccur.NumoccurY(prob, beam1.element().getFirst());
+		struct.numoccur.NumoccurY numGold = new struct.numoccur.NumoccurY(prob, gold);
+		if(struct.numoccur.NumoccurY.getLoss(numGold, numPred) < 0.001) {
+			List<Node> nodes = beam1.element().getFirst().nodes;
+			nodes.clear();
+			for(Node leaf : gold.equation.root.getLeaves()) {
+				Node node = new Node(leaf);
+				if(node.label.equals("VAR") && gold.varTokens.containsKey(node.varId) &&
+						gold.varTokens.get(node.varId).size()>0) {
+					node.index = gold.varTokens.get(node.varId).get(0);
+				}
+				if(node.label.equals("NUM")) {
+					for(int i=0; i<prob.quantities.size(); ++i) {
+						if(Tools.safeEquals(Tools.getValue(
+								prob.quantities.get(i)), node.value)) {
+							node.index = i;
+							break;
+						}
+					}
+				}
+				nodes.add(node);
+			}
+		}
+		
 		// Grounding of variables
 		for(Pair<TreeY, Double> pair : beam1) {
 			for(int i=0; i<prob.candidateVars.size(); ++i) {
