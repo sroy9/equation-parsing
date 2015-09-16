@@ -125,6 +125,7 @@ public class ConsInfSolver {
 		beam1.addAll(beam2);
 		beam2.clear();
 		if(struct.lca.LcaY.getLoss(y, new struct.lca.LcaY(beam1.element().getFirst())) > 0.001) {
+			System.out.println("HOLA HERE");
 			System.out.println("Gold : "+y);
 			System.out.println("Pred : "+new struct.lca.LcaY(beam1.element().getFirst()));
 		}
