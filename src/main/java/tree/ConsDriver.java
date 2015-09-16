@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import reader.DocReader;
+import struct.numoccur.NumoccurX;
+import struct.numoccur.NumoccurY;
 import structure.SimulProb;
 import utils.Params;
+import var.VarX;
+import var.VarY;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 
@@ -81,11 +85,22 @@ public class ConsDriver {
 			SLModel lcaModel, SLProblem sp, boolean printMistakes) throws Exception {
 		System.out.println("Testing with params : NumOccurScale "+ConsInfSolver.numOccurScale+
 				" : VarScale "+ConsInfSolver.varScale);
-		double acc = 0.0;
+		double acc = 0.0, numAcc = 0.0, varAcc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			TreeX prob = (TreeX) sp.instanceList.get(i);
 			TreeY gold = (TreeY) sp.goldStructureList.get(i);
 			TreeY pred = ConsInfSolver.getBestStructure(prob, numOccurModel, varModel, lcaModel, gold);
+			struct.numoccur.NumoccurY numGold = new NumoccurY(prob, gold);
+			struct.numoccur.NumoccurY numPred = new NumoccurY(prob, pred);
+			VarY varGold = new VarY(gold);
+			VarY varPred = new VarY(pred);
+			if(NumoccurY.getLoss(numGold, numPred) < 0.001) {
+				numAcc++;
+			}
+			if(SimulProb.getVarTokenLoss(varGold.varTokens, varPred.varTokens, true) < 0.001 ||
+					SimulProb.getVarTokenLoss(varGold.varTokens, varPred.varTokens, false) < 0.001) {
+				varAcc++;
+			}
 			if(TreeY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else if(printMistakes) {
@@ -96,6 +111,10 @@ public class ConsDriver {
 				System.out.println("Loss : "+TreeY.getLoss(gold, pred));
 			}
 		}
+		System.out.println("Number Accuracy : = " + numAcc + " / " + sp.instanceList.size()
+				+ " = " + (numAcc/sp.instanceList.size()));
+		System.out.println("Var Accuracy : = " + varAcc + " / " + sp.instanceList.size()
+				+ " = " + (varAcc/sp.instanceList.size()));
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
 		return (acc/sp.instanceList.size());
