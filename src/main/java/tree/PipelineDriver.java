@@ -76,7 +76,7 @@ public class PipelineDriver {
 			struct.lca.LcaX lcaX = new struct.lca.LcaX(prob, varPred.varTokens, nodes);
 			struct.lca.LcaY lcaGold = new struct.lca.LcaY(prob);
 			struct.lca.LcaY lcaPred = (struct.lca.LcaY) 
-					lcaModel.infSolver.getBestStructure(numOccurModel.wv, lcaX);
+					lcaModel.infSolver.getBestStructure(lcaModel.wv, lcaX);
 			
 			if(struct.numoccur.NumoccurY.getLoss(numGold, numPred) < 0.0001 
 					&& VarY.getLoss(varGold, varPred) < 0.0001
