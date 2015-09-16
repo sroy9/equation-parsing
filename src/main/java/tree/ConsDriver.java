@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import reader.DocReader;
+import struct.lca.LcaY;
 import struct.numoccur.NumoccurX;
 import struct.numoccur.NumoccurY;
 import structure.SimulProb;
@@ -105,15 +106,17 @@ public class ConsDriver {
 			} else if(printMistakes && 
 					SimulProb.getVarTokenLoss(varGold.varTokens, varPred.varTokens, false) < 0.001 &&
 					NumoccurY.getLoss(numGold, numPred) < 0.001) {
-				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
-				System.out.println("Quantities : "+prob.quantities);
-				System.out.println("Gold : \n"+gold);
-				System.out.println("Pred : \n"+pred);
-				System.out.println("Loss : "+TreeY.getLoss(gold, pred));
 				struct.lca.LcaX lcaX = new struct.lca.LcaX(prob, varPred.varTokens, pred.nodes);
 				struct.lca.LcaY lcaPred = (struct.lca.LcaY) 
 						lcaModel.infSolver.getBestStructure(lcaModel.wv, lcaX);
-				System.out.println("Lca : "+lcaPred);
+				if(struct.lca.LcaY.getLoss(lcaPred, new struct.lca.LcaY(pred)) > 0.01) {
+					System.out.println(prob.problemIndex+" : "+prob.ta.getText());
+					System.out.println("Quantities : "+prob.quantities);
+					System.out.println("Gold : \n"+gold);
+					System.out.println("Pred : \n"+pred);
+					System.out.println("Loss : "+TreeY.getLoss(gold, pred));
+					System.out.println("Lca : "+lcaPred);
+				}
 				
 			}
 		}
