@@ -72,7 +72,7 @@ public class LcaDriver {
 	
 	public static List<Node> enumerateVariableInstantiations(SimulProb simulProb, Node leaf) {
 		List<Node> nodeList = new ArrayList<>();
-		if(leaf.label.equals("VAR")) {
+		if(leaf.label.equals("VAR") && simulProb.varTokens.keySet().contains(leaf.varId)) {
 			for(int id : simulProb.varTokens.get(leaf.varId)) {
 				Node node = new Node(leaf);
 				node.index = id;

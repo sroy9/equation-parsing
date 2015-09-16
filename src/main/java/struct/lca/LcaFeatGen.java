@@ -87,4 +87,23 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements Serializable
 		return newFeats;
 	}
 	
+	public static List<String> getPairFeaturesWithoutGlobalPrefix(LcaX x, Node node) {
+		List<String> features = new ArrayList<String>();
+		if(node.children.size() == 2) {
+			for(Node leaf1 : node.children.get(0).getLeaves()) {
+				for(Node leaf2 : node.children.get(1).getLeaves()) {
+					lca.LcaX lcaX = new lca.LcaX(x, leaf1, leaf2);
+					lca.LcaY lcaY = new lca.LcaY(node.label);
+					features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));
+					String label = node.label;
+					if(label.equals("SUB") || label.equals("DIV")) label += "_REV";
+					lcaX = new lca.LcaX(x, leaf2, leaf1);
+					lcaY = new lca.LcaY(label);
+					features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));
+				}
+			}
+		}
+		return features;
+	}
+	
 }

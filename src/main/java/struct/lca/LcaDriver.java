@@ -2,6 +2,7 @@ package struct.lca;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -59,23 +60,25 @@ public class LcaDriver {
 			for(Map<String, List<Integer>> varTokens : 
 					enumerateVarTokens(simulProb.varTokens)) {
 				List<Node> nodes = new ArrayList<Node>();
-				for(Node leaf : simulProb.equation.root.getLeaves()) {
-					Node node = new Node(leaf);
-					if(node.label.equals("VAR") && varTokens.containsKey(node.varId) &&
-							varTokens.get(node.varId).size()>0) {
-						node.index = varTokens.get(node.varId).get(0);
-					}
-					if(node.label.equals("NUM")) {
-						for(int i=0; i<simulProb.quantities.size(); ++i) {
-							if(Tools.safeEquals(Tools.getValue(
-									simulProb.quantities.get(i)), node.value)) {
-								node.index = i;
-								break;
-							}
+				for(int i=0; i<simulProb.quantities.size(); ++i) {
+					for(Node leaf : simulProb.equation.root.getLeaves()) {
+						if(leaf.label.equals("NUM") && Tools.safeEquals(Tools.getValue(
+								simulProb.quantities.get(i)), leaf.value)) {
+							Node node = new Node(leaf);
+							node.index = i;
+							nodes.add(node);
 						}
 					}
-					nodes.add(node);
 				}
+				for(Node leaf : simulProb.equation.root.getLeaves()) {
+					if(leaf.label.equals("VAR") && varTokens.containsKey(leaf.varId) &&
+							varTokens.get(leaf.varId).size()>0) {
+						Node node = new Node(leaf);
+						node.index = varTokens.get(node.varId).get(0);
+						nodes.add(node);
+					}
+				}
+//				Collections.shuffle(nodes);
 				LcaX x = new LcaX(simulProb, varTokens, nodes);
 				LcaY y = new LcaY(simulProb);
 				problem.addExample(x, y);

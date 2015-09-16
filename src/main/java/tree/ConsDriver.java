@@ -4,17 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import reader.DocReader;
-import struct.lca.LcaY;
-import struct.numoccur.NumoccurX;
 import struct.numoccur.NumoccurY;
 import structure.SimulProb;
 import utils.Params;
-import var.VarX;
 import var.VarY;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 
 public class ConsDriver {
+	
+	public static boolean useSPforNumoccur = true, useSPforLCA = false;
 	
 	public static double crossVal() throws Exception {
 		double acc = 0.0;
@@ -40,8 +39,16 @@ public class ConsDriver {
 		}
 		SLModel numOccurModel = null, lcaModel = null;
 		SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
-		numOccurModel = SLModel.loadModel("models/numoccurStruct"+testFold+".save");
-		lcaModel = SLModel.loadModel("models/lcaStruct"+testFold+".save");
+		if(useSPforNumoccur) {
+			numOccurModel = SLModel.loadModel("models/numoccurStruct"+testFold+".save");
+		} else {
+			numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
+		}
+		if(useSPforLCA) {
+			lcaModel = SLModel.loadModel("models/lcaStruct"+testFold+".save");
+		} else {
+			lcaModel = SLModel.loadModel("models/lca"+testFold+".save");
+		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
 		tuneModel(numOccurModel, varModel, lcaModel, train);
@@ -61,7 +68,7 @@ public class ConsDriver {
 		SLModel numOccurModel = null, lcaModel = null;
 		SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
 		numOccurModel = SLModel.loadModel("models/numoccurStruct"+testFold+".save");
-		lcaModel = SLModel.loadModel("models/lcaStruct"+testFold+".save");
+		lcaModel = SLModel.loadModel("models/lca"+testFold+".save");
 		
 		SLProblem test = getSP(testProbs);
 		return testModel(numOccurModel, varModel, lcaModel, test, true);
@@ -103,21 +110,12 @@ public class ConsDriver {
 			}
 			if(TreeY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
-			} else if(printMistakes && 
-					SimulProb.getVarTokenLoss(varGold.varTokens, varPred.varTokens, false) < 0.001 &&
-					NumoccurY.getLoss(numGold, numPred) < 0.001) {
-				struct.lca.LcaX lcaX = new struct.lca.LcaX(prob, varPred.varTokens, pred.nodes);
-				struct.lca.LcaY lcaPred = (struct.lca.LcaY) 
-						lcaModel.infSolver.getBestStructure(lcaModel.wv, lcaX);
-				if(struct.lca.LcaY.getLoss(lcaPred, new struct.lca.LcaY(pred)) > 0.01) {
-					System.out.println(prob.problemIndex+" : "+prob.ta.getText());
-					System.out.println("Quantities : "+prob.quantities);
-					System.out.println("Gold : \n"+gold);
-					System.out.println("Pred : \n"+pred);
-					System.out.println("Loss : "+TreeY.getLoss(gold, pred));
-					System.out.println("Lca : "+lcaPred);
-				}
-				
+			} else if(printMistakes) {
+				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
+				System.out.println("Quantities : "+prob.quantities);
+				System.out.println("Gold : \n"+gold);
+				System.out.println("Pred : \n"+pred);
+				System.out.println("Loss : "+TreeY.getLoss(gold, pred));				
 			}
 		}
 		System.out.println("Number Accuracy : = " + numAcc + " / " + sp.instanceList.size()

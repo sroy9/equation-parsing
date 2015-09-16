@@ -32,7 +32,7 @@ public class ConsInfSolver {
 				new PairComparator<TreeY>() {};
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(200).create();
+				maximumSize(20).create();
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
 				maximumSize(200).create();
@@ -61,22 +61,22 @@ public class ConsInfSolver {
 			beam1.addAll(beam2);
 			beam2.clear();
 		}
-		
-		for(Pair<TreeY, Double> pair : beam1) {
-			double score = numOccurScale*numOccurModel.wv.dotProduct(
-					((struct.numoccur.NumoccurFeatGen) numOccurModel.featureGenerator).
-					getGlobalFeatureVector(new struct.numoccur.NumoccurX(prob), 
-							new struct.numoccur.NumoccurY(prob, pair.getFirst().nodes)));
-			beam2.add(new Pair<TreeY, Double>(pair.getFirst(), pair.getSecond()+score));
+		if(ConsDriver.useSPforNumoccur) {
+			for(Pair<TreeY, Double> pair : beam1) {
+				double score = numOccurScale*numOccurModel.wv.dotProduct(
+						((struct.numoccur.NumoccurFeatGen) numOccurModel.featureGenerator).
+						getGlobalFeatureVector(new struct.numoccur.NumoccurX(prob), 
+								new struct.numoccur.NumoccurY(prob, pair.getFirst().nodes)));
+				beam2.add(new Pair<TreeY, Double>(pair.getFirst(), pair.getSecond()+score));
+			}
+			beam1.clear();
+			beam1.addAll(beam2);
+			beam2.clear();
 		}
-		beam1.clear();
-		beam1.addAll(beam2);
-		beam2.clear();
-
-		beam2.add(beam1.element());
-		beam1.clear();
-		beam1.addAll(beam2);
-		beam2.clear();
+//		beam2.add(beam1.element());
+//		beam1.clear();
+//		beam1.addAll(beam2);
+//		beam2.clear();
 		
 		// Grounding of variables
 		for(Pair<TreeY, Double> pair : beam1) {
@@ -111,60 +111,18 @@ public class ConsInfSolver {
 		beam1.addAll(beam2);
 		beam2.clear();
 
-		beam2.add(beam1.element());
-		beam1.clear();
-		beam1.addAll(beam2);
-		beam2.clear();
-		
-		
-		// Get the right order
-//		struct.numoccur.NumoccurY numPred = new struct.numoccur.NumoccurY(
-//				prob, beam1.element().getFirst().nodes);
-//		struct.numoccur.NumoccurY numGold = new struct.numoccur.NumoccurY(prob, gold);
-//		VarY varGold = new VarY(gold);
-//		VarY varPred = new VarY(beam1.element().getFirst());
-//		if(struct.numoccur.NumoccurY.getLoss(numGold, numPred) < 0.001 &&
-//				SimulProb.getVarTokenLoss(varGold.varTokens, varPred.varTokens, false) < 0.001) {
-//			List<Node> nodes = beam1.element().getFirst().nodes;
-//			nodes.clear();
-//			for(Node leaf : gold.equation.root.getLeaves()) {
-//				Node node = new Node(leaf);
-//				if(node.label.equals("VAR") && gold.varTokens.containsKey(node.varId) &&
-//						gold.varTokens.get(node.varId).size()>0) {
-//					node.index = gold.varTokens.get(node.varId).get(0);
-//				}
-//				if(node.label.equals("NUM")) {
-//					for(int i=0; i<prob.quantities.size(); ++i) {
-//						if(Tools.safeEquals(Tools.getValue(
-//								prob.quantities.get(i)), node.value)) {
-//							node.index = i;
-//							break;
-//						}
-//					}
-//				}
-//				nodes.add(node);
-//			}
-//		}
+//		beam2.add(beam1.element());
+//		beam1.clear();
+//		beam1.addAll(beam2);
+//		beam2.clear();
 		
 		// Equation generation
-//		struct.lca.LcaX x = new LcaX(prob, beam1.element().getFirst().varTokens, 
-//				beam1.element().getFirst().nodes);
-//		struct.lca.LcaY y = (struct.lca.LcaY) lcaModel.infSolver.getBestStructure(lcaModel.wv, x); 
-//		struct.lca.LcaY Gy = new LcaY(gold); 
-		
-		
-		
 		for(Pair<TreeY, Double> pair : beam1) {
 			beam2.addAll(getBottomUpBestParse(prob, pair, lcaModel));
 		}
 		beam1.clear();
 		beam1.addAll(beam2);
 		beam2.clear();
-//		if(struct.lca.LcaY.getLoss(y, Gy) > 0.001) {
-//			System.out.println("HOLA HERE");
-//			System.out.println("Gold : "+y);
-//			System.out.println("Pred : "+Gy);
-//		}
 		return beam1.element().getFirst();
 	}
 	
@@ -175,10 +133,10 @@ public class ConsInfSolver {
 				new PairComparator<List<Node>>() {};
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(1000).create();
+				.maximumSize(5).create();
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(1000).create();
+				.maximumSize(5).create();
 		int n = y.nodes.size();
 		List<Node> init = new ArrayList<>();
 		init.addAll(y.nodes);
@@ -267,7 +225,11 @@ public class ConsInfSolver {
 			Map<String, List<Integer>> varTokens, List<Node> nodes) {
 		List<String> features = new ArrayList<String>();
 		struct.lca.LcaX lcaX = new struct.lca.LcaX(x, varTokens, nodes);
-		features.addAll(struct.lca.LcaFeatGen.getPairFeatures(lcaX, node));
+		if(ConsDriver.useSPforLCA) {
+			features.addAll(struct.lca.LcaFeatGen.getPairFeatures(lcaX, node));
+		} else {
+			features.addAll(struct.lca.LcaFeatGen.getPairFeaturesWithoutGlobalPrefix(lcaX, node));
+		}
 		return lcaModel.wv.dotProduct(FeatGen.getFeatureVectorFromList(features, lcaModel.lm));
 	}
 	
