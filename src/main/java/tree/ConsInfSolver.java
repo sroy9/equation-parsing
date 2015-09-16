@@ -32,10 +32,10 @@ public class ConsInfSolver {
 				new PairComparator<TreeY>() {};
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(200).create();
+				maximumSize(1000).create();
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(200).create();
+				maximumSize(1000).create();
 		TreeY seed = new TreeY();
 		beam1.add(new Pair<TreeY, Double>(seed, 0.0));
 		
@@ -118,33 +118,33 @@ public class ConsInfSolver {
 		
 		
 		// Get the right order
-		struct.numoccur.NumoccurY numPred = new struct.numoccur.NumoccurY(
-				prob, beam1.element().getFirst().nodes);
-		struct.numoccur.NumoccurY numGold = new struct.numoccur.NumoccurY(prob, gold);
-		VarY varGold = new VarY(gold);
-		VarY varPred = new VarY(beam1.element().getFirst());
-		if(struct.numoccur.NumoccurY.getLoss(numGold, numPred) < 0.001 &&
-				SimulProb.getVarTokenLoss(varGold.varTokens, varPred.varTokens, false) < 0.001) {
-			List<Node> nodes = beam1.element().getFirst().nodes;
-			nodes.clear();
-			for(Node leaf : gold.equation.root.getLeaves()) {
-				Node node = new Node(leaf);
-				if(node.label.equals("VAR") && gold.varTokens.containsKey(node.varId) &&
-						gold.varTokens.get(node.varId).size()>0) {
-					node.index = gold.varTokens.get(node.varId).get(0);
-				}
-				if(node.label.equals("NUM")) {
-					for(int i=0; i<prob.quantities.size(); ++i) {
-						if(Tools.safeEquals(Tools.getValue(
-								prob.quantities.get(i)), node.value)) {
-							node.index = i;
-							break;
-						}
-					}
-				}
-				nodes.add(node);
-			}
-		}
+//		struct.numoccur.NumoccurY numPred = new struct.numoccur.NumoccurY(
+//				prob, beam1.element().getFirst().nodes);
+//		struct.numoccur.NumoccurY numGold = new struct.numoccur.NumoccurY(prob, gold);
+//		VarY varGold = new VarY(gold);
+//		VarY varPred = new VarY(beam1.element().getFirst());
+//		if(struct.numoccur.NumoccurY.getLoss(numGold, numPred) < 0.001 &&
+//				SimulProb.getVarTokenLoss(varGold.varTokens, varPred.varTokens, false) < 0.001) {
+//			List<Node> nodes = beam1.element().getFirst().nodes;
+//			nodes.clear();
+//			for(Node leaf : gold.equation.root.getLeaves()) {
+//				Node node = new Node(leaf);
+//				if(node.label.equals("VAR") && gold.varTokens.containsKey(node.varId) &&
+//						gold.varTokens.get(node.varId).size()>0) {
+//					node.index = gold.varTokens.get(node.varId).get(0);
+//				}
+//				if(node.label.equals("NUM")) {
+//					for(int i=0; i<prob.quantities.size(); ++i) {
+//						if(Tools.safeEquals(Tools.getValue(
+//								prob.quantities.get(i)), node.value)) {
+//							node.index = i;
+//							break;
+//						}
+//					}
+//				}
+//				nodes.add(node);
+//			}
+//		}
 		
 		// Equation generation
 //		struct.lca.LcaX x = new LcaX(prob, beam1.element().getFirst().varTokens, 
@@ -175,10 +175,10 @@ public class ConsInfSolver {
 				new PairComparator<List<Node>>() {};
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(50).create();
+				.maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(50).create();
+				.maximumSize(200).create();
 		int n = y.nodes.size();
 		List<Node> init = new ArrayList<>();
 		init.addAll(y.nodes);
