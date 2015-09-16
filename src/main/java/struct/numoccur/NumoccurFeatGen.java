@@ -34,7 +34,7 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 		for(int i=0; i<x.quantities.size(); ++i) {
 			numoccur.NumoccurX numX = new numoccur.NumoccurX(x, i);
 			numoccur.NumoccurY numY = new numoccur.NumoccurY(y.numOccurList.get(i));
-			features.addAll(getIndividualFeatures(numX, numY));
+			features.addAll(numoccur.NumoccurFeatGen.getFeatures(numX, numY));
 		}
 		return features;
 	}
@@ -46,7 +46,7 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 	
 	public IFeatureVector getIndividualFeatureVector(numoccur.NumoccurX x, 
 			numoccur.NumoccurY y) {
-		List<String> features = getIndividualFeatures(x, y);
+		List<String> features = numoccur.NumoccurFeatGen.getFeatures(x, y);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
@@ -57,9 +57,4 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 //		}
 //		return features;
 //	}
-	
-	public static List<String> getIndividualFeatures(
-			numoccur.NumoccurX x, numoccur.NumoccurY y) {
-		return numoccur.NumoccurFeatGen.getFeatures(x, y);
-	}
 }

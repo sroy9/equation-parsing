@@ -18,8 +18,7 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 	private static final long serialVersionUID = 5253748728743334706L;
 	public VarFeatGen featGen;
 
-	public VarInfSolver(VarFeatGen featGen) 
-			throws Exception {
+	public VarInfSolver(VarFeatGen featGen) throws Exception {
 		this.featGen = featGen;
 	}
 

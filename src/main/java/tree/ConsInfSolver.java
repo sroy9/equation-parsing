@@ -22,10 +22,10 @@ import edu.illinois.cs.cogcomp.sl.core.SLModel;
 public class ConsInfSolver {
 	
 	public static double numOccurScale, varScale;
-	public static boolean useSPforNumOccur = false, useSPforLCA = false;
+	public static boolean useSPforNumOccur = true, useSPforLCA = true;
 	
 	public static TreeY getBestStructure(TreeX prob, SLModel numOccurModel, 
-			SLModel varModel, SLModel lcaModel) throws Exception {
+			SLModel varModel, SLModel lcaModel, TreeY gold) throws Exception {
 		PairComparator<TreeY> pairComparator = 
 				new PairComparator<TreeY>() {};
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam1 = 
@@ -35,25 +35,24 @@ public class ConsInfSolver {
 				MinMaxPriorityQueue.orderedBy(pairComparator).
 				maximumSize(200).create();
 		TreeY seed = new TreeY();
+//		for(Node leaf : gold.equation.root.getLeaves()) {
+//			if(leaf.label.equals("NUM")) {
+//				seed.nodes.add(leaf);
+//			}
+//		}
+//		seed.varTokens.putAll(gold.varTokens);
+//		
 		beam1.add(new Pair<TreeY, Double>(seed, 0.0));
 		
 		// Predict number of occurrences of each quantity
 		for(int i=0; i<prob.quantities.size(); ++i) {
 			for(Pair<TreeY, Double> pair : beam1) {
 				for(int j=0; j<3; ++j) {
-					double score = 0.0;
-					if(useSPforNumOccur) {
-						score = numOccurScale*numOccurModel.wv.dotProduct(
-								((struct.numoccur.NumoccurFeatGen) numOccurModel.featureGenerator).
-								getIndividualFeatureVector(
-										new NumoccurX(prob, i),
-										new NumoccurY(j)));
-					} else {
-						score = numOccurScale*numOccurModel.wv.dotProduct(
-								numOccurModel.featureGenerator.getFeatureVector(
-										new NumoccurX(prob, i),
-										new NumoccurY(j)));
-					}
+					List<String> features = numoccur.NumoccurFeatGen.getFeatures(
+							new NumoccurX(prob, i),
+							new NumoccurY(j));
+					double score = numOccurScale*numOccurModel.wv.dotProduct(
+							FeatGen.getFeatureVectorFromList(features, numOccurModel.lm));
 					TreeY y = new TreeY(pair.getFirst());
 					for(int k=0; k<j; ++k) {
 						Node node = new Node("NUM", i, new ArrayList<Node>());
@@ -67,6 +66,11 @@ public class ConsInfSolver {
 			beam1.addAll(beam2);
 			beam2.clear();
 		}
+		beam2.add(beam1.element());
+		beam1.clear();
+		beam1.addAll(beam2);
+		beam2.clear();
+		
 //		if(useSPforNumOccur) {
 //			for(Pair<TreeY, Double> pair : beam1) {
 //				double score = numOccurScale*numOccurModel.wv.dotProduct(
@@ -105,11 +109,16 @@ public class ConsInfSolver {
 					y.varTokens.get("V2").add(j);
 					beam2.add(new Pair<TreeY, Double>(y, 
 							pair.getSecond()+varScale*varModel.wv.dotProduct(
-							varModel.featureGenerator.getFeatureVector(
-									new VarX(prob), new VarY(y)))));
+							varModel.featureGenerator.getFeatureVector(new VarX(prob), new VarY(y)))));
 				}
 			}
 		}
+		beam1.clear();
+		beam1.addAll(beam2);
+		beam2.clear();
+		
+
+		beam2.add(beam1.element());
 		beam1.clear();
 		beam1.addAll(beam2);
 		beam2.clear();

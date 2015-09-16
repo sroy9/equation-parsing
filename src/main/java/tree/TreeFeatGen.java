@@ -74,7 +74,7 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 	
 	public IFeatureVector getIndividualFeatureVector(numoccur.NumoccurX x, 
 			numoccur.NumoccurY y) {
-		List<String> features = struct.numoccur.NumoccurFeatGen.getIndividualFeatures(x, y);
+		List<String> features = numoccur.NumoccurFeatGen.getFeatures(x, y);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	

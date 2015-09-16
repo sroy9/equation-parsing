@@ -217,7 +217,7 @@ public class Node implements Serializable {
 	
 	public String getSignature() {
 		if(children.size() == 0) return label;
-		return "("+children.get(0).getSignature() + " " + label + " " + 
+		return "("+children.get(0).getSignature() + " " + label + "_" + index + " " +
 				children.get(1).getSignature()+")";
 	}
 }

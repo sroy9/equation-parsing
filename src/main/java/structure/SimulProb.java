@@ -111,13 +111,13 @@ public class SimulProb {
 					Integer.parseInt(strArr[1]));
 			int end = ta.getTokenIdFromCharacterOffset(
 					Integer.parseInt(strArr[2])-1)+1;
-			if(!varTokens.containsKey(label)) {
-				varTokens.put(label, new ArrayList<Integer>());
-			}
 			boolean foundNP = false;
 			for(int i=0; i<candidateVars.size(); ++i) {
 				IntPair ip = candidateVars.get(i);
 				if(Tools.doesIntersect(ip, new IntPair(start, end))) {
+					if(!varTokens.containsKey(label)) {
+						varTokens.put(label, new ArrayList<Integer>());
+					}
 					varTokens.get(label).add(i);
 					foundNP = true;
 				}

@@ -14,7 +14,7 @@ public class ConsDriver {
 	public static double crossVal() throws Exception {
 		double acc = 0.0;
 		for(int i=0;i<5;i++) {
-			acc += doTest(i);
+			acc += doTuneTest(i);
 		}
 		System.out.println("5-fold CV : " + (acc/5));
 		return (acc/5);
@@ -101,7 +101,7 @@ public class ConsDriver {
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			TreeX prob = (TreeX) sp.instanceList.get(i);
 			TreeY gold = (TreeY) sp.goldStructureList.get(i);
-			TreeY pred = ConsInfSolver.getBestStructure(prob, numOccurModel, varModel, lcaModel);
+			TreeY pred = ConsInfSolver.getBestStructure(prob, numOccurModel, varModel, lcaModel, gold);
 			if(TreeY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else if(printMistakes) {
@@ -119,17 +119,19 @@ public class ConsDriver {
 	
 	public static void tuneModel(SLModel numOccurModel, SLModel varModel, 
 			SLModel lcaModel, SLProblem sp) throws Exception {
-		double vals[] = {1.0, 100.0, 10000.0};
+		double vals[] = {1.0, 100.0, 10000.0, 1000000.0};
 		double bestAccuracy = 0.0, bestNumOccurScale = 0.0, bestVarScale = 0.0;
 		for(Double val1 : vals) {
 			for(Double val2 : vals) {
-				ConsInfSolver.numOccurScale = val1;
-				ConsInfSolver.varScale = val2;
-				double accuracy = testModel(numOccurModel, varModel, lcaModel, sp, false);
-				if(accuracy > bestAccuracy) {
-					bestAccuracy = accuracy;
-					bestNumOccurScale = val1;
-					bestVarScale = val2;
+				if(val1 > val2 && val2 > 1.0) {
+					ConsInfSolver.numOccurScale = val1;
+					ConsInfSolver.varScale = val2;
+					double accuracy = testModel(numOccurModel, varModel, lcaModel, sp, false);
+					if(accuracy > bestAccuracy) {
+						bestAccuracy = accuracy;
+						bestNumOccurScale = val1;
+						bestVarScale = val2;
+					}
 				}
 			}
 		}
@@ -140,6 +142,6 @@ public class ConsDriver {
 	public static void main(String args[]) throws Exception {
 		ConsInfSolver.numOccurScale = 1000000.0;
 		ConsInfSolver.varScale = 1000.0;
-		ConsDriver.crossVal();
+		ConsDriver.doTest(0);
 	}
 }

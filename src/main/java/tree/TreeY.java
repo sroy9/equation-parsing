@@ -45,9 +45,11 @@ public class TreeY implements IStructure, Serializable {
 				(pred.varTokens.containsKey("V2") && pred.varTokens.get("V2").size() > 1)) {
 			System.err.println("Error in TreeY getLoss() function");
 		}
-		float loss1 = Equation.getLoss(gold.equation, pred.equation, true) + 
+		float loss1 = 
+				Equation.getLoss(gold.equation, pred.equation, true) + 
 				SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, true);
-		float loss2 = Equation.getLoss(gold.equation, pred.equation, false) + 
+		float loss2 = 
+				Equation.getLoss(gold.equation, pred.equation, false) + 
 				SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, false);
 		return Math.min(loss1, loss2);
 	}
