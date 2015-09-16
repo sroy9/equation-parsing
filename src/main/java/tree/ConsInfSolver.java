@@ -119,7 +119,7 @@ public class ConsInfSolver {
 		
 		// Get the right order
 		struct.numoccur.NumoccurY numPred = new struct.numoccur.NumoccurY(
-				prob, beam1.element().getFirst());
+				prob, beam1.element().getFirst().nodes);
 		struct.numoccur.NumoccurY numGold = new struct.numoccur.NumoccurY(prob, gold);
 		VarY varGold = new VarY(gold);
 		VarY varPred = new VarY(beam1.element().getFirst());
