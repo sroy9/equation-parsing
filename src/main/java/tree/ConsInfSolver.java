@@ -115,6 +115,7 @@ public class ConsInfSolver {
 		
 		// Equation generation
 		for(Pair<TreeY, Double> pair : beam1) {
+			System.out.println("TreeY : "+pair.getFirst());
 			beam2.addAll(getBottomUpBestParse(prob, pair, lcaModel));
 		}
 		beam1.clear();
