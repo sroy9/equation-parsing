@@ -63,7 +63,7 @@ public class NumoccurInfSolver extends AbstractInferenceSolver implements
 				}
 			}
 			beam1.clear();
-			beam1.add(beam2.element());
+			beam1.addAll(beam2);
 			beam2.clear();
 		}
 		for(Pair<NumoccurY, Double> pair : beam1) {
