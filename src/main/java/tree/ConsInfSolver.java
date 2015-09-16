@@ -58,10 +58,6 @@ public class ConsInfSolver {
 			beam1.addAll(beam2);
 			beam2.clear();
 		}
-//		beam2.add(beam1.element());
-//		beam1.clear();
-//		beam1.addAll(beam2);
-//		beam2.clear();
 		
 		for(Pair<TreeY, Double> pair : beam1) {
 			double score = numOccurScale*numOccurModel.wv.dotProduct(
@@ -70,6 +66,11 @@ public class ConsInfSolver {
 							new struct.numoccur.NumoccurY(prob, pair.getFirst().nodes)));
 			beam2.add(new Pair<TreeY, Double>(pair.getFirst(), pair.getSecond()+score));
 		}
+		beam1.clear();
+		beam1.addAll(beam2);
+		beam2.clear();
+
+		beam2.add(beam1.element());
 		beam1.clear();
 		beam1.addAll(beam2);
 		beam2.clear();
@@ -107,10 +108,10 @@ public class ConsInfSolver {
 		beam1.addAll(beam2);
 		beam2.clear();
 
-//		beam2.add(beam1.element());
-//		beam1.clear();
-//		beam1.addAll(beam2);
-//		beam2.clear();
+		beam2.add(beam1.element());
+		beam1.clear();
+		beam1.addAll(beam2);
+		beam2.clear();
 		
 		// Equation generation
 		for(Pair<TreeY, Double> pair : beam1) {
