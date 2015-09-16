@@ -8,6 +8,7 @@ import java.util.Map;
 import numoccur.NumoccurX;
 import numoccur.NumoccurY;
 import struct.lca.LcaX;
+import struct.lca.LcaY;
 import structure.Node;
 import structure.PairComparator;
 import utils.FeatGen;
@@ -118,13 +119,14 @@ public class ConsInfSolver {
 		struct.lca.LcaX x = new LcaX(prob, beam1.element().getFirst().varTokens, 
 				beam1.element().getFirst().nodes);
 		struct.lca.LcaY y = (struct.lca.LcaY) lcaModel.infSolver.getBestStructure(lcaModel.wv, x); 
+		struct.lca.LcaY Gy = new LcaY(gold); 
 		for(Pair<TreeY, Double> pair : beam1) {
 			beam2.addAll(getBottomUpBestParse(prob, pair, lcaModel));
 		}
 		beam1.clear();
 		beam1.addAll(beam2);
 		beam2.clear();
-		if(struct.lca.LcaY.getLoss(y, new struct.lca.LcaY(beam1.element().getFirst())) > 0.001) {
+		if(struct.lca.LcaY.getLoss(y, Gy) > 0.001) {
 			System.out.println("HOLA HERE");
 			System.out.println("Gold : "+y);
 			System.out.println("Pred : "+new struct.lca.LcaY(beam1.element().getFirst()));
