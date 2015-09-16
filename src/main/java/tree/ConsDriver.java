@@ -110,6 +110,11 @@ public class ConsDriver {
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Pred : \n"+pred);
 				System.out.println("Loss : "+TreeY.getLoss(gold, pred));
+				struct.lca.LcaX lcaX = new struct.lca.LcaX(prob, varPred.varTokens, pred.nodes);
+				struct.lca.LcaY lcaPred = (struct.lca.LcaY) 
+						lcaModel.infSolver.getBestStructure(lcaModel.wv, lcaX);
+				System.out.println("Lca : "+lcaPred);
+				
 			}
 		}
 		System.out.println("Number Accuracy : = " + numAcc + " / " + sp.instanceList.size()

@@ -129,7 +129,7 @@ public class ConsInfSolver {
 		if(struct.lca.LcaY.getLoss(y, Gy) > 0.001) {
 			System.out.println("HOLA HERE");
 			System.out.println("Gold : "+y);
-			System.out.println("Pred : "+new struct.lca.LcaY(beam1.element().getFirst()));
+			System.out.println("Pred : "+Gy);
 		}
 		return beam1.element().getFirst();
 	}
