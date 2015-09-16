@@ -73,8 +73,8 @@ public class PipelineDriver {
 				nodes.add(node);
 			}
 			
-			struct.lca.LcaX lcaX = new struct.lca.LcaX(prob, varPred.varTokens, nodes);
-			struct.lca.LcaY lcaGold = new struct.lca.LcaY(prob);
+			struct.lca.LcaX lcaX = new struct.lca.LcaX(new TreeX(prob), varPred.varTokens, nodes);
+			struct.lca.LcaY lcaGold = new struct.lca.LcaY(new TreeY(prob));
 			struct.lca.LcaY lcaPred = (struct.lca.LcaY) 
 					lcaModel.infSolver.getBestStructure(lcaModel.wv, lcaX);
 			
