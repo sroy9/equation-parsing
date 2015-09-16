@@ -97,8 +97,7 @@ public class ConsDriver {
 			if(NumoccurY.getLoss(numGold, numPred) < 0.001) {
 				numAcc++;
 			}
-			if(SimulProb.getVarTokenLoss(varGold.varTokens, varPred.varTokens, true) < 0.001 ||
-					SimulProb.getVarTokenLoss(varGold.varTokens, varPred.varTokens, false) < 0.001) {
+			if(SimulProb.getVarTokenLoss(varGold.varTokens, varPred.varTokens, false) < 0.001) {
 				varAcc++;
 			}
 			if(TreeY.getLoss(gold, pred) < 0.0001) {
