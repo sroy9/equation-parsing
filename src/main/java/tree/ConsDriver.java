@@ -102,7 +102,9 @@ public class ConsDriver {
 			}
 			if(TreeY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
-			} else if(printMistakes) {
+			} else if(printMistakes && 
+					SimulProb.getVarTokenLoss(varGold.varTokens, varPred.varTokens, false) < 0.001 &&
+					NumoccurY.getLoss(numGold, numPred) < 0.001) {
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
 				System.out.println("Gold : \n"+gold);
