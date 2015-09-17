@@ -7,11 +7,8 @@ import java.util.Map;
 
 import numoccur.NumoccurX;
 import numoccur.NumoccurY;
-import struct.lca.LcaX;
-import struct.lca.LcaY;
 import structure.Node;
 import structure.PairComparator;
-import structure.SimulProb;
 import utils.FeatGen;
 import utils.Tools;
 import var.VarX;
