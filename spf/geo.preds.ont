@@ -1,0 +1,7 @@
+(
+add:<n,<n,n>>
+sub:<n,<n,n>>
+mul:<n,<n,n>>
+div:<n,<n,n>>
+eq:<n,<n,t>>
+)

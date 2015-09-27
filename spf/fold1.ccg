@@ -1,0 +1,237 @@
+2 similar tables and 6 similar chairs cost 6600 dollars . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 2.0:n V1:n) (mul:<n,<n,n>> 6.0:n V2:n)) 6600.0:n)
+
+the tallest player is 9.5 inches taller than the shortest player . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 9.5:n V2:n))
+
+the probability that san francisco plays in the next super bowl plus the probability that they do not play is 1 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 1.0:n)
+
+in a basketball game , will scored 26 points , consisting only of 3-point shots and 2-point shots . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 3.0:n V1:n) (mul:<n,<n,n>> 2.0:n V2:n)) 26.0:n)
+
+the larger of two numbers is 23 less than thrice the smaller . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> (mul:<n,<n,n>> 3.0:n V2:n) 23.0:n))
+
+the second plan has no initial fee but costs 0.60 dollars per mile driven . 
+(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 0.6:n V2:n))
+
+one number is 8 more than the other . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 8.0:n V2:n))
+
+there are 3 more girls than boys in tom 's class . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> V2:n 3.0:n))
+
+the automobile from the east travels at 10 kilometers faster than the automobile from the west . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 10.0:n V2:n))
+
+she sold 27 more cars than trucks . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n 27.0:n) V2:n)
+
+think of a number , half it and the result is 9 . 
+(eq:<n,<n,t>> (mul:<n,<n,n>> 0.5:n V1:n) 9.0:n)
+
+2 ducks and 9 pigs cost 269 dollars . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 2.0:n V1:n) (mul:<n,<n,n>> 9.0:n V2:n)) 269.0:n)
+
+venus hall charges 500 dollars to rent the room and 35 dollars for each meal . 
+(eq:<n,<n,t>> V2:n (add:<n,<n,n>> 500.0:n (mul:<n,<n,n>> 35.0:n V2:n)))
+
+sara has already saved 4100 dollars , and she plans to save 10 dollars a week . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 4100.0:n (mul:<n,<n,n>> 10.0:n V2:n)))
+
+jim plans to save 15 dollars a week . 
+(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 15.0:n V2:n))
+
+in a given day , the mill turns out three times as many units of plywood as lumber . 
+(eq:<n,<n,t>> (div:<n,<n,n>> V1:n 3.0:n) V2:n)
+
+one number is 3 less than twice another . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> (mul:<n,<n,n>> 2.0:n V2:n) 3.0:n))
+
+0.6667 of a number increased by 0.75 is 1.6667 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 0.6667:n V1:n) 0.75:n) 1.6667:n)
+
+7 times the first part added to 5 times the second part makes 146 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 7.0:n V1:n) (mul:<n,<n,n>> 5.0:n V2:n)) 146.0:n)
+
+on the first day of ticket sales the school sold 4 senior citizen tickets and 3 student tickets for 79 dollars . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 4.0:n V1:n) (mul:<n,<n,n>> 3.0:n V2:n)) 79.0:n)
+
+the second is 10 more than 3 times the first . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 10.0:n (mul:<n,<n,n>> 3.0:n V2:n)))
+
+one cyclist travels 8 kilometers per hour faster than the other . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 8.0:n V2:n))
+
+twice a number increased by 5 is 17 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 2.0:n V1:n) 5.0:n) 17.0:n)
+
+7 audio cassettes and 3 video cassettes cost rs 1110 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 7.0:n V1:n) (mul:<n,<n,n>> 3.0:n V2:n)) 1110.0:n)
+
+one piece is 2 times the length of the other . 
+(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 2.0:n V2:n))
+
+the sum of 2 numbers is 84 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 84.0:n)
+
+mrs. lloyd plans on spending 370 dollars on 10 meals and 3 nights in a hotel . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 10.0:n V1:n) (mul:<n,<n,n>> 3.0:n V2:n)) 370.0:n)
+
+a customer walks into an electronics store and buys 5 mp3 players and 8 sets of headphones , paying 840 dollars . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 5.0:n V1:n) (mul:<n,<n,n>> 8.0:n V2:n)) 840.0:n)
+
+there were 11 more republicans than democrats . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> V2:n 11.0:n))
+
+a bank teller has 54 5-dollar and 20-dollar bills in her cash drawer . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 54.0:n)
+
+3 times one of the numbers is 11 less than 5 times the other . 
+(eq:<n,<n,t>> (mul:<n,<n,n>> 3.0:n V1:n) (sub:<n,<n,n>> (mul:<n,<n,n>> 5.0:n V2:n) 11.0:n))
+
+24 is divided in two parts . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 24.0:n)
+
+tickets for balcony seats will cost 15 dollars less than tickets for main-level seats . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> V2:n 15.0:n))
+
+there were 178 more hikers than bike riders . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n 178.0:n) V2:n)
+
+there are 69 more girls than boys . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n 69.0:n) V2:n)
+
+the world 's oldest bride was 19 years older than her groom . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 19.0:n V2:n))
+
+sam 's picture emporium charges 1.50 dollars per sheet and a one time sitting fee of 140 dollars . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> (mul:<n,<n,n>> 1.5:n V2:n) 140.0:n))
+
+there were twice as many adults as children . 
+(eq:<n,<n,t>> (div:<n,<n,n>> V1:n 2.0:n) V2:n)
+
+the total number of democrats and republicans in the house of representatives was 434 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 434.0:n)
+
+there were 30 more republicans then democrats . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> V2:n 30.0:n))
+
+1 more than 0.6667 the number is 0.75 the number . 
+(eq:<n,<n,t>> (add:<n,<n,n>> 1.0:n (mul:<n,<n,n>> 0.6667:n V1:n)) (mul:<n,<n,n>> 0.75:n V2:n))
+
+the number of baseball cards he has is five more than three times the number of football cards . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 5.0:n (mul:<n,<n,n>> 3.0:n V2:n)))
+
+one number is 11 more than 3 times another number . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 11.0:n (mul:<n,<n,n>> 3.0:n V2:n)))
+
+an electrician cuts a 30 feet piece of wire into two pieces . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 30.0:n)
+
+one piece is 2 feet longer than the other . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 2.0:n V2:n))
+
+in 20 years , the father will be twice as old as his son . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n 20.0:n) (mul:<n,<n,n>> 2.0:n (add:<n,<n,n>> V2:n 20.0:n)))
+
+in 6 years , diane will be twice as old as amy . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n 6.0:n) (mul:<n,<n,n>> 2.0:n (add:<n,<n,n>> V2:n 6.0:n)))
+
+four years ago , the father was 3 times as old as the son . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> V1:n 4.0:n) (mul:<n,<n,n>> 3.0:n (sub:<n,<n,n>> V2:n 4.0:n)))
+
+four years ago , the china plate was three times the age of the glass plate . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> V1:n 4.0:n) (mul:<n,<n,n>> 3.0:n (sub:<n,<n,n>> V2:n 4.0:n)))
+
+in 12 years , the limestone will be three times as old as the marble statue . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n 12.0:n) (mul:<n,<n,n>> 3.0:n (add:<n,<n,n>> V2:n 12.0:n)))
+
+the sum of clyde and wendy ’ s age is 64 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 64.0:n)
+
+one cyclist rides twice as fast as the other . 
+(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 2.0:n V2:n))
+
+four less than eight times a certain number is 660 . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> (mul:<n,<n,n>> 8.0:n V1:n) 4.0:n) 660.0:n)
+
+the second pieces is 3 times as long as the first piece . 
+(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 3.0:n V2:n))
+
+the third piece is 5 feet longer than the first piece 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 5.0:n V2:n))
+
+the length of the rectangle is 24 inches more than twice the width . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 24.0:n (mul:<n,<n,n>> 2.0:n V2:n)))
+
+eileen inherits 20,000 dollars and decides to invest the money in two accounts , part in a certificate of deposit that pays 3 % interest per year , and the rest in a mutual fund that pays 5 % per year . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 20000.0:n)
+
+safety rent a truck costs 41.95 dollars plus 0.29 dollars per mile . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 41.95:n (mul:<n,<n,n>> 0.29:n V2:n)))
+
+city rentals rents the truck for 38.95 dollars plus 0.31 dollars per mile . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 38.95:n (mul:<n,<n,n>> 0.31:n V2:n)))
+
+the difference between 2 times a number and -8 is -12 . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> (mul:<n,<n,n>> 2.0:n V1:n) -8.0:n) -12.0:n)
+
+the larger number is 1 less than twice the smaller number . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> (mul:<n,<n,n>> 2.0:n V2:n) 1.0:n))
+
+the sum of 20 and a number is 30 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> 20.0:n V1:n) 30.0:n)
+
+3 times a number is added to 5 times a number to get 54 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 3.0:n V1:n) (mul:<n,<n,n>> 5.0:n V2:n)) 54.0:n)
+
+the second number is 2 less than the first . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> V2:n 2.0:n))
+
+april wti oil up $1.59 , to settle at $49.76 / bbl on nymex . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n 1.59:n) 49.76:n)
+
+u.s. fourth-quarter gdp chopped to 2.2 % from 2.6 % . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 0.026:n 0.022:n))
+
+fedex stock price target raised to $203 from $177 at credit suisse . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 203.0:n 177.0:n))
+
+stoxx europe opens 0.1 % higher at 391.20 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n (mul:<n,<n,n>> 0.001:n V2:n)) 391.2:n)
+
+ross stores announces 18 % dividend increase to 23 cents per share . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n (mul:<n,<n,n>> 0.18:n V2:n)) 0.23:n)
+
+ims health stock price target raised to $30 from $27 at barclays . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 30.0:n 27.0:n))
+
+japan 's nikkei average opens 0.9 % up at 18,499.58 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n (mul:<n,<n,n>> 0.009:n V2:n)) 18499.58:n)
+
+japan 's topix up 0.7 % at 1,510.61 in early moves . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n (mul:<n,<n,n>> 0.007:n V2:n)) 1510.61:n)
+
+u.k. 's ftse opens 2 point lower at 6,885.24 . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> V1:n 2.0:n) 6885.24:n)
+
+t.rowe price raises regular quarterly dividend by 18 % to 52 cents a share . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n (mul:<n,<n,n>> 0.18:n V2:n)) 0.52:n)
+
+valero energy stock price target raised to $70 from $60 . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 70.0:n 60.0:n))
+
+u.k. 's ftse opens 0.4 % lower at 6,873.42 . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> V1:n (mul:<n,<n,n>> 0.004:n V2:n)) 6873.42:n)
+
+travelers ' stock price target raised to $110 from $94 at citigroup . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 110.0:n 94.0:n))
+
+germany 's dax opens 0.7 % lower at 10,842 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n (mul:<n,<n,n>> 0.007:n V2:n)) 10842.0:n)
+
+stoxx europe opens 0.2 % lower at 375.63 . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> V1:n (mul:<n,<n,n>> 0.002:n V2:n)) 375.63:n)
+

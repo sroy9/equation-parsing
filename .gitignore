@@ -17,4 +17,3 @@ models/
 *.log
 paper/ccg.bib
 paper/cited.bib
-spf/*

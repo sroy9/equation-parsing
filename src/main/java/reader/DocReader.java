@@ -188,12 +188,22 @@ public class DocReader {
 			BufferedWriter npList = new BufferedWriter(new FileWriter(
 					new File("nplist"+(count++)+".ont")));
 			for(SimulProb prob : simulProbList) {
-				// All numbers should always be available
+				// All numbers and NPs should always be available
 				for(int i=0; i<prob.quantities.size(); ++i) {
 					int tokenId = prob.ta.getTokenIdFromCharacterOffset(
 							prob.quantities.get(i).start);
 					npList.write(prob.ta.getToken(tokenId).toLowerCase()+
 							" :- NP : "+Tools.getValue(prob.quantities.get(i))+":n\n");		
+				}
+				for(IntPair ip : prob.candidateVars) {
+					for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
+						npList.write(prob.ta.getToken(i).toLowerCase()+" ");
+					}
+					npList.write(":- NP : V1:n\n");
+					for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
+						npList.write(prob.ta.getToken(i).toLowerCase()+" ");
+					}
+					npList.write(":- NP : V2:n\n");
 				}
 				if(fold.contains(prob.index)) {
 					// Add the questions of the fold
@@ -202,15 +212,6 @@ public class DocReader {
 					}
 					bw.write("\n");
 					bw.write(prob.equation.getLambdaExpression()+"\n\n");
-				} else {
-					for(String label : prob.varTokens.keySet()) {
-						for(IntPair ip : getContiguousSpans(prob.varTokens.get(label))) {
-							for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
-								npList.write(prob.ta.getToken(i).toLowerCase()+" ");
-							}
-							npList.write(":- NP : "+label+":n\n");
-						}
-					}
 				}
 			}
 			bw.close();
@@ -224,27 +225,6 @@ public class DocReader {
 		}
 		bw.write(")\n");
 		bw.close();
-	}
-	
-	public static List<IntPair> getContiguousSpans(List<Integer> list) {
-		List<IntPair> ips = new ArrayList<>();
-		int min = Integer.MAX_VALUE;
-		int max = Integer.MIN_VALUE;
-		for(int num : list) {
-			if(num > max) max = num;
-			if(num < min) min = num;
-		}
-		int j=min;
-		for(int i=min; i<max; ++i) {
-			if(list.contains(i) && !list.contains(i+1)) {
-				ips.add(new IntPair(j, i+1));
-			}
-			if(!list.contains(i) && list.contains(i+1)) {
-				j=i+1;
-			}
-		}
-		ips.add(new IntPair(j, max+1));
-		return ips;
 	}
 
 	public static void createGizaProbTable() throws Exception {
@@ -285,12 +265,12 @@ public class DocReader {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		List<SimulProb> simulProbList = 
-				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
-		for(SimulProb prob : simulProbList) {
-			print(prob);
-		}
-//		DocReader.createLambdaExpForSPF();
+//		List<SimulProb> simulProbList = 
+//				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
+//		for(SimulProb prob : simulProbList) {
+//			print(prob);
+//		}
+		DocReader.createLambdaExpForSPF();
 //		DocReader.createGizaProbTable();
 		
 	}
