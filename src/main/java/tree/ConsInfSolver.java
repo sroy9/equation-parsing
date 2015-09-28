@@ -32,7 +32,7 @@ public class ConsInfSolver {
 				maximumSize(20).create();
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(200).create();
+				maximumSize(20).create();
 		TreeY seed = new TreeY();
 		beam1.add(new Pair<TreeY, Double>(seed, 0.0));
 		
