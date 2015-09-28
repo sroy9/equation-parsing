@@ -195,15 +195,25 @@ public class DocReader {
 					npList.write(prob.ta.getToken(tokenId).toLowerCase()+
 							" :- NP : "+Tools.getValue(prob.quantities.get(i))+":n\n");		
 				}
-				for(IntPair ip : prob.candidateVars) {
-					for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
-						npList.write(prob.ta.getToken(i).toLowerCase()+" ");
+//				for(IntPair ip : prob.candidateVars) {
+//					for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
+//						npList.write(prob.ta.getToken(i).toLowerCase()+" ");
+//					}
+//					npList.write(":- NP : V1:n\n");
+//					for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
+//						npList.write(prob.ta.getToken(i).toLowerCase()+" ");
+//					}
+//					npList.write(":- NP : V2:n\n");
+//				}
+				for(String label : prob.varTokens.keySet()) {
+					for(Integer j : prob.varTokens.get(label)) {
+						IntPair ip = prob.candidateVars.get(j);
+						for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
+							npList.write(prob.ta.getToken(i).toLowerCase()+" ");
+						}
+						npList.write(":- NP : "+label+":n\n");
+						break;
 					}
-					npList.write(":- NP : V1:n\n");
-					for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
-						npList.write(prob.ta.getToken(i).toLowerCase()+" ");
-					}
-					npList.write(":- NP : V2:n\n");
 				}
 				if(fold.contains(prob.index)) {
 					// Add the questions of the fold
