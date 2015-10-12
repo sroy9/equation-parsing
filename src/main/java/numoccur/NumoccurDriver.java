@@ -126,5 +126,6 @@ public class NumoccurDriver {
 
 	public static void main(String args[]) throws Exception {
 		NumoccurDriver.crossVal();
+		Tools.pipeline.closeCache();
 	}
 }

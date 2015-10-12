@@ -1,5 +1,5 @@
 The ratio of boys to girls is 9 to 4.
 
-V1=2.25*V2
+V1/V2=9/4
 
 [The (ratio )][of ][(boys )][to ][(girls )][is ][9 ][to ][4 ]. 

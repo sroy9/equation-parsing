@@ -7,6 +7,7 @@ import reader.DocReader;
 import struct.numoccur.NumoccurY;
 import structure.SimulProb;
 import utils.Params;
+import utils.Tools;
 import var.VarY;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
@@ -18,41 +19,10 @@ public class ConsDriver {
 	public static double crossVal() throws Exception {
 		double acc = 0.0;
 		for(int i=0;i<5;i++) {
-			acc += doTuneTest(i);
+			acc += doTest(i);
 		}
 		System.out.println("5-fold CV : " + (acc/5));
 		return (acc/5);
-	}
-	
-	public static double doTuneTest(int testFold) throws Exception {
-		List<List<Integer>> folds = DocReader.extractFolds();
-		List<SimulProb> simulProbList = 
-				DocReader.readSimulProbFromBratDir(Params.annotationDir);
-		List<SimulProb> trainProbs = new ArrayList<>();
-		List<SimulProb> testProbs = new ArrayList<>();
-		for(SimulProb simulProb : simulProbList) {
-			if(folds.get(testFold).contains(simulProb.index)) {
-				testProbs.add(simulProb);
-			} else {
-				trainProbs.add(simulProb);
-			}
-		}
-		SLModel numOccurModel = null, lcaModel = null;
-		SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
-		if(useSPforNumoccur) {
-			numOccurModel = SLModel.loadModel("models/numoccurStruct"+testFold+".save");
-		} else {
-			numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
-		}
-		if(useSPforLCA) {
-			lcaModel = SLModel.loadModel("models/lcaStruct"+testFold+".save");
-		} else {
-			lcaModel = SLModel.loadModel("models/lca"+testFold+".save");
-		}
-		SLProblem train = getSP(trainProbs);
-		SLProblem test = getSP(testProbs);
-		tuneModel(numOccurModel, varModel, lcaModel, train);
-		return testModel(numOccurModel, varModel, lcaModel, test, true);
 	}
 	
 	public static double doTest(int testFold) throws Exception {
@@ -67,9 +37,16 @@ public class ConsDriver {
 		}
 		SLModel numOccurModel = null, lcaModel = null;
 		SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
-		numOccurModel = SLModel.loadModel("models/numoccurStruct"+testFold+".save");
-		lcaModel = SLModel.loadModel("models/lca"+testFold+".save");
-		
+		if(useSPforNumoccur) {
+			numOccurModel = SLModel.loadModel("models/numoccurStruct"+testFold+".save");
+		} else {
+			numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
+		}
+		if(useSPforLCA) {
+			lcaModel = SLModel.loadModel("models/lcaStruct"+testFold+".save");
+		} else {
+			lcaModel = SLModel.loadModel("models/lca"+testFold+".save");
+		}
 		SLProblem test = getSP(testProbs);
 		return testModel(numOccurModel, varModel, lcaModel, test, true);
 	}
@@ -77,8 +54,7 @@ public class ConsDriver {
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
 			throws Exception {
 		if(simulProbList == null) {
-			simulProbList = 
-					DocReader.readSimulProbFromBratDir(Params.annotationDir);
+			simulProbList = DocReader.readSimulProbFromBratDir(Params.annotationDir);
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
@@ -91,8 +67,6 @@ public class ConsDriver {
 
 	public static double testModel(SLModel numOccurModel, SLModel varModel, 
 			SLModel lcaModel, SLProblem sp, boolean printMistakes) throws Exception {
-		System.out.println("Testing with params : NumOccurScale "+ConsInfSolver.numOccurScale+
-				" : VarScale "+ConsInfSolver.varScale);
 		double acc = 0.0, numAcc = 0.0, varAcc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			TreeX prob = (TreeX) sp.instanceList.get(i);
@@ -127,31 +101,18 @@ public class ConsDriver {
 		return (acc/sp.instanceList.size());
 	}
 	
-	public static void tuneModel(SLModel numOccurModel, SLModel varModel, 
-			SLModel lcaModel, SLProblem sp) throws Exception {
-		double vals[] = {1.0, 100.0, 10000.0, 1000000.0};
-		double bestAccuracy = 0.0, bestNumOccurScale = 0.0, bestVarScale = 0.0;
-		for(Double val1 : vals) {
-			for(Double val2 : vals) {
-				if(val1 > val2 && val2 > 1.0) {
-					ConsInfSolver.numOccurScale = val1;
-					ConsInfSolver.varScale = val2;
-					double accuracy = testModel(numOccurModel, varModel, lcaModel, sp, false);
-					if(accuracy > bestAccuracy) {
-						bestAccuracy = accuracy;
-						bestNumOccurScale = val1;
-						bestVarScale = val2;
-					}
-				}
-			}
-		}
-		ConsInfSolver.numOccurScale = bestNumOccurScale;
-		ConsInfSolver.varScale = bestVarScale;
-	}
-	
 	public static void main(String args[]) throws Exception {
-		ConsInfSolver.numOccurScale = 1000000.0;
-		ConsInfSolver.varScale = 1000.0;
-		ConsDriver.doTest(0);
+		if(args[0].equals("SP")) {
+			ConsDriver.useSPforNumoccur = true; 
+		} else {
+			ConsDriver.useSPforNumoccur = false;
+		}
+		if(args[1].equals("SP")) {
+			ConsDriver.useSPforLCA = true; 
+		} else {
+			ConsDriver.useSPforLCA = false;
+		}
+		ConsDriver.crossVal();
+		Tools.pipeline.closeCache();
 	}
 }

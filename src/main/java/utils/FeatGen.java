@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang.math.NumberUtils;
 
-import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
-import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.sl.util.FeatureVectorBuffer;
 import edu.illinois.cs.cogcomp.sl.util.IFeatureVector;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;

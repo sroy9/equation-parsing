@@ -21,7 +21,7 @@ import edu.illinois.cs.cogcomp.sl.core.SLModel;
 
 public class ConsInfSolver {
 	
-	public static double numOccurScale, varScale;
+//	public static double numOccurScale, varScale;
 	
 	public static TreeY getBestStructure(TreeX prob, SLModel numOccurModel, 
 			SLModel varModel, SLModel lcaModel, TreeY gold) throws Exception {
@@ -43,7 +43,7 @@ public class ConsInfSolver {
 					List<String> features = numoccur.NumoccurFeatGen.getFeatures(
 							new NumoccurX(prob, i),
 							new NumoccurY(j));
-					double score = numOccurScale*numOccurModel.wv.dotProduct(
+					double score = numOccurModel.wv.dotProduct(
 							FeatGen.getFeatureVectorFromList(features, numOccurModel.lm));
 					TreeY y = new TreeY(pair.getFirst());
 					for(int k=0; k<j; ++k) {
@@ -60,7 +60,7 @@ public class ConsInfSolver {
 		}
 		if(ConsDriver.useSPforNumoccur) {
 			for(Pair<TreeY, Double> pair : beam1) {
-				double score = numOccurScale*numOccurModel.wv.dotProduct(
+				double score = numOccurModel.wv.dotProduct(
 						((struct.numoccur.NumoccurFeatGen) numOccurModel.featureGenerator).
 						getGlobalFeatureVector(new struct.numoccur.NumoccurX(prob), 
 								new struct.numoccur.NumoccurY(prob, pair.getFirst().nodes)));
@@ -70,10 +70,10 @@ public class ConsInfSolver {
 			beam1.addAll(beam2);
 			beam2.clear();
 		}
-//		beam2.add(beam1.element());
-//		beam1.clear();
-//		beam1.addAll(beam2);
-//		beam2.clear();
+		beam2.add(beam1.element());
+		beam1.clear();
+		beam1.addAll(beam2);
+		beam2.clear();
 		
 		// Grounding of variables
 		for(Pair<TreeY, Double> pair : beam1) {
@@ -84,7 +84,7 @@ public class ConsInfSolver {
 				y.nodes.add(node);
 				y.varTokens.put("V1", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
-				beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+varScale*varModel.wv.dotProduct(
+				beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+varModel.wv.dotProduct(
 						varModel.featureGenerator.getFeatureVector(new VarX(prob), new VarY(y)))));
 				for(int j=i; j<prob.candidateVars.size(); ++j) {
 					y = new TreeY(pair.getFirst());
@@ -99,7 +99,7 @@ public class ConsInfSolver {
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					beam2.add(new Pair<TreeY, Double>(y, 
-							pair.getSecond()+varScale*varModel.wv.dotProduct(
+							pair.getSecond()+varModel.wv.dotProduct(
 							varModel.featureGenerator.getFeatureVector(new VarX(prob), new VarY(y)))));
 				}
 			}
@@ -108,10 +108,10 @@ public class ConsInfSolver {
 		beam1.addAll(beam2);
 		beam2.clear();
 
-//		beam2.add(beam1.element());
-//		beam1.clear();
-//		beam1.addAll(beam2);
-//		beam2.clear();
+		beam2.add(beam1.element());
+		beam1.clear();
+		beam1.addAll(beam2);
+		beam2.clear();
 		
 		// Equation generation
 		for(Pair<TreeY, Double> pair : beam1) {

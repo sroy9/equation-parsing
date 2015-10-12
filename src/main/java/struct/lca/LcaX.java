@@ -7,8 +7,8 @@ import structure.Node;
 import structure.SimulProb;
 import tree.TreeX;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
-import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 
@@ -30,8 +30,6 @@ public class LcaX implements IInstance {
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;
 		posTags = simulProb.posTags;
-		parse = simulProb.parse;
-		lemmas = simulProb.lemmas;
 		candidateVars = simulProb.candidateVars;
 		this.varTokens = varTokens;
 		this.nodes = nodes;
@@ -43,8 +41,6 @@ public class LcaX implements IInstance {
 		problemIndex = simulProb.problemIndex;
 		ta = simulProb.ta;
 		posTags = simulProb.posTags;
-		parse = simulProb.parse;
-		lemmas = simulProb.lemmas;
 		candidateVars = simulProb.candidateVars;
 		this.varTokens = varTokens;
 		this.nodes = nodes;

@@ -1,36 +1,55 @@
 package utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import structure.Operation;
-import curator.NewCachingCurator;
+import edu.illinois.cs.cogcomp.annotation.AnnotatorService;
+import edu.illinois.cs.cogcomp.annotation.handler.IllinoisChunkerHandler;
+import edu.illinois.cs.cogcomp.annotation.handler.IllinoisPOSHandler;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
-import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
-import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Annotator;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
+import edu.illinois.cs.cogcomp.core.utilities.ResourceManager;
+import edu.illinois.cs.cogcomp.nlp.tokenizer.IllinoisTokenizer;
+import edu.illinois.cs.cogcomp.nlp.utility.TextAnnotationBuilder;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
-import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
+import edu.illinois.cs.cogcomp.quant.driver.SimpleQuantifier;
 import edu.illinois.cs.cogcomp.quant.standardize.Quantity;
 import edu.illinois.cs.cogcomp.quant.standardize.Ratio;
 
 public class Tools {
 	
-	public static NewCachingCurator curator;
-	public static Quantifier quantifier;
+	public static SimpleQuantifier quantifier;
+	public static AnnotatorService pipeline;
 	
 	static {
 		try {
-			curator = new NewCachingCurator(
-					"trollope.cs.illinois.edu", 
-					9010, 
-					Params.cacheLoc, 
-					null);
-			quantifier = new Quantifier();
+			ResourceManager rm = new ResourceManager(Params.pipelineConfig);
+			
+	        IllinoisTokenizer tokenizer = new IllinoisTokenizer();
+	        TextAnnotationBuilder taBuilder = new TextAnnotationBuilder( tokenizer );
+	        IllinoisPOSHandler pos = new IllinoisPOSHandler();
+	        IllinoisChunkerHandler chunk = new IllinoisChunkerHandler();
+	        
+	        Map< String, Annotator> extraViewGenerators = new HashMap<String, Annotator>();
+
+	        extraViewGenerators.put( ViewNames.POS, pos );
+	        extraViewGenerators.put( ViewNames.SHALLOW_PARSE, chunk );
+	        
+	        Map< String, Boolean > requestedViews = new HashMap<String, Boolean>();
+	        for ( String view : extraViewGenerators.keySet() )
+	            requestedViews.put( view, false );
+
+	        pipeline =  new AnnotatorService(taBuilder, extraViewGenerators, rm);
+			quantifier = new SimpleQuantifier();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -66,15 +85,6 @@ public class Tools {
 			return true;
 		}
 		return false;
-	}
-	
-	public static Operation getOperationFromString(String op) {
-		if(op.equals("ADD") || op.equals("+")) return Operation.ADD;
-		if(op.equals("SUB") || op.equals("-")) return Operation.SUB;
-		if(op.equals("MUL") || op.equals("*")) return Operation.MUL;
-		if(op.equals("DIV") || op.equals("/")) return Operation.DIV;
-		if(op.equals("EQ") || op.equals("=")) return Operation.EQ;
-		return null;
 	}
 	
 	public static boolean safeEquals(Double d1, Double d2) {

@@ -9,6 +9,7 @@ import java.util.Set;
 import reader.DocReader;
 import structure.SimulProb;
 import utils.Params;
+import utils.Tools;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLParameters;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
@@ -121,5 +122,6 @@ public class NumoccurDriver {
 
 	public static void main(String args[]) throws Exception {
 		NumoccurDriver.crossVal();
+		Tools.pipeline.closeCache();
 	}
 }

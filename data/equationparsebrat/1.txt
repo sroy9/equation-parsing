@@ -1,5 +1,5 @@
 A writing workshop enrolls novelists and poets in a ratio of 5 to 3.
 
-V1=1.66666*V2
+V1/V2=5/3
 
 [A writing (workshop )(enrolls )(novelists )and (poets )][in ][a (ratio )][of ][5 ][to ][3 ]. 

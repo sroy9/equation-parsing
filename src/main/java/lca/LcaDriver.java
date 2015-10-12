@@ -154,5 +154,6 @@ public class LcaDriver {
 
 	public static void main(String args[]) throws Exception {
 		LcaDriver.crossVal();
+		Tools.pipeline.closeCache();
 	}
 }

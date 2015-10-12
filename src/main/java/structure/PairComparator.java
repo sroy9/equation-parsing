@@ -2,7 +2,6 @@ package structure;
 
 import java.util.Comparator;
 
-import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 
 public abstract class PairComparator<A> implements Comparator<Pair<A, Double>> {

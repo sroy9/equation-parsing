@@ -1,5 +1,5 @@
 The ratio of spaces for full sized cars to compact cars is 11 to 4.
 
-V1=2.75*V2
+V1/V2=11/4
 
 [The (ratio )][of ][(spaces )][for ][full ][sized ][(cars )][to ][compact (cars )][is ][11 ][to ][4 ]. 

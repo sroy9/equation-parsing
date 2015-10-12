@@ -14,14 +14,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
-
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
-import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
-import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
-import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
 import structure.Node;
 import structure.SimulProb;
 import utils.Params;
@@ -31,55 +25,55 @@ public class DocReader {
 	
 	public static Set<String> preds = new HashSet<>();
 	
-	public static void createBratFiles(String eqParseFile) throws Exception {
-		String lines[] = FileUtils.readFileToString(new File(eqParseFile)).split("\n");
-		for(int i=0; i<lines.length; ++i) {
-			if(lines[i].startsWith("#")) continue;
-			TextAnnotation ta = Tools.curator.getTextAnnotationWithSingleView(
-					lines[i], ViewNames.POS, false);
-			List<Constituent> posTags = ta.getView(ViewNames.POS)
-					.getConstituents();
-			List<Constituent> chunks = Tools.curator.getTextAnnotationWithSingleView(
-					lines[i], ViewNames.SHALLOW_PARSE, false)
-					.getView(ViewNames.SHALLOW_PARSE).getConstituents();
-			String str = "";
-			str += lines[i]+"\n\n"+lines[i+1]+"\n\n";
-			for(int j=0; j<=ta.size(); ++j) {
-				for(Constituent cons : posTags) {
-					if(cons.getLabel().startsWith("N") && 
-							cons.getEndSpan() == j) {
-						str += ")";
-					}
-				}
-				for(Constituent cons : chunks) {
-					if(cons.getEndSpan() == j) {
-						str += "]";
-					}
-				}
-				for(Constituent cons : chunks) {
-					if(cons.getStartSpan() == j) {
-						str += "[";
-					}
-				}
-				for(Constituent cons : posTags) {
-					if(cons.getLabel().startsWith("N") && 
-							cons.getStartSpan() == j) {
-						str += "(";
-					}
-				}
-				if(j==ta.size()) continue;
-				str += ta.getToken(j) + " ";
-			}
-			FileUtils.writeStringToFile(
-					new File(Params.annotationDir+"/"+(i+999000)+".txt"), 
-					str);
+//	public static void createBratFiles(String eqParseFile) throws Exception {
+//		String lines[] = FileUtils.readFileToString(new File(eqParseFile)).split("\n");
+//		for(int i=0; i<lines.length; ++i) {
+//			if(lines[i].startsWith("#")) continue;
+//			TextAnnotation ta = Tools.curator.getTextAnnotationWithSingleView(
+//					lines[i], ViewNames.POS, false);
+//			List<Constituent> posTags = ta.getView(ViewNames.POS)
+//					.getConstituents();
+//			List<Constituent> chunks = Tools.curator.getTextAnnotationWithSingleView(
+//					lines[i], ViewNames.SHALLOW_PARSE, false)
+//					.getView(ViewNames.SHALLOW_PARSE).getConstituents();
+//			String str = "";
+//			str += lines[i]+"\n\n"+lines[i+1]+"\n\n";
+//			for(int j=0; j<=ta.size(); ++j) {
+//				for(Constituent cons : posTags) {
+//					if(cons.getLabel().startsWith("N") && 
+//							cons.getEndSpan() == j) {
+//						str += ")";
+//					}
+//				}
+//				for(Constituent cons : chunks) {
+//					if(cons.getEndSpan() == j) {
+//						str += "]";
+//					}
+//				}
+//				for(Constituent cons : chunks) {
+//					if(cons.getStartSpan() == j) {
+//						str += "[";
+//					}
+//				}
+//				for(Constituent cons : posTags) {
+//					if(cons.getLabel().startsWith("N") && 
+//							cons.getStartSpan() == j) {
+//						str += "(";
+//					}
+//				}
+//				if(j==ta.size()) continue;
+//				str += ta.getToken(j) + " ";
+//			}
 //			FileUtils.writeStringToFile(
-//					new File(Params.annotationDir+"/"+(i+999000)+".ann"), 
-//					"");
-			
-			++i;
-		}
-	}
+//					new File(Params.annotationDir+"/"+(i+999000)+".txt"), 
+//					str);
+////			FileUtils.writeStringToFile(
+////					new File(Params.annotationDir+"/"+(i+999000)+".ann"), 
+////					"");
+//			
+//			++i;
+//		}
+//	}
 	
 	// Reads list of files from brat folder
 	public static List<SimulProb> readSimulProbFromBratDir(String bratDir) 
@@ -91,7 +85,6 @@ public class DocReader {
 	public static List<SimulProb> readSimulProbFromBratDir(
 			String bratDir, double start, double end) throws Exception {
 		List<SimulProb> simulProbList = new ArrayList<SimulProb>();
-		Quantifier quantifier = new Quantifier();
 		File dir = new File(bratDir);
 		for(File file : dir.listFiles()) {
 			if(file.getName().endsWith(".txt")) {
@@ -101,7 +94,7 @@ public class DocReader {
 								file.getName().length()-4));
 				SimulProb simulProb = new SimulProb(index);
 				simulProb.extractTextAndEquation();
-				simulProb.extractQuantities(quantifier);
+				simulProb.extractQuantities();
 				simulProb.extractAnnotations();
 				simulProb.createCandidateVars();
 				simulProb.extractVarTokens();
@@ -275,12 +268,12 @@ public class DocReader {
 	}
 	
 	public static void main(String args[]) throws Exception {
-//		List<SimulProb> simulProbList = 
-//				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
-//		for(SimulProb prob : simulProbList) {
-//			print(prob);
-//		}
-		DocReader.createLambdaExpForSPF();
+		List<SimulProb> simulProbList = 
+				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
+		for(SimulProb prob : simulProbList) {
+			print(prob);
+		}
+//		DocReader.createLambdaExpForSPF();
 //		DocReader.createGizaProbTable();
 		
 	}

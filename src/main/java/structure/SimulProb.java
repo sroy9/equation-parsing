@@ -13,11 +13,10 @@ import org.apache.commons.io.FileUtils;
 import utils.Params;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.edison.sentences.Constituent;
-import edu.illinois.cs.cogcomp.edison.sentences.TextAnnotation;
-import edu.illinois.cs.cogcomp.edison.sentences.ViewNames;
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
-import edu.illinois.cs.cogcomp.quant.driver.Quantifier;
 import edu.illinois.cs.cogcomp.quant.standardize.Quantity;
 import edu.illinois.cs.cogcomp.quant.standardize.Ratio;
  
@@ -31,11 +30,8 @@ public class SimulProb {
 	public Map<String, List<Integer>> varTokens;
 	public TextAnnotation ta;
 	public List<Constituent> posTags;
-	public List<Constituent> lemmas;
 	public List<Constituent> chunks;
-	public List<Constituent> parse;
 	public List<IntPair> candidateVars;
-//	public List<Pair<String, IntPair>> skeleton;
   	
 	public SimulProb(int index) {
 		this.index = index;
@@ -44,17 +40,25 @@ public class SimulProb {
 		varTokens = new HashMap<>();
 	}
 	
-	public void extractQuantities(Quantifier quantifier) throws IOException {
-		List<QuantSpan> spanArray = quantifier.getSpans(text, true);
+	public void extractQuantities() throws Exception {
+		List<QuantSpan> spanArray = Tools.quantifier.getSpans(text);
 		quantities = new ArrayList<QuantSpan>();
 		for(QuantSpan span : spanArray){
-			if(text.substring(span.start, span.end).contains("several") ||
-					text.substring(span.start, span.end).contains("Several")) {
-				// Quantities arising out of "several" not needed in math problems
-				continue;
-			}
 			if(span.object instanceof Quantity || span.object instanceof Ratio) {
 				quantities.add(span);
+				for(int i=span.end; i<Math.min(span.end+3, text.length()); ++i) {
+					if(text.charAt(i) == '%') {
+						// This assumes usage of simple quantifier
+						((Quantity)span.object).value *= 0.01;
+						break;
+					}
+				}
+				if(span.start>0 && text.charAt(span.start-1)=='-') {
+					((Quantity)span.object).value *= -1;
+				}
+				if(span.end+6 <= text.length() && text.substring(span.end, span.end+6).contains("cents")) {
+					((Quantity)span.object).value *= 0.01;
+				}
 			}
 		}
 	}
@@ -77,19 +81,9 @@ public class SimulProb {
 	}
 	
 	public void extractAnnotations() throws Exception {
-		ta = new TextAnnotation("", "", text);
-		posTags = Tools.curator.getTextAnnotationWithSingleView(
-				text, ViewNames.POS, false)
-				.getView(ViewNames.POS).getConstituents();
-		lemmas = Tools.curator.getTextAnnotationWithSingleView(
-				text, ViewNames.LEMMA, false)
-				.getView(ViewNames.LEMMA).getConstituents();
-		chunks = Tools.curator.getTextAnnotationWithSingleView(
-				text, ViewNames.SHALLOW_PARSE, false)
-				.getView(ViewNames.SHALLOW_PARSE).getConstituents();
-		parse = Tools.curator.getTextAnnotationWithSingleView(
-				text, ViewNames.PARSE_STANFORD, false)
-				.getView(ViewNames.PARSE_STANFORD).getConstituents();
+		ta = Tools.pipeline.createAnnotatedTextAnnotation(text, false);
+		posTags = ta.getView(ViewNames.POS).getConstituents();
+		chunks = ta.getView(ViewNames.SHALLOW_PARSE).getConstituents();
 	}
 	
 	public void createCandidateVars() {

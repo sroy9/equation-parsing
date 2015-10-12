@@ -132,25 +132,41 @@ public class Node implements Serializable {
 		return node;
 	}
 	
-	public static int indexOfMathOp(
-			String equationString, List<Character> keys) {
-		int index = -1;
-		for(Character key : keys) {
-			index = equationString.indexOf(key);
-			if(index >= 0) {
-				boolean inBracket = false;
+//	public static int indexOfMathOp(
+//			String equationString, List<Character> keys) {
+//		int index = -1;
+//		for(Character key : keys) {
+//			index = equationString.indexOf(key);
+//			if(index >= 0) {
+//				boolean inBracket = false;
+//				for(int i=index; i>=0; --i) {
+//					if(equationString.charAt(i) == ')') return index;
+//					if(equationString.charAt(i) == '(') {
+//						inBracket = true;
+//						break; 
+//					}
+//				}
+//				if(inBracket) continue;
+//				return index;
+//			}
+//		}
+//		return index;
+//	}
+	
+	public static int indexOfMathOp(String equationString, List<Character> keys) {
+		for(int index=0; index<equationString.length(); ++index) {
+			if(keys.contains(equationString.charAt(index))) {
+				int open = 0, close = 0;
 				for(int i=index; i>=0; --i) {
-					if(equationString.charAt(i) == ')') return index;
-					if(equationString.charAt(i) == '(') {
-						inBracket = true;
-						break; 
-					}
+					if(equationString.charAt(i) == ')') close++;
+					if(equationString.charAt(i) == '(') open++;
 				}
-				if(inBracket) continue;
-				return index;
+				if(open==close) {
+					return index;
+				}
 			}
 		}
-		return index;
+		return -1;
 	}
 	
 	public List<Node> getLeaves() {
