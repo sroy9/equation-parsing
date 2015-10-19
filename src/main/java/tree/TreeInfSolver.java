@@ -296,4 +296,8 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		return best;
 	}
 	
+	@Override
+	public Object clone() {
+		return new TreeInfSolver(featGen);
+	}
 }

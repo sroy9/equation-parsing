@@ -41,8 +41,7 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 		VarX prob = (VarX) x;
 		PairComparator<VarY> pairComparator = new PairComparator<VarY>() {};
 		MinMaxPriorityQueue<Pair<VarY, Double>> beam = 
-				MinMaxPriorityQueue.orderedBy(pairComparator)
-				.maximumSize(50).create();
+				MinMaxPriorityQueue.orderedBy(pairComparator).maximumSize(200).create();
 		// Grounding of variables
 		for(int i=0; i<prob.candidateVars.size(); ++i) {
 			VarY y = new VarY();
