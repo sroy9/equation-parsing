@@ -1,4217 +1,1540 @@
-5 :- NP : 1.6666666666666667:n
-a writing workshop enrolls novelists and poets :- NP : V1:n
+5 :- NP : 5.0:n
+3 :- NP : 3.0:n
 a writing workshop enrolls novelists and poets :- NP : V2:n
-a ratio :- NP : V1:n
-a ratio :- NP : V2:n
-5 :- NP : V1:n
-5 :- NP : V2:n
-3 :- NP : V1:n
-3 :- NP : V2:n
+a writing workshop enrolls novelists and poets :- NP : V1:n
 15 :- NP : 15.0:n
 7 :- NP : 7.0:n
 55.40 :- NP : 55.4:n
-eldora :- NP : V1:n
-eldora :- NP : V2:n
-15 boxes :- NP : V1:n
-15 boxes :- NP : V2:n
-paper clips :- NP : V1:n
-paper clips :- NP : V2:n
-7 packages :- NP : V1:n
 7 packages :- NP : V2:n
-index cards :- NP : V1:n
-index cards :- NP : V2:n
-a total cost :- NP : V1:n
-a total cost :- NP : V2:n
-55.40 dollars :- NP : V1:n
-55.40 dollars :- NP : V2:n
+15 boxes :- NP : V1:n
 12 :- NP : 12.0:n
 10 :- NP : 10.0:n
 61.70 :- NP : 61.7:n
-finn :- NP : V1:n
-finn :- NP : V2:n
-12 boxes :- NP : V1:n
-12 boxes :- NP : V2:n
-paper clips :- NP : V1:n
-paper clips :- NP : V2:n
-10 packages :- NP : V1:n
 10 packages :- NP : V2:n
-index cards :- NP : V1:n
-index cards :- NP : V2:n
-a total cost :- NP : V1:n
-a total cost :- NP : V2:n
-61.70 dollars :- NP : V1:n
-61.70 dollars :- NP : V2:n
+12 boxes :- NP : V1:n
 2 :- NP : 2.0:n
 3 :- NP : 3.0:n
-the larger number :- NP : V1:n
-the larger number :- NP : V2:n
-2 :- NP : V1:n
-2 :- NP : V2:n
-3 times :- NP : V1:n
-3 times :- NP : V2:n
-the smaller number :- NP : V1:n
 the smaller number :- NP : V2:n
+the larger number :- NP : V1:n
 34 :- NP : 34.0:n
-several fashion magazines :- NP : V1:n
-several fashion magazines :- NP : V2:n
-she :- NP : V1:n
-she :- NP : V2:n
-her shelves :- NP : V1:n
-her shelves :- NP : V2:n
-34 more blue dresses :- NP : V1:n
 34 more blue dresses :- NP : V2:n
 red dresses :- NP : V1:n
-red dresses :- NP : V2:n
 17.99 :- NP : 17.99:n
 0.18 :- NP : 0.18:n
-sunshine car :- NP : V1:n
-sunshine car :- NP : V2:n
-rents :- NP : V1:n
-rents :- NP : V2:n
-a basic car :- NP : V1:n
-a basic car :- NP : V2:n
-a daily rate :- NP : V1:n
-a daily rate :- NP : V2:n
-17.99 dollars :- NP : V1:n
-17.99 dollars :- NP : V2:n
-0.18 :- NP : V1:n
-0.18 :- NP : V2:n
-mile :- NP : V1:n
 mile :- NP : V2:n
+sunshine car :- NP : V1:n
 twice :- NP : 2.0:n
-you :- NP : V1:n
-you :- NP : V2:n
-your house :- NP : V1:n
-your house :- NP : V2:n
-you :- NP : V1:n
-you :- NP : V2:n
-your mothers house :- NP : V1:n
 your mothers house :- NP : V2:n
+your house :- NP : V1:n
 18.95 :- NP : 18.95:n
 0.16 :- NP : 0.16:n
-city :- NP : V1:n
-city :- NP : V2:n
-rents :- NP : V1:n
-rents :- NP : V2:n
-a basic car :- NP : V1:n
-a basic car :- NP : V2:n
-18.95 dollars :- NP : V1:n
-18.95 dollars :- NP : V2:n
-0.16 :- NP : V1:n
-0.16 :- NP : V2:n
-mile :- NP : V1:n
 mile :- NP : V2:n
+city :- NP : V1:n
 38 :- NP : 38.0:n
 twice :- NP : 2.0:n
 124 :- NP : 124.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-38 :- NP : V1:n
-38 :- NP : V2:n
 a number :- NP : V1:n
-a number :- NP : V2:n
-124 :- NP : V1:n
-124 :- NP : V2:n
+half :- NP : 0.5:n
 2,750,000 :- NP : 2750000.0:n
-a company :- NP : V1:n
-a company :- NP : V2:n
-'s profit :- NP : V1:n
-'s profit :- NP : V2:n
-the first half :- NP : V1:n
-the first half :- NP : V2:n
-the year :- NP : V1:n
-the year :- NP : V2:n
-2,750,000 dollars :- NP : V1:n
-2,750,000 dollars :- NP : V2:n
-the profit :- NP : V1:n
+half :- NP : 0.5:n
 the profit :- NP : V2:n
-the second half :- NP : V1:n
-the second half :- NP : V2:n
+a company :- NP : V1:n
 2 :- NP : 2.0:n
 6 :- NP : 6.0:n
 6600 :- NP : 6600.0:n
-2 similar tables :- NP : V1:n
-2 similar tables :- NP : V2:n
-6 similar chairs :- NP : V1:n
 6 similar chairs :- NP : V2:n
-6600 dollars :- NP : V1:n
-6600 dollars :- NP : V2:n
+2 similar tables :- NP : V1:n
 500 :- NP : 500.0:n
-the table cost :- NP : V1:n
-the table cost :- NP : V2:n
-500 dollars :- NP : V1:n
-500 dollars :- NP : V2:n
-a chair :- NP : V1:n
 a chair :- NP : V2:n
+the table cost :- NP : V1:n
 27 :- NP : 27.0:n
-the state market :- NP : V1:n
-the state market :- NP : V2:n
-27 more apples :- NP : V1:n
 27 more apples :- NP : V2:n
 oranges :- NP : V1:n
-oranges :- NP : V2:n
 301 :- NP : 301.0:n
-there :- NP : V1:n
-there :- NP : V2:n
-301 apples and oranges :- NP : V1:n
 301 apples and oranges :- NP : V2:n
+301 apples and oranges :- NP : V1:n
 double :- NP : 2.0:n
 45 :- NP : 45.0:n
 half :- NP : 0.5:n
-the number :- NP : V1:n
 the number :- NP : V2:n
-whose double :- NP : V1:n
-whose double :- NP : V2:n
-45 :- NP : V1:n
-45 :- NP : V2:n
-its half :- NP : V1:n
-its half :- NP : V2:n
+the number :- NP : V1:n
 3 :- NP : 3.0:n
 1.45 :- NP : 1.45:n
-kevin :- NP : V1:n
-kevin :- NP : V2:n
-3 muffins :- NP : V1:n
 3 muffins :- NP : V2:n
-a bottle :- NP : V1:n
-a bottle :- NP : V2:n
-juice :- NP : V1:n
-juice :- NP : V2:n
-cost :- NP : V1:n
-cost :- NP : V2:n
-1.45 dollars :- NP : V1:n
-1.45 dollars :- NP : V2:n
+kevin :- NP : V1:n
 9.5 :- NP : 9.5:n
-the tallest player :- NP : V1:n
-the tallest player :- NP : V2:n
-9.5 inches :- NP : V1:n
-9.5 inches :- NP : V2:n
-the shortest player :- NP : V1:n
 the shortest player :- NP : V2:n
+the tallest player :- NP : V1:n
 10,000 :- NP : 10000.0:n
-10,000 :- NP : 2.0:n
-10,000 :- NP : 0.05:n
-10,000 :- NP : 0.07:n
-a total :- NP : V1:n
-a total :- NP : V2:n
-10,000 dollars :- NP : V1:n
-10,000 dollars :- NP : V2:n
-2 funds :- NP : V1:n
+2 :- NP : 2.0:n
+5 :- NP : 0.05:n
+7 :- NP : 0.07:n
 2 funds :- NP : V2:n
-5 % :- NP : V1:n
-5 % :- NP : V2:n
-7 % annual interest :- NP : V1:n
-7 % annual interest :- NP : V2:n
+2 funds :- NP : V1:n
 0.20 :- NP : 0.2:n
 4 :- NP : 4.0:n
 6 :- NP : 6.0:n
-0.20 :- NP : V1:n
-0.20 :- NP : V2:n
 a number :- NP : V1:n
-a number :- NP : V2:n
-4 :- NP : V1:n
-4 :- NP : V2:n
-6 :- NP : V1:n
-6 :- NP : V2:n
 36 :- NP : 36.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-the numbers :- NP : V1:n
-the numbers :- NP : V2:n
-boys and girls :- NP : V1:n
 boys and girls :- NP : V2:n
-a class :- NP : V1:n
-a class :- NP : V2:n
-36 :- NP : V1:n
-36 :- NP : V2:n
+boys and girls :- NP : V1:n
 twice :- NP : 2.0:n
 12 :- NP : 12.0:n
-the number :- NP : V1:n
 the number :- NP : V2:n
-girls :- NP : V1:n
-girls :- NP : V2:n
 the number :- NP : V1:n
-the number :- NP : V2:n
-boys :- NP : V1:n
-boys :- NP : V2:n
-12 :- NP : V1:n
-12 :- NP : V2:n
 nine :- NP : 9.0:n
-the probability :- NP : V1:n
 the probability :- NP : V2:n
-san francisco :- NP : V1:n
-san francisco :- NP : V2:n
-the next super bowl :- NP : V1:n
-the next super bowl :- NP : V2:n
-nine times :- NP : V1:n
-nine times :- NP : V2:n
 the probability :- NP : V1:n
-the probability :- NP : V2:n
-they :- NP : V1:n
-they :- NP : V2:n
-the next super bowl :- NP : V1:n
-the next super bowl :- NP : V2:n
 1 :- NP : 1.0:n
-the probability :- NP : V1:n
 the probability :- NP : V2:n
-san francisco :- NP : V1:n
-san francisco :- NP : V2:n
-the next super bowl :- NP : V1:n
-the next super bowl :- NP : V2:n
 the probability :- NP : V1:n
-the probability :- NP : V2:n
-they :- NP : V1:n
-they :- NP : V2:n
-1 :- NP : V1:n
-1 :- NP : V2:n
 4 :- NP : 4.0:n
 2 :- NP : 2.0:n
 1 :- NP : 1.0:n
-4 apples :- NP : V1:n
-4 apples :- NP : V2:n
-2 oranges :- NP : V1:n
 2 oranges :- NP : V2:n
-1 dollars :- NP : V1:n
-1 dollars :- NP : V2:n
+4 apples :- NP : V1:n
 2 :- NP : 2.0:n
 3 :- NP : 3.0:n
 0.70 :- NP : 0.7:n
-2 apples :- NP : V1:n
-2 apples :- NP : V2:n
-3 orange :- NP : V1:n
 3 orange :- NP : V2:n
-0.70 dollars :- NP : V1:n
-0.70 dollars :- NP : V2:n
+2 apples :- NP : V1:n
 220 :- NP : 220.0:n
-the washer :- NP : V1:n
-the washer :- NP : V2:n
-220 dollars :- NP : V1:n
-220 dollars :- NP : V2:n
-the dryer :- NP : V1:n
 the dryer :- NP : V2:n
+the washer :- NP : V1:n
+2010 :- NP : 2010.0:n
 1800000 :- NP : 1800000.0:n
 0.75 :- NP : 0.75:n
-freeport mcmoran :- NP : V1:n
-freeport mcmoran :- NP : V2:n
-2010 :- NP : V1:n
-2010 :- NP : V2:n
-the world grain supply :- NP : V1:n
-the world grain supply :- NP : V2:n
-1800000 metric tons :- NP : V1:n
-1800000 metric tons :- NP : V2:n
-the supply :- NP : V1:n
-the supply :- NP : V2:n
-only 0.75 :- NP : V1:n
-only 0.75 :- NP : V2:n
 the world grain demand :- NP : V1:n
-the world grain demand :- NP : V2:n
 21.95 :- NP : 21.95:n
 0.19 :- NP : 0.19:n
-safety rent-a-car :- NP : V1:n
-safety rent-a-car :- NP : V2:n
-an intermediate-size car :- NP : V1:n
-an intermediate-size car :- NP : V2:n
-a daily rate :- NP : V1:n
-a daily rate :- NP : V2:n
-21.95 dollars :- NP : V1:n
-21.95 dollars :- NP : V2:n
-0.19 :- NP : V1:n
-0.19 :- NP : V2:n
-mile :- NP : V1:n
 mile :- NP : V2:n
+safety rent-a-car :- NP : V1:n
 2 :- NP : 2.0:n
 12 :- NP : 0.12:n
-his long distance phone service milan :- NP : V1:n
-his long distance phone service milan :- NP : V2:n
-a 2 dollars :- NP : V1:n
-a 2 dollars :- NP : V2:n
-fee :- NP : V1:n
-fee :- NP : V2:n
-plus 12 cents :- NP : V1:n
-plus 12 cents :- NP : V2:n
-minute :- NP : V1:n
 minute :- NP : V2:n
+his long distance phone service milan :- NP : V1:n
 18.95 :- NP : 18.95:n
 0.21 :- NP : 0.21:n
-city rentals :- NP : V1:n
-city rentals :- NP : V2:n
-an intermediate-size car :- NP : V1:n
-an intermediate-size car :- NP : V2:n
-18.95 dollars :- NP : V1:n
-18.95 dollars :- NP : V2:n
-0.21 :- NP : V1:n
-0.21 :- NP : V2:n
-mile :- NP : V1:n
 mile :- NP : V2:n
+city rentals :- NP : V1:n
 6 :- NP : 6.0:n
-jill :- NP : V1:n
-jill :- NP : V2:n
-6 more dolls :- NP : V1:n
-6 more dolls :- NP : V2:n
-jane :- NP : V1:n
 jane :- NP : V2:n
+jill :- NP : V1:n
 26 :- NP : 26.0:n
 3-point :- NP : 3.0:n
 2-point :- NP : 2.0:n
-a basketball game :- NP : V1:n
-a basketball game :- NP : V2:n
-will :- NP : V1:n
-will :- NP : V2:n
-26 points :- NP : V1:n
-26 points :- NP : V2:n
-only :- NP : V1:n
-only :- NP : V2:n
-3-point shots :- NP : V1:n
-3-point shots :- NP : V2:n
-2-point shots :- NP : V1:n
 2-point shots :- NP : V2:n
+3-point shots :- NP : V1:n
 one :- NP : 1.0:n
 3 :- NP : 3.0:n
 twice :- NP : 2.0:n
-one number :- NP : V1:n
-one number :- NP : V2:n
-3 :- NP : V1:n
-3 :- NP : V2:n
-twice a second number :- NP : V1:n
 twice a second number :- NP : V2:n
+one number :- NP : V1:n
 6 :- NP : 6.0:n
 2 :- NP : 2.0:n
 127.92 :- NP : 127.92:n
-lakota :- NP : V1:n
-lakota :- NP : V2:n
-6 new compact disks :- NP : V1:n
-6 new compact disks :- NP : V2:n
-2 :- NP : V1:n
-2 :- NP : V2:n
-compact disks :- NP : V1:n
 compact disks :- NP : V2:n
-127.92 dollars :- NP : V1:n
-127.92 dollars :- NP : V2:n
+6 new compact disks :- NP : V1:n
 3 :- NP : 3.0:n
 8 :- NP : 8.0:n
 133.89 :- NP : 133.89:n
-mackenzie :- NP : V1:n
-mackenzie :- NP : V2:n
-3 new compact disks :- NP : V1:n
-3 new compact disks :- NP : V2:n
-8 :- NP : V1:n
-8 :- NP : V2:n
-compact disks :- NP : V1:n
 compact disks :- NP : V2:n
-133.89 dollars :- NP : V1:n
-133.89 dollars :- NP : V2:n
+3 new compact disks :- NP : V1:n
 450 :- NP : 450.0:n
-a garden table :- NP : V1:n
-a garden table :- NP : V2:n
-a bench cost :- NP : V1:n
 a bench cost :- NP : V2:n
-450 dollars :- NP : V1:n
-450 dollars :- NP : V2:n
+a garden table :- NP : V1:n
 2 :- NP : 2.0:n
-the price :- NP : V1:n
 the price :- NP : V2:n
-the garden table :- NP : V1:n
-the garden table :- NP : V2:n
-2 times :- NP : V1:n
-2 times :- NP : V2:n
 the price :- NP : V1:n
-the price :- NP : V2:n
-the bench :- NP : V1:n
-the bench :- NP : V2:n
 20.25 :- NP : 20.25:n
 0.14 :- NP : 0.14:n
-the first agency charges :- NP : V1:n
-the first agency charges :- NP : V2:n
-20.25 dollars :- NP : V1:n
-20.25 dollars :- NP : V2:n
-day :- NP : V1:n
-day :- NP : V2:n
-0.14 dollars :- NP : V1:n
-0.14 dollars :- NP : V2:n
-mile :- NP : V1:n
 mile :- NP : V2:n
+the first agency charges :- NP : V1:n
 18.25 :- NP : 18.25:n
 0.22 :- NP : 0.22:n
-the second agency charges :- NP : V1:n
-the second agency charges :- NP : V2:n
-18.25 dollars :- NP : V1:n
-18.25 dollars :- NP : V2:n
-day :- NP : V1:n
-day :- NP : V2:n
-0.22 dollars :- NP : V1:n
-0.22 dollars :- NP : V2:n
-mile :- NP : V1:n
 mile :- NP : V2:n
+the second agency charges :- NP : V1:n
 16,000 :- NP : 16000.0:n
-16,000 :- NP : 0.8:n
-the value :- NP : V1:n
-the value :- NP : V2:n
-a sport utility vehicle :- NP : V1:n
-a sport utility vehicle :- NP : V2:n
-this year :- NP : V1:n
-this year :- NP : V2:n
-16,000 dollars :- NP : V1:n
-16,000 dollars :- NP : V2:n
-which :- NP : V1:n
-which :- NP : V2:n
-0.8 :- NP : V1:n
-0.8 :- NP : V2:n
+0.8 :- NP : 0.8:n
 what :- NP : V1:n
-what :- NP : V2:n
-its value :- NP : V1:n
-its value :- NP : V2:n
-last year :- NP : V1:n
-last year :- NP : V2:n
 22 :- NP : 22.0:n
 two :- NP : 2.0:n
-the carpenter saws :- NP : V1:n
-the carpenter saws :- NP : V2:n
-a board :- NP : V1:n
-a board :- NP : V2:n
-that :- NP : V1:n
-that :- NP : V2:n
-22 feet :- NP : V1:n
-22 feet :- NP : V2:n
-two pieces :- NP : V1:n
 two pieces :- NP : V2:n
+two pieces :- NP : V1:n
 one :- NP : 1.0:n
 3 :- NP : 3.0:n
 twice :- NP : 2.0:n
-one piece :- NP : V1:n
-one piece :- NP : V2:n
-3 foot :- NP : V1:n
-3 foot :- NP : V2:n
-twice the length :- NP : V1:n
 twice the length :- NP : V2:n
-the shorter piece :- NP : V1:n
-the shorter piece :- NP : V2:n
+one piece :- NP : V1:n
 two :- NP : 2.0:n
+one :- NP : 1.0:n
 40 :- NP : 40.0:n
-two planes :- NP : V1:n
-two planes :- NP : V2:n
-chicago :- NP : V1:n
-chicago :- NP : V2:n
-the same time :- NP : V1:n
-the same time :- NP : V2:n
-opposite directions :- NP : V1:n
-opposite directions :- NP : V2:n
-one averaging :- NP : V1:n
-one averaging :- NP : V2:n
-a speed :- NP : V1:n
-a speed :- NP : V2:n
-40 miles :- NP : V1:n
-40 miles :- NP : V2:n
-hour :- NP : V1:n
-hour :- NP : V2:n
-the other :- NP : V1:n
 the other :- NP : V2:n
+one averaging :- NP : V1:n
 four :- NP : 4.0:n
 five :- NP : 5.0:n
 7.90 :- NP : 7.9:n
-she :- NP : V1:n
-she :- NP : V2:n
-four roses :- NP : V1:n
-four roses :- NP : V2:n
-five daisies :- NP : V1:n
 five daisies :- NP : V2:n
-7.90 dollars :- NP : V1:n
-7.90 dollars :- NP : V2:n
+four roses :- NP : V1:n
 twice :- NP : 2.0:n
-there :- NP : V1:n
-there :- NP : V2:n
-many children :- NP : V1:n
-many children :- NP : V2:n
-as adults :- NP : V1:n
 as adults :- NP : V2:n
-the group :- NP : V1:n
-the group :- NP : V2:n
+many children :- NP : V1:n
 17 :- NP : 17.0:n
 4 :- NP : 4.0:n
 8 :- NP : 8.0:n
-17 :- NP : V1:n
-17 :- NP : V2:n
-8 times :- NP : V1:n
-8 times :- NP : V2:n
 a number :- NP : V1:n
-a number :- NP : V2:n
 20,196 :- NP : 20196.0:n
-jerry weller :- NP : V1:n
-jerry weller :- NP : V2:n
-20,196 :- NP : V1:n
-20,196 :- NP : V2:n
-more votes :- NP : V1:n
-more votes :- NP : V2:n
-opponent john pavich :- NP : V1:n
 opponent john pavich :- NP : V2:n
+jerry weller :- NP : V1:n
 5 :- NP : 5.0:n
-a swim team :- NP : V1:n
-a swim team :- NP : V2:n
-5 times as many girls :- NP : V1:n
-5 times as many girls :- NP : V2:n
-boys :- NP : V1:n
 boys :- NP : V2:n
+5 times as many girls :- NP : V1:n
 two :- NP : 2.0:n
 23 :- NP : 23.0:n
 thrice :- NP : 3.0:n
-the larger :- NP : V1:n
-the larger :- NP : V2:n
-two numbers :- NP : V1:n
-two numbers :- NP : V2:n
-23 :- NP : V1:n
-23 :- NP : V2:n
-thrice the smaller :- NP : V1:n
 thrice the smaller :- NP : V2:n
+the larger :- NP : V1:n
 two :- NP : 2.0:n
 70 :- NP : 70.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-the two numbers :- NP : V1:n
 the two numbers :- NP : V2:n
-70 :- NP : V1:n
-70 :- NP : V2:n
+the two numbers :- NP : V1:n
 2 :- NP : 2.0:n
 50 :- NP : 50.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-2 numbers :- NP : V1:n
 2 numbers :- NP : V2:n
-50 :- NP : V1:n
-50 :- NP : V2:n
+2 numbers :- NP : V1:n
 750 :- NP : 750.0:n
-a garden table :- NP : V1:n
-a garden table :- NP : V2:n
-a bench cost :- NP : V1:n
 a bench cost :- NP : V2:n
-750 combined :- NP : V1:n
-750 combined :- NP : V2:n
+a garden table :- NP : V1:n
 two :- NP : 2.0:n
-the price :- NP : V1:n
 the price :- NP : V2:n
-the garden table :- NP : V1:n
-the garden table :- NP : V2:n
-two times :- NP : V1:n
-two times :- NP : V2:n
 the price :- NP : V1:n
-the price :- NP : V2:n
-the bench :- NP : V1:n
-the bench :- NP : V2:n
 5 :- NP : 5.0:n
 20 :- NP : 20.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-5 :- NP : V1:n
-5 :- NP : V2:n
 a number :- NP : V1:n
-a number :- NP : V2:n
-20 :- NP : V1:n
-20 :- NP : V2:n
 65 :- NP : 65.0:n
 0.40 :- NP : 0.4:n
+mile :- NP : V2:n
 the first plan :- NP : V1:n
-the first plan :- NP : V2:n
-an initial fee :- NP : V1:n
-an initial fee :- NP : V2:n
-65 dollars :- NP : V1:n
-65 dollars :- NP : V2:n
-an additional 0.40 dollars :- NP : V1:n
-an additional 0.40 dollars :- NP : V2:n
-mile :- NP : V1:n
-mile :- NP : V2:n
 0.60 :- NP : 0.6:n
-the second plan :- NP : V1:n
-the second plan :- NP : V2:n
-no initial fee :- NP : V1:n
-no initial fee :- NP : V2:n
-0.60 dollars :- NP : V1:n
-0.60 dollars :- NP : V2:n
-mile :- NP : V1:n
 mile :- NP : V2:n
+the second plan :- NP : V1:n
 5 :- NP : 5.0:n
-there :- NP : V1:n
-there :- NP : V2:n
-5 :- NP : V1:n
-5 :- NP : V2:n
-fewer girls :- NP : V1:n
 fewer girls :- NP : V2:n
 boys :- NP : V1:n
-boys :- NP : V2:n
 21 :- NP : 21.0:n
-they :- NP : V1:n
 they :- NP : V2:n
-21 more games :- NP : V1:n
-21 more games :- NP : V2:n
 they :- NP : V1:n
-they :- NP : V2:n
 one :- NP : 1.0:n
 10 :- NP : 10.0:n
-one number :- NP : V1:n
-one number :- NP : V2:n
-another :- NP : V1:n
 another :- NP : V2:n
-10 :- NP : V1:n
-10 :- NP : V2:n
+one number :- NP : V1:n
 200 :- NP : 200.0:n
 0.5 :- NP : 0.5:n
-the trailer :- NP : V1:n
-the trailer :- NP : V2:n
-200 pounds :- NP : V1:n
-200 pounds :- NP : V2:n
-0.5 :- NP : V1:n
-0.5 :- NP : V2:n
-the truck :- NP : V1:n
 the truck :- NP : V2:n
+the trailer :- NP : V1:n
 3 :- NP : 3.0:n
 5 :- NP : 5.0:n
 40 :- NP : 40.0:n
-the difference :- NP : V1:n
-the difference :- NP : V2:n
-3 times :- NP : V1:n
-3 times :- NP : V2:n
 a number and 5 :- NP : V1:n
-a number and 5 :- NP : V2:n
-40 :- NP : V1:n
-40 :- NP : V2:n
 43 :- NP : 43.0:n
 twice :- NP : 2.0:n
-the first number :- NP : V1:n
-the first number :- NP : V2:n
-43 :- NP : V1:n
-43 :- NP : V2:n
-twice the second number :- NP : V1:n
 twice the second number :- NP : V2:n
+the first number :- NP : V1:n
 2 :- NP : 2.0:n
 4 :- NP : 4.0:n
-the number :- NP : V1:n
 the number :- NP : V2:n
-coach class seats :- NP : V1:n
-coach class seats :- NP : V2:n
-2 :- NP : V1:n
-2 :- NP : V2:n
-4 times :- NP : V1:n
-4 times :- NP : V2:n
 the number :- NP : V1:n
-the number :- NP : V2:n
-first-class seats :- NP : V1:n
-first-class seats :- NP : V2:n
 one :- NP : 1.0:n
 8 :- NP : 8.0:n
-one number :- NP : V1:n
-one number :- NP : V2:n
-8 :- NP : V1:n
-8 :- NP : V2:n
-the other :- NP : V1:n
 the other :- NP : V2:n
+one number :- NP : V1:n
 one :- NP : 1.0:n
 twice :- NP : 2.0:n
-one :- NP : V1:n
-one :- NP : V2:n
-the stocks :- NP : V1:n
-the stocks :- NP : V2:n
-share :- NP : V1:n
-share :- NP : V2:n
-the other :- NP : V1:n
 the other :- NP : V2:n
+one :- NP : V1:n
 2 :- NP : 2.0:n
 3 :- NP : 3.0:n
 12.00 :- NP : 12.0:n
-jim :- NP : V1:n
-jim :- NP : V2:n
-2 bags :- NP : V1:n
-2 bags :- NP : V2:n
-bagels :- NP : V1:n
-bagels :- NP : V2:n
-3 packages :- NP : V1:n
 3 packages :- NP : V2:n
-cream cheese :- NP : V1:n
-cream cheese :- NP : V2:n
-12.00 dollars :- NP : V1:n
-12.00 dollars :- NP : V2:n
+2 bags :- NP : V1:n
 4 :- NP : 4.0:n
 2 :- NP : 2.0:n
 14.00 :- NP : 14.0:n
-he :- NP : V1:n
-he :- NP : V2:n
-4 bags :- NP : V1:n
-4 bags :- NP : V2:n
-bagels :- NP : V1:n
-bagels :- NP : V2:n
-2 packages :- NP : V1:n
 2 packages :- NP : V2:n
-cream cheese :- NP : V1:n
-cream cheese :- NP : V2:n
-14.00 dollars :- NP : V1:n
-14.00 dollars :- NP : V2:n
+4 bags :- NP : V1:n
 3 :- NP : 3.0:n
-there :- NP : V1:n
-there :- NP : V2:n
+boys :- NP : V2:n
 3 more girls :- NP : V1:n
-3 more girls :- NP : V2:n
-boys :- NP : V1:n
-boys :- NP : V2:n
-tom :- NP : V1:n
-tom :- NP : V2:n
-'s class :- NP : V1:n
-'s class :- NP : V2:n
 41 :- NP : 41.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-girls :- NP : V1:n
-girls :- NP : V2:n
-boys :- NP : V1:n
 boys :- NP : V2:n
-41 :- NP : V1:n
-41 :- NP : V2:n
+girls :- NP : V1:n
 10 :- NP : 10.0:n
-the automobile :- NP : V1:n
 the automobile :- NP : V2:n
-the east travels :- NP : V1:n
-the east travels :- NP : V2:n
-10 kilometers :- NP : V1:n
-10 kilometers :- NP : V2:n
 the automobile :- NP : V1:n
-the automobile :- NP : V2:n
-the west :- NP : V1:n
-the west :- NP : V2:n
 two :- NP : 2.0:n
 8 :- NP : 8.0:n
-the greater :- NP : V1:n
-the greater :- NP : V2:n
-two numbers :- NP : V1:n
-two numbers :- NP : V2:n
-8 times :- NP : V1:n
-8 times :- NP : V2:n
-the lesser :- NP : V1:n
 the lesser :- NP : V2:n
+the greater :- NP : V1:n
 3 :- NP : 3.0:n
 twice :- NP : 2.0:n
-the second number :- NP : V1:n
-the second number :- NP : V2:n
-3 :- NP : V1:n
-3 :- NP : V2:n
-twice the first number :- NP : V1:n
 twice the first number :- NP : V2:n
+the second number :- NP : V1:n
 two :- NP : 2.0:n
 three :- NP : 3.0:n
-the kings :- NP : V1:n
-the kings :- NP : V2:n
-two less than three times as many games :- NP : V1:n
-two less than three times as many games :- NP : V2:n
-they :- NP : V1:n
 they :- NP : V2:n
+the kings :- NP : V1:n
 69 :- NP : 69.0:n
-a sale :- NP : V1:n
-a sale :- NP : V2:n
-an automobile dealer :- NP : V1:n
-an automobile dealer :- NP : V2:n
-69 cars and trucks :- NP : V1:n
 69 cars and trucks :- NP : V2:n
+69 cars and trucks :- NP : V1:n
 27 :- NP : 27.0:n
-she :- NP : V1:n
-she :- NP : V2:n
-27 more cars :- NP : V1:n
 27 more cars :- NP : V2:n
 trucks :- NP : V1:n
-trucks :- NP : V2:n
 1 :- NP : 1.0:n
 0.6 :- NP : 0.6:n
-this amount :- NP : V1:n
-this amount :- NP : V2:n
-1 gallon :- NP : V1:n
-1 gallon :- NP : V2:n
-minute :- NP : V1:n
-minute :- NP : V2:n
-0.6 :- NP : V1:n
-0.6 :- NP : V2:n
-the original flow rate :- NP : V1:n
 the original flow rate :- NP : V2:n
+this amount :- NP : V1:n
 one :- NP : 1.0:n
 4 :- NP : 4.0:n
 0.375 :- NP : 0.375:n
-one :- NP : V1:n
-one :- NP : V2:n
-0.375 :- NP : V1:n
-0.375 :- NP : V2:n
-the other :- NP : V1:n
 the other :- NP : V2:n
+one :- NP : V1:n
 two :- NP : 2.0:n
 4 :- NP : 4.0:n
-the second :- NP : V1:n
-the second :- NP : V2:n
-two numbers :- NP : V1:n
-two numbers :- NP : V2:n
-4 :- NP : V1:n
-4 :- NP : V2:n
-the first :- NP : V1:n
 the first :- NP : V2:n
+the second :- NP : V1:n
 twice :- NP : 2.0:n
 25 :- NP : 25.0:n
 triple :- NP : 3.0:n
-twice a number :- NP : V1:n
-twice a number :- NP : V2:n
-25 :- NP : V1:n
-25 :- NP : V2:n
-triple the same number :- NP : V1:n
 triple the same number :- NP : V2:n
+twice a number :- NP : V1:n
 22,000 :- NP : 22000.0:n
-22,000 :- NP : 0.08:n
-22,000 :- NP : 0.07:n
-lane :- NP : V1:n
-lane :- NP : V2:n
-22,000 dollars :- NP : V1:n
-22,000 dollars :- NP : V2:n
-part :- NP : V1:n
-part :- NP : V2:n
-8 % and part :- NP : V1:n
+8 :- NP : 0.08:n
+7 :- NP : 0.07:n
 8 % and part :- NP : V2:n
-7 % :- NP : V1:n
-7 % :- NP : V2:n
+part :- NP : V1:n
 1 :- NP : 1.0:n
 9 :- NP : 9.0:n
 twice :- NP : 2.0:n
-1 number :- NP : V1:n
-1 number :- NP : V2:n
-9 :- NP : V1:n
-9 :- NP : V2:n
-twice another :- NP : V1:n
 twice another :- NP : V2:n
+1 number :- NP : V1:n
 half :- NP : 0.5:n
 9 :- NP : 9.0:n
 a number :- NP : V1:n
-a number :- NP : V2:n
-half it :- NP : V1:n
-half it :- NP : V2:n
-the result :- NP : V1:n
-the result :- NP : V2:n
-9 :- NP : V1:n
-9 :- NP : V2:n
 1.3333 :- NP : 1.3333:n
 4.82 :- NP : 4.82:n
-1.3333 :- NP : V1:n
-1.3333 :- NP : V2:n
 a number :- NP : V1:n
-a number :- NP : V2:n
-4.82 :- NP : V1:n
-4.82 :- NP : V2:n
 190 :- NP : 190.0:n
 4 :- NP : 0.04:n
-each week :- NP : V1:n
-each week :- NP : V2:n
-he :- NP : V1:n
-he :- NP : V2:n
-190 dollars :- NP : V1:n
-190 dollars :- NP : V2:n
-plus commission :- NP : V1:n
-plus commission :- NP : V2:n
-4 % :- NP : V1:n
-4 % :- NP : V2:n
-his sales :- NP : V1:n
 his sales :- NP : V2:n
+he :- NP : V1:n
 6 :- NP : 6.0:n
 5 :- NP : 5.0:n
 213 :- NP : 213.0:n
-6 ducks :- NP : V1:n
-6 ducks :- NP : V2:n
-5 pigs :- NP : V1:n
-5 pigs :- NP : V2:n
-213 dollars :- NP : V1:n
-213 dollars :- NP : V2:n
+6 ducks and 5 pigs :- NP : V2:n
+6 ducks and 5 pigs :- NP : V1:n
 2 :- NP : 2.0:n
 9 :- NP : 9.0:n
 269 :- NP : 269.0:n
-2 ducks :- NP : V1:n
-2 ducks :- NP : V2:n
-9 pigs :- NP : V1:n
 9 pigs :- NP : V2:n
-269 dollars :- NP : V1:n
-269 dollars :- NP : V2:n
+2 ducks :- NP : V1:n
 6 :- NP : 6.0:n
-they craw :- NP : V1:n
 they craw :- NP : V2:n
-each other :- NP : V1:n
-each other :- NP : V2:n
-rates :- NP : V1:n
-rates :- NP : V2:n
-that :- NP : V1:n
-that :- NP : V2:n
-6 centimeters :- NP : V1:n
-6 centimeters :- NP : V2:n
-minute :- NP : V1:n
-minute :- NP : V2:n
+they craw :- NP : V1:n
 10 :- NP : 10.0:n
 20 :- NP : 20.0:n
 800 :- NP : 800.0:n
-the cost :- NP : V1:n
-the cost :- NP : V2:n
-the first shipment :- NP : V1:n
-the first shipment :- NP : V2:n
-which :- NP : V1:n
-which :- NP : V2:n
-10 identical sweaters :- NP : V1:n
-10 identical sweaters :- NP : V2:n
-20 identical jackets :- NP : V1:n
 20 identical jackets :- NP : V2:n
-800 dollars :- NP : V1:n
-800 dollars :- NP : V2:n
+10 identical sweaters :- NP : V1:n
 800 :- NP : 800.0:n
 30 :- NP : 30.0:n
-caesar :- NP : V1:n
-caesar :- NP : V2:n
-'s charges 800 dollars :- NP : V1:n
-'s charges 800 dollars :- NP : V2:n
-the room :- NP : V1:n
-the room :- NP : V2:n
-30 dollars :- NP : V1:n
-30 dollars :- NP : V2:n
-each meal :- NP : V1:n
 each meal :- NP : V2:n
+caesar :- NP : V1:n
 500 :- NP : 500.0:n
 35 :- NP : 35.0:n
-venus hall :- NP : V1:n
-venus hall :- NP : V2:n
-500 dollars :- NP : V1:n
-500 dollars :- NP : V2:n
-the room :- NP : V1:n
-the room :- NP : V2:n
-35 dollars :- NP : V1:n
-35 dollars :- NP : V2:n
-each meal :- NP : V1:n
 each meal :- NP : V2:n
+venus hall :- NP : V1:n
 4 :- NP : 4.0:n
 7 :- NP : 7.0:n
 55 :- NP : 55.0:n
-4 times :- NP : V1:n
-4 times :- NP : V2:n
-the number :- NP : V1:n
 the number :- NP : V2:n
-7 times :- NP : V1:n
-7 times :- NP : V2:n
 the number :- NP : V1:n
-the number :- NP : V2:n
-the result :- NP : V1:n
-the result :- NP : V2:n
-55 :- NP : V1:n
-55 :- NP : V2:n
 two :- NP : 2.0:n
 8800 :- NP : 8800.0:n
-two investments :- NP : V1:n
 two investments :- NP : V2:n
-8800 dollars :- NP : V1:n
-8800 dollars :- NP : V2:n
+two investments :- NP : V1:n
 2000 :- NP : 2000.0:n
 4 :- NP : 4.0:n
-a tail wind :- NP : V1:n
 a tail wind :- NP : V2:n
 a jet :- NP : V1:n
-a jet :- NP : V2:n
-2000 miles :- NP : V1:n
-2000 miles :- NP : V2:n
-4 hours :- NP : V1:n
-4 hours :- NP : V2:n
 4100 :- NP : 4100.0:n
 10 :- NP : 10.0:n
+a week :- NP : V2:n
 sara :- NP : V1:n
-sara :- NP : V2:n
-4100 dollars :- NP : V1:n
-4100 dollars :- NP : V2:n
-she :- NP : V1:n
-she :- NP : V2:n
-10 dollars :- NP : V1:n
-10 dollars :- NP : V2:n
-a week :- NP : V1:n
-a week :- NP : V2:n
-3 :- NP : 1.5:n
-her ratio :- NP : V1:n
-her ratio :- NP : V2:n
-time :- NP : V1:n
+3 :- NP : 3.0:n
+2 :- NP : 2.0:n
 time :- NP : V2:n
-aerobics :- NP : V1:n
-aerobics :- NP : V2:n
 time :- NP : V1:n
-time :- NP : V2:n
-weight training :- NP : V1:n
-weight training :- NP : V2:n
-3 :- NP : V1:n
-3 :- NP : V2:n
-2 :- NP : V1:n
-2 :- NP : V2:n
 15 :- NP : 15.0:n
-jim :- NP : V1:n
-jim :- NP : V2:n
-15 dollars :- NP : V1:n
-15 dollars :- NP : V2:n
-a week :- NP : V1:n
 a week :- NP : V2:n
+jim :- NP : V1:n
 0.40 :- NP : 0.4:n
 one :- NP : 1.0:n
 0.625 :- NP : 0.625:n
 10 :- NP : 10.0:n
-0.40 :- NP : V1:n
-0.40 :- NP : V2:n
-one part :- NP : V1:n
-one part :- NP : V2:n
-0.625 :- NP : V1:n
-0.625 :- NP : V2:n
-the other part :- NP : V1:n
 the other part :- NP : V2:n
-10 :- NP : V1:n
-10 :- NP : V2:n
+one part :- NP : V1:n
 three :- NP : 3.0:n
-a given day :- NP : V1:n
-a given day :- NP : V2:n
-the mill :- NP : V1:n
-the mill :- NP : V2:n
-three times :- NP : V1:n
-three times :- NP : V2:n
-many units :- NP : V1:n
 many units :- NP : V2:n
-plywood :- NP : V1:n
-plywood :- NP : V2:n
 lumber :- NP : V1:n
-lumber :- NP : V2:n
 one :- NP : 1.0:n
 3 :- NP : 3.0:n
 twice :- NP : 2.0:n
-one number :- NP : V1:n
-one number :- NP : V2:n
-3 :- NP : V1:n
-3 :- NP : V2:n
-twice another :- NP : V1:n
 twice another :- NP : V2:n
+one number :- NP : V1:n
 30 :- NP : 30.0:n
-the freight train :- NP : V1:n
-the freight train :- NP : V2:n
-30 kilometers :- NP : V1:n
-30 kilometers :- NP : V2:n
-hour :- NP : V1:n
-hour :- NP : V2:n
-the express train :- NP : V1:n
 the express train :- NP : V2:n
+the freight train :- NP : V1:n
 10 :- NP : 10.0:n
 36 :- NP : 36.0:n
 twice :- NP : 2.0:n
-the product :- NP : V1:n
-the product :- NP : V2:n
-10 :- NP : V1:n
-10 :- NP : V2:n
-a number :- NP : V1:n
-a number :- NP : V2:n
-the same :- NP : V1:n
-the same :- NP : V2:n
-36 :- NP : V1:n
-36 :- NP : V2:n
-same number :- NP : V1:n
 same number :- NP : V2:n
+a number :- NP : V1:n
 60 :- NP : 0.6:n
-the peach :- NP : V1:n
-the peach :- NP : V2:n
-the apple :- NP : V1:n
 the apple :- NP : V2:n
-60 cents :- NP : V1:n
-60 cents :- NP : V2:n
+the peach :- NP : V1:n
 3 :- NP : 3.0:n
 1 :- NP : 1.0:n
 twice :- NP : 2.0:n
-the difference :- NP : V1:n
-the difference :- NP : V2:n
-3 times :- NP : V1:n
-3 times :- NP : V2:n
-a number :- NP : V1:n
-a number :- NP : V2:n
-1 :- NP : V1:n
-1 :- NP : V2:n
-the same :- NP : V1:n
-the same :- NP : V2:n
-a number :- NP : V1:n
-a number :- NP : V2:n
-one :- NP : 0.5:n
+twice a number :- NP : V2:n
+a number and 1 :- NP : V1:n
+one :- NP : 1.0:n
+two :- NP : 2.0:n
 thrice :- NP : 3.0:n
-one :- NP : V1:n
-one :- NP : V2:n
-two numbers :- NP : V1:n
-two numbers :- NP : V2:n
-the other :- NP : V1:n
 the other :- NP : V2:n
+one :- NP : V1:n
 0.6667 :- NP : 0.6667:n
 0.75 :- NP : 0.75:n
 1.6667 :- NP : 1.6667:n
-0.6667 :- NP : V1:n
-0.6667 :- NP : V2:n
 a number :- NP : V1:n
-a number :- NP : V2:n
-0.75 :- NP : V1:n
-0.75 :- NP : V2:n
-1.6667 :- NP : V1:n
-1.6667 :- NP : V2:n
 two :- NP : 2.0:n
 64 :- NP : 64.0:n
-sum :- NP : V1:n
-sum :- NP : V2:n
-two numbers :- NP : V1:n
 two numbers :- NP : V2:n
-64 :- NP : V1:n
-64 :- NP : V2:n
+two numbers :- NP : V1:n
 three :- NP : 3.0:n
 20 :- NP : 20.0:n
-three times :- NP : V1:n
-three times :- NP : V2:n
-a number :- NP : V1:n
-a number :- NP : V2:n
-a second number :- NP : V1:n
 a second number :- NP : V2:n
-20 :- NP : V1:n
-20 :- NP : V2:n
+a number :- NP : V1:n
 39000 :- NP : 39000.0:n
 4 :- NP : 0.04:n
 6 :- NP : 0.06:n
-phyllis :- NP : V1:n
-phyllis :- NP : V2:n
-39000 dollars :- NP : V1:n
-39000 dollars :- NP : V2:n
-a portion :- NP : V1:n
-a portion :- NP : V2:n
-a simple interest rate :- NP : V1:n
-a simple interest rate :- NP : V2:n
-4 % :- NP : V1:n
-4 % :- NP : V2:n
-year :- NP : V1:n
-year :- NP : V2:n
-the rest :- NP : V1:n
 the rest :- NP : V2:n
-a rate :- NP : V1:n
-a rate :- NP : V2:n
-6 % :- NP : V1:n
-6 % :- NP : V2:n
-year :- NP : V1:n
-year :- NP : V2:n
+a portion :- NP : V1:n
 7 :- NP : 7.0:n
 5 :- NP : 5.0:n
 146 :- NP : 146.0:n
-7 times :- NP : V1:n
-7 times :- NP : V2:n
-the first part :- NP : V1:n
-the first part :- NP : V2:n
-5 times :- NP : V1:n
-5 times :- NP : V2:n
-the second part :- NP : V1:n
 the second part :- NP : V2:n
-146 :- NP : V1:n
-146 :- NP : V2:n
+the first part :- NP : V1:n
 24 :- NP : 24.0:n
 two :- NP : 2.0:n
-24 :- NP : V1:n
-24 :- NP : V2:n
-two parts :- NP : V1:n
 two parts :- NP : V2:n
-9 :- NP : 2.25:n
-the ratio :- NP : V1:n
-the ratio :- NP : V2:n
-boys :- NP : V1:n
-boys :- NP : V2:n
-girls :- NP : V1:n
+two parts :- NP : V1:n
+9 :- NP : 9.0:n
+4 :- NP : 4.0:n
 girls :- NP : V2:n
-9 :- NP : V1:n
-9 :- NP : V2:n
-4 :- NP : V1:n
-4 :- NP : V2:n
+boys :- NP : V1:n
 6100 :- NP : 6100.0:n
 two :- NP : 2.0:n
 7 :- NP : 0.07:n
 6 :- NP : 0.06:n
-bob :- NP : V1:n
-bob :- NP : V2:n
-6100 dollars :- NP : V1:n
-6100 dollars :- NP : V2:n
-two funds :- NP : V1:n
 two funds :- NP : V2:n
-which :- NP : V1:n
-which :- NP : V2:n
-7 % and 6 % :- NP : V1:n
-7 % and 6 % :- NP : V2:n
-simple interest :- NP : V1:n
-simple interest :- NP : V2:n
+two funds :- NP : V1:n
 4 :- NP : 4.0:n
 3 :- NP : 3.0:n
 79 :- NP : 79.0:n
-the first day :- NP : V1:n
-the first day :- NP : V2:n
-ticket sales :- NP : V1:n
-ticket sales :- NP : V2:n
-the school :- NP : V1:n
-the school :- NP : V2:n
-4 senior citizen tickets :- NP : V1:n
-4 senior citizen tickets :- NP : V2:n
-3 student tickets :- NP : V1:n
 3 student tickets :- NP : V2:n
-79 dollars :- NP : V1:n
-79 dollars :- NP : V2:n
+4 senior citizen tickets :- NP : V1:n
 246 :- NP : 246.0:n
 12 :- NP : 12.0:n
 10 :- NP : 10.0:n
-the school :- NP : V1:n
-the school :- NP : V2:n
-246 dollars :- NP : V1:n
-246 dollars :- NP : V2:n
-the second day :- NP : V1:n
-the second day :- NP : V2:n
-12 senior citizen tickets :- NP : V1:n
-12 senior citizen tickets :- NP : V2:n
-10 student tickets :- NP : V1:n
 10 student tickets :- NP : V2:n
+12 senior citizen tickets :- NP : V1:n
 10 :- NP : 10.0:n
 3 :- NP : 3.0:n
-the second :- NP : V1:n
-the second :- NP : V2:n
-10 more than 3 times :- NP : V1:n
-10 more than 3 times :- NP : V2:n
-the first :- NP : V1:n
 the first :- NP : V2:n
+the second :- NP : V1:n
 twice :- NP : 2.0:n
 5 :- NP : 5.0:n
-the greater number :- NP : V1:n
-the greater number :- NP : V2:n
-the smaller number :- NP : V1:n
 the smaller number :- NP : V2:n
-5 :- NP : V1:n
-5 :- NP : V2:n
+the greater number :- NP : V1:n
 5 :- NP : 5.0:n
-increased :- NP : 4.0:n
+4 :- NP : 4.0:n
 19 :- NP : 19.0:n
-the product :- NP : V1:n
-the product :- NP : V2:n
-5 :- NP : V1:n
-5 :- NP : V2:n
 a number :- NP : V1:n
-a number :- NP : V2:n
-4 :- NP : V1:n
-4 :- NP : V2:n
-the result :- NP : V1:n
-the result :- NP : V2:n
-19 :- NP : V1:n
-19 :- NP : V2:n
 10 :- NP : 10.0:n
 0.6667 :- NP : 0.6667:n
 0.25 :- NP : 0.25:n
-10 less than 0.6667 :- NP : V1:n
-10 less than 0.6667 :- NP : V2:n
-the number :- NP : V1:n
 the number :- NP : V2:n
-0.25 :- NP : V1:n
-0.25 :- NP : V2:n
 the number :- NP : V1:n
-the number :- NP : V2:n
 3 :- NP : 3.0:n
 4 :- NP : 4.0:n
 155 :- NP : 155.0:n
-3 footballs and 4 soccer balls :- NP : V1:n
 3 footballs and 4 soccer balls :- NP : V2:n
-155 dollars :- NP : V1:n
-155 dollars :- NP : V2:n
+3 footballs and 4 soccer balls :- NP : V1:n
 2 :- NP : 2.0:n
 3 :- NP : 3.0:n
 220 :- NP : 220.0:n
-2 footballs :- NP : V1:n
-2 footballs :- NP : V2:n
-3 soccer balls :- NP : V1:n
 3 soccer balls :- NP : V2:n
-220 dollars :- NP : V1:n
-220 dollars :- NP : V2:n
+2 footballs :- NP : V1:n
 one :- NP : 1.0:n
 1.6 :- NP : 1.6:n
-one day :- NP : V1:n
-one day :- NP : V2:n
-a store :- NP : V1:n
-a store :- NP : V2:n
-1.6 :- NP : V1:n
-1.6 :- NP : V2:n
+cds :- NP : V2:n
 many dvds :- NP : V1:n
-many dvds :- NP : V2:n
-cds :- NP : V1:n
-cds :- NP : V2:n
 273 :- NP : 273.0:n
-the total number :- NP : V1:n
-the total number :- NP : V2:n
-dvds :- NP : V1:n
-dvds :- NP : V2:n
-cds :- NP : V1:n
 cds :- NP : V2:n
-that day :- NP : V1:n
-that day :- NP : V2:n
-273 :- NP : V1:n
-273 :- NP : V2:n
+dvds :- NP : V1:n
 4 :- NP : 4.0:n
-the cost :- NP : V1:n
 the cost :- NP : V2:n
-a child :- NP : V1:n
-a child :- NP : V2:n
-'s ticket :- NP : V1:n
-'s ticket :- NP : V2:n
-4 dollars :- NP : V1:n
-4 dollars :- NP : V2:n
 the cost :- NP : V1:n
-the cost :- NP : V2:n
-an adult :- NP : V1:n
-an adult :- NP : V2:n
-'s ticket :- NP : V1:n
-'s ticket :- NP : V2:n
 5 :- NP : 5.0:n
-a rancher :- NP : V1:n
-a rancher :- NP : V2:n
-5 times as many cows :- NP : V1:n
-5 times as many cows :- NP : V2:n
-horses :- NP : V1:n
 horses :- NP : V2:n
+5 times as many cows :- NP : V1:n
 1 :- NP : 1.0:n
 3 :- NP : 3.0:n
 twice :- NP : 2.0:n
-1 number :- NP : V1:n
-1 number :- NP : V2:n
-3 :- NP : V1:n
-3 :- NP : V2:n
-twice another number :- NP : V1:n
 twice another number :- NP : V2:n
+1 number :- NP : V1:n
 4 :- NP : 4.0:n
-honda day shift :- NP : V1:n
-honda day shift :- NP : V2:n
-4 times :- NP : V1:n
-4 times :- NP : V2:n
-second shift :- NP : V1:n
 second shift :- NP : V2:n
+honda day shift :- NP : V1:n
 twice :- NP : 2.0:n
-the shoe store :- NP : V1:n
-the shoe store :- NP : V2:n
-twice as many black shoes :- NP : V1:n
-twice as many black shoes :- NP : V2:n
-it :- NP : V1:n
-it :- NP : V2:n
-brown shoes :- NP : V1:n
 brown shoes :- NP : V2:n
+twice as many black shoes :- NP : V1:n
 three :- NP : 3.0:n
 22 :- NP : 22.0:n
-three times :- NP : V1:n
-three times :- NP : V2:n
-the smaller number :- NP : V1:n
-the smaller number :- NP : V2:n
-the larger number :- NP : V1:n
 the larger number :- NP : V2:n
-the result :- NP : V1:n
-the result :- NP : V2:n
-22 :- NP : V1:n
-22 :- NP : V2:n
+the smaller number :- NP : V1:n
 2 :- NP : 2.0:n
 20 :- NP : 20.0:n
-a semi truck :- NP : V1:n
-a semi truck :- NP : V2:n
-a paved road :- NP : V1:n
-a paved road :- NP : V2:n
-2 hours :- NP : V1:n
-2 hours :- NP : V2:n
-an average speed :- NP : V1:n
-an average speed :- NP : V2:n
-20 miles :- NP : V1:n
-20 miles :- NP : V2:n
-hour :- NP : V1:n
-hour :- NP : V2:n
-it :- NP : V1:n
 it :- NP : V2:n
-a dirt road :- NP : V1:n
-a dirt road :- NP : V2:n
+a semi truck :- NP : V1:n
 one :- NP : 1.0:n
 8 :- NP : 8.0:n
-one cyclist :- NP : V1:n
-one cyclist :- NP : V2:n
-8 kilometers :- NP : V1:n
-8 kilometers :- NP : V2:n
-hour :- NP : V1:n
-hour :- NP : V2:n
-the other :- NP : V1:n
 the other :- NP : V2:n
+one cyclist :- NP : V1:n
 3 :- NP : 3.0:n
 2 :- NP : 2.0:n
 6.25 :- NP : 6.25:n
-david :- NP : V1:n
-david :- NP : V2:n
-3 hamburgers :- NP : V1:n
-3 hamburgers :- NP : V2:n
-2 servings :- NP : V1:n
 2 servings :- NP : V2:n
-french fries :- NP : V1:n
-french fries :- NP : V2:n
-diane :- NP : V1:n
-diane :- NP : V2:n
-'s drive :- NP : V1:n
-'s drive :- NP : V2:n
-6.25 dollars :- NP : V1:n
-6.25 dollars :- NP : V2:n
+3 hamburgers :- NP : V1:n
 0.25 :- NP : 0.25:n
-a serving :- NP : V1:n
-a serving :- NP : V2:n
-fries costs :- NP : V1:n
-fries costs :- NP : V2:n
-0.25 dollars :- NP : V1:n
-0.25 dollars :- NP : V2:n
-a hamburger :- NP : V1:n
 a hamburger :- NP : V2:n
+a serving :- NP : V1:n
 80.34 :- NP : 80.34:n
-the total cost :- NP : V1:n
-the total cost :- NP : V2:n
-a shirt :- NP : V1:n
-a shirt :- NP : V2:n
-a sweater :- NP : V1:n
 a sweater :- NP : V2:n
-80.34 dollars :- NP : V1:n
-80.34 dollars :- NP : V2:n
+a shirt :- NP : V1:n
 7.43 :- NP : 7.43:n
-the price :- NP : V1:n
-the price :- NP : V2:n
-the shirt :- NP : V1:n
-the shirt :- NP : V2:n
-7.43 dollars :- NP : V1:n
-7.43 dollars :- NP : V2:n
-the sweater :- NP : V1:n
 the sweater :- NP : V2:n
+the price :- NP : V1:n
 one :- NP : 1.0:n
 15 :- NP : 15.0:n
-one car :- NP : V1:n
-one car :- NP : V2:n
-15 kilometers :- NP : V1:n
-15 kilometers :- NP : V2:n
-hour :- NP : V1:n
-hour :- NP : V2:n
-the other :- NP : V1:n
 the other :- NP : V2:n
+one car :- NP : V1:n
 twice :- NP : 2.0:n
 5 :- NP : 5.0:n
 17 :- NP : 17.0:n
 twice a number :- NP : V1:n
-twice a number :- NP : V2:n
-5 :- NP : V1:n
-5 :- NP : V2:n
-17 :- NP : V1:n
-17 :- NP : V2:n
 36 :- NP : 36.0:n
 three :- NP : 3.0:n
 48 :- NP : 48.0:n
-36 more :- NP : V1:n
-36 more :- NP : V2:n
-the product :- NP : V1:n
-the product :- NP : V2:n
-three :- NP : V1:n
-three :- NP : V2:n
-the same :- NP : V1:n
-the same :- NP : V2:n
-48 :- NP : V1:n
-48 :- NP : V2:n
 43 :- NP : 43.0:n
 22 :- NP : 22.0:n
 3 :- NP : 3.0:n
-the lakers :- NP : V1:n
-the lakers :- NP : V2:n
-43 points :- NP : V1:n
-43 points :- NP : V2:n
-a combination :- NP : V1:n
-a combination :- NP : V2:n
-22 point baskets :- NP : V1:n
-22 point baskets :- NP : V2:n
-3 point baskets :- NP : V1:n
 3 point baskets :- NP : V2:n
-11 :- NP : 2.75:n
-the ratio :- NP : V1:n
-the ratio :- NP : V2:n
-spaces :- NP : V1:n
-spaces :- NP : V2:n
-full :- NP : V1:n
-full :- NP : V2:n
-cars :- NP : V1:n
-cars :- NP : V2:n
-compact cars :- NP : V1:n
+22 point baskets :- NP : V1:n
+11 :- NP : 11.0:n
+4 :- NP : 4.0:n
 compact cars :- NP : V2:n
-11 :- NP : V1:n
-11 :- NP : V2:n
-4 :- NP : V1:n
-4 :- NP : V2:n
+full :- NP : V1:n
 9 :- NP : 9.0:n
-they :- NP : V1:n
 they :- NP : V2:n
-9 more games :- NP : V1:n
-9 more games :- NP : V2:n
 they :- NP : V1:n
-they :- NP : V2:n
 seven :- NP : 7.0:n
 5 :- NP : 5.0:n
-seven times :- NP : V1:n
-seven times :- NP : V2:n
-the smaller number :- NP : V1:n
-the smaller number :- NP : V2:n
-the same :- NP : V1:n
-the same :- NP : V2:n
-5 times :- NP : V1:n
-5 times :- NP : V2:n
-the larger number :- NP : V1:n
 the larger number :- NP : V2:n
+seven times the smaller number :- NP : V1:n
 3 :- NP : 3.0:n
 4 :- NP : 4.0:n
 84 :- NP : 84.0:n
-a special event :- NP : V1:n
-a special event :- NP : V2:n
-the tcr spring fest :- NP : V1:n
-the tcr spring fest :- NP : V2:n
-the cost :- NP : V1:n
-the cost :- NP : V2:n
-3 adult tickets :- NP : V1:n
-3 adult tickets :- NP : V2:n
-4 student tickets :- NP : V1:n
 4 student tickets :- NP : V2:n
-84 dollars :- NP : V1:n
-84 dollars :- NP : V2:n
+3 adult tickets :- NP : V1:n
 450 :- NP : 450.0:n
 2 :- NP : 0.02:n
 3 :- NP : 0.03:n
-a woman :- NP : V1:n
-a woman :- NP : V2:n
-450 dollars :- NP : V1:n
-450 dollars :- NP : V2:n
-part :- NP : V1:n
-part :- NP : V2:n
-2 % :- NP : V1:n
-2 % :- NP : V2:n
-the remainder :- NP : V1:n
 the remainder :- NP : V2:n
-3 % simple interest :- NP : V1:n
-3 % simple interest :- NP : V2:n
+part :- NP : V1:n
 3 :- NP : 3.0:n
-more :- NP : 4.0:n
+one :- NP : 1.0:n
+4 :- NP : 4.0:n
 2 :- NP : 2.0:n
-3 times one :- NP : V1:n
-3 times one :- NP : V2:n
-them :- NP : V1:n
-them :- NP : V2:n
-more than 4 times :- NP : V1:n
-more than 4 times :- NP : V2:n
-the second :- NP : V1:n
 the second :- NP : V2:n
-2 :- NP : V1:n
-2 :- NP : V2:n
+3 times one :- NP : V1:n
 6 :- NP : 6.0:n
 three :- NP : 3.0:n
 twice :- NP : 2.0:n
-6 :- NP : V1:n
-6 :- NP : V2:n
-three times :- NP : V1:n
-three times :- NP : V2:n
-a number :- NP : V1:n
-a number :- NP : V2:n
-the difference :- NP : V1:n
-the difference :- NP : V2:n
-the number :- NP : V1:n
 the number :- NP : V2:n
+a number :- NP : V1:n
 7 :- NP : 7.0:n
 0.6667 :- NP : 0.6667:n
-the amount :- NP : V1:n
 the amount :- NP : V2:n
-class a :- NP : V1:n
-class a :- NP : V2:n
-7 dollars :- NP : V1:n
-7 dollars :- NP : V2:n
-0.6667 :- NP : V1:n
-0.6667 :- NP : V2:n
 the amount :- NP : V1:n
-the amount :- NP : V2:n
-class b :- NP : V1:n
-class b :- NP : V2:n
 7 :- NP : 7.0:n
 3 :- NP : 3.0:n
-rs :- NP : 1110.0:n
-7 audio cassettes :- NP : V1:n
-7 audio cassettes :- NP : V2:n
-3 video cassettes cost rs 1110 :- NP : V1:n
+1110 :- NP : 1110.0:n
 3 video cassettes cost rs 1110 :- NP : V2:n
+7 audio cassettes :- NP : V1:n
 one :- NP : 1.0:n
 2 :- NP : 2.0:n
-one piece :- NP : V1:n
-one piece :- NP : V2:n
-2 times :- NP : V1:n
-2 times :- NP : V2:n
-the length :- NP : V1:n
-the length :- NP : V2:n
-the other :- NP : V1:n
 the other :- NP : V2:n
+one piece :- NP : V1:n
 69 :- NP : 69.0:n
 2 :- NP : 2.0:n
-a 69 inch board :- NP : V1:n
-a 69 inch board :- NP : V2:n
-2 pieces :- NP : V1:n
 2 pieces :- NP : V2:n
+2 pieces :- NP : V1:n
 two :- NP : 2.0:n
 one :- NP : 1.0:n
-two times :- NP : V1:n
-two times :- NP : V2:n
-the first number :- NP : V1:n
-the first number :- NP : V2:n
-one :- NP : V1:n
-one :- NP : V2:n
-the second number :- NP : V1:n
 the second number :- NP : V2:n
+the first number :- NP : V1:n
 2 :- NP : 2.0:n
 84 :- NP : 84.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-2 numbers :- NP : V1:n
 2 numbers :- NP : V2:n
-84 :- NP : V1:n
-84 :- NP : V2:n
+2 numbers :- NP : V1:n
 36 :- NP : 36.0:n
-they :- NP : V1:n
 they :- NP : V2:n
-36 more :- NP : V1:n
-36 more :- NP : V2:n
 they :- NP : V1:n
-they :- NP : V2:n
 0.75 :- NP : 0.75:n
 0.4 :- NP : 0.4:n
 28 :- NP : 28.0:n
-the difference :- NP : V1:n
-the difference :- NP : V2:n
-0.75 :- NP : V1:n
-0.75 :- NP : V2:n
-a line and 0.4 :- NP : V1:n
-a line and 0.4 :- NP : V2:n
-the same line :- NP : V1:n
 the same line :- NP : V2:n
-28 centimeters :- NP : V1:n
-28 centimeters :- NP : V2:n
+a line and 0.4 :- NP : V1:n
 7 :- NP : 7.0:n
 5 :- NP : 5.0:n
-the second :- NP : V1:n
-the second :- NP : V2:n
-7 :- NP : V1:n
-7 :- NP : V2:n
-5 times :- NP : V1:n
-5 times :- NP : V2:n
-the first :- NP : V1:n
 the first :- NP : V2:n
+the second :- NP : V1:n
 370 :- NP : 370.0:n
 10 :- NP : 10.0:n
 3 :- NP : 3.0:n
-mrs. lloyd :- NP : V1:n
-mrs. lloyd :- NP : V2:n
-370 dollars :- NP : V1:n
-370 dollars :- NP : V2:n
-10 meals :- NP : V1:n
-10 meals :- NP : V2:n
-3 nights :- NP : V1:n
 3 nights :- NP : V2:n
-a hotel :- NP : V1:n
-a hotel :- NP : V2:n
-every :- NP : 2.0:n
+10 meals :- NP : V1:n
+2 :- NP : 2.0:n
 4 :- NP : 4.0:n
-she :- NP : V1:n
-she :- NP : V2:n
-every 2 cans :- NP : V1:n
-every 2 cans :- NP : V2:n
-tomato soup :- NP : V1:n
-tomato soup :- NP : V2:n
-she :- NP : V1:n
-she :- NP : V2:n
-she :- NP : V1:n
-she :- NP : V2:n
-4 cans :- NP : V1:n
 4 cans :- NP : V2:n
-chili beans :- NP : V1:n
-chili beans :- NP : V2:n
+every 2 cans :- NP : V1:n
 seven :- NP : 7.0:n
 12 :- NP : 12.0:n
 3 :- NP : 3.0:n
-seven times :- NP : V1:n
-seven times :- NP : V2:n
-a number :- NP : V1:n
-a number :- NP : V2:n
-the same :- NP : V1:n
-the same :- NP : V2:n
-12 more than 3 times :- NP : V1:n
-12 more than 3 times :- NP : V2:n
-the number :- NP : V1:n
 the number :- NP : V2:n
+a number :- NP : V1:n
 530 :- NP : 530.0:n
 4 :- NP : 4.0:n
 2 :- NP : 2.0:n
-530 pesos :- NP : V1:n
-530 pesos :- NP : V2:n
-4 kilograms :- NP : V1:n
-4 kilograms :- NP : V2:n
-fish :- NP : V1:n
-fish :- NP : V2:n
-2 kilograms :- NP : V1:n
 2 kilograms :- NP : V2:n
-pork :- NP : V1:n
-pork :- NP : V2:n
+4 kilograms :- NP : V1:n
 twice :- NP : 2.0:n
 6 :- NP : 6.0:n
-the smaller number :- NP : V1:n
-the smaller number :- NP : V2:n
-6 :- NP : V1:n
-6 :- NP : V2:n
-the larger :- NP : V1:n
 the larger :- NP : V2:n
+the smaller number :- NP : V1:n
 two :- NP : 2.0:n
 18 :- NP : 18.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-two numbers :- NP : V1:n
 two numbers :- NP : V2:n
-18 :- NP : V1:n
-18 :- NP : V2:n
+two numbers :- NP : V1:n
 5 :- NP : 5.0:n
+mp3 :- NP : 3.0:n
 8 :- NP : 8.0:n
 840 :- NP : 840.0:n
-a customer :- NP : V1:n
-a customer :- NP : V2:n
-an electronics store :- NP : V1:n
-an electronics store :- NP : V2:n
-5 mp3 players :- NP : V1:n
-5 mp3 players :- NP : V2:n
-8 sets :- NP : V1:n
 8 sets :- NP : V2:n
-headphones :- NP : V1:n
-headphones :- NP : V2:n
-840 dollars :- NP : V1:n
-840 dollars :- NP : V2:n
+5 mp3 players :- NP : V1:n
 one :- NP : 1.0:n
 3 :- NP : 3.0:n
-one number :- NP : V1:n
-one number :- NP : V2:n
-3 times :- NP : V1:n
-3 times :- NP : V2:n
-the other :- NP : V1:n
 the other :- NP : V2:n
+one number :- NP : V1:n
 2 :- NP : 2.0:n
 10 :- NP : 10.0:n
 5 :- NP : 5.0:n
-2 times :- NP : V1:n
-2 times :- NP : V2:n
-the larger integer :- NP : V1:n
-the larger integer :- NP : V2:n
-10 :- NP : V1:n
-10 :- NP : V2:n
-5 times :- NP : V1:n
-5 times :- NP : V2:n
-the smaller integer :- NP : V1:n
 the smaller integer :- NP : V2:n
+the larger integer :- NP : V1:n
 two :- NP : 2.0:n
 75 :- NP : 75.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-the average miles :- NP : V1:n
 the average miles :- NP : V2:n
-gallon :- NP : V1:n
-gallon :- NP : V2:n
-the two cars :- NP : V1:n
-the two cars :- NP : V2:n
-a particular week :- NP : V1:n
-a particular week :- NP : V2:n
-75 miles :- NP : V1:n
-75 miles :- NP : V2:n
-gallon :- NP : V1:n
-gallon :- NP : V2:n
+the average miles :- NP : V1:n
 11 :- NP : 11.0:n
-there :- NP : V1:n
-there :- NP : V2:n
-11 more republicans :- NP : V1:n
-11 more republicans :- NP : V2:n
-democrats :- NP : V1:n
 democrats :- NP : V2:n
+11 more republicans :- NP : V1:n
 one :- NP : 1.0:n
 4 :- NP : 4.0:n
-one :- NP : V1:n
-one :- NP : V2:n
-4 times :- NP : V1:n
-4 times :- NP : V2:n
-the other :- NP : V1:n
 the other :- NP : V2:n
+one :- NP : V1:n
 two :- NP : 2.0:n
-8 :- NP : 2.6666666666666665:n
-two numbers :- NP : V1:n
+8 :- NP : 8.0:n
+3 :- NP : 3.0:n
 two numbers :- NP : V2:n
-the ratio :- NP : V1:n
-the ratio :- NP : V2:n
-8 to 3 :- NP : V1:n
-8 to 3 :- NP : V2:n
+two numbers :- NP : V1:n
 one :- NP : 1.0:n
 3 :- NP : 3.0:n
-one number :- NP : V1:n
-one number :- NP : V2:n
-3 times :- NP : V1:n
-3 times :- NP : V2:n
-the other number :- NP : V1:n
 the other number :- NP : V2:n
+one number :- NP : V1:n
 7 :- NP : 7.0:n
-there :- NP : V1:n
-there :- NP : V2:n
-7 times :- NP : V1:n
-7 times :- NP : V2:n
-many thermometers :- NP : V1:n
-many thermometers :- NP : V2:n
-hot-water bottles :- NP : V1:n
 hot-water bottles :- NP : V2:n
+many thermometers :- NP : V1:n
 1250 :- NP : 1250.0:n
 5 :- NP : 0.05:n
-jordan :- NP : V1:n
-jordan :- NP : V2:n
-'s salary :- NP : V1:n
-'s salary :- NP : V2:n
-1250 dollars :- NP : V1:n
-1250 dollars :- NP : V2:n
-a month :- NP : V1:n
-a month :- NP : V2:n
-plus a 5 % commission :- NP : V1:n
-plus a 5 % commission :- NP : V2:n
-all :- NP : V1:n
 all :- NP : V2:n
-his sales :- NP : V1:n
-his sales :- NP : V2:n
+jordan :- NP : V1:n
 36 :- NP : 36.0:n
-steve :- NP : V1:n
-steve :- NP : V2:n
-36 coins :- NP : V1:n
-36 coins :- NP : V2:n
-dimes and nickels :- NP : V1:n
 dimes and nickels :- NP : V2:n
+dimes and nickels :- NP : V1:n
 0.75 :- NP : 0.75:n
 two :- NP : 2.0:n
 eight :- NP : 8.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-0.75 :- NP : V1:n
-0.75 :- NP : V2:n
 a number and two :- NP : V1:n
-a number and two :- NP : V2:n
-eight :- NP : V1:n
-eight :- NP : V2:n
 54 :- NP : 54.0:n
 5-dollar :- NP : 5.0:n
 20-dollar :- NP : 20.0:n
-a bank teller :- NP : V1:n
-a bank teller :- NP : V2:n
-54 5-dollar and 20-dollar bills :- NP : V1:n
 54 5-dollar and 20-dollar bills :- NP : V2:n
-her cash drawer :- NP : V1:n
-her cash drawer :- NP : V2:n
+54 5-dollar and 20-dollar bills :- NP : V1:n
 3 :- NP : 3.0:n
+one :- NP : 1.0:n
 11 :- NP : 11.0:n
 5 :- NP : 5.0:n
-3 times one :- NP : V1:n
-3 times one :- NP : V2:n
-the numbers :- NP : V1:n
-the numbers :- NP : V2:n
-11 :- NP : V1:n
-11 :- NP : V2:n
-5 times :- NP : V1:n
-5 times :- NP : V2:n
-the other :- NP : V1:n
 the other :- NP : V2:n
+3 times one :- NP : V1:n
 7 :- NP : 7.0:n
 4 :- NP : 4.0:n
 13 :- NP : 13.0:n
-7 less than 4 times :- NP : V1:n
-7 less than 4 times :- NP : V2:n
 a number :- NP : V1:n
-a number :- NP : V2:n
-13 :- NP : V1:n
-13 :- NP : V2:n
 16 :- NP : 16.0:n
 twice :- NP : 2.0:n
-the number :- NP : V1:n
-the number :- NP : V2:n
-boys :- NP : V1:n
-boys :- NP : V2:n
-eighth grade :- NP : V1:n
-eighth grade :- NP : V2:n
-16 :- NP : V1:n
-16 :- NP : V2:n
-twice the number :- NP : V1:n
 twice the number :- NP : V2:n
-girls :- NP : V1:n
-girls :- NP : V2:n
+the number :- NP : V1:n
 twice :- NP : 2.0:n
 3 :- NP : 3.0:n
 16 :- NP : 16.0:n
-the larger number :- NP : V1:n
-the larger number :- NP : V2:n
-3 times :- NP : V1:n
-3 times :- NP : V2:n
-the smaller number :- NP : V1:n
 the smaller number :- NP : V2:n
-16 :- NP : V1:n
-16 :- NP : V2:n
+the larger number :- NP : V1:n
 4 :- NP : 4.0:n
-he :- NP : V1:n
-he :- NP : V2:n
-4 times :- NP : V1:n
-4 times :- NP : V2:n
-many large postcards :- NP : V1:n
-many large postcards :- NP : V2:n
-small postcards :- NP : V1:n
 small postcards :- NP : V2:n
+many large postcards :- NP : V1:n
 70.93 :- NP : 70.93:n
-the total cost :- NP : V1:n
-the total cost :- NP : V2:n
-a pair :- NP : V1:n
-a pair :- NP : V2:n
-pants :- NP : V1:n
-pants :- NP : V2:n
-a belt :- NP : V1:n
 a belt :- NP : V2:n
-70.93 dollars :- NP : V1:n
-70.93 dollars :- NP : V2:n
+a pair :- NP : V1:n
 12 :- NP : 12.0:n
-he :- NP : V1:n
-he :- NP : V2:n
-12 more dimes :- NP : V1:n
 12 more dimes :- NP : V2:n
 nickels :- NP : V1:n
-nickels :- NP : V2:n
 80 :- NP : 80.0:n
-this year :- NP : V1:n
-this year :- NP : V2:n
-he :- NP : V1:n
-he :- NP : V2:n
-80 more acres :- NP : V1:n
 80 more acres :- NP : V2:n
-sunflowers :- NP : V1:n
-sunflowers :- NP : V2:n
 flax :- NP : V1:n
-flax :- NP : V2:n
 7 :- NP : 7.0:n
 5 :- NP : 5.0:n
 146 :- NP : 146.0:n
-7 time :- NP : V1:n
-7 time :- NP : V2:n
-the first part :- NP : V1:n
-the first part :- NP : V2:n
-5 times :- NP : V1:n
-5 times :- NP : V2:n
-the second part :- NP : V1:n
 the second part :- NP : V2:n
-146 :- NP : V1:n
-146 :- NP : V2:n
+the first part :- NP : V1:n
 24 :- NP : 24.0:n
 two :- NP : 2.0:n
-24 :- NP : V1:n
-24 :- NP : V2:n
-two parts :- NP : V1:n
 two parts :- NP : V2:n
+two parts :- NP : V1:n
 10,000 :- NP : 10000.0:n
-10,000 :- NP : 2.0:n
-a total :- NP : V1:n
-a total :- NP : V2:n
-10,000 dollars :- NP : V1:n
-10,000 dollars :- NP : V2:n
-two bond mutual funds :- NP : V1:n
+two :- NP : 2.0:n
 two bond mutual funds :- NP : V2:n
-a junk bond fund :- NP : V1:n
-a junk bond fund :- NP : V2:n
-a government bond fund :- NP : V1:n
-a government bond fund :- NP : V2:n
+two bond mutual funds :- NP : V1:n
 3 :- NP : 3.0:n
 4 :- NP : 4.0:n
 10 :- NP : 10.0:n
-arthur :- NP : V1:n
-arthur :- NP : V2:n
-3 hamburgers :- NP : V1:n
-3 hamburgers :- NP : V2:n
-4 hot dogs :- NP : V1:n
 4 hot dogs :- NP : V2:n
-10 dollars :- NP : V1:n
-10 dollars :- NP : V2:n
+3 hamburgers :- NP : V1:n
 15 :- NP : 15.0:n
-tickets :- NP : V1:n
 tickets :- NP : V2:n
-balcony seats :- NP : V1:n
-balcony seats :- NP : V2:n
-15 dollars :- NP : V1:n
-15 dollars :- NP : V2:n
 tickets :- NP : V1:n
-tickets :- NP : V2:n
-main-level seats :- NP : V1:n
-main-level seats :- NP : V2:n
 12 :- NP : 12.0:n
 18 :- NP : 18.0:n
 44.46 :- NP : 44.46:n
-the cost :- NP : V1:n
-the cost :- NP : V2:n
-12 gallons :- NP : V1:n
-12 gallons :- NP : V2:n
-regular gasoline :- NP : V1:n
-regular gasoline :- NP : V2:n
-18 gallons :- NP : V1:n
 18 gallons :- NP : V2:n
-premium gasoline :- NP : V1:n
-premium gasoline :- NP : V2:n
-44.46 dollars :- NP : V1:n
-44.46 dollars :- NP : V2:n
+12 gallons :- NP : V1:n
 0.22 :- NP : 0.22:n
+regular :- NP : V2:n
 premium :- NP : V1:n
-premium :- NP : V2:n
-0.22 dollars :- NP : V1:n
-0.22 dollars :- NP : V2:n
-gallon :- NP : V1:n
-gallon :- NP : V2:n
 178 :- NP : 178.0:n
-there :- NP : V1:n
-there :- NP : V2:n
-178 :- NP : V1:n
-178 :- NP : V2:n
-more hikers :- NP : V1:n
 more hikers :- NP : V2:n
 bike riders :- NP : V1:n
-bike riders :- NP : V2:n
 0.4 :- NP : 0.4:n
-the number :- NP : V1:n
 the number :- NP : V2:n
-girls :- NP : V1:n
-girls :- NP : V2:n
-0.4 :- NP : V1:n
-0.4 :- NP : V2:n
 the number :- NP : V1:n
-the number :- NP : V2:n
-boys :- NP : V1:n
-boys :- NP : V2:n
 two :- NP : 2.0:n
 7 :- NP : 7.0:n
-the number :- NP : V1:n
 the number :- NP : V2:n
-grocery items :- NP : V1:n
-grocery items :- NP : V2:n
-two grocery lists :- NP : V1:n
-two grocery lists :- NP : V2:n
-7 :- NP : V1:n
-7 :- NP : V2:n
+the number :- NP : V1:n
 142.50 :- NP : 142.5:n
-wednesdays game :- NP : V1:n
-wednesdays game :- NP : V2:n
-142.50 dollars :- NP : V1:n
-142.50 dollars :- NP : V2:n
-saturdays game :- NP : V1:n
 saturdays game :- NP : V2:n
+wednesdays game :- NP : V1:n
 69 :- NP : 69.0:n
-there :- NP : V1:n
-there :- NP : V2:n
-69 more girls :- NP : V1:n
 69 more girls :- NP : V2:n
 boys :- NP : V1:n
-boys :- NP : V2:n
 3 :- NP : 3.0:n
 6 :- NP : 6.0:n
 104.25 :- NP : 104.25:n
-3 pairs :- NP : V1:n
-3 pairs :- NP : V2:n
-jeans :- NP : V1:n
-jeans :- NP : V2:n
-6 shirts :- NP : V1:n
 6 shirts :- NP : V2:n
-104.25 dollars :- NP : V1:n
-104.25 dollars :- NP : V2:n
+3 pairs :- NP : V1:n
 2.75 :- NP : 2.75:n
 one :- NP : 1.0:n
 125 :- NP : 125.0:n
-john :- NP : V1:n
-john :- NP : V2:n
-'s photo world :- NP : V1:n
-'s photo world :- NP : V2:n
-2.75 dollars :- NP : V1:n
-2.75 dollars :- NP : V2:n
-sheet :- NP : V1:n
 sheet :- NP : V2:n
-a one time sitting fee :- NP : V1:n
-a one time sitting fee :- NP : V2:n
-125 dollars :- NP : V1:n
-125 dollars :- NP : V2:n
+john :- NP : V1:n
 one :- NP : 1.0:n
 twice :- NP : 2.0:n
-one week :- NP : V1:n
-one week :- NP : V2:n
-she :- NP : V1:n
 she :- NP : V2:n
-the office :- NP : V1:n
-the office :- NP : V2:n
 she :- NP : V1:n
-she :- NP : V2:n
-the tractor :- NP : V1:n
-the tractor :- NP : V2:n
 19 :- NP : 19.0:n
+her groom :- NP : V2:n
 the world :- NP : V1:n
-the world :- NP : V2:n
-'s oldest bride :- NP : V1:n
-'s oldest bride :- NP : V2:n
-19 years :- NP : V1:n
-19 years :- NP : V2:n
-her :- NP : V1:n
-her :- NP : V2:n
-groom :- NP : V1:n
-groom :- NP : V2:n
 two :- NP : 2.0:n
 45 :- NP : 45.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-the average miles :- NP : V1:n
 the average miles :- NP : V2:n
-gallon :- NP : V1:n
-gallon :- NP : V2:n
-the two cars :- NP : V1:n
-the two cars :- NP : V2:n
-a particular week :- NP : V1:n
-a particular week :- NP : V2:n
-45 :- NP : V1:n
-45 :- NP : V2:n
+the average miles :- NP : V1:n
 0.5 :- NP : 0.5:n
 0.3333 :- NP : 0.3333:n
 11 :- NP : 11.0:n
-0.5 :- NP : V1:n
-0.5 :- NP : V2:n
-the first number :- NP : V1:n
-the first number :- NP : V2:n
-plus 0.3333 :- NP : V1:n
-plus 0.3333 :- NP : V2:n
-the second number :- NP : V1:n
 the second number :- NP : V2:n
-11 :- NP : V1:n
-11 :- NP : V2:n
+the first number :- NP : V1:n
 24 :- NP : 24.0:n
 twice :- NP : 2.0:n
-the mainers :- NP : V1:n
-the mainers :- NP : V2:n
-24 :- NP : V1:n
-24 :- NP : V2:n
-twice as many games :- NP : V1:n
-twice as many games :- NP : V2:n
-they :- NP : V1:n
 they :- NP : V2:n
+the mainers :- NP : V1:n
 2.00 :- NP : 2.0:n
-a bottle :- NP : V1:n
-a bottle :- NP : V2:n
-wine :- NP : V1:n
-wine :- NP : V2:n
-a cork :- NP : V1:n
-a cork :- NP : V2:n
-2.00 dollars :- NP : V1:n
-2.00 dollars :- NP : V2:n
-the cork :- NP : V1:n
 the cork :- NP : V2:n
+a bottle :- NP : V1:n
 3 :- NP : 3.0:n
 2 :- NP : 2.0:n
 12.75 :- NP : 12.75:n
-mrs.martin :- NP : V1:n
-mrs.martin :- NP : V2:n
-3 cups :- NP : V1:n
-3 cups :- NP : V2:n
-coffee :- NP : V1:n
-coffee :- NP : V2:n
-2 bagels :- NP : V1:n
 2 bagels :- NP : V2:n
-12.75 dollars :- NP : V1:n
-12.75 dollars :- NP : V2:n
+3 cups :- NP : V1:n
 two :- NP : 2.0:n
-the number :- NP : V1:n
 the number :- NP : V2:n
-student tickets :- NP : V1:n
-student tickets :- NP : V2:n
-two times :- NP : V1:n
-two times :- NP : V2:n
 the number :- NP : V1:n
-the number :- NP : V2:n
-adult tickets :- NP : V1:n
-adult tickets :- NP : V2:n
 3 :- NP : 3.0:n
 twice :- NP : 2.0:n
-this :- NP : V1:n
-this :- NP : V2:n
-3 meters :- NP : V1:n
-3 meters :- NP : V2:n
-twice the width :- NP : V1:n
 twice the width :- NP : V2:n
+this :- NP : V1:n
 three :- NP : 3.0:n
 16 :- NP : 16.0:n
-the difference :- NP : V1:n
-the difference :- NP : V2:n
-three times :- NP : V1:n
-three times :- NP : V2:n
-the smaller number :- NP : V1:n
-the smaller number :- NP : V2:n
-the larger number :- NP : V1:n
 the larger number :- NP : V2:n
-16 :- NP : V1:n
-16 :- NP : V2:n
+the smaller number :- NP : V1:n
 1.50 :- NP : 1.5:n
 one :- NP : 1.0:n
 140 :- NP : 140.0:n
-sam :- NP : V1:n
-sam :- NP : V2:n
-'s picture emporium :- NP : V1:n
-'s picture emporium :- NP : V2:n
-1.50 dollars :- NP : V1:n
-1.50 dollars :- NP : V2:n
-sheet :- NP : V1:n
 sheet :- NP : V2:n
-a one time sitting fee :- NP : V1:n
-a one time sitting fee :- NP : V2:n
-140 dollars :- NP : V1:n
-140 dollars :- NP : V2:n
+sam :- NP : V1:n
 twice :- NP : 2.0:n
-the longest piece :- NP : V1:n
-the longest piece :- NP : V2:n
-the shorter piece :- NP : V1:n
 the shorter piece :- NP : V2:n
+the longest piece :- NP : V1:n
 12 :- NP : 12.0:n
-they :- NP : V1:n
 they :- NP : V2:n
-12 games :- NP : V1:n
-12 games :- NP : V2:n
 they :- NP : V1:n
-they :- NP : V2:n
 22,000 :- NP : 22000.0:n
-22,000 :- NP : 0.18:n
-22,000 :- NP : 0.14:n
-bob :- NP : V1:n
-bob :- NP : V2:n
-22,000 dollars :- NP : V1:n
-22,000 dollars :- NP : V2:n
-part :- NP : V1:n
-part :- NP : V2:n
-18 % and part :- NP : V1:n
+18 :- NP : 0.18:n
+14 :- NP : 0.14:n
 18 % and part :- NP : V2:n
-14 % :- NP : V1:n
-14 % :- NP : V2:n
+part :- NP : V1:n
 twice :- NP : 2.0:n
-there :- NP : V1:n
-there :- NP : V2:n
-many adults :- NP : V1:n
-many adults :- NP : V2:n
-children :- NP : V1:n
 children :- NP : V2:n
+many adults :- NP : V1:n
 434 :- NP : 434.0:n
-the total number :- NP : V1:n
-the total number :- NP : V2:n
-democrats and republicans :- NP : V1:n
 democrats and republicans :- NP : V2:n
-the house :- NP : V1:n
-the house :- NP : V2:n
-representatives :- NP : V1:n
-representatives :- NP : V2:n
-434 :- NP : V1:n
-434 :- NP : V2:n
+democrats and republicans :- NP : V1:n
 30 :- NP : 30.0:n
-there :- NP : V1:n
-there :- NP : V2:n
-30 more republicans :- NP : V1:n
-30 more republicans :- NP : V2:n
-democrats :- NP : V1:n
 democrats :- NP : V2:n
+30 more republicans :- NP : V1:n
 1 :- NP : 1.0:n
 0.6667 :- NP : 0.6667:n
 0.75 :- NP : 0.75:n
-1 more than 0.6667 :- NP : V1:n
-1 more than 0.6667 :- NP : V2:n
-the number :- NP : V1:n
 the number :- NP : V2:n
-0.75 :- NP : V1:n
-0.75 :- NP : V2:n
 the number :- NP : V1:n
-the number :- NP : V2:n
 177-inch :- NP : 177.0:n
 two :- NP : 2.0:n
-a 177-inch pipe :- NP : V1:n
-a 177-inch pipe :- NP : V2:n
-two pieces :- NP : V1:n
 two pieces :- NP : V2:n
+two pieces :- NP : V1:n
 five :- NP : 5.0:n
 three :- NP : 3.0:n
-the number :- NP : V1:n
 the number :- NP : V2:n
-baseball cards :- NP : V1:n
-baseball cards :- NP : V2:n
-he :- NP : V1:n
-he :- NP : V2:n
-five :- NP : V1:n
-five :- NP : V2:n
-three times :- NP : V1:n
-three times :- NP : V2:n
 the number :- NP : V1:n
-the number :- NP : V2:n
-football cards :- NP : V1:n
-football cards :- NP : V2:n
 0.25 :- NP : 0.25:n
 9 :- NP : 9.0:n
+text message :- NP : V2:n
 plan a :- NP : V1:n
-plan a :- NP : V2:n
-0.25 dollars :- NP : V1:n
-0.25 dollars :- NP : V2:n
-text message :- NP : V1:n
-text message :- NP : V2:n
-a monthly fee :- NP : V1:n
-a monthly fee :- NP : V2:n
-9 dollars :- NP : V1:n
-9 dollars :- NP : V2:n
 70 :- NP : 70.0:n
-the mcdonalds stock :- NP : V1:n
-the mcdonalds stock :- NP : V2:n
-70 dollars :- NP : V1:n
-70 dollars :- NP : V2:n
-share :- NP : V1:n
-share :- NP : V2:n
-the ohio art company stock :- NP : V1:n
 the ohio art company stock :- NP : V2:n
+the mcdonalds stock :- NP : V1:n
 0.40 :- NP : 0.4:n
-the other plan costs :- NP : V1:n
-the other plan costs :- NP : V2:n
-0.40 dollars :- NP : V1:n
-0.40 dollars :- NP : V2:n
-text message :- NP : V1:n
 text message :- NP : V2:n
-no monthly fee :- NP : V1:n
-no monthly fee :- NP : V2:n
+the other plan costs :- NP : V1:n
 81,000 :- NP : 81000.0:n
-81,000 :- NP : 7000.0:n
-the cost :- NP : V1:n
-the cost :- NP : V2:n
-an overhead :- NP : V1:n
-an overhead :- NP : V2:n
-81,000 dollars :- NP : V1:n
-81,000 dollars :- NP : V2:n
-production costs :- NP : V1:n
-production costs :- NP : V2:n
-7,000 dollars :- NP : V1:n
-7,000 dollars :- NP : V2:n
-performance :- NP : V1:n
+7,000 :- NP : 7000.0:n
 performance :- NP : V2:n
+the cost :- NP : V1:n
 one :- NP : 1.0:n
 11 :- NP : 11.0:n
 3 :- NP : 3.0:n
-one number :- NP : V1:n
-one number :- NP : V2:n
-11 :- NP : V1:n
-11 :- NP : V2:n
-3 times :- NP : V1:n
-3 times :- NP : V2:n
-another number :- NP : V1:n
 another number :- NP : V2:n
+one number :- NP : V1:n
 one :- NP : 1.0:n
 twice :- NP : 2.0:n
-one integer :- NP : V1:n
-one integer :- NP : V2:n
-twice another :- NP : V1:n
 twice another :- NP : V2:n
+one integer :- NP : V1:n
 160 :- NP : 160.0:n
 7 :- NP : 7.0:n
-you :- NP : V1:n
-you :- NP : V2:n
-160 dollars :- NP : V1:n
-160 dollars :- NP : V2:n
-7 dollars :- NP : V1:n
-7 dollars :- NP : V2:n
-week :- NP : V1:n
 week :- NP : V2:n
+you :- NP : V1:n
 twice :- NP : 2.0:n
-there :- NP : V1:n
-there :- NP : V2:n
-many dimes :- NP : V1:n
-many dimes :- NP : V2:n
-nickels :- NP : V1:n
 nickels :- NP : V2:n
+many dimes :- NP : V1:n
 two :- NP : 2.0:n
 6 :- NP : 6.0:n
-the difference :- NP : V1:n
-the difference :- NP : V2:n
-two numbers :- NP : V1:n
 two numbers :- NP : V2:n
-6 :- NP : V1:n
-6 :- NP : V2:n
+two numbers :- NP : V1:n
 27 :- NP : 27.0:n
-a bank :- NP : V1:n
-a bank :- NP : V2:n
-27 coins :- NP : V1:n
-27 coins :- NP : V2:n
-dimes and quarters :- NP : V1:n
 dimes and quarters :- NP : V2:n
+dimes and quarters :- NP : V1:n
 18 :- NP : 18.0:n
-a coin purse :- NP : V1:n
-a coin purse :- NP : V2:n
-18 coins :- NP : V1:n
-18 coins :- NP : V2:n
-nickels and dimes :- NP : V1:n
 nickels and dimes :- NP : V2:n
+nickels and dimes :- NP : V1:n
 15-cent :- NP : 15.0:n
 four :- NP : 4.0:n
 three :- NP : 3.0:n
 18-cent :- NP : 18.0:n
-the number :- NP : V1:n
 the number :- NP : V2:n
-15-cent stamps :- NP : V1:n
-15-cent stamps :- NP : V2:n
-four :- NP : V1:n
-four :- NP : V2:n
-three times :- NP : V1:n
-three times :- NP : V2:n
 the number :- NP : V1:n
-the number :- NP : V2:n
-18-cent stamps :- NP : V1:n
-18-cent stamps :- NP : V2:n
 six :- NP : 6.0:n
-there :- NP : V1:n
-there :- NP : V2:n
-six more quarters :- NP : V1:n
-six more quarters :- NP : V2:n
-dimes :- NP : V1:n
 dimes :- NP : V2:n
+six more quarters :- NP : V1:n
 10 :- NP : 10.0:n
 twice :- NP : 2.0:n
-the number :- NP : V1:n
-the number :- NP : V2:n
-dimes :- NP : V1:n
-dimes :- NP : V2:n
-10 :- NP : V1:n
-10 :- NP : V2:n
-twice the number :- NP : V1:n
 twice the number :- NP : V2:n
-nickels :- NP : V1:n
-nickels :- NP : V2:n
+the number :- NP : V1:n
 22-cent :- NP : 22.0:n
 three :- NP : 3.0:n
 four :- NP : 4.0:n
 40-cent :- NP : 40.0:n
-the number :- NP : V1:n
 the number :- NP : V2:n
-22-cent stamps :- NP : V1:n
-22-cent stamps :- NP : V2:n
-three :- NP : V1:n
-three :- NP : V2:n
-four times :- NP : V1:n
-four times :- NP : V2:n
 the number :- NP : V1:n
-the number :- NP : V2:n
-40-cent stamps :- NP : V1:n
-40-cent stamps :- NP : V2:n
 50000 :- NP : 50000.0:n
 5 :- NP : 0.05:n
 7.5 :- NP : 0.075:n
-a total :- NP : V1:n
-a total :- NP : V2:n
-50000 dollars :- NP : V1:n
-50000 dollars :- NP : V2:n
-part :- NP : V1:n
-part :- NP : V2:n
-it :- NP : V1:n
-it :- NP : V2:n
-5 % :- NP : V1:n
-5 % :- NP : V2:n
-the rest :- NP : V1:n
 the rest :- NP : V2:n
-7.5 % :- NP : V1:n
-7.5 % :- NP : V2:n
+part :- NP : V1:n
 five :- NP : 5.0:n
 three :- NP : 3.0:n
 19 :- NP : 19.0:n
-five :- NP : V1:n
-five :- NP : V2:n
-three :- NP : V1:n
-three :- NP : V2:n
 a certain number :- NP : V1:n
-a certain number :- NP : V2:n
-the result :- NP : V1:n
-the result :- NP : V2:n
-19 :- NP : V1:n
-19 :- NP : V2:n
 five :- NP : 5.0:n
 three :- NP : 3.0:n
 10 :- NP : 10.0:n
-five :- NP : V1:n
-five :- NP : V2:n
-three times :- NP : V1:n
-three times :- NP : V2:n
 a certain number :- NP : V1:n
-a certain number :- NP : V2:n
-the result :- NP : V1:n
-the result :- NP : V2:n
-10 :- NP : V1:n
-10 :- NP : V2:n
 two :- NP : 2.0:n
 20 :- NP : 20.0:n
-the difference :- NP : V1:n
-the difference :- NP : V2:n
-two numbers :- NP : V1:n
 two numbers :- NP : V2:n
-20 :- NP : V1:n
-20 :- NP : V2:n
+two numbers :- NP : V1:n
 18 :- NP : 18.0:n
 six :- NP : 6.0:n
 42 :- NP : 42.0:n
-18 :- NP : V1:n
-18 :- NP : V2:n
-six times :- NP : V1:n
-six times :- NP : V2:n
 a certain number :- NP : V1:n
-a certain number :- NP : V2:n
-the result :- NP : V1:n
-the result :- NP : V2:n
-42 :- NP : V1:n
-42 :- NP : V2:n
 twice :- NP : 2.0:n
 96 :- NP : 96.0:n
-a certain number :- NP : V1:n
-a certain number :- NP : V2:n
-itself :- NP : V1:n
 itself :- NP : V2:n
-96 :- NP : V1:n
-96 :- NP : V2:n
+a certain number :- NP : V1:n
 sixty :- NP : 60.0:n
 nine :- NP : 9.0:n
 two :- NP : 2.0:n
 ten :- NP : 10.0:n
-sixty more than nine times :- NP : V1:n
-sixty more than nine times :- NP : V2:n
-a number :- NP : V1:n
-a number :- NP : V2:n
-the same :- NP : V1:n
-the same :- NP : V2:n
-two less :- NP : V1:n
-two less :- NP : V2:n
-ten times :- NP : V1:n
-ten times :- NP : V2:n
-the number :- NP : V1:n
 the number :- NP : V2:n
+a number :- NP : V1:n
 eleven :- NP : 11.0:n
 seven :- NP : 7.0:n
 five :- NP : 5.0:n
 six :- NP : 6.0:n
-eleven less than seven times :- NP : V1:n
-eleven less than seven times :- NP : V2:n
-a number :- NP : V1:n
-a number :- NP : V2:n
-five :- NP : V1:n
-five :- NP : V2:n
-six times :- NP : V1:n
-six times :- NP : V2:n
-the number :- NP : V1:n
 the number :- NP : V2:n
+a number :- NP : V1:n
 fourteen :- NP : 14.0:n
 eight :- NP : 8.0:n
 three :- NP : 3.0:n
 four :- NP : 4.0:n
-fourteen less than eight times :- NP : V1:n
-fourteen less than eight times :- NP : V2:n
-a number :- NP : V1:n
-a number :- NP : V2:n
-three :- NP : V1:n
-three :- NP : V2:n
-four times :- NP : V1:n
-four times :- NP : V2:n
-the number :- NP : V1:n
 the number :- NP : V2:n
+a number :- NP : V1:n
 12 :- NP : 12.0:n
-the third angle :- NP : V1:n
-the third angle :- NP : V2:n
-12 degrees :- NP : V1:n
-12 degrees :- NP : V2:n
-the first angle :- NP : V1:n
 the first angle :- NP : V2:n
+the third angle :- NP : V1:n
 3 :- NP : 3.0:n
-the third angle :- NP : V1:n
-the third angle :- NP : V2:n
-3 times :- NP : V1:n
-3 times :- NP : V2:n
-the first :- NP : V1:n
 the first :- NP : V2:n
-40 :- NP : 40.0:n
-the measure :- NP : V1:n
-the measure :- NP : V2:n
 the third angle :- NP : V1:n
-the third angle :- NP : V2:n
-40 degrees greater :- NP : V1:n
-40 degrees greater :- NP : V2:n
-that :- NP : V1:n
-that :- NP : V2:n
-the first angle :- NP : V1:n
-the first angle :- NP : V2:n
 40 :- NP : 40.0:n
-the length :- NP : V1:n
-the length :- NP : V2:n
-40 cm :- NP : V1:n
-40 cm :- NP : V2:n
-the width :- NP : V1:n
+the first angle :- NP : V2:n
+the measure :- NP : V1:n
+40 :- NP : 40.0:n
 the width :- NP : V2:n
+the length :- NP : V1:n
 4 :- NP : 4.0:n
-the land :- NP : V1:n
-the land :- NP : V2:n
-cost :- NP : V1:n
-cost :- NP : V2:n
-4 times :- NP : V1:n
-4 times :- NP : V2:n
-the cabin :- NP : V1:n
 the cabin :- NP : V2:n
+the land :- NP : V1:n
 0.5 :- NP : 0.5:n
 10 :- NP : 10.0:n
 0.1667 :- NP : 0.1667:n
-0.5 :- NP : V1:n
-0.5 :- NP : V2:n
-a certain number :- NP : V1:n
-a certain number :- NP : V2:n
-10 :- NP : V1:n
-10 :- NP : V2:n
-0.1667 :- NP : V1:n
-0.1667 :- NP : V2:n
-a number :- NP : V1:n
 a number :- NP : V2:n
+a certain number :- NP : V1:n
 240 :- NP : 240.0:n
-a bicycle :- NP : V1:n
-a bicycle :- NP : V2:n
-a bicycle helmet cost :- NP : V1:n
 a bicycle helmet cost :- NP : V2:n
-240 dollars :- NP : V1:n
-240 dollars :- NP : V2:n
+a bicycle :- NP : V1:n
 5 :- NP : 5.0:n
-the bicycle :- NP : V1:n
-the bicycle :- NP : V2:n
-cost :- NP : V1:n
-cost :- NP : V2:n
-5 times :- NP : V1:n
-5 times :- NP : V2:n
-the helmet :- NP : V1:n
 the helmet :- NP : V2:n
+the bicycle :- NP : V1:n
 7 :- NP : 7.0:n
-aaron :- NP : V1:n
-aaron :- NP : V2:n
-7 times :- NP : V1:n
-7 times :- NP : V2:n
-many sheep :- NP : V1:n
-many sheep :- NP : V2:n
-beth :- NP : V1:n
 beth :- NP : V2:n
+aaron :- NP : V1:n
 30 :- NP : 30.0:n
 two :- NP : 2.0:n
-an electrician :- NP : V1:n
-an electrician :- NP : V2:n
-a 30 feet piece :- NP : V1:n
-a 30 feet piece :- NP : V2:n
-wire :- NP : V1:n
-wire :- NP : V2:n
-two pieces :- NP : V1:n
 two pieces :- NP : V2:n
+two pieces :- NP : V1:n
 one :- NP : 1.0:n
 2 :- NP : 2.0:n
-one piece :- NP : V1:n
-one piece :- NP : V2:n
-2 feet :- NP : V1:n
-2 feet :- NP : V2:n
-the other :- NP : V1:n
 the other :- NP : V2:n
+one piece :- NP : V1:n
 704 :- NP : 704.0:n
-tuition costs 704 dollars more :- NP : V1:n
-tuition costs 704 dollars more :- NP : V2:n
-room and board :- NP : V1:n
 room and board :- NP : V2:n
+tuition costs 704 dollars more :- NP : V1:n
 4 :- NP : 4.0:n
 twice :- NP : 2.0:n
-4 years :- NP : V1:n
-4 years :- NP : V2:n
+his brother :- NP : V2:n
 he :- NP : V1:n
-he :- NP : V2:n
-his brother :- NP : V1:n
-his brother :- NP : V2:n
 10 :- NP : 10.0:n
-a boy :- NP : V1:n
-a boy :- NP : V2:n
-10 years :- NP : V1:n
-10 years :- NP : V2:n
-his brother :- NP : V1:n
 his brother :- NP : V2:n
+a boy :- NP : V1:n
 20 :- NP : 20.0:n
 twice :- NP : 2.0:n
-20 years :- NP : V1:n
-20 years :- NP : V2:n
-the father :- NP : V1:n
-the father :- NP : V2:n
-his son :- NP : V1:n
 his son :- NP : V2:n
+the father :- NP : V1:n
 6 :- NP : 6.0:n
 twice :- NP : 2.0:n
-6 years :- NP : V1:n
-6 years :- NP : V2:n
-diane :- NP : V1:n
-diane :- NP : V2:n
-amy :- NP : V1:n
 amy :- NP : V2:n
+diane :- NP : V1:n
 15000 :- NP : 15000.0:n
 2 :- NP : 2.0:n
+one :- NP : 1.0:n
 4 :- NP : 0.04:n
 3 :- NP : 0.03:n
-an investor :- NP : V1:n
-an investor :- NP : V2:n
-a total :- NP : V1:n
-a total :- NP : V2:n
-15000 dollars :- NP : V1:n
-15000 dollars :- NP : V2:n
-2 accounts :- NP : V1:n
 2 accounts :- NP : V2:n
-one :- NP : V1:n
-one :- NP : V2:n
-4 % annual simple interest :- NP : V1:n
-4 % annual simple interest :- NP : V2:n
-the other 3 % :- NP : V1:n
-the other 3 % :- NP : V2:n
+2 accounts :- NP : V1:n
 four :- NP : 4.0:n
 twice :- NP : 2.0:n
-four years :- NP : V1:n
-four years :- NP : V2:n
-john :- NP : V1:n
-john :- NP : V2:n
-mary :- NP : V1:n
 mary :- NP : V2:n
+john :- NP : V1:n
 four :- NP : 4.0:n
 3 :- NP : 3.0:n
-four years :- NP : V1:n
-four years :- NP : V2:n
-the father :- NP : V1:n
-the father :- NP : V2:n
-3 times :- NP : V1:n
-3 times :- NP : V2:n
-the son :- NP : V1:n
 the son :- NP : V2:n
+the father :- NP : V1:n
 16 :- NP : 16.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-the ages :- NP : V1:n
-the ages :- NP : V2:n
-a china plate :- NP : V1:n
-a china plate :- NP : V2:n
-a glass plate :- NP : V1:n
 a glass plate :- NP : V2:n
-16 years :- NP : V1:n
-16 years :- NP : V2:n
+the ages :- NP : V1:n
 four :- NP : 4.0:n
 three :- NP : 3.0:n
-four years :- NP : V1:n
-four years :- NP : V2:n
-the china plate :- NP : V1:n
-the china plate :- NP : V2:n
-three times :- NP : V1:n
-three times :- NP : V2:n
-the age :- NP : V1:n
 the age :- NP : V2:n
-the glass plate :- NP : V1:n
-the glass plate :- NP : V2:n
+the china plate :- NP : V1:n
 four :- NP : 4.0:n
 half :- NP : 0.5:n
-four years :- NP : V1:n
-four years :- NP : V2:n
-the bronze plaque :- NP : V1:n
-the bronze plaque :- NP : V2:n
-half the age :- NP : V1:n
 half the age :- NP : V2:n
-the wood plaque :- NP : V1:n
-the wood plaque :- NP : V2:n
+the bronze plaque :- NP : V1:n
 two :- NP : 2.0:n
-the age :- NP : V1:n
-the age :- NP : V2:n
-the older :- NP : V1:n
-the older :- NP : V2:n
-two boys :- NP : V1:n
-two boys :- NP : V2:n
-the younger :- NP : V1:n
+thrice :- NP : 3.0:n
 the younger :- NP : V2:n
+the age :- NP : V1:n
 12 :- NP : 12.0:n
 three :- NP : 3.0:n
-12 years :- NP : V1:n
-12 years :- NP : V2:n
-the limestone :- NP : V1:n
-the limestone :- NP : V2:n
-three times as old :- NP : V1:n
-three times as old :- NP : V2:n
-the marble statue :- NP : V1:n
 the marble statue :- NP : V2:n
+the limestone :- NP : V1:n
 56 :- NP : 56.0:n
-a limestone statue :- NP : V1:n
-a limestone statue :- NP : V2:n
-56 years :- NP : V1:n
-56 years :- NP : V2:n
-a marble statue :- NP : V1:n
 a marble statue :- NP : V2:n
+a limestone statue :- NP : V1:n
 64 :- NP : 64.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-clyde and wendy ’ :- NP : V1:n
 clyde and wendy ’ :- NP : V2:n
-age :- NP : V1:n
-age :- NP : V2:n
-64 :- NP : V1:n
-64 :- NP : V2:n
+clyde and wendy ’ :- NP : V1:n
 four :- NP : 4.0:n
 three :- NP : 3.0:n
-four years :- NP : V1:n
-four years :- NP : V2:n
-wendy :- NP : V1:n
-wendy :- NP : V2:n
-three times as old :- NP : V1:n
-three times as old :- NP : V2:n
-clyde :- NP : V1:n
 clyde :- NP : V2:n
+wendy :- NP : V1:n
 17,000 :- NP : 17000.0:n
-17,000 :- NP : 0.18:n
-17,000 :- NP : 0.04:n
-stan :- NP : V1:n
-stan :- NP : V2:n
-17,000 dollars :- NP : V1:n
-17,000 dollars :- NP : V2:n
-part :- NP : V1:n
-part :- NP : V2:n
-18 % and part :- NP : V1:n
+18 :- NP : 0.18:n
+4 :- NP : 0.04:n
 18 % and part :- NP : V2:n
-4 % :- NP : V1:n
-4 % :- NP : V2:n
+part :- NP : V1:n
 two :- NP : 2.0:n
 three :- NP : 3.0:n
-two years :- NP : V1:n
-two years :- NP : V2:n
-the age :- NP : V1:n
 the age :- NP : V2:n
-the older ship :- NP : V1:n
-the older ship :- NP : V2:n
-three times :- NP : V1:n
-three times :- NP : V2:n
 the age :- NP : V1:n
-the age :- NP : V2:n
-the newer ship :- NP : V1:n
-the newer ship :- NP : V2:n
 four :- NP : 4.0:n
 3 :- NP : 3.0:n
-four years :- NP : V1:n
-four years :- NP : V2:n
-elli :- NP : V1:n
-elli :- NP : V2:n
-3 times :- NP : V1:n
-3 times :- NP : V2:n
-dan :- NP : V1:n
 dan :- NP : V2:n
+elli :- NP : V1:n
 one :- NP : 1.0:n
 twice :- NP : 2.0:n
-one cyclist rides :- NP : V1:n
-one cyclist rides :- NP : V2:n
-the other :- NP : V1:n
 the other :- NP : V2:n
+one cyclist rides :- NP : V1:n
 25 :- NP : 25.0:n
-the first plane :- NP : V1:n
-the first plane :- NP : V2:n
-25 mph :- NP : V1:n
-25 mph :- NP : V2:n
-the second plane :- NP : V1:n
 the second plane :- NP : V2:n
+the first plane :- NP : V1:n
 6 :- NP : 6.0:n
 2 :- NP : 2.0:n
-the second angle :- NP : V1:n
-the second angle :- NP : V2:n
-6 degrees larger than 2 times :- NP : V1:n
-6 degrees larger than 2 times :- NP : V2:n
-the measure :- NP : V1:n
 the measure :- NP : V2:n
-the first angle :- NP : V1:n
-the first angle :- NP : V2:n
+the second angle :- NP : V1:n
 10 :- NP : 10.0:n
 3 :- NP : 3.0:n
-the second angle :- NP : V1:n
-the second angle :- NP : V2:n
-10 degrees larger than 3 times :- NP : V1:n
-10 degrees larger than 3 times :- NP : V2:n
-the measure :- NP : V1:n
 the measure :- NP : V2:n
-the first angle :- NP : V1:n
-the first angle :- NP : V2:n
+the second angle :- NP : V1:n
 10 :- NP : 10.0:n
 4 :- NP : 4.0:n
-the second angle :- NP : V1:n
-the second angle :- NP : V2:n
-10 degrees larger than 4 times :- NP : V1:n
-10 degrees larger than 4 times :- NP : V2:n
-the measure :- NP : V1:n
 the measure :- NP : V2:n
-the first angle :- NP : V1:n
-the first angle :- NP : V2:n
+the second angle :- NP : V1:n
 four :- NP : 4.0:n
 eight :- NP : 8.0:n
 660 :- NP : 660.0:n
-four less than eight times :- NP : V1:n
-four less than eight times :- NP : V2:n
 a certain number :- NP : V1:n
-a certain number :- NP : V2:n
-660 :- NP : V1:n
-660 :- NP : V2:n
 nine :- NP : 9.0:n
 five :- NP : 5.0:n
 141 :- NP : 141.0:n
-nine less than five times :- NP : V1:n
-nine less than five times :- NP : V2:n
 a certain number :- NP : V1:n
-a certain number :- NP : V2:n
-141 :- NP : V1:n
-141 :- NP : V2:n
 four :- NP : 4.0:n
-several days :- NP : V1:n
-several days :- NP : V2:n
-he :- NP : V1:n
 he :- NP : V2:n
-four times :- NP : V1:n
-four times :- NP : V2:n
 the beginning :- NP : V1:n
-the beginning :- NP : V2:n
-the trail :- NP : V1:n
-the trail :- NP : V2:n
-he :- NP : V1:n
-he :- NP : V2:n
-the end :- NP : V1:n
-the end :- NP : V2:n
 3 :- NP : 3.0:n
-juan :- NP : V1:n
-juan :- NP : V2:n
-his bike :- NP : V1:n
-his bike :- NP : V2:n
-3 miles :- NP : V1:n
-3 miles :- NP : V2:n
-hour :- NP : V1:n
-hour :- NP : V2:n
-peter :- NP : V1:n
 peter :- NP : V2:n
-who :- NP : V1:n
-who :- NP : V2:n
-his skateboard :- NP : V1:n
-his skateboard :- NP : V2:n
+juan :- NP : V1:n
 two :- NP : 2.0:n
-several days :- NP : V1:n
-several days :- NP : V2:n
-he :- NP : V1:n
 he :- NP : V2:n
-two times :- NP : V1:n
-two times :- NP : V2:n
 the beginning :- NP : V1:n
-the beginning :- NP : V2:n
-the trail :- NP : V1:n
-the trail :- NP : V2:n
-he :- NP : V1:n
-he :- NP : V2:n
-the end :- NP : V1:n
-the end :- NP : V2:n
 3 :- NP : 3.0:n
-the second pieces :- NP : V1:n
-the second pieces :- NP : V2:n
-3 times :- NP : V1:n
-3 times :- NP : V2:n
-the first piece :- NP : V1:n
 the first piece :- NP : V2:n
+the second pieces :- NP : V1:n
 7 :- NP : 7.0:n
+the first piece :- NP : V2:n
 the second pieces :- NP : V1:n
-the second pieces :- NP : V2:n
-7 times :- NP : V1:n
-7 times :- NP : V2:n
-the first piece :- NP : V1:n
-the first piece :- NP : V2:n
 5 :- NP : 5.0:n
-the third piece :- NP : V1:n
-the third piece :- NP : V2:n
-5 feet :- NP : V1:n
-5 feet :- NP : V2:n
-the first piece :- NP : V1:n
 the first piece :- NP : V2:n
+the third piece :- NP : V1:n
 2 :- NP : 2.0:n
+the first side :- NP : V2:n
 the second side :- NP : V1:n
-the second side :- NP : V2:n
-the triangle :- NP : V1:n
-the triangle :- NP : V2:n
-2 times :- NP : V1:n
-2 times :- NP : V2:n
-the first side :- NP : V1:n
-the first side :- NP : V2:n
 6 :- NP : 6.0:n
-the third side :- NP : V1:n
-the third side :- NP : V2:n
-the triangle :- NP : V1:n
-the triangle :- NP : V2:n
-6 inches :- NP : V1:n
-6 inches :- NP : V2:n
-the first side :- NP : V1:n
 the first side :- NP : V2:n
+the third side :- NP : V1:n
 30 :- NP : 30.0:n
-the degree measure :- NP : V1:n
 the degree measure :- NP : V2:n
-angle c :- NP : V1:n
-angle c :- NP : V2:n
-30 degrees :- NP : V1:n
-30 degrees :- NP : V2:n
 the degree measure :- NP : V1:n
-the degree measure :- NP : V2:n
-angle a :- NP : V1:n
-angle a :- NP : V2:n
 4 :- NP : 4.0:n
-the degree measure :- NP : V1:n
 the degree measure :- NP : V2:n
-angle :- NP : V1:n
-angle :- NP : V2:n
-b :- NP : V1:n
-b :- NP : V2:n
-4 times :- NP : V1:n
-4 times :- NP : V2:n
 the degree measure :- NP : V1:n
-the degree measure :- NP : V2:n
-angle a :- NP : V1:n
-angle a :- NP : V2:n
 60 :- NP : 60.0:n
-the degree measure :- NP : V1:n
 the degree measure :- NP : V2:n
-angle c :- NP : V1:n
-angle c :- NP : V2:n
-60 degrees :- NP : V1:n
-60 degrees :- NP : V2:n
 the degree measure :- NP : V1:n
-the degree measure :- NP : V2:n
-angle a :- NP : V1:n
-angle a :- NP : V2:n
 seven :- NP : 7.0:n
 two :- NP : 2.0:n
 181 :- NP : 181.0:n
-seven more than two times :- NP : V1:n
-seven more than two times :- NP : V2:n
 a certain number :- NP : V1:n
-a certain number :- NP : V2:n
-181 :- NP : V1:n
-181 :- NP : V2:n
 0.5 :- NP : 0.5:n
 2 :- NP : 2.0:n
 0.25 :- NP : 0.25:n
-0.5 :- NP : V1:n
-0.5 :- NP : V2:n
-a number :- NP : V1:n
-a number :- NP : V2:n
-2 :- NP : V1:n
-2 :- NP : V2:n
-0.25 :- NP : V1:n
-0.25 :- NP : V2:n
-the number :- NP : V1:n
 the number :- NP : V2:n
+a number :- NP : V1:n
 nine :- NP : 9.0:n
 two :- NP : 2.0:n
 137 :- NP : 137.0:n
-nine more than two times :- NP : V1:n
-nine more than two times :- NP : V2:n
 a certain number :- NP : V1:n
-a certain number :- NP : V2:n
-137 :- NP : V1:n
-137 :- NP : V2:n
 3,000 :- NP : 3000.0:n
-3,000 :- NP : 8.0:n
-the amount :- NP : V1:n
+8 :- NP : 8.0:n
 the amount :- NP : V2:n
-the certificate :- NP : V1:n
-the certificate :- NP : V2:n
-deposit :- NP : V1:n
-deposit :- NP : V2:n
-3,000 dollars :- NP : V1:n
-3,000 dollars :- NP : V2:n
-8 times :- NP : V1:n
-8 times :- NP : V2:n
 the amount :- NP : V1:n
-the amount :- NP : V2:n
-the mutual fund :- NP : V1:n
-the mutual fund :- NP : V2:n
 two :- NP : 2.0:n
 42 :- NP : 42.0:n
 3 :- NP : 3.0:n
-the second :- NP : V1:n
-the second :- NP : V2:n
-two complementary angles :- NP : V1:n
-two complementary angles :- NP : V2:n
-42 degrees larger than 3 times :- NP : V1:n
-42 degrees larger than 3 times :- NP : V2:n
-the first angle :- NP : V1:n
 the first angle :- NP : V2:n
+the second :- NP : V1:n
 two :- NP : 2.0:n
 57 :- NP : 57.0:n
 3 :- NP : 3.0:n
-the second :- NP : V1:n
-the second :- NP : V2:n
-two complementary angles :- NP : V1:n
-two complementary angles :- NP : V2:n
-57 degrees larger than 3 times :- NP : V1:n
-57 degrees larger than 3 times :- NP : V2:n
-the first angle :- NP : V1:n
 the first angle :- NP : V2:n
+the second :- NP : V1:n
 28 :- NP : 28.0:n
 twice :- NP : 2.0:n
-the length :- NP : V1:n
-the length :- NP : V2:n
-the rectangle :- NP : V1:n
-the rectangle :- NP : V2:n
-28 inches :- NP : V1:n
-28 inches :- NP : V2:n
-twice the width :- NP : V1:n
 twice the width :- NP : V2:n
+the length :- NP : V1:n
 24 :- NP : 24.0:n
 twice :- NP : 2.0:n
-the length :- NP : V1:n
-the length :- NP : V2:n
-the rectangle :- NP : V1:n
-the rectangle :- NP : V2:n
-24 inches :- NP : V1:n
-24 inches :- NP : V2:n
-twice the width :- NP : V1:n
 twice the width :- NP : V2:n
+the length :- NP : V1:n
 twice :- NP : 2.0:n
 one :- NP : 1.0:n
+one :- NP : 1.0:n
 5 :- NP : 5.0:n
-the difference :- NP : V1:n
-the difference :- NP : V2:n
-twice :- NP : V1:n
-twice :- NP : V2:n
-one :- NP : V1:n
-one :- NP : V2:n
-them :- NP : V1:n
-them :- NP : V2:n
-the other one :- NP : V1:n
 the other one :- NP : V2:n
-5 :- NP : V1:n
-5 :- NP : V2:n
+one :- NP : V1:n
 two :- NP : 2.0:n
 40 :- NP : 40.0:n
 3 :- NP : 3.0:n
-the second :- NP : V1:n
-the second :- NP : V2:n
-two supplementary angles :- NP : V1:n
-two supplementary angles :- NP : V2:n
-40 degrees larger than 3 times :- NP : V1:n
-40 degrees larger than 3 times :- NP : V2:n
-the first angle :- NP : V1:n
 the first angle :- NP : V2:n
+the second :- NP : V1:n
 two :- NP : 2.0:n
 114 :- NP : 114.0:n
 3 :- NP : 3.0:n
-the second :- NP : V1:n
-the second :- NP : V2:n
-two supplementary angles :- NP : V1:n
-two supplementary angles :- NP : V2:n
-114 degrees larger than 3 times :- NP : V1:n
-114 degrees larger than 3 times :- NP : V2:n
-the first angle :- NP : V1:n
 the first angle :- NP : V2:n
+the second :- NP : V1:n
 20,000 :- NP : 20000.0:n
-20,000 :- NP : 2.0:n
-20,000 :- NP : 0.03:n
-20,000 :- NP : 0.05:n
-eileen inherits 20,000 dollars :- NP : V1:n
-eileen inherits 20,000 dollars :- NP : V2:n
-the money :- NP : V1:n
-the money :- NP : V2:n
-two accounts :- NP : V1:n
-two accounts :- NP : V2:n
-part :- NP : V1:n
-part :- NP : V2:n
-a certificate :- NP : V1:n
-a certificate :- NP : V2:n
-deposit :- NP : V1:n
-deposit :- NP : V2:n
-that :- NP : V1:n
-that :- NP : V2:n
-3 % interest :- NP : V1:n
-3 % interest :- NP : V2:n
-year :- NP : V1:n
-year :- NP : V2:n
-the rest :- NP : V1:n
+two :- NP : 2.0:n
+3 :- NP : 0.03:n
+5 :- NP : 0.05:n
 the rest :- NP : V2:n
-a mutual fund :- NP : V1:n
-a mutual fund :- NP : V2:n
-that :- NP : V1:n
-that :- NP : V2:n
-5 % :- NP : V1:n
-5 % :- NP : V2:n
-year :- NP : V1:n
-year :- NP : V2:n
+part :- NP : V1:n
 40,000 :- NP : 40000.0:n
-40,000 :- NP : 2.0:n
-40,000 :- NP : 0.03:n
-40,000 :- NP : 0.06:n
-alice inherits 40,000 dollars :- NP : V1:n
-alice inherits 40,000 dollars :- NP : V2:n
-the money :- NP : V1:n
-the money :- NP : V2:n
-two accounts :- NP : V1:n
+two :- NP : 2.0:n
+3 :- NP : 0.03:n
+6 :- NP : 0.06:n
 two accounts :- NP : V2:n
-part :- NP : V1:n
-part :- NP : V2:n
-a certificate :- NP : V1:n
-a certificate :- NP : V2:n
-deposit :- NP : V1:n
-deposit :- NP : V2:n
-that :- NP : V1:n
-that :- NP : V2:n
-3 % interest :- NP : V1:n
-3 % interest :- NP : V2:n
-year :- NP : V1:n
-year :- NP : V2:n
-the rest :- NP : V1:n
-the rest :- NP : V2:n
-a mutual fund :- NP : V1:n
-a mutual fund :- NP : V2:n
-that :- NP : V1:n
-that :- NP : V2:n
-6 % :- NP : V1:n
-6 % :- NP : V2:n
-year :- NP : V1:n
-year :- NP : V2:n
+two accounts :- NP : V1:n
 12 :- NP : 12.0:n
 three :- NP : 3.0:n
-the length :- NP : V1:n
-the length :- NP : V2:n
-the rectangle :- NP : V1:n
-the rectangle :- NP : V2:n
-12 centimeters :- NP : V1:n
-12 centimeters :- NP : V2:n
-three times :- NP : V1:n
-three times :- NP : V2:n
-the width :- NP : V1:n
 the width :- NP : V2:n
+the length :- NP : V1:n
 28 :- NP : 28.0:n
 three :- NP : 3.0:n
-the length :- NP : V1:n
-the length :- NP : V2:n
-the rectangle :- NP : V1:n
-the rectangle :- NP : V2:n
-28 feet :- NP : V1:n
-28 feet :- NP : V2:n
-three times :- NP : V1:n
-three times :- NP : V2:n
-the width :- NP : V1:n
 the width :- NP : V2:n
+the length :- NP : V1:n
 0.5 :- NP : 0.5:n
 30 :- NP : 30.0:n
-the wind :- NP : V1:n
 the wind :- NP : V2:n
-0.5 times :- NP : V1:n
-0.5 times :- NP : V2:n
 the bird :- NP : V1:n
-the bird :- NP : V2:n
-it :- NP : V1:n
-it :- NP : V2:n
-it :- NP : V1:n
-it :- NP : V2:n
-only 30 kilometers :- NP : V1:n
-only 30 kilometers :- NP : V2:n
-hour :- NP : V1:n
-hour :- NP : V2:n
 150 :- NP : 150.0:n
-flying :- NP : V1:n
-flying :- NP : V2:n
-the wind :- NP : V1:n
-the wind :- NP : V2:n
-a bird :- NP : V1:n
 a bird :- NP : V2:n
-150 kilometers :- NP : V1:n
-150 kilometers :- NP : V2:n
-hour :- NP : V1:n
-hour :- NP : V2:n
+the wind :- NP : V1:n
 210 :- NP : 210.0:n
 5 :- NP : 5.0:n
-your friend :- NP : V1:n
-your friend :- NP : V2:n
-210 dollars :- NP : V1:n
-210 dollars :- NP : V2:n
-5 dollars :- NP : V1:n
-5 dollars :- NP : V2:n
-week :- NP : V1:n
 week :- NP : V2:n
+your friend :- NP : V1:n
 41.95 :- NP : 41.95:n
 0.29 :- NP : 0.29:n
-safety rent a truck :- NP : V1:n
-safety rent a truck :- NP : V2:n
-41.95 dollars :- NP : V1:n
-41.95 dollars :- NP : V2:n
-plus 0.29 dollars :- NP : V1:n
-plus 0.29 dollars :- NP : V2:n
-mile :- NP : V1:n
 mile :- NP : V2:n
+safety rent a truck :- NP : V1:n
 38.95 :- NP : 38.95:n
 0.31 :- NP : 0.31:n
-city :- NP : V1:n
-city :- NP : V2:n
-rents :- NP : V1:n
-rents :- NP : V2:n
-the truck :- NP : V1:n
-the truck :- NP : V2:n
-38.95 dollars :- NP : V1:n
-38.95 dollars :- NP : V2:n
-plus 0.31 dollars :- NP : V1:n
-plus 0.31 dollars :- NP : V2:n
-mile :- NP : V1:n
 mile :- NP : V2:n
+city :- NP : V1:n
 2 :- NP : 2.0:n
 -8 :- NP : -8.0:n
 -12 :- NP : -12.0:n
-the difference :- NP : V1:n
-the difference :- NP : V2:n
-2 times :- NP : V1:n
-2 times :- NP : V2:n
 a number and -8 :- NP : V1:n
-a number and -8 :- NP : V2:n
--12 :- NP : V1:n
--12 :- NP : V2:n
 15 :- NP : 15.0:n
-college there :- NP : V1:n
-college there :- NP : V2:n
-15 times :- NP : V1:n
-15 times :- NP : V2:n
-many students :- NP : V1:n
-many students :- NP : V2:n
-professors :- NP : V1:n
 professors :- NP : V2:n
+many students :- NP : V1:n
 40,000 :- NP : 40000.0:n
-together the students and professors number 40,000 :- NP : V1:n
 together the students and professors number 40,000 :- NP : V2:n
+together the students and professors number 40,000 :- NP : V1:n
 3 :- NP : 3.0:n
-the price :- NP : V1:n
 the price :- NP : V2:n
-the washer :- NP : V1:n
-the washer :- NP : V2:n
-3 times :- NP : V1:n
-3 times :- NP : V2:n
 the price :- NP : V1:n
-the price :- NP : V2:n
-the dryer :- NP : V1:n
-the dryer :- NP : V2:n
 three :- NP : 3.0:n
 twice :- NP : 2.0:n
 seven :- NP : 7.0:n
-three times :- NP : V1:n
-three times :- NP : V2:n
-a number :- NP : V1:n
-a number :- NP : V2:n
-the same :- NP : V1:n
-the same :- NP : V2:n
-the difference :- NP : V1:n
-the difference :- NP : V2:n
-twice the number and seven :- NP : V1:n
 twice the number and seven :- NP : V2:n
+a number :- NP : V1:n
 .833 :- NP : 0.833:n
 -60 :- NP : -60.0:n
-.833 :- NP : V1:n
-.833 :- NP : V2:n
 a number :- NP : V1:n
-a number :- NP : V2:n
--60 :- NP : V1:n
--60 :- NP : V2:n
 two :- NP : 2.0:n
 104 :- NP : 104.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-two numbers :- NP : V1:n
 two numbers :- NP : V2:n
-104 :- NP : V1:n
-104 :- NP : V2:n
+two numbers :- NP : V1:n
 1 :- NP : 1.0:n
 twice :- NP : 2.0:n
-the larger number :- NP : V1:n
-the larger number :- NP : V2:n
-1 :- NP : V1:n
-1 :- NP : V2:n
-twice the smaller number :- NP : V1:n
 twice the smaller number :- NP : V2:n
+the larger number :- NP : V1:n
 20-foot :- NP : 20.0:n
 2 :- NP : 2.0:n
-a 20-foot board :- NP : V1:n
-a 20-foot board :- NP : V2:n
-2 pieces :- NP : V1:n
 2 pieces :- NP : V2:n
+2 pieces :- NP : V1:n
 20 :- NP : 20.0:n
 30 :- NP : 30.0:n
-the sum :- NP : V1:n
-the sum :- NP : V2:n
-20 :- NP : V1:n
-20 :- NP : V2:n
 a number :- NP : V1:n
-a number :- NP : V2:n
-30 :- NP : V1:n
-30 :- NP : V2:n
 3 :- NP : 3.0:n
 5 :- NP : 5.0:n
 54 :- NP : 54.0:n
-3 times :- NP : V1:n
-3 times :- NP : V2:n
-a number :- NP : V1:n
 a number :- NP : V2:n
-5 times :- NP : V1:n
-5 times :- NP : V2:n
 a number :- NP : V1:n
-a number :- NP : V2:n
-54 :- NP : V1:n
-54 :- NP : V2:n
 2 :- NP : 2.0:n
-the second number :- NP : V1:n
-the second number :- NP : V2:n
-2 :- NP : V1:n
-2 :- NP : V2:n
-the first :- NP : V1:n
 the first :- NP : V2:n
+the second number :- NP : V1:n
 20 :- NP : 20.0:n
-today :- NP : V1:n
-today :- NP : V2:n
-'s matinee :- NP : V1:n
-'s matinee :- NP : V2:n
-there :- NP : V1:n
-there :- NP : V2:n
-20 more children :- NP : V1:n
-20 more children :- NP : V2:n
-adults :- NP : V1:n
 adults :- NP : V2:n
+20 more children :- NP : V1:n
 two :- NP : 2.0:n
 3 :- NP : 3.0:n
-the difference :- NP : V1:n
-the difference :- NP : V2:n
-two numbers :- NP : V1:n
 two numbers :- NP : V2:n
-3 :- NP : V1:n
-3 :- NP : V2:n
+two numbers :- NP : V1:n
 $2.53 :- NP : 2.53:n
 $62.58 :- NP : 62.58:n
 april brent crude :- NP : V1:n
-april brent crude :- NP : V2:n
-$2.53 :- NP : V1:n
-$2.53 :- NP : V2:n
-$62.58 / bbl :- NP : V1:n
-$62.58 / bbl :- NP : V2:n
-ice :- NP : V1:n
-ice :- NP : V2:n
 $1.59 :- NP : 1.59:n
 $49.76 :- NP : 49.76:n
 april wti oil :- NP : V1:n
-april wti oil :- NP : V2:n
-$1.59 :- NP : V1:n
-$1.59 :- NP : V2:n
-$49.76 / bbl :- NP : V1:n
-$49.76 / bbl :- NP : V2:n
-nymex :- NP : V1:n
-nymex :- NP : V2:n
 2.2 :- NP : 0.022000000000000002:n
 2.6 :- NP : 0.026000000000000002:n
 u.s. fourth-quarter gdp :- NP : V1:n
-u.s. fourth-quarter gdp :- NP : V2:n
-2.2 % :- NP : V1:n
-2.2 % :- NP : V2:n
-2.6 % :- NP : V1:n
-2.6 % :- NP : V2:n
 $9 :- NP : 9.0:n
 $7.50 :- NP : 7.5:n
 procera networks stock price target :- NP : V1:n
-procera networks stock price target :- NP : V2:n
-$9 :- NP : V1:n
-$9 :- NP : V2:n
-$7.50 :- NP : V1:n
-$7.50 :- NP : V2:n
-deutsche bank :- NP : V1:n
-deutsche bank :- NP : V2:n
 $163 :- NP : 163.0:n
 $233 :- NP : 233.0:n
 pharmacyclics stock price target cut :- NP : V1:n
-pharmacyclics stock price target cut :- NP : V2:n
-$163 :- NP : V1:n
-$163 :- NP : V2:n
-$233 :- NP : V1:n
-$233 :- NP : V2:n
-credit suisse :- NP : V1:n
-credit suisse :- NP : V2:n
 $22 :- NP : 22.0:n
 $30 :- NP : 30.0:n
 walter investment mgmt stock price target cut :- NP : V1:n
-walter investment mgmt stock price target cut :- NP : V2:n
-$22 :- NP : V1:n
-$22 :- NP : V2:n
-$30 :- NP : V1:n
-$30 :- NP : V2:n
-credit suisse :- NP : V1:n
-credit suisse :- NP : V2:n
 $4 :- NP : 4.0:n
 $12 :- NP : 12.0:n
 safe bulkers stock price target cut :- NP : V1:n
-safe bulkers stock price target cut :- NP : V2:n
-$4 :- NP : V1:n
-$4 :- NP : V2:n
-$12 :- NP : V1:n
-$12 :- NP : V2:n
-credit suisse :- NP : V1:n
-credit suisse :- NP : V2:n
 $11 :- NP : 11.0:n
 $21 :- NP : 21.0:n
 intelsat stock price target cut :- NP : V1:n
-intelsat stock price target cut :- NP : V2:n
-$11 :- NP : V1:n
-$11 :- NP : V2:n
-$21 :- NP : V1:n
-$21 :- NP : V2:n
-credit suisse :- NP : V1:n
-credit suisse :- NP : V2:n
 $203 :- NP : 203.0:n
 $177 :- NP : 177.0:n
 fedex stock price target :- NP : V1:n
-fedex stock price target :- NP : V2:n
-$203 :- NP : V1:n
-$203 :- NP : V2:n
-$177 :- NP : V1:n
-$177 :- NP : V2:n
-credit suisse :- NP : V1:n
-credit suisse :- NP : V2:n
 0.1 :- NP : 0.001:n
 391.20 :- NP : 391.2:n
-stoxx europe :- NP : V1:n
 stoxx europe :- NP : V2:n
-0.1 % :- NP : V1:n
-0.1 % :- NP : V2:n
-391.20 :- NP : V1:n
-391.20 :- NP : V2:n
+stoxx europe :- NP : V1:n
 0.3 :- NP : 0.003:n
 1,525.87 :- NP : 1525.87:n
-1,525.87 :- NP : 1.0:n
-japan :- NP : V1:n
 japan :- NP : V2:n
-'s topix :- NP : V1:n
-'s topix :- NP : V2:n
-0.3 % :- NP : V1:n
-0.3 % :- NP : V2:n
-1,525.87 :- NP : V1:n
-1,525.87 :- NP : V2:n
-early moves :- NP : V1:n
-early moves :- NP : V2:n
+japan :- NP : V1:n
 0.3 :- NP : 0.003:n
 844.28 :- NP : 844.28:n
-japan :- NP : V1:n
 japan :- NP : V2:n
-'s nikkei average :- NP : V1:n
-'s nikkei average :- NP : V2:n
-0.3 % :- NP : V1:n
-0.3 % :- NP : V2:n
-844.28 :- NP : V1:n
-844.28 :- NP : V2:n
+japan :- NP : V1:n
 3.6 :- NP : 0.036000000000000004:n
 3.4 :- NP : 0.034:n
 japan january jobless rate :- NP : V1:n
-japan january jobless rate :- NP : V2:n
-3.6 % :- NP : V1:n
-3.6 % :- NP : V2:n
-3.4 % :- NP : V1:n
-3.4 % :- NP : V2:n
 18 :- NP : 0.18:n
 23 :- NP : 0.23:n
-ross stores :- NP : V1:n
 ross stores :- NP : V2:n
-18 % dividend increase :- NP : V1:n
-18 % dividend increase :- NP : V2:n
-23 cents :- NP : V1:n
-23 cents :- NP : V2:n
-share :- NP : V1:n
-share :- NP : V2:n
+ross stores :- NP : V1:n
 $2.82 :- NP : 2.82:n
 $48.17 :- NP : 48.17:n
 april oil :- NP : V1:n
-april oil :- NP : V2:n
-$2.82 :- NP : V1:n
-$2.82 :- NP : V2:n
-$48.17 / bbl :- NP : V1:n
-$48.17 / bbl :- NP : V2:n
-nymex :- NP : V1:n
-nymex :- NP : V2:n
 0.1 :- NP : 0.001:n
 4,888.30 :- NP : 4888.3:n
-france :- NP : V1:n
 france :- NP : V2:n
-'s cac :- NP : V1:n
-'s cac :- NP : V2:n
-0.1 % :- NP : V1:n
-0.1 % :- NP : V2:n
-4,888.30 :- NP : V1:n
-4,888.30 :- NP : V2:n
+france :- NP : V1:n
 0.3 :- NP : 0.003:n
 3,218.47 :- NP : 3218.47:n
-shanghai composite :- NP : V1:n
 shanghai composite :- NP : V2:n
-0.3 % :- NP : V1:n
-0.3 % :- NP : V2:n
-3,218.47 :- NP : V1:n
-3,218.47 :- NP : V2:n
+shanghai composite :- NP : V1:n
 0.1 :- NP : 0.001:n
 1,506.39 :- NP : 1506.39:n
-1,506.39 :- NP : 1.0:n
-japan :- NP : V1:n
 japan :- NP : V2:n
-'s topix :- NP : V1:n
-'s topix :- NP : V2:n
-0.1 % :- NP : V1:n
-0.1 % :- NP : V2:n
-1,506.39 :- NP : V1:n
-1,506.39 :- NP : V2:n
-early moves :- NP : V1:n
-early moves :- NP : V2:n
+japan :- NP : V1:n
 $49.45 :- NP : 49.45:n
 $1.36 :- NP : 1.36:n
 april crude :- NP : V1:n
-april crude :- NP : V2:n
-$49.45 / bbl :- NP : V1:n
-$49.45 / bbl :- NP : V2:n
-$1.36 :- NP : V1:n
-$1.36 :- NP : V2:n
 2 :- NP : 2.0:n
 4,958 :- NP : 4958.0:n
 nasdaq :- NP : V1:n
-nasdaq :- NP : V2:n
-higher :- NP : V1:n
-higher :- NP : V2:n
-up 2 points :- NP : V1:n
-up 2 points :- NP : V2:n
-4,958 :- NP : V1:n
-4,958 :- NP : V2:n
 $132 :- NP : 132.0:n
 $146 :- NP : 146.0:n
 boeing stock price target cut :- NP : V1:n
-boeing stock price target cut :- NP : V2:n
-$132 :- NP : V1:n
-$132 :- NP : V2:n
-$146 :- NP : V1:n
-$146 :- NP : V2:n
-goldman sachs :- NP : V1:n
-goldman sachs :- NP : V2:n
 $30 :- NP : 30.0:n
 $27 :- NP : 27.0:n
 ims health stock price target :- NP : V1:n
-ims health stock price target :- NP : V2:n
-$30 :- NP : V1:n
-$30 :- NP : V2:n
-$27 :- NP : V1:n
-$27 :- NP : V2:n
-barclays :- NP : V1:n
-barclays :- NP : V2:n
 $140 :- NP : 140.0:n
 $113 :- NP : 113.0:n
 lab corp :- NP : V1:n
-lab corp :- NP : V2:n
-america :- NP : V1:n
-america :- NP : V2:n
-stock price target :- NP : V1:n
-stock price target :- NP : V2:n
-$140 :- NP : V1:n
-$140 :- NP : V2:n
-$113 :- NP : V1:n
-$113 :- NP : V2:n
-credit suisse :- NP : V1:n
-credit suisse :- NP : V2:n
 $81 :- NP : 81.0:n
 $74 :- NP : 74.0:n
 colgate-palmolive stock price target :- NP : V1:n
-colgate-palmolive stock price target :- NP : V2:n
-$81 :- NP : V1:n
-$81 :- NP : V2:n
-$74 :- NP : V1:n
-$74 :- NP : V2:n
-citigroup :- NP : V1:n
-citigroup :- NP : V2:n
 $25 :- NP : 25.0:n
 $50 :- NP : 50.0:n
 target cuts :- NP : V1:n
-target cuts :- NP : V2:n
-minimum order :- NP : V1:n
-minimum order :- NP : V2:n
-$25 :- NP : V1:n
-$25 :- NP : V2:n
-$50 :- NP : V1:n
-$50 :- NP : V2:n
 $175 :- NP : 175.0:n
 $160 :- NP : 160.0:n
 boeing stock price target :- NP : V1:n
-boeing stock price target :- NP : V2:n
-$175 :- NP : V1:n
-$175 :- NP : V2:n
-$160 :- NP : V1:n
-$160 :- NP : V2:n
-stifel nicolaus :- NP : V1:n
-stifel nicolaus :- NP : V2:n
 $12 :- NP : 12.0:n
 $15 :- NP : 15.0:n
 transocean stock price target cut :- NP : V1:n
-transocean stock price target cut :- NP : V2:n
-$12 :- NP : V1:n
-$12 :- NP : V2:n
-$15 :- NP : V1:n
-$15 :- NP : V2:n
-susquehanna :- NP : V1:n
-susquehanna :- NP : V2:n
 0.6 :- NP : 0.006:n
 384.39 :- NP : 384.39:n
-stoxx europe :- NP : V1:n
 stoxx europe :- NP : V2:n
-0.6 % :- NP : V1:n
-0.6 % :- NP : V2:n
-384.39 :- NP : V1:n
-384.39 :- NP : V2:n
+stoxx europe :- NP : V1:n
 0.3 :- NP : 0.003:n
 24,916.24 :- NP : 24916.24:n
-hong kong :- NP : V1:n
 hong kong :- NP : V2:n
-'s hang seng :- NP : V1:n
-'s hang seng :- NP : V2:n
-up 0.3 % :- NP : V1:n
-up 0.3 % :- NP : V2:n
-24,916.24 :- NP : V1:n
-24,916.24 :- NP : V2:n
+hong kong :- NP : V1:n
 0.5 :- NP : 0.005:n
 12,008.19 :- NP : 12008.19:n
-hong kong h-shares :- NP : V1:n
-hong kong h-shares :- NP : V2:n
-0.5 % :- NP : V1:n
-0.5 % :- NP : V2:n
-12,008.19 :- NP : V1:n
-12,008.19 :- NP : V2:n
+hong kong h-shares index :- NP : V2:n
+hong kong h-shares index :- NP : V1:n
 0.9 :- NP : 0.009000000000000001:n
 18,499.58 :- NP : 18499.58:n
-japan :- NP : V1:n
 japan :- NP : V2:n
-'s nikkei average :- NP : V1:n
-'s nikkei average :- NP : V2:n
-0.9 % :- NP : V1:n
-0.9 % :- NP : V2:n
-18,499.58 :- NP : V1:n
-18,499.58 :- NP : V2:n
+japan :- NP : V1:n
 0.7 :- NP : 0.006999999999999999:n
 1,510.61 :- NP : 1510.61:n
-1,510.61 :- NP : 1.0:n
-japan :- NP : V1:n
 japan :- NP : V2:n
-'s topix :- NP : V1:n
-'s topix :- NP : V2:n
-0.7 % :- NP : V1:n
-0.7 % :- NP : V2:n
-1,510.61 :- NP : V1:n
-1,510.61 :- NP : V2:n
-early moves :- NP : V1:n
-early moves :- NP : V2:n
+japan :- NP : V1:n
 2 :- NP : 2.0:n
 6,885.24 :- NP : 6885.24:n
 u.k. :- NP : V1:n
-u.k. :- NP : V2:n
-'s ftse :- NP : V1:n
-'s ftse :- NP : V2:n
-2 point :- NP : V1:n
-2 point :- NP : V2:n
-6,885.24 :- NP : V1:n
-6,885.24 :- NP : V2:n
 0.1 :- NP : 0.001:n
 381.13 :- NP : 381.13:n
-stoxx europe :- NP : V1:n
 stoxx europe :- NP : V2:n
-0.1 % :- NP : V1:n
-0.1 % :- NP : V2:n
-381.13 :- NP : V1:n
-381.13 :- NP : V2:n
+stoxx europe :- NP : V1:n
 0.2 :- NP : 0.002:n
 1,498.59 :- NP : 1498.59:n
-1,498.59 :- NP : 1.0:n
-japan :- NP : V1:n
 japan :- NP : V2:n
-'s topix :- NP : V1:n
-'s topix :- NP : V2:n
-0.2 % :- NP : V1:n
-0.2 % :- NP : V2:n
-1,498.59 :- NP : V1:n
-1,498.59 :- NP : V2:n
-early moves :- NP : V1:n
-early moves :- NP : V2:n
+japan :- NP : V1:n
 1.9 :- NP : 0.019:n
 $51.16 :- NP : 51.16:n
-march oil :- NP : V1:n
 march oil :- NP : V2:n
-1.9 % :- NP : V1:n
-1.9 % :- NP : V2:n
-$51.16 / bbl :- NP : V1:n
-$51.16 / bbl :- NP : V2:n
-nymex :- NP : V1:n
-nymex :- NP : V2:n
+march oil :- NP : V1:n
 18 :- NP : 0.18:n
 52 :- NP : 0.52:n
-t.rowe price :- NP : V1:n
 t.rowe price :- NP : V2:n
-regular quarterly dividend :- NP : V1:n
-regular quarterly dividend :- NP : V2:n
-18 % :- NP : V1:n
-18 % :- NP : V2:n
-52 cents :- NP : V1:n
-52 cents :- NP : V2:n
-a share :- NP : V1:n
-a share :- NP : V2:n
+t.rowe price :- NP : V1:n
 8 :- NP : 0.08:n
 33 :- NP : 0.33:n
-coca-cola :- NP : V1:n
 coca-cola :- NP : V2:n
-dividend :- NP : V1:n
-dividend :- NP : V2:n
-% to 33 cents :- NP : V1:n
-% to 33 cents :- NP : V2:n
-a share :- NP : V1:n
-a share :- NP : V2:n
+coca-cola :- NP : V1:n
 7.1 :- NP : 0.071:n
 $1,203.11 :- NP : 1203.11:n
-priceline shares surge :- NP : V1:n
 priceline shares surge :- NP : V2:n
-$1,203.11 :- NP : V1:n
-$1,203.11 :- NP : V2:n
+priceline shares surge :- NP : V1:n
 21,000 :- NP : 21000.0:n
-21,000 :- NP : 283000.0:n
+283,000 :- NP : 283000.0:n
 u.s. jobless claims :- NP : V1:n
-u.s. jobless claims :- NP : V2:n
-21,000 :- NP : V1:n
-21,000 :- NP : V2:n
-283,000 :- NP : V1:n
-283,000 :- NP : V2:n
-four-week :- NP : 4.0:n
 6,500 :- NP : 6500.0:n
-6,500 :- NP : 283250.0:n
+283,250 :- NP : 283250.0:n
 four-week :- NP : V1:n
-four-week :- NP : V2:n
-average declines :- NP : V1:n
-average declines :- NP : V2:n
-6,500 to 283,250 :- NP : V1:n
-6,500 to 283,250 :- NP : V2:n
 58,000 :- NP : 58000.0:n
-58,000 :- NP : 2430000.0:n
+2,430,000 :- NP : 2430000.0:n
 continuing jobless claims :- NP : V1:n
-continuing jobless claims :- NP : V2:n
-58,000 :- NP : V1:n
-58,000 :- NP : V2:n
-2.43 million :- NP : V1:n
-2.43 million :- NP : V2:n
 $70 :- NP : 70.0:n
 $60 :- NP : 60.0:n
 valero energy stock price target :- NP : V1:n
-valero energy stock price target :- NP : V2:n
-$70 :- NP : V1:n
-$70 :- NP : V2:n
-$60 :- NP : V1:n
-$60 :- NP : V2:n
 6.8 :- NP : 0.068:n
-$2.39 :- NP : 2.39E9:n
-hormel foods total net sales :- NP : V1:n
+$2390000000 :- NP : 2.39E9:n
 hormel foods total net sales :- NP : V2:n
-6.8 % :- NP : V1:n
-6.8 % :- NP : V2:n
-$2.39 billion :- NP : V1:n
-$2.39 billion :- NP : V2:n
+hormel foods total net sales :- NP : V1:n
 0.1 :- NP : 0.001:n
 4,792.50 :- NP : 4792.5:n
-france :- NP : V1:n
 france :- NP : V2:n
-'s cac :- NP : V1:n
-'s cac :- NP : V2:n
-0.1 % :- NP : V1:n
-0.1 % :- NP : V2:n
-4,792.50 :- NP : V1:n
-4,792.50 :- NP : V2:n
+france :- NP : V1:n
 0.3 :- NP : 0.003:n
 10,927.16 :- NP : 10927.16:n
-germany :- NP : V1:n
 germany :- NP : V2:n
-'s dax :- NP : V1:n
-'s dax :- NP : V2:n
-0.3 % :- NP : V1:n
-0.3 % :- NP : V2:n
-10,927.16 :- NP : V1:n
-10,927.16 :- NP : V2:n
+germany :- NP : V1:n
 0.4 :- NP : 0.004:n
 6,873.42 :- NP : 6873.42:n
-u.k. :- NP : V1:n
 u.k. :- NP : V2:n
-'s ftse :- NP : V1:n
-'s ftse :- NP : V2:n
-0.4 % :- NP : V1:n
-0.4 % :- NP : V2:n
-6,873.42 :- NP : V1:n
-6,873.42 :- NP : V2:n
+u.k. :- NP : V1:n
 0.4 :- NP : 0.004:n
 379.03 :- NP : 379.03:n
-stoxx europe :- NP : V1:n
 stoxx europe :- NP : V2:n
-0.4 % :- NP : V1:n
-0.4 % :- NP : V2:n
-379.03 :- NP : V1:n
-379.03 :- NP : V2:n
+stoxx europe :- NP : V1:n
 $14.90 :- NP : 14.9:n
 $1215.10 :- NP : 1215.1:n
-april gold :- NP : V1:n
 april gold :- NP : V2:n
-$14.90 :- NP : V1:n
-$14.90 :- NP : V2:n
-$1215.10 :- NP : V1:n
-$1215.10 :- NP : V2:n
-an ounce :- NP : V1:n
-an ounce :- NP : V2:n
+april gold :- NP : V1:n
 1.7 :- NP : 0.017:n
 $59.48 :- NP : 59.48:n
-brent crude :- NP : V1:n
 brent crude :- NP : V2:n
-1.7 % :- NP : V1:n
-1.7 % :- NP : V2:n
-$59.48 :- NP : V1:n
-$59.48 :- NP : V2:n
-a barrel :- NP : V1:n
-a barrel :- NP : V2:n
+brent crude :- NP : V1:n
 0.2 :- NP : 0.002:n
 18241.48 :- NP : 18241.48:n
-japan :- NP : V1:n
 japan :- NP : V2:n
-'s nikkei average :- NP : V1:n
-'s nikkei average :- NP : V2:n
-0.2 % :- NP : V1:n
-0.2 % :- NP : V2:n
-18241.48 :- NP : V1:n
-18241.48 :- NP : V2:n
+japan :- NP : V1:n
 0.5 :- NP : 0.005:n
 5,943.60 :- NP : 5943.6:n
-australia :- NP : V1:n
 australia :- NP : V2:n
-'s s & p / asx :- NP : V1:n
-'s s & p / asx :- NP : V2:n
-0.5 % :- NP : V1:n
-0.5 % :- NP : V2:n
-5,943.60 :- NP : V1:n
-5,943.60 :- NP : V2:n
+australia :- NP : V1:n
 $1.39 :- NP : 1.39:n
 $52.14 :- NP : 52.14:n
 march oil :- NP : V1:n
-march oil :- NP : V2:n
-$52.14 / bbl :- NP : V1:n
-$52.14 / bbl :- NP : V2:n
 $1,230 :- NP : 1230.0:n
-$1,230 :- NP : 1300.0:n
+$1,300 :- NP : 1300.0:n
 priceline 's stock price target cut :- NP : V1:n
-priceline 's stock price target cut :- NP : V2:n
-$1,230 :- NP : V1:n
-$1,230 :- NP : V2:n
-$1,300 :- NP : V1:n
-$1,300 :- NP : V2:n
-jmp securities :- NP : V1:n
-jmp securities :- NP : V2:n
 $55 :- NP : 55.0:n
 $50 :- NP : 50.0:n
 arthur j. gallagher stock price target :- NP : V1:n
-arthur j. gallagher stock price target :- NP : V2:n
-$55 :- NP : V1:n
-$55 :- NP : V2:n
-$50 :- NP : V1:n
-$50 :- NP : V2:n
-citigroup :- NP : V1:n
-citigroup :- NP : V2:n
 $17 :- NP : 17.0:n
 $16 :- NP : 16.0:n
 point reinsurance stock price target :- NP : V1:n
-point reinsurance stock price target :- NP : V2:n
-$17 :- NP : V1:n
-$17 :- NP : V2:n
-$16 :- NP : V1:n
-$16 :- NP : V2:n
 $120 :- NP : 120.0:n
 $108 :- NP : 108.0:n
 renaissancere :- NP : V1:n
-renaissancere :- NP : V2:n
-'s stock price target :- NP : V1:n
-'s stock price target :- NP : V2:n
-$120 :- NP : V1:n
-$120 :- NP : V2:n
-$108 :- NP : V1:n
-$108 :- NP : V2:n
 $54 :- NP : 54.0:n
 $46 :- NP : 46.0:n
 axis capital :- NP : V1:n
-axis capital :- NP : V2:n
-'s stock price target :- NP : V1:n
-'s stock price target :- NP : V2:n
-$54 :- NP : V1:n
-$54 :- NP : V2:n
-$46 :- NP : V1:n
-$46 :- NP : V2:n
 $103 :- NP : 103.0:n
 $89 :- NP : 89.0:n
 chubb :- NP : V1:n
-chubb :- NP : V2:n
-'s stock price target :- NP : V1:n
-'s stock price target :- NP : V2:n
-$103 :- NP : V1:n
-$103 :- NP : V2:n
-$89 :- NP : V1:n
-$89 :- NP : V2:n
-citigroup :- NP : V1:n
-citigroup :- NP : V2:n
 $110 :- NP : 110.0:n
 $94 :- NP : 94.0:n
 travelers ' stock price target :- NP : V1:n
-travelers ' stock price target :- NP : V2:n
-$110 :- NP : V1:n
-$110 :- NP : V2:n
-$94 :- NP : V1:n
-$94 :- NP : V2:n
-citigroup :- NP : V1:n
-citigroup :- NP : V2:n
 5.7 :- NP : 0.057:n
 5.8 :- NP : 0.057999999999999996:n
 uk december unemployment rate dips :- NP : V1:n
-uk december unemployment rate dips :- NP : V2:n
-5.7 % :- NP : V1:n
-5.7 % :- NP : V2:n
-5.8 % :- NP : V1:n
-5.8 % :- NP : V2:n
 $6 :- NP : 6.0:n
 $16 :- NP : 16.0:n
 transocean stock price target cut :- NP : V1:n
-transocean stock price target cut :- NP : V2:n
-$6 :- NP : V1:n
-$6 :- NP : V2:n
-$16 :- NP : V1:n
-$16 :- NP : V2:n
-deutsche bank :- NP : V1:n
-deutsche bank :- NP : V2:n
 0.7 :- NP : 0.006999999999999999:n
 10,842 :- NP : 10842.0:n
-germany :- NP : V1:n
 germany :- NP : V2:n
-'s dax :- NP : V1:n
-'s dax :- NP : V2:n
-0.7 % :- NP : V1:n
-0.7 % :- NP : V2:n
-10,842 :- NP : V1:n
-10,842 :- NP : V2:n
+germany :- NP : V1:n
 0.6 :- NP : 0.006:n
 4,722 :- NP : 4722.0:n
-france :- NP : V1:n
 france :- NP : V2:n
-'s cac :- NP : V1:n
-'s cac :- NP : V2:n
-0.6 % :- NP : V1:n
-0.6 % :- NP : V2:n
-4,722 :- NP : V1:n
-4,722 :- NP : V2:n
-early trade :- NP : V1:n
-early trade :- NP : V2:n
+france :- NP : V1:n
 0.2 :- NP : 0.002:n
 375.63 :- NP : 375.63:n
-stoxx europe :- NP : V1:n
 stoxx europe :- NP : V2:n
-0.2 % :- NP : V1:n
-0.2 % :- NP : V2:n
-375.63 :- NP : V1:n
-375.63 :- NP : V2:n
+stoxx europe :- NP : V1:n
 0.1 :- NP : 0.001:n
 11,919.48 :- NP : 11919.48:n
-hong kong h-share index :- NP : V1:n
 hong kong h-share index :- NP : V2:n
-0.1 % :- NP : V1:n
-0.1 % :- NP : V2:n
-11,919.48 :- NP : V1:n
-11,919.48 :- NP : V2:n
+hong kong h-share index :- NP : V1:n
 0.2 :- NP : 0.002:n
 1,457.16 :- NP : 1457.16:n
-1,457.16 :- NP : 1.0:n
-japan :- NP : V1:n
 japan :- NP : V2:n
-'s topix :- NP : V1:n
-'s topix :- NP : V2:n
-0.2 % :- NP : V1:n
-0.2 % :- NP : V2:n
-1,457.16 :- NP : V1:n
-1,457.16 :- NP : V2:n
-early moves :- NP : V1:n
-early moves :- NP : V2:n
+japan :- NP : V1:n
 $18 :- NP : 18.0:n
 $42 :- NP : 42.0:n
 's stock price target cut :- NP : V1:n
-'s stock price target cut :- NP : V2:n
-$18 :- NP : V1:n
-$18 :- NP : V2:n
-$42 :- NP : V1:n
-$42 :- NP : V2:n
-rw baird :- NP : V1:n
-rw baird :- NP : V2:n
 $30 :- NP : 30.0:n
 $28 :- NP : 28.0:n
 cisco systems :- NP : V1:n
-cisco systems :- NP : V2:n
-' stock price target :- NP : V1:n
-' stock price target :- NP : V2:n
-$30 :- NP : V1:n
-$30 :- NP : V2:n
-$28 :- NP : V1:n
-$28 :- NP : V2:n
-raymond james :- NP : V1:n
-raymond james :- NP : V2:n
 $230 :- NP : 230.0:n
 $280 :- NP : 280.0:n
 baidu :- NP : V1:n
-baidu :- NP : V2:n
-'s stock price target cut :- NP : V1:n
-'s stock price target cut :- NP : V2:n
-$230 :- NP : V1:n
-$230 :- NP : V2:n
-$280 :- NP : V1:n
-$280 :- NP : V2:n
-oppenheimer :- NP : V1:n
-oppenheimer :- NP : V2:n
 $31 :- NP : 31.0:n
 $28 :- NP : 28.0:n
 cisco systems :- NP : V1:n
-cisco systems :- NP : V2:n
-' stock price target :- NP : V1:n
-' stock price target :- NP : V2:n
-$31 :- NP : V1:n
-$31 :- NP : V2:n
-$28 :- NP : V1:n
-$28 :- NP : V2:n
-sterne agee :- NP : V1:n
-sterne agee :- NP : V2:n
 $30 :- NP : 30.0:n
 $27 :- NP : 27.0:n
 cisco systems :- NP : V1:n
-cisco systems :- NP : V2:n
-' stock price target :- NP : V1:n
-' stock price target :- NP : V2:n
-$30 :- NP : V1:n
-$30 :- NP : V2:n
-$27 :- NP : V1:n
-$27 :- NP : V2:n
-pacific crest :- NP : V1:n
-pacific crest :- NP : V2:n
 $33 :- NP : 33.0:n
 $31 :- NP : 31.0:n
 cisco systems :- NP : V1:n
-cisco systems :- NP : V2:n
-' stock price target :- NP : V1:n
-' stock price target :- NP : V2:n
-$33 :- NP : V1:n
-$33 :- NP : V2:n
-$31 :- NP : V1:n
-$31 :- NP : V2:n
-cantor fitzgerald :- NP : V1:n
-cantor fitzgerald :- NP : V2:n
 12 :- NP : 0.12:n
 19 :- NP : 0.19:n
-newell rubbermaid :- NP : V1:n
 newell rubbermaid :- NP : V2:n
-quarterly dividend :- NP : V1:n
-quarterly dividend :- NP : V2:n
-12 % :- NP : V1:n
-12 % :- NP : V2:n
-19 cents :- NP : V1:n
-19 cents :- NP : V2:n
-a share :- NP : V1:n
-a share :- NP : V2:n
+newell rubbermaid :- NP : V1:n
 10 :- NP : 0.1:n
 18.7 :- NP : 0.187:n
-mobile mini :- NP : V1:n
 mobile mini :- NP : V2:n
-quarterly dividend :- NP : V1:n
-quarterly dividend :- NP : V2:n
-10 % :- NP : V1:n
-10 % :- NP : V2:n
-18.7 cents :- NP : V1:n
-18.7 cents :- NP : V2:n
-a share :- NP : V1:n
-a share :- NP : V2:n
+mobile mini :- NP : V1:n

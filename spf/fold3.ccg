@@ -101,7 +101,7 @@ one number is 3 times the other .
 (eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 3.0:n V2:n))
 
 two numbers are in the ratio 8 to 3 . 
-(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 2.6667:n V2:n))
+(eq:<n,<n,t>> (div:<n,<n,n>> V1:n V2:n) (div:<n,<n,n>> 8.0:n 3.0:n))
 
 there were 7 times as many thermometers as hot-water bottles sold . 
 (eq:<n,<n,t>> (div:<n,<n,n>> V1:n 7.0:n) V2:n)

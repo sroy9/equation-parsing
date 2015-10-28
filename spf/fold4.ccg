@@ -107,7 +107,7 @@ the total cost of a shirt and a sweater is 80.34 dollars .
 (eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 80.34:n)
 
 the ratio of spaces for full sized cars to compact cars is 11 to 4 . 
-(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 2.75:n V2:n))
+(eq:<n,<n,t>> (div:<n,<n,n>> V1:n V2:n) (div:<n,<n,n>> 11.0:n 4.0:n))
 
 if 6 is subtracted from three times a number , the difference is twice the number . 
 (eq:<n,<n,t>> (sub:<n,<n,n>> (mul:<n,<n,n>> 3.0:n V1:n) 6.0:n) (mul:<n,<n,n>> 2.0:n V2:n))
@@ -223,7 +223,7 @@ hong kong h-shares index down 0.5 % at 12,008.19 .
 u.s. jobless claims drop 21,000 to 283,000 . 
 (eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 283000.0:n 21000.0:n))
 
-continuing jobless claims rise 58,000 to 2.43 million . 
+continuing jobless claims rise 58,000 to 2,430,000 . 
 (eq:<n,<n,t>> (add:<n,<n,n>> V1:n 58000.0:n) 2430000.0:n)
 
 france 's cac opens 0.1 % lower at 4,792.50 . 

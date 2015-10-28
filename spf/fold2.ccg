@@ -56,7 +56,7 @@ the freight train travels 30 kilometers per hour slower than the express train .
 (eq:<n,<n,t>> V1:n (sub:<n,<n,n>> V2:n 30.0:n))
 
 the ratio of boys to girls is 9 to 4 . 
-(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 2.25:n V2:n))
+(eq:<n,<n,t>> (div:<n,<n,n>> V1:n V2:n) (div:<n,<n,n>> 9.0:n 4.0:n))
 
 bob invested 6100 dollars in two funds , which pay 7 % and 6 % simple interest respectively . 
 (eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 6100.0:n)

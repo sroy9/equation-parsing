@@ -198,16 +198,16 @@ public class DocReader {
 //					}
 //					npList.write(":- NP : V2:n\n");
 //				}
-				for(String label : prob.varTokens.keySet()) {
-					for(Integer j : prob.varTokens.get(label)) {
-						IntPair ip = prob.candidateVars.get(j);
-						for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
-							npList.write(prob.ta.getToken(i).toLowerCase()+" ");
-						}
-						npList.write(":- NP : "+label+":n\n");
-						break;
-					}
-				}
+//				for(String label : prob.varTokens.keySet()) {
+//					for(Integer j : prob.varTokens.get(label)) {
+//						IntPair ip = prob.candidateVars.get(j);
+//						for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
+//							npList.write(prob.ta.getToken(i).toLowerCase()+" ");
+//						}
+//						npList.write(":- NP : "+label+":n\n");
+//						break;
+//					}
+//				}
 				if(fold.contains(prob.index)) {
 					// Add the questions of the fold
 					for(String token : prob.ta.getTokens()) {
@@ -231,12 +231,12 @@ public class DocReader {
 	}
 
 	public static void createGizaProbTable() throws Exception {
-		for(int i=0; i<5; ++i) {
+		for(int i=0; i<1; ++i) {
 			Map<Integer, String> srcVcb = new HashMap<>();
 			Map<Integer, String> targetVcb = new HashMap<>();
 			String str;
 			BufferedReader br = new BufferedReader(new FileReader(
-					"/Users/subhroroy/Desktop/parallel/A"+i+".vcb"));
+					"../../Desktop/parallel/A"+i+".vcb"));
 			while((str=br.readLine())!=null) {
 				String strArr[] = str.split(" ");
 				srcVcb.put(Integer.parseInt(strArr[0].trim()), 
@@ -244,7 +244,7 @@ public class DocReader {
 			}
 			br.close();
 			br = new BufferedReader(new FileReader(
-					"/Users/subhroroy/Desktop/parallel/B"+i+".vcb"));
+					"../../Desktop/parallel/B"+i+".vcb"));
 			while((str=br.readLine())!=null) {
 				String strArr[] = str.split(" ");
 				targetVcb.put(Integer.parseInt(strArr[0].trim()), 
@@ -252,9 +252,9 @@ public class DocReader {
 			}
 			br.close();
 			br = new BufferedReader(new FileReader(
-					"/Users/subhroroy/Desktop/parallel/A"+i+"_B"+i+"_prob"));
+					"../../Desktop/parallel/A"+i+"_B"+i+"_prob"));
 			BufferedWriter bw = new BufferedWriter(new FileWriter(
-					"/Users/subhroroy/Desktop/parallel/A"+i+"_B"+i+"_wordprob"));
+					"../../Desktop/parallel/A"+i+"_B"+i+"_wordprob"));
 			while((str=br.readLine())!=null) {
 				String strArr[] = str.split(" ");
 				bw.write(targetVcb.get(Integer.parseInt(strArr[1].trim()))+"  ::  "+
@@ -268,13 +268,15 @@ public class DocReader {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		List<SimulProb> simulProbList = 
-				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
-		for(SimulProb prob : simulProbList) {
-			print(prob);
-		}
+//		List<SimulProb> simulProbList = 
+//				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
+//		for(SimulProb prob : simulProbList) {
+//			print(prob);
+//		}
 //		DocReader.createLambdaExpForSPF();
-//		DocReader.createGizaProbTable();
+		DocReader.createGizaProbTable();
+		System.out.println("Done");
+		Tools.pipeline.closeCache();
 		
 	}
 }
