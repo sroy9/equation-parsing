@@ -1,5 +1,5 @@
 There were 30 more Republicans then Democrats.
 
-V1=V2+30
+V1-30=V2
 
 [There ][were ][30 more (Republicans )][then ][(Democrats )]. 

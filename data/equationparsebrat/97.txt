@@ -1,5 +1,5 @@
 At today 's matinee , there are 20 more children than adults.
 
-V1=V2+20
+V1-20=V2
 
 [At ][(today )]['s (matinee )], [there ][are ][20 more (children )][than ][(adults )]. 
