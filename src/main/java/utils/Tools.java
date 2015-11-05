@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import edu.illinois.cs.cogcomp.annotation.AnnotatorService;
 import edu.illinois.cs.cogcomp.annotation.handler.IllinoisChunkerHandler;
 import edu.illinois.cs.cogcomp.annotation.handler.IllinoisPOSHandler;
+import edu.illinois.cs.cogcomp.annotation.handler.StanfordParseHandler;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames;
@@ -23,6 +25,8 @@ import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.quant.driver.SimpleQuantifier;
 import edu.illinois.cs.cogcomp.quant.standardize.Quantity;
 import edu.illinois.cs.cogcomp.quant.standardize.Ratio;
+import edu.stanford.nlp.pipeline.POSTaggerAnnotator;
+import edu.stanford.nlp.pipeline.ParserAnnotator;
 
 public class Tools {
 	
@@ -38,10 +42,18 @@ public class Tools {
 	        IllinoisPOSHandler pos = new IllinoisPOSHandler();
 	        IllinoisChunkerHandler chunk = new IllinoisChunkerHandler();
 	        
+	        Properties stanfordProps = new Properties();
+            stanfordProps.put( "annotators", "pos, parse") ;
+            stanfordProps.put("parse.originalDependencies", true);
+            POSTaggerAnnotator posAnnotator = new POSTaggerAnnotator( "pos", stanfordProps );
+            ParserAnnotator parseAnnotator = new ParserAnnotator( "parse", stanfordProps );
+            StanfordParseHandler parser = new StanfordParseHandler( posAnnotator, parseAnnotator );
+	        
 	        Map< String, Annotator> extraViewGenerators = new HashMap<String, Annotator>();
 
 	        extraViewGenerators.put( ViewNames.POS, pos );
 	        extraViewGenerators.put( ViewNames.SHALLOW_PARSE, chunk );
+	        extraViewGenerators.put(ViewNames.PARSE_STANFORD, parser);
 	        
 	        Map< String, Boolean > requestedViews = new HashMap<String, Boolean>();
 	        for ( String view : extraViewGenerators.keySet() )
@@ -260,5 +272,9 @@ public class Tools {
 		return false;
 	}
 	
+	public static double getJaccardScore(IntPair ip1, IntPair ip2) {
+		return 1.0*(Math.min(ip1.getSecond(), ip2.getSecond()) - Math.max(ip1.getFirst(), ip2.getFirst()))
+				/ (Math.max(ip1.getSecond(), ip2.getSecond()) - Math.min(ip1.getFirst(), ip2.getFirst()));		
+	}
 	
 }

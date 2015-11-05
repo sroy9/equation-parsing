@@ -31,6 +31,7 @@ public class SimulProb {
 	public TextAnnotation ta;
 	public List<Constituent> posTags;
 	public List<Constituent> chunks;
+	public List<Constituent> parse;
 	public List<IntPair> candidateVars;
   	
 	public SimulProb(int index) {
@@ -84,12 +85,13 @@ public class SimulProb {
 		ta = Tools.pipeline.createAnnotatedTextAnnotation(text, false);
 		posTags = ta.getView(ViewNames.POS).getConstituents();
 		chunks = ta.getView(ViewNames.SHALLOW_PARSE).getConstituents();
+		parse = ta.getView(ViewNames.PARSE_STANFORD).getConstituents();
 	}
 	
 	public void createCandidateVars() {
 		candidateVars = new ArrayList<>();
-		for(Constituent cons : chunks) {
-			if(cons.getLabel().equals("NP")) {
+		for(Constituent cons : parse) {
+			if(cons.getLabel().startsWith("NP") || cons.getLabel().startsWith("NN")) {
 				candidateVars.add(cons.getSpan());
 			}
 		}
@@ -105,21 +107,28 @@ public class SimulProb {
 					Integer.parseInt(strArr[1]));
 			int end = ta.getTokenIdFromCharacterOffset(
 					Integer.parseInt(strArr[2])-1)+1;
-			boolean foundNP = false;
+			int bestIp = -1;
+			Double bestJscore = 0.0;
 			for(int i=0; i<candidateVars.size(); ++i) {
 				IntPair ip = candidateVars.get(i);
-				if(Tools.doesIntersect(ip, new IntPair(start, end))) {
-					if(!varTokens.containsKey(label)) {
-						varTokens.put(label, new ArrayList<Integer>());
-					}
-					varTokens.get(label).add(i);
-					foundNP = true;
+				double score = Tools.getJaccardScore(ip, new IntPair(start, end));
+				if(score > bestJscore) {
+					bestJscore = score;
+					bestIp = i;
 				}
 			}
-			if(!foundNP) {
+			if(bestIp < 0) {
 				System.out.println("Problem : "+text);
-				System.out.println("Shallow parse : "+Arrays.asList(chunks));
+				System.out.println("Parse : ");
+				for(Constituent cons : parse) {
+					System.out.println(cons.getLabel()+" : "+cons.getSurfaceForm());
+				}
 				System.out.println("NP not found for "+line.split("\t")[2]);
+			} else {
+				if(!varTokens.containsKey(label)) {
+					varTokens.put(label, new ArrayList<Integer>());
+				}
+				varTokens.get(label).add(bestIp);
 			}
 		}
 	}
