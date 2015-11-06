@@ -141,6 +141,12 @@ public class SimulProb {
 		if(numV1>1) {
 			coref = true;
 			varTokens.put("V2", varTokens.get("V1"));
+			for(Node leaf : equation.root.getLeaves()) {
+				if(leaf.label.equals("VAR") && leaf.varId.equals("V1")) {
+					leaf.varId = "V2";
+					break;
+				}
+			}
 		}
 	}
 	
