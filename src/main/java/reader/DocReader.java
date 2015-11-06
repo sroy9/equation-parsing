@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import structure.Node;
 import structure.SimulProb;
@@ -122,6 +121,7 @@ public class DocReader {
 		System.out.println("Equation : "+simulProb.equation);
 		System.out.println("Leaves : "+simulProb.equation.root.getLeaves());
 		System.out.println("VarTokens : "+simulProb.varTokens);
+		System.out.println("Coref : "+simulProb.coref);
 		sanityCheck(simulProb);
 		System.out.println();
 		
@@ -268,13 +268,13 @@ public class DocReader {
 	}
 	
 	public static void main(String args[]) throws Exception {
-//		List<SimulProb> simulProbList = 
-//				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
-//		for(SimulProb prob : simulProbList) {
-//			print(prob);
-//		}
+		List<SimulProb> simulProbList = 
+				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
+		for(SimulProb prob : simulProbList) {
+			print(prob);
+		}
 //		DocReader.createLambdaExpForSPF();
-		DocReader.createGizaProbTable();
+//		DocReader.createGizaProbTable();
 		System.out.println("Done");
 		Tools.pipeline.closeCache();
 		

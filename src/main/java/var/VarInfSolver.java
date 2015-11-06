@@ -55,6 +55,15 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 				y.varTokens.put("V2", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
 				y.varTokens.get("V2").add(j);
+				y.coref = false;
+				beam.add(new Pair<VarY, Double>(y, 
+						1.0*wv.dotProduct(featGen.getFeatureVector(prob, y))));
+				y = new VarY();
+				y.varTokens.put("V1", new ArrayList<Integer>());
+				y.varTokens.put("V2", new ArrayList<Integer>());
+				y.varTokens.get("V1").add(i);
+				y.varTokens.get("V2").add(j);
+				y.coref = true;
 				beam.add(new Pair<VarY, Double>(y, 
 						1.0*wv.dotProduct(featGen.getFeatureVector(prob, y))));
 			}
@@ -94,6 +103,7 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 			}
 		}
 		if(best == null) return gold;
+		best.coref = gold.coref;
 		return best;
 	}
 	

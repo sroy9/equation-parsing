@@ -8,6 +8,7 @@ import java.util.Set;
 import reader.DocReader;
 import structure.SimulProb;
 import utils.Params;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLParameters;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
@@ -85,10 +86,12 @@ public class VarDriver {
 				incorrect.add(prob.problemIndex);
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
-				System.out.println("Gold : \n"+gold);
+				System.out.println("Gold :");
+				print(prob, gold);
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
-				System.out.println("Pred : \n"+pred);
+				System.out.println("Pred :");
+				print(prob, pred);
 				System.out.println("Pred weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, pred)));
 				System.out.println("Loss : "+VarY.getLoss(gold, pred));
@@ -149,5 +152,17 @@ public class VarDriver {
 	
 	public static void main(String args[]) throws Exception {
 		VarDriver.crossVal();
+	}
+	
+	public static void print(VarX x, VarY y) {
+		for(String key : y.varTokens.keySet()) {
+			IntPair span = x.candidateVars.get(y.varTokens.get(key).get(0));
+			String str = "";
+			for(int i=span.getFirst(); i<span.getSecond(); ++i) {
+				str += x.ta.getToken(i)+" ";
+			}
+			System.out.print(key+" : "+str+" ");
+		}
+		System.out.println();
 	}
 }

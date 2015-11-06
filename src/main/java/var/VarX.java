@@ -16,7 +16,7 @@ public class VarX implements IInstance {
 	public TextAnnotation ta;
 	public List<Constituent> posTags;
 //	public List<Constituent> lemmas;
-//	public List<Constituent> parse;
+	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
 	public List<IntPair> candidateVars;
 	

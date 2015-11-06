@@ -3,7 +3,6 @@ package structure;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +27,7 @@ public class SimulProb {
 	public Equation equation;
 	public List<QuantSpan> quantities;
 	public Map<String, List<Integer>> varTokens;
+	public boolean coref;
 	public TextAnnotation ta;
 	public List<Constituent> posTags;
 	public List<Constituent> chunks;
@@ -39,6 +39,7 @@ public class SimulProb {
 		equation = new Equation();
 		quantities = new ArrayList<QuantSpan>();
 		varTokens = new HashMap<>();
+		coref = false;
 	}
 	
 	public void extractQuantities() throws Exception {
@@ -131,13 +132,20 @@ public class SimulProb {
 				varTokens.get(label).add(bestIp);
 			}
 		}
+		int numV1 = 0;
+		for(Node leaf : equation.root.getLeaves()) {
+			if(leaf.label.equals("VAR") && leaf.varId.equals("V1")) {
+				numV1++;
+			}
+		}
+		if(numV1>1) {
+			coref = true;
+			varTokens.put("V2", varTokens.get("V1"));
+		}
 	}
-	
 	
 	public static float getVarTokenLoss(Map<String, List<Integer>> gold,
 			Map<String, List<Integer>> pred, boolean varNameSwap) {
-//		System.out.println("VarTokenLoss called with : "+Arrays.asList(gold)+" and "+
-//			Arrays.asList(pred));
 		float loss = 0.0f;
 		if(gold.keySet().size() != pred.keySet().size()) return 4.0f;
 		if(gold.keySet().size() == 1) {

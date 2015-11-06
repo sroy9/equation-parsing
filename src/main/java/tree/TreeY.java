@@ -18,6 +18,7 @@ public class TreeY implements IStructure, Serializable {
 	public Equation equation;
 	public Map<String, List<Integer>> varTokens;
 	public List<Node> nodes;
+	public boolean coref;
 	
 	public TreeY() {
 		equation = new Equation();
@@ -31,6 +32,7 @@ public class TreeY implements IStructure, Serializable {
 		varTokens.putAll(other.varTokens);
 		nodes = new ArrayList<>();
 		nodes.addAll(other.nodes);
+		coref = other.coref;
 	}
 	
 	public TreeY(SimulProb prob) {
@@ -38,6 +40,7 @@ public class TreeY implements IStructure, Serializable {
 		varTokens = new HashMap<String, List<Integer>>();
 		varTokens.putAll(prob.varTokens);
 		nodes = new ArrayList<Node>();
+		coref = prob.coref;
 	}
 	
 	public static float getLoss(TreeY gold, TreeY pred) {
