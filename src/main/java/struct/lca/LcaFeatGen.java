@@ -71,36 +71,36 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements Serializable
 		if(node.children.size() == 2) {
 			IntPair ip1, ip2, ip;
 			for(Node leaf1 : node.children.get(0).getLeaves()) {
-				if(leaf1.label.equals("VAR")) {
-					ip1 = x.candidateVars.get(leaf1.index);
-				} else {
-					QuantSpan qs = x.quantities.get(leaf1.index);
-					ip1 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
-							x.ta.getTokenIdFromCharacterOffset(qs.end));
-				}
+//				if(leaf1.label.equals("VAR")) {
+//					ip1 = x.candidateVars.get(leaf1.index);
+//				} else {
+//					QuantSpan qs = x.quantities.get(leaf1.index);
+//					ip1 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
+//							x.ta.getTokenIdFromCharacterOffset(qs.end));
+//				}
 				for(Node leaf2 : node.children.get(1).getLeaves()) {
-					if(leaf2.label.equals("VAR")) {
-						ip2 = x.candidateVars.get(leaf2.index);
-					} else {
-						QuantSpan qs = x.quantities.get(leaf2.index);
-						ip2 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
-								x.ta.getTokenIdFromCharacterOffset(qs.end));
-					}
-					boolean allow = true;
-					for(Node leaf : node.getLeaves()) {
-						if(leaf.label.equals("VAR")) {
-							ip = x.candidateVars.get(leaf.index);
-						} else {
-							QuantSpan qs = x.quantities.get(leaf.index);
-							ip = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
-									x.ta.getTokenIdFromCharacterOffset(qs.end));
-						}
-						if((ip1.getSecond()<=ip.getFirst() && ip.getSecond()<ip2.getFirst()) || 
-								(ip2.getSecond()<=ip.getFirst() && ip.getSecond()<ip1.getFirst())) {
-							allow = false;
-						}
-					}
-					if(!allow) continue;
+//					if(leaf2.label.equals("VAR")) {
+//						ip2 = x.candidateVars.get(leaf2.index);
+//					} else {
+//						QuantSpan qs = x.quantities.get(leaf2.index);
+//						ip2 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
+//								x.ta.getTokenIdFromCharacterOffset(qs.end));
+//					}
+//					boolean allow = true;
+//					for(Node leaf : node.getLeaves()) {
+//						if(leaf.label.equals("VAR")) {
+//							ip = x.candidateVars.get(leaf.index);
+//						} else {
+//							QuantSpan qs = x.quantities.get(leaf.index);
+//							ip = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
+//									x.ta.getTokenIdFromCharacterOffset(qs.end));
+//						}
+//						if((ip1.getSecond()<=ip.getFirst() && ip.getSecond()<ip2.getFirst()) || 
+//								(ip2.getSecond()<=ip.getFirst() && ip.getSecond()<ip1.getFirst())) {
+//							allow = false;
+//						}
+//					}
+//					if(!allow) continue;
 					lca.LcaX lcaX = new lca.LcaX(x, leaf1, leaf2);
 					lca.LcaY lcaY = new lca.LcaY(node.label);
 					features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));
@@ -124,36 +124,36 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements Serializable
 		if(node.children.size() == 2) {
 			IntPair ip1, ip2, ip;
 			for(Node leaf1 : node.children.get(0).getLeaves()) {
-				if(leaf1.label.equals("VAR")) {
-					ip1 = x.candidateVars.get(leaf1.index);
-				} else {
-					QuantSpan qs = x.quantities.get(leaf1.index);
-					ip1 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
-							x.ta.getTokenIdFromCharacterOffset(qs.end));
-				}
+//				if(leaf1.label.equals("VAR")) {
+//					ip1 = x.candidateVars.get(leaf1.index);
+//				} else {
+//					QuantSpan qs = x.quantities.get(leaf1.index);
+//					ip1 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
+//							x.ta.getTokenIdFromCharacterOffset(qs.end));
+//				}
 				for(Node leaf2 : node.children.get(1).getLeaves()) {
-					if(leaf2.label.equals("VAR")) {
-						ip2 = x.candidateVars.get(leaf2.index);
-					} else {
-						QuantSpan qs = x.quantities.get(leaf2.index);
-						ip2 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
-								x.ta.getTokenIdFromCharacterOffset(qs.end));
-					}
-					boolean allow = true;
-					for(Node leaf : node.getLeaves()) {
-						if(leaf.label.equals("VAR")) {
-							ip = x.candidateVars.get(leaf.index);
-						} else {
-							QuantSpan qs = x.quantities.get(leaf.index);
-							ip = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
-									x.ta.getTokenIdFromCharacterOffset(qs.end));
-						}
-						if((ip1.getSecond()<=ip.getFirst() && ip.getSecond()<ip2.getFirst()) || 
-								(ip2.getSecond()<=ip.getFirst() && ip.getSecond()<ip1.getFirst())) {
-							allow = false;
-						}
-					}
-					if(!allow) continue;
+//					if(leaf2.label.equals("VAR")) {
+//						ip2 = x.candidateVars.get(leaf2.index);
+//					} else {
+//						QuantSpan qs = x.quantities.get(leaf2.index);
+//						ip2 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
+//								x.ta.getTokenIdFromCharacterOffset(qs.end));
+//					}
+//					boolean allow = true;
+//					for(Node leaf : node.getLeaves()) {
+//						if(leaf.label.equals("VAR")) {
+//							ip = x.candidateVars.get(leaf.index);
+//						} else {
+//							QuantSpan qs = x.quantities.get(leaf.index);
+//							ip = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
+//									x.ta.getTokenIdFromCharacterOffset(qs.end));
+//						}
+//						if((ip1.getSecond()<=ip.getFirst() && ip.getSecond()<ip2.getFirst()) || 
+//								(ip2.getSecond()<=ip.getFirst() && ip.getSecond()<ip1.getFirst())) {
+//							allow = false;
+//						}
+//					}
+//					if(!allow) continue;
 					lca.LcaX lcaX = new lca.LcaX(x, leaf1, leaf2);
 					lca.LcaY lcaY = new lca.LcaY(node.label);
 					features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));

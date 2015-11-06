@@ -77,5 +77,12 @@ fi
 if [ "$1" == "Joint" ]
 then
     echo "Running Joint"
-    java -cp target/classes/:target/dependency/* tree.TreeDriver 1>log/Joint.out
+    java -cp target/classes/:target/dependency/* tree.TreeDriver 1>log/Joint.out 2>log/Joint.err &
+fi
+
+## LastTwo
+if [ "$1" == "LastTwo" ]
+then
+    echo "Running LastTwo"
+    java -cp target/classes/:target/dependency/* tree.LastTwoDriver 1>log/LastTwo.out 2>log/LastTwo.err &
 fi
