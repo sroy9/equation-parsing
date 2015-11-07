@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import reader.DocReader;
-import structure.Equation;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
@@ -67,7 +66,7 @@ public class TreeDriver {
 		SLModel model = SLModel.loadModel(modelPath);
 		Set<Integer> incorrect = new HashSet<>();
 		Set<Integer> total = new HashSet<>();
-		double acc = 0.0, eqAcc = 0.0;
+		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			TreeX prob = (TreeX) sp.instanceList.get(i);
 			TreeY gold = (TreeY) sp.goldStructureList.get(i);
@@ -80,10 +79,6 @@ public class TreeDriver {
 					model.featureGenerator.getFeatureVector(prob, pred));
 			if(goldWt > predWt) {
 				System.out.println("PROBLEM HERE");
-			}
-			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.001 || 
-					Equation.getLoss(gold.equation, pred.equation, false) < 0.001) {
-				eqAcc++;
 			}
 			if(TreeY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
@@ -100,8 +95,6 @@ public class TreeDriver {
 				System.out.println("Loss : "+TreeY.getLoss(gold, pred));
 			}
 		}
-		System.out.println("Equation Accuracy : = " + eqAcc + " / " + sp.instanceList.size()
-				+ " = " + (eqAcc/sp.instanceList.size()));
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
 		return (acc/sp.instanceList.size());

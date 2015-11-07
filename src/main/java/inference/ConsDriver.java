@@ -1,11 +1,12 @@
-package tree;
+package inference;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import reader.DocReader;
-import structure.Equation;
 import structure.SimulProb;
+import tree.TreeX;
+import tree.TreeY;
 import utils.Params;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
@@ -66,15 +67,11 @@ public class ConsDriver {
 
 	public static double testModel(SLModel numOccurModel, SLModel varModel, 
 			SLModel lcaModel, SLProblem sp, boolean printMistakes) throws Exception {
-		double acc = 0.0, eqAcc = 0.0;
+		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			TreeX prob = (TreeX) sp.instanceList.get(i);
 			TreeY gold = (TreeY) sp.goldStructureList.get(i);
 			TreeY pred = ConsInfSolver.getBestStructure(prob, numOccurModel, varModel, lcaModel, gold);
-			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.001 || 
-					Equation.getLoss(gold.equation, pred.equation, false) < 0.001) {
-				eqAcc++;
-			}
 			if(TreeY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else if(printMistakes) {
@@ -85,8 +82,6 @@ public class ConsDriver {
 				System.out.println("Loss : "+TreeY.getLoss(gold, pred));				
 			}
 		}
-		System.out.println("Equation Accuracy : = " + eqAcc + " / " + sp.instanceList.size()
-				+ " = " + (eqAcc/sp.instanceList.size()));
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
 		return (acc/sp.instanceList.size());

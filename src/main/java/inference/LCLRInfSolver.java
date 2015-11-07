@@ -1,30 +1,33 @@
-package tree;
+package inference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import lasttwo.LastTwoFeatGen;
+import lasttwo.LastTwoX;
+import lasttwo.LastTwoY;
 import numoccur.NumoccurX;
 import numoccur.NumoccurY;
 import structure.Node;
 import structure.PairComparator;
+import tree.TreeX;
+import tree.TreeY;
 import utils.FeatGen;
 import utils.Tools;
-import var.VarX;
-import var.VarY;
 
 import com.google.common.collect.MinMaxPriorityQueue;
 
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 
-public class ConsInfSolver {
+public class LCLRInfSolver {
 	
 //	public static double numOccurScale, varScale;
 	
 	public static TreeY getBestStructure(TreeX prob, SLModel numOccurModel, 
-			SLModel varModel, SLModel lcaModel, TreeY gold) throws Exception {
+			SLModel lastTwoModel, TreeY gold) throws Exception {
 		PairComparator<TreeY> pairComparator = 
 				new PairComparator<TreeY>() {};
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam1 = 
@@ -85,8 +88,9 @@ public class ConsInfSolver {
 				y.varTokens.put("V1", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
 				y.coref = false;
-				beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+varModel.wv.dotProduct(
-						varModel.featureGenerator.getFeatureVector(new VarX(prob), new VarY(y)))));
+				beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+lastTwoModel.wv.dotProduct(
+						((LastTwoFeatGen)lastTwoModel.featureGenerator).getVarTokenFeatureVector(
+								new LastTwoX(prob, y.nodes), new LastTwoY(y)))));
 				for(int j=i; j<prob.candidateVars.size(); ++j) {
 					y = new TreeY(pair.getFirst());
 					node = new Node("VAR", i, new ArrayList<Node>());
@@ -100,9 +104,9 @@ public class ConsInfSolver {
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					y.coref = false;
-					beam2.add(new Pair<TreeY, Double>(y, 
-							pair.getSecond()+varModel.wv.dotProduct(
-							varModel.featureGenerator.getFeatureVector(new VarX(prob), new VarY(y)))));
+					beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+lastTwoModel.wv.dotProduct(
+							((LastTwoFeatGen)lastTwoModel.featureGenerator).getVarTokenFeatureVector(
+									new LastTwoX(prob, y.nodes), new LastTwoY(y)))));
 					y = new TreeY(pair.getFirst());
 					node = new Node("VAR", i, new ArrayList<Node>());
 					node.varId = "V1";
@@ -115,10 +119,9 @@ public class ConsInfSolver {
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					y.coref = true;
-					beam2.add(new Pair<TreeY, Double>(y, 
-							pair.getSecond()+varModel.wv.dotProduct(
-							varModel.featureGenerator.getFeatureVector(new VarX(prob), new VarY(y)))));
-
+					beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+lastTwoModel.wv.dotProduct(
+							((LastTwoFeatGen)lastTwoModel.featureGenerator).getVarTokenFeatureVector(
+									new LastTwoX(prob, y.nodes), new LastTwoY(y)))));
 				}
 			}
 		}
@@ -133,7 +136,7 @@ public class ConsInfSolver {
 		
 		// Equation generation
 		for(Pair<TreeY, Double> pair : beam1) {
-			beam2.addAll(getBottomUpBestParse(prob, pair, lcaModel));
+			beam2.addAll(getBottomUpBestParse(prob, pair, lastTwoModel));
 		}
 		beam1.clear();
 		beam1.addAll(beam2);
@@ -142,7 +145,7 @@ public class ConsInfSolver {
 	}
 	
 	public static List<Pair<TreeY, Double>> getBottomUpBestParse(
-			TreeX x, Pair<TreeY, Double> pair, SLModel lcaModel) {
+			TreeX x, Pair<TreeY, Double> pair, SLModel lastTwoModel) {
 		TreeY y = pair.getFirst();
 		PairComparator<List<Node>> nodePairComparator = 
 				new PairComparator<List<Node>>() {};
@@ -158,7 +161,7 @@ public class ConsInfSolver {
 		beam1.add(new Pair<List<Node>, Double>(init, pair.getSecond()));
 		for(int i=1; i<=n-2; ++i) {
 			for(Pair<List<Node>, Double> state : beam1) {
-				beam2.addAll(enumerateSingleMerge(state, lcaModel, x, 
+				beam2.addAll(enumerateSingleMerge(state, lastTwoModel, x, 
 						pair.getFirst().varTokens, pair.getFirst().nodes));
 			}
 			beam1.clear();
@@ -170,7 +173,7 @@ public class ConsInfSolver {
 			Node node = new Node("EQ", -1, Arrays.asList(
 					state.getFirst().get(0), state.getFirst().get(1)));
 			beam2.add(new Pair<List<Node>, Double>(Arrays.asList(node), 
-					state.getSecond()+getLcaScore(node, lcaModel, x, 
+					state.getSecond()+getLcaScore(node, lastTwoModel, x, 
 							pair.getFirst().varTokens, pair.getFirst().nodes)));
 		}
 		List<Pair<TreeY, Double>> results = new ArrayList<Pair<TreeY,Double>>();
@@ -184,7 +187,7 @@ public class ConsInfSolver {
 	}
 	
 	public static List<Pair<List<Node>, Double>> enumerateSingleMerge(
-			Pair<List<Node>, Double> state, SLModel lcaModel, TreeX x, 
+			Pair<List<Node>, Double> state, SLModel lastTwoModel, TreeX x, 
 			Map<String, List<Integer>> varTokens, List<Node> nodes) {
 		List<Pair<List<Node>, Double>> nextStates = new ArrayList<>();
 		List<Node> nodeList = state.getFirst();
@@ -202,7 +205,7 @@ public class ConsInfSolver {
 				tmpNodeList.remove(i);
 				tmpNodeList.remove(j-1);
 				for(Pair<Node, Double> pair : enumerateMerge(
-						nodeList.get(i), nodeList.get(j), lcaModel, x, varTokens, nodes)) {
+						nodeList.get(i), nodeList.get(j), lastTwoModel, x, varTokens, nodes)) {
 					List<Node> newNodeList = new ArrayList<Node>();
 					newNodeList.addAll(tmpNodeList);
 					newNodeList.add(pair.getFirst());
@@ -236,16 +239,16 @@ public class ConsInfSolver {
 		return nextStates;
 	}
 
-	public static double getLcaScore(Node node, SLModel lcaModel, TreeX x, 
+	public static double getLcaScore(Node node, SLModel lastTwoModel, TreeX x, 
 			Map<String, List<Integer>> varTokens, List<Node> nodes) {
 		List<String> features = new ArrayList<String>();
 		struct.lca.LcaX lcaX = new struct.lca.LcaX(x, varTokens, nodes);
-		if(ConsDriver.useSPforLCA) {
+//		if(ConsDriver.useSPforLCA) {
 			features.addAll(struct.lca.LcaFeatGen.getPairFeatures(lcaX, node));
-		} else {
-			features.addAll(struct.lca.LcaFeatGen.getPairFeaturesWithoutGlobalPrefix(lcaX, node));
-		}
-		return lcaModel.wv.dotProduct(FeatGen.getFeatureVectorFromList(features, lcaModel.lm));
+//		} else {
+//			features.addAll(struct.lca.LcaFeatGen.getPairFeaturesWithoutGlobalPrefix(lcaX, node));
+//		}
+		return lastTwoModel.wv.dotProduct(FeatGen.getFeatureVectorFromList(features, lastTwoModel.lm));
 	}
 	
 }

@@ -1,4 +1,4 @@
-package tree;
+package lasttwo;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -7,6 +7,7 @@ import java.util.Set;
 
 import reader.DocReader;
 import structure.Equation;
+import structure.Node;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
@@ -43,8 +44,8 @@ public class LastTwoDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/lastTwo"+testFold+".save", train, testFold);
-		return testModel("models/lastTwo"+testFold+".save", test);
+		trainModel("models/lasttwo"+testFold+".save", train, testFold);
+		return testModel("models/lasttwo"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
@@ -55,8 +56,19 @@ public class LastTwoDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			TreeX x = new TreeX(simulProb);
-			TreeY y = new TreeY(simulProb);
+			List<Node> nodes = new ArrayList<Node>();
+			for(int i=0; i<simulProb.quantities.size(); ++i) {
+				for(Node leaf : simulProb.equation.root.getLeaves()) {
+					if(leaf.label.equals("NUM") && Tools.safeEquals(Tools.getValue(
+							simulProb.quantities.get(i)), leaf.value)) {
+						Node node = new Node(leaf);
+						node.index = i;
+						nodes.add(node);
+					}
+				}
+			}
+			LastTwoX x = new LastTwoX(simulProb, nodes);
+			LastTwoY y = new LastTwoY(simulProb);
 			problem.addExample(x, y);
 		}
 		return problem;
@@ -69,9 +81,9 @@ public class LastTwoDriver {
 		Set<Integer> total = new HashSet<>();
 		double acc = 0.0, eqAcc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			TreeX prob = (TreeX) sp.instanceList.get(i);
-			TreeY gold = (TreeY) sp.goldStructureList.get(i);
-			TreeY pred = (TreeY) model.infSolver.getLossAugmentedBestStructure(
+			LastTwoX prob = (LastTwoX) sp.instanceList.get(i);
+			LastTwoY gold = (LastTwoY) sp.goldStructureList.get(i);
+			LastTwoY pred = (LastTwoY) model.infSolver.getLossAugmentedBestStructure(
 					model.wv, prob, gold);
 			total.add(prob.problemIndex);
 			double goldWt = model.wv.dotProduct(
@@ -85,7 +97,7 @@ public class LastTwoDriver {
 					Equation.getLoss(gold.equation, pred.equation, false) < 0.001) {
 				eqAcc++;
 			}
-			if(TreeY.getLoss(gold, pred) < 0.0001) {
+			if(LastTwoY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else {
 				incorrect.add(prob.problemIndex);
@@ -97,7 +109,7 @@ public class LastTwoDriver {
 				System.out.println("Pred : \n"+pred);
 				System.out.println("Pred weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, pred)));
-				System.out.println("Loss : "+TreeY.getLoss(gold, pred));
+				System.out.println("Loss : "+LastTwoY.getLoss(gold, pred));
 			}
 		}
 		System.out.println("Equation Accuracy : = " + eqAcc + " / " + sp.instanceList.size()
@@ -113,7 +125,7 @@ public class LastTwoDriver {
 		Lexiconer lm = new Lexiconer();
 		lm.setAllowNewFeatures(true);
 		model.lm = lm;
-		TreeFeatGen fg = new TreeFeatGen(lm);
+		LastTwoFeatGen fg = new LastTwoFeatGen(lm);
 		model.featureGenerator = fg;
 		model.infSolver = new LastTwoInfSolver(fg);
 		SLParameters para = new SLParameters();
@@ -134,9 +146,9 @@ public class LastTwoDriver {
 			System.err.println("Latent SSVM : Iteration "+i);
 			SLProblem newProb = new SLProblem();
 			for(int j=0; j<sp.goldStructureList.size(); ++j) {
-				TreeX prob = (TreeX) sp.instanceList.get(j);
-				TreeY gold = (TreeY) sp.goldStructureList.get(j);
-				TreeY bestLatent = infSolver.getLatentBestStructure(prob, gold, wv);
+				LastTwoX prob = (LastTwoX) sp.instanceList.get(j);
+				LastTwoY gold = (LastTwoY) sp.goldStructureList.get(j);
+				LastTwoY bestLatent = infSolver.getLatentBestStructure(prob, gold, wv);
 				newProb.addExample(prob, bestLatent);
 			}
 			System.err.println("Learning SSVM");

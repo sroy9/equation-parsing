@@ -54,23 +54,34 @@ then
     if [ "$2" = "SP" -a "$3" = "SP" ]
     then
 	echo "Running Pipeline, with SP:Numoccur SP:Var SP:Tree"
-	java -cp target/classes/:target/dependency/* tree.ConsDriver SP SP 1>log/PipelineSPSP.out
+	java -cp target/classes/:target/dependency/* inference.ConsDriver SP SP 1>log/PipelineSPSP.out
     fi
     if [ "$2" = "D" -a "$3" = "SP" ]
     then
 	echo "Running Pipeline, with D:Numoccur SP:Var SP:Tree"
-	java -cp target/classes/:target/dependency/* tree.ConsDriver D SP 1>log/PipelineDSP.out
+	java -cp target/classes/:target/dependency/* inference.ConsDriver D SP 1>log/PipelineDSP.out
     fi
     if [ "$2" = "SP" -a "$3" = "D" ]
     then
 	echo "Running Pipeline, with SP:Numoccur SP:Var D:Tree"
-	java -cp target/classes/:target/dependency/* tree.ConsDriver SP D 1>log/PipelineSPD.out
+	java -cp target/classes/:target/dependency/* inference.ConsDriver SP D 1>log/PipelineSPD.out
     fi
     if [ "$2" = "D" -a "$3" = "D" ]
     then
 	echo "Running Pipeline, with D:Numoccur SP:Var D:Tree"
-	java -cp target/classes/:target/dependency/* tree.ConsDriver D D 1>log/PipelineDD.out
+	java -cp target/classes/:target/dependency/* inference.ConsDriver D D 1>log/PipelineDD.out
     fi
+    if [ "$2" = "D" -a "$3" = "LastTwo" ]
+    then
+	echo "Running Pipeline, with D:Numoccur SP:Var and Tree"
+	java -cp target/classes/:target/dependency/* inference.LCLRDriver D 1>log/LCLRD.out
+    fi
+    if [ "$2" = "SP" -a "$3" = "LastTwo" ]
+    then
+	echo "Running Pipeline, with SP:Numoccur SP:Var and Tree"
+	java -cp target/classes/:target/dependency/* inference.LCLRDriver SP 1>log/LCLRSP.out
+    fi
+
 fi
 
 ## Joint

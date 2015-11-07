@@ -2,6 +2,7 @@ package struct.lca;
 
 import java.io.Serializable;
 
+import lasttwo.LastTwoY;
 import structure.Equation;
 import structure.SimulProb;
 import tree.TreeY;
@@ -26,7 +27,10 @@ public class LcaY implements IStructure, Serializable {
 	
 	public LcaY(TreeY prob) {
 		equation = new Equation(prob.equation);
-		
+	}
+	
+	public LcaY(LastTwoY prob) {
+		equation = new Equation(prob.equation);
 	}
 	
 	public static float getLoss(LcaY gold, LcaY pred) {
