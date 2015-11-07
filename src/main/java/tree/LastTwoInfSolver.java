@@ -76,6 +76,7 @@ public class LastTwoInfSolver extends AbstractInferenceSolver implements
 				y.nodes.add(node);
 				y.varTokens.put("V1", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
+				y.coref = false;
 				beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+
 						wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 				for(int j=i; j<prob.candidateVars.size(); ++j) {
@@ -90,6 +91,21 @@ public class LastTwoInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.put("V2", new ArrayList<Integer>());
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
+					y.coref = false;
+					beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+
+							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+					y = new TreeY(pair.getFirst());
+					node = new Node("VAR", i, new ArrayList<Node>());
+					node.varId = "V1";
+					y.nodes.add(node);
+					node = new Node("VAR", j, new ArrayList<Node>());
+					node.varId = "V2";
+					y.nodes.add(node);
+					y.varTokens.put("V1", new ArrayList<Integer>());
+					y.varTokens.put("V2", new ArrayList<Integer>());
+					y.varTokens.get("V1").add(i);
+					y.varTokens.get("V2").add(j);
+					y.coref = true;
 					beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+
 							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 				}
@@ -272,6 +288,7 @@ public class LastTwoInfSolver extends AbstractInferenceSolver implements
 			}
 		}
 		if(best == null) return gold;
+		best.coref = gold.coref;
 		return best;
 	}
 	

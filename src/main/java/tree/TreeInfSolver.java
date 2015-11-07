@@ -309,6 +309,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 			}
 		}
 		if(best == null) return gold;
+		best.coref = gold.coref;
 		return best;
 	}
 	

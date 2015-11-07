@@ -6,6 +6,8 @@ import java.util.List;
 
 import structure.Node;
 import utils.FeatGen;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -33,26 +35,6 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements Serializable
 		List<String> features = getPairFeatures(x, node);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
-
-//	public IFeatureVector getGlobalFeatureVector(LcaX x, LcaY y) {
-//		List<String> features = getGlobalFeatures(x, y);
-//		return FeatGen.getFeatureVectorFromList(features, lm);
-//	}
-//	
-//	public static List<String> getGlobalFeatures(LcaX x, LcaY y) {
-//		List<String> features = new ArrayList<>();
-//		for(int i=0; i<x.ta.size(); ++i) {
-//			features.add(y.equation.root.getSignature()+"_Unigram_"+
-//					x.ta.getToken(i).toLowerCase());
-//			if(i<x.ta.size()-1) {
-//				features.add(y.equation.root.getSignature()+"_Bigram_"+
-//						x.ta.getToken(i).toLowerCase()+"_"+
-//						x.ta.getToken(i+1).toLowerCase());
-//			}
-//		}
-//		return features;
-//	}
-	
 	
 	public static List<String> getFeatures(LcaX x, LcaY y) {
 		List<String> features = new ArrayList<String>();
@@ -67,8 +49,38 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements Serializable
 	public static List<String> getPairFeatures(LcaX x, Node node) {
 		List<String> features = new ArrayList<String>();
 		if(node.children.size() == 2) {
+			IntPair ip1, ip2, ip;
 			for(Node leaf1 : node.children.get(0).getLeaves()) {
+				if(leaf1.label.equals("VAR")) {
+					ip1 = x.candidateVars.get(leaf1.index);
+				} else {
+					QuantSpan qs = x.quantities.get(leaf1.index);
+					ip1 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
+							x.ta.getTokenIdFromCharacterOffset(qs.end));
+				}
 				for(Node leaf2 : node.children.get(1).getLeaves()) {
+					if(leaf2.label.equals("VAR")) {
+						ip2 = x.candidateVars.get(leaf2.index);
+					} else {
+						QuantSpan qs = x.quantities.get(leaf2.index);
+						ip2 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
+								x.ta.getTokenIdFromCharacterOffset(qs.end));
+					}
+					boolean allow = true;
+					for(Node leaf : node.getLeaves()) {
+						if(leaf.label.equals("VAR")) {
+							ip = x.candidateVars.get(leaf.index);
+						} else {
+							QuantSpan qs = x.quantities.get(leaf.index);
+							ip = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
+									x.ta.getTokenIdFromCharacterOffset(qs.end));
+						}
+						if((ip1.getSecond()<=ip.getFirst() && ip.getSecond()<=ip2.getFirst()) || 
+								(ip2.getSecond()<=ip.getFirst() && ip.getSecond()<=ip1.getFirst())) {
+							allow = false;
+						}
+					}
+//					if(!allow) continue;
 					lca.LcaX lcaX = new lca.LcaX(x, leaf1, leaf2);
 					lca.LcaY lcaY = new lca.LcaY(node.label);
 					features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));
@@ -90,8 +102,38 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements Serializable
 	public static List<String> getPairFeaturesWithoutGlobalPrefix(LcaX x, Node node) {
 		List<String> features = new ArrayList<String>();
 		if(node.children.size() == 2) {
+			IntPair ip1, ip2, ip;
 			for(Node leaf1 : node.children.get(0).getLeaves()) {
+				if(leaf1.label.equals("VAR")) {
+					ip1 = x.candidateVars.get(leaf1.index);
+				} else {
+					QuantSpan qs = x.quantities.get(leaf1.index);
+					ip1 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
+							x.ta.getTokenIdFromCharacterOffset(qs.end));
+				}
 				for(Node leaf2 : node.children.get(1).getLeaves()) {
+					if(leaf2.label.equals("VAR")) {
+						ip2 = x.candidateVars.get(leaf2.index);
+					} else {
+						QuantSpan qs = x.quantities.get(leaf2.index);
+						ip2 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
+								x.ta.getTokenIdFromCharacterOffset(qs.end));
+					}
+					boolean allow = true;
+					for(Node leaf : node.getLeaves()) {
+						if(leaf.label.equals("VAR")) {
+							ip = x.candidateVars.get(leaf.index);
+						} else {
+							QuantSpan qs = x.quantities.get(leaf.index);
+							ip = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
+									x.ta.getTokenIdFromCharacterOffset(qs.end));
+						}
+						if((ip1.getSecond()<=ip.getFirst() && ip.getSecond()<=ip2.getFirst()) || 
+								(ip2.getSecond()<=ip.getFirst() && ip.getSecond()<=ip1.getFirst())) {
+							allow = false;
+						}
+					}
+//					if(!allow) continue;
 					lca.LcaX lcaX = new lca.LcaX(x, leaf1, leaf2);
 					lca.LcaY lcaY = new lca.LcaY(node.label);
 					features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));
