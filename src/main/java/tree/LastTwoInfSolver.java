@@ -113,10 +113,10 @@ public class LastTwoInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<List<Node>>() {};
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(20).create();
+				.maximumSize(5).create();
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(20).create();
+				.maximumSize(5).create();
 		int n = y.nodes.size();
 		List<Node> init = new ArrayList<>();
 		init.addAll(y.nodes);
