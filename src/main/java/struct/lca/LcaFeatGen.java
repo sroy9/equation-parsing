@@ -80,7 +80,7 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements Serializable
 							allow = false;
 						}
 					}
-					if(!allow) continue;
+//					if(!allow) continue;
 					lca.LcaX lcaX = new lca.LcaX(x, leaf1, leaf2);
 					lca.LcaY lcaY = new lca.LcaY(node.label);
 					features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));
@@ -92,11 +92,12 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements Serializable
 				}
 			}
 		}
-//		List<String> newFeats = new ArrayList<String>();
-//		for(String feat : features) {
-//			newFeats.add(feat+"_"+node.getSignature());
-//		}
-		return features;
+		List<String> newFeats = new ArrayList<String>();
+		for(String feat : features) {
+			newFeats.add(feat+"_"+node.getSignature());
+		}
+//		return features;
+		return newFeats;
 	}
 	
 //	public static List<String> getPairFeaturesWithoutGlobalPrefix(LcaX x, Node node) {

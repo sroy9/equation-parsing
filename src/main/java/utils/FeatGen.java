@@ -1,7 +1,9 @@
 package utils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -16,12 +18,18 @@ public class FeatGen {
 	public static IFeatureVector getFeatureVectorFromList(
 			List<String> features, Lexiconer lm) {
 		FeatureVectorBuffer fvb = new FeatureVectorBuffer();
-		for(String feature : features) {
+		Set<String> feats = new HashSet<String>();
+		feats.addAll(features);
+		for(String feature : feats) {
+			double count = 0;
+			for(String copy : features) {
+				if(feature.equals(copy)) count+=1.0;
+			}
 			if(!lm.containFeature(feature) && lm.isAllowNewFeatures()) {
 				lm.addFeature(feature);
 			}
 			if(lm.containFeature(feature)) {
-				fvb.addFeature(lm.getFeatureId(feature), 1.0);
+				fvb.addFeature(lm.getFeatureId(feature), count);
 			}
 		}
 		return fvb.toFeatureVector();
