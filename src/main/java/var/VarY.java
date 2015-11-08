@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lasttwo.LastTwoY;
 import structure.SimulProb;
 import tree.TreeY;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -35,12 +34,6 @@ public class VarY implements IStructure, Serializable {
 	}
 	
 	public VarY(TreeY prob) {
-		varTokens = new HashMap<String, List<Integer>>();
-		varTokens.putAll(prob.varTokens);
-		coref = prob.coref;
-	}
-	
-	public VarY(LastTwoY prob) {
 		varTokens = new HashMap<String, List<Integer>>();
 		varTokens.putAll(prob.varTokens);
 		coref = prob.coref;

@@ -3,7 +3,6 @@ package struct.lca;
 import java.util.List;
 import java.util.Map;
 
-import lasttwo.LastTwoX;
 import structure.Node;
 import structure.SimulProb;
 import tree.TreeX;
@@ -37,17 +36,6 @@ public class LcaX implements IInstance {
 	}
 	
 	public LcaX(TreeX simulProb, Map<String, List<Integer>> varTokens,
-			List<Node> nodes) {
-		quantities = simulProb.quantities;
-		problemIndex = simulProb.problemIndex;
-		ta = simulProb.ta;
-		posTags = simulProb.posTags;
-		candidateVars = simulProb.candidateVars;
-		this.varTokens = varTokens;
-		this.nodes = nodes;
-	}
-	
-	public LcaX(LastTwoX simulProb, Map<String, List<Integer>> varTokens,
 			List<Node> nodes) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.problemIndex;

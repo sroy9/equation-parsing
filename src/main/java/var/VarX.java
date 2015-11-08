@@ -2,7 +2,6 @@ package var;
 
 import java.util.List;
 
-import lasttwo.LastTwoX;
 import structure.SimulProb;
 import tree.TreeX;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
@@ -30,14 +29,6 @@ public class VarX implements IInstance {
 	}
 	
 	public VarX(TreeX simulProb) {
-		quantities = simulProb.quantities;
-		problemIndex = simulProb.problemIndex;
-		ta = simulProb.ta;
-		posTags = simulProb.posTags;
-		candidateVars = simulProb.candidateVars;
-	}
-	
-	public VarX(LastTwoX simulProb) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.problemIndex;
 		ta = simulProb.ta;
