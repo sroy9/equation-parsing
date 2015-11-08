@@ -51,9 +51,11 @@ public class VarY implements IStructure, Serializable {
 				(pred.varTokens.containsKey("V2") && pred.varTokens.get("V2").size() > 1)) {
 			System.err.println("Error in TreeY getLoss() function");
 		}
-		float loss1 = SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, true);
-		float loss2 = SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, false);
-		return Math.min(loss1, loss2)+((gold.coref==pred.coref)?0.0f:1.0f);
+		float loss1 = SimulProb.getVarTokenLoss(gold.varTokens, gold.coref, 
+				pred.varTokens, pred.coref, true);
+		float loss2 = SimulProb.getVarTokenLoss(gold.varTokens, gold.coref, 
+				pred.varTokens, pred.coref, false);
+		return Math.min(loss1, loss2);
 	}
 	
 	@Override

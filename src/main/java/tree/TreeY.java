@@ -50,10 +50,12 @@ public class TreeY implements IStructure, Serializable {
 		}
 		float loss1 = 
 				Equation.getLoss(gold.equation, pred.equation, true) + 
-				SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, true);
+				SimulProb.getVarTokenLoss(gold.varTokens, gold.coref, 
+						pred.varTokens, pred.coref, true);
 		float loss2 = 
 				Equation.getLoss(gold.equation, pred.equation, false) + 
-				SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, false);
+				SimulProb.getVarTokenLoss(gold.varTokens, gold.coref, 
+						pred.varTokens, pred.coref, false);
 		return Math.min(loss1, loss2);
 	}
 	

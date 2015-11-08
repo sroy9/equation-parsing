@@ -16,6 +16,9 @@ import tree.TreeX;
 import tree.TreeY;
 import utils.FeatGen;
 import utils.Tools;
+import var.VarFeatGen;
+import var.VarX;
+import var.VarY;
 
 import com.google.common.collect.MinMaxPriorityQueue;
 
@@ -32,10 +35,10 @@ public class LCLRInfSolver {
 				new PairComparator<TreeY>() {};
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(200).create();
+				maximumSize(20).create();
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(200).create();
+				maximumSize(20).create();
 		TreeY seed = new TreeY();
 		beam1.add(new Pair<TreeY, Double>(seed, 0.0));
 		
@@ -89,8 +92,9 @@ public class LCLRInfSolver {
 				y.varTokens.get("V1").add(i);
 				y.coref = false;
 				beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+lastTwoModel.wv.dotProduct(
-						((LastTwoFeatGen)lastTwoModel.featureGenerator).getVarTokenFeatureVector(
-								new LastTwoX(prob, y.nodes), new LastTwoY(y)))));
+						FeatGen.getFeatureVectorFromList(VarFeatGen.getFeatures(new VarX(prob), new VarY(y)), lastTwoModel.lm))));
+//						((LastTwoFeatGen)lastTwoModel.featureGenerator).getVarTokenFeatureVector(
+//								new LastTwoX(prob, y.nodes), new LastTwoY(y)))));
 				for(int j=i; j<prob.candidateVars.size(); ++j) {
 					y = new TreeY(pair.getFirst());
 					node = new Node("VAR", i, new ArrayList<Node>());
@@ -105,8 +109,9 @@ public class LCLRInfSolver {
 					y.varTokens.get("V2").add(j);
 					y.coref = false;
 					beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+lastTwoModel.wv.dotProduct(
-							((LastTwoFeatGen)lastTwoModel.featureGenerator).getVarTokenFeatureVector(
-									new LastTwoX(prob, y.nodes), new LastTwoY(y)))));
+							FeatGen.getFeatureVectorFromList(VarFeatGen.getFeatures(new VarX(prob), new VarY(y)), lastTwoModel.lm))));
+//							((LastTwoFeatGen)lastTwoModel.featureGenerator).getVarTokenFeatureVector(
+//									new LastTwoX(prob, y.nodes), new LastTwoY(y)))));
 					y = new TreeY(pair.getFirst());
 					node = new Node("VAR", i, new ArrayList<Node>());
 					node.varId = "V1";
@@ -120,8 +125,9 @@ public class LCLRInfSolver {
 					y.varTokens.get("V2").add(j);
 					y.coref = true;
 					beam2.add(new Pair<TreeY, Double>(y, pair.getSecond()+lastTwoModel.wv.dotProduct(
-							((LastTwoFeatGen)lastTwoModel.featureGenerator).getVarTokenFeatureVector(
-									new LastTwoX(prob, y.nodes), new LastTwoY(y)))));
+							FeatGen.getFeatureVectorFromList(VarFeatGen.getFeatures(new VarX(prob), new VarY(y)), lastTwoModel.lm))));
+//							((LastTwoFeatGen)lastTwoModel.featureGenerator).getVarTokenFeatureVector(
+//									new LastTwoX(prob, y.nodes), new LastTwoY(y)))));
 				}
 			}
 		}
@@ -151,10 +157,10 @@ public class LCLRInfSolver {
 				new PairComparator<List<Node>>() {};
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(50).create();
+				.maximumSize(5).create();
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(50).create();
+				.maximumSize(5).create();
 		int n = y.nodes.size();
 		List<Node> init = new ArrayList<>();
 		init.addAll(y.nodes);
