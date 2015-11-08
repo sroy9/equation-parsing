@@ -71,17 +71,6 @@ then
 	echo "Running Pipeline, with D:Numoccur SP:Var D:Tree"
 	java -cp target/classes/:target/dependency/* inference.ConsDriver D D 1>log/PipelineDD.out
     fi
-    if [ "$2" = "D" -a "$3" = "LastTwo" ]
-    then
-	echo "Running Pipeline, with D:Numoccur SP:Var and Tree"
-	java -cp target/classes/:target/dependency/* inference.LCLRDriver D 1>log/LCLRD.out
-    fi
-    if [ "$2" = "SP" -a "$3" = "LastTwo" ]
-    then
-	echo "Running Pipeline, with SP:Numoccur SP:Var and Tree"
-	java -cp target/classes/:target/dependency/* inference.LCLRDriver SP 1>log/LCLRSP.out
-    fi
-
 fi
 
 ## Joint
@@ -89,11 +78,4 @@ if [ "$1" == "Joint" ]
 then
     echo "Running Joint"
     java -cp target/classes/:target/dependency/* tree.TreeDriver 1>log/Joint.out 2>log/Joint.err &
-fi
-
-## LastTwo
-if [ "$1" == "LastTwo" ]
-then
-    echo "Running LastTwo"
-    java -cp target/classes/:target/dependency/* lasttwo.LastTwoDriver 1>log/LastTwo.out 2>log/LastTwo.err &
 fi
