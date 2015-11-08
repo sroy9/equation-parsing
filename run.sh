@@ -1,6 +1,6 @@
 ## Script to run various configurations of equation parsing framework
 if [ "$#" -eq 0 ]
-then echo "Usage : sh run.sh (Numoccur/Var/LCA/Pipeline/Joint) 
+then echo "Usage : sh run.sh (Numoccur/Var/LCA/LastTwo/Pipeline/Joint) 
 If Pipeline, should have 2 more parameters : (SP/D) for NumOccur and (SP/D) for LCA predictor)
 If Numoccur or LCA, should have one more parameter (SP/D)
 SP : Structured Model D : Decomposed model
@@ -95,5 +95,5 @@ fi
 if [ "$1" == "LastTwo" ]
 then
     echo "Running LastTwo"
-    java -cp target/classes/:target/dependency/* tree.LastTwoDriver 1>log/LastTwo.out 2>log/LastTwo.err &
+    java -cp target/classes/:target/dependency/* lasttwo.LastTwoDriver 1>log/LastTwo.out 2>log/LastTwo.err &
 fi
