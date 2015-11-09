@@ -138,7 +138,9 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		
 		// Equation generation
 		for(Pair<TreeY, Double> pair : beam1) {
-			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
+			TreeY rule = Grammar.mergeByRule(prob, pair.getFirst());
+			if(rule!=null) beam2.add(new Pair<TreeY, Double>(rule, pair.getSecond()));
+			else beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
 		return beam2.element().getFirst();
 	}

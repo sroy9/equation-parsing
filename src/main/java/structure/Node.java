@@ -19,6 +19,7 @@ public class Node implements Serializable {
 	// For quantities : index of quantities list
 	// For variables : index of candidate variables list
 	public int index;
+	public int charIndex;
 	
 	public Node() {
 		children = new ArrayList<>();
