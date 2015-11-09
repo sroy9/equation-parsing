@@ -6,20 +6,25 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import structure.Equation;
 import structure.Node;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 
 public class Grammar {
 
-	public static TreeY mergeByRule(TreeX x, TreeY y) {
+	public static Equation mergeByRule(TextAnnotation ta, List<Constituent> posTags, 
+			List<QuantSpan> quantities, List<IntPair> candidateVars, List<Node> leaves) {
 		List<Node> nodes = new ArrayList<>();
-		nodes.addAll(y.nodes);
+		nodes.addAll(leaves);
 		for(Node node : nodes) {
 			if(node.label.equals("NUM")) node.charIndex = 
-					(x.quantities.get(node.index).start+x.quantities.get(node.index).end)/2;
+					(quantities.get(node.index).start+quantities.get(node.index).end)/2;
 			if(node.label.equals("VAR")) {
-				int start = x.ta.getTokenCharacterOffset(x.candidateVars.get(node.index).getFirst()).getFirst();
-				int end = x.ta.getTokenCharacterOffset(x.candidateVars.get(node.index).getSecond()-1).getSecond()-1;
+				int start = ta.getTokenCharacterOffset(candidateVars.get(node.index).getFirst()).getFirst();
+				int end = ta.getTokenCharacterOffset(candidateVars.get(node.index).getSecond()-1).getSecond()-1;
 				node.charIndex = (start+end)/2;
 			}
 		}
@@ -30,17 +35,19 @@ public class Grammar {
 				return Integer.compare(o1.charIndex, o2.charIndex);
 			}
 		});
-		List<Node> nodeList = parse(x, nodes);
+		List<Node> nodeList = parse(ta, posTags, quantities, candidateVars, nodes);
 		for(Node node : nodeList) {
 			if(node.label.equals("EQ")) {
-				y.equation.root = node;
-				return y;
+				Equation eq = new Equation();
+				eq.root = node;
+				return eq;
 			}
 		}
 		return null;
 	}
 	
-	public static List<Node> parse(TreeX x, List<Node> leaves) {
+	public static List<Node> parse(TextAnnotation ta, List<Constituent> posTags, 
+			List<QuantSpan> quantities, List<IntPair> candidateVars, List<Node> leaves) {
 		List<List<List<Node>>> cky = new ArrayList<List<List<Node>>>();
 		int n = leaves.size();
 		for(int i=0; i<=n; ++i) {
@@ -54,43 +61,47 @@ public class Grammar {
 		}
 		for(int i=n-1; i>=0; --i) {
 			for(int j=i+2; j<=n; ++j) {
-				parse(x, i, j, cky, leaves);
+				parse(ta, posTags, quantities, candidateVars, i, j, cky, leaves);
 			}
 		}
 		return cky.get(0).get(n);
 	}
 	
-	public static void parse(TreeX x, int start, int end, 
+	public static void parse(TextAnnotation ta, List<Constituent> posTags, 
+			List<QuantSpan> quantities, List<IntPair> candidateVars,  
+			int start, int end, 
 			List<List<List<Node>>> cky,
 			List<Node> leaves) {
 		for(int i=start+1; i<end; ++i) {
-			parse(x, start, i, end, cky, leaves);
+			parse(ta, posTags, quantities, candidateVars, start, i, end, cky, leaves);
 		}
 	}
 	
-	public static void parse(TreeX x, int start, int mid, int end, 
+	public static void parse(TextAnnotation ta, List<Constituent> posTags, 
+			List<QuantSpan> quantities, List<IntPair> candidateVars,
+			int start, int mid, int end, 
 			List<List<List<Node>>> cky,
 			List<Node> leaves) {
-		String midPhrase = x.ta.getText().toLowerCase().substring(
+		String midPhrase = ta.getText().toLowerCase().substring(
 				leaves.get(mid-1).charIndex, leaves.get(mid).charIndex);
 		boolean verbInMidPhrase = false;
-		for(int i=x.ta.getTokenIdFromCharacterOffset(leaves.get(mid-1).charIndex);
-				i<x.ta.getTokenIdFromCharacterOffset(leaves.get(mid).charIndex);
+		for(int i=ta.getTokenIdFromCharacterOffset(leaves.get(mid-1).charIndex);
+				i<ta.getTokenIdFromCharacterOffset(leaves.get(mid).charIndex);
 				++i) {
-			if(x.posTags.get(i).getLabel().startsWith("VB")) {
+			if(posTags.get(i).getLabel().startsWith("VB")) {
 				verbInMidPhrase = true;
 				break;
 			}
 		}
 		String prePhrase = "";
-		if(start == 0) prePhrase = x.ta.getText().toLowerCase().substring(
+		if(start == 0) prePhrase = ta.getText().toLowerCase().substring(
 				0, leaves.get(start).charIndex);
-		else prePhrase = x.ta.getText().toLowerCase().substring(
+		else prePhrase = ta.getText().toLowerCase().substring(
 				leaves.get(start-1).charIndex, leaves.get(start).charIndex);
 		String leftToken = "";
 		if(start+1 == mid && leaves.get(start).label.equals("NUM")) {
-			QuantSpan qs = x.quantities.get(leaves.get(start).index);
-			leftToken = x.ta.getText().toLowerCase().substring(qs.start, qs.end);
+			QuantSpan qs = quantities.get(leaves.get(start).index);
+			leftToken = ta.getText().toLowerCase().substring(qs.start, qs.end);
 		}
 		for(Node node1 : cky.get(start).get(mid)) {
 			for(Node node2 : cky.get(mid).get(end)) {

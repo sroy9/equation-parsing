@@ -11,6 +11,7 @@ import java.util.Set;
 import reader.DocReader;
 import structure.Node;
 import structure.SimulProb;
+import tree.Grammar;
 import utils.Params;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
@@ -86,6 +87,34 @@ public class LcaDriver {
 		return problem;
 	}
 
+	public static double testRuleModel() throws Exception {
+		List<SimulProb> simulProbList = 
+				DocReader.readSimulProbFromBratDir(Params.annotationDir);
+		SLProblem sp = getSP(simulProbList);
+		double correct = 0.0, total = 0.0, predicted = 0.0;
+		for (int i = 0; i < sp.instanceList.size(); i++) {
+			LcaX prob = (LcaX) sp.instanceList.get(i);
+			LcaY gold = (LcaY) sp.goldStructureList.get(i);
+			LcaY pred = new LcaY();
+			pred.equation = Grammar.mergeByRule(prob.ta, prob.posTags, prob.quantities, 
+					prob.candidateVars, prob.nodes);
+			
+			if(pred.equation != null) predicted += 1.0;
+			if(pred.equation != null && LcaY.getLoss(gold, pred) < 0.0001) {
+				correct += 1;
+			} else {
+				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
+				System.out.println("Quantities : "+prob.quantities);
+				System.out.println("Gold : \n"+gold);
+				System.out.println("Pred : \n"+pred);
+			}
+		}
+		total = sp.instanceList.size() ;
+		System.out.println("Correct : " + correct + " Predicted : " + predicted 
+				+ " Total : " + total+" Precision : "+(correct/predicted));
+		return (correct/predicted);
+	}
+	
 	public static double testModel(String modelPath, SLProblem sp)
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
@@ -167,7 +196,8 @@ public class LcaDriver {
 		return mapList;
 	}
 	public static void main(String args[]) throws Exception {
-		LcaDriver.crossVal();
+//		LcaDriver.crossVal();
+		LcaDriver.testRuleModel();
 		Tools.pipeline.closeCache();
 	}
 }
