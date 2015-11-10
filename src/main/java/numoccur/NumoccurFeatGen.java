@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import numoccur.NumoccurX;
+import numoccur.NumoccurY;
 
 import utils.FeatGen;
 import utils.Tools;
@@ -20,8 +21,6 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 	
 	private static final long serialVersionUID = 1810851154558168679L;
 	public Lexiconer lm = null;
-	private static int lexWindow=5;
-	private static int posWindow=3;
 	
 	public NumoccurFeatGen(Lexiconer lm) {
 		this.lm = lm;
@@ -34,89 +33,95 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = getFeatures(x, y);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
-		
+	
 	public static List<String> getFeatures(NumoccurX x, NumoccurY y) {
 		List<String> features = new ArrayList<>();
-		addPOSfeatures(features,x,y);
-		addLexfeatures(features,x,y);
-		addUnitfeatures(features,x,y);
-		addOneOrTwoFeatures(features,x,y);
-		addQuantPhraseFeatures(features,x,y);
-		addGlobalFeatures(features,x,y);
+		features.addAll(getGlobalFeatures(x, y));
+		for(int i=0; i<x.quantities.size(); ++i) {
+			features.addAll(getIndividualFeatures(x, i, y.numOccurList.get(i)));
+		}
 		return features;
 	}
 	
-	private static void addGlobalFeatures(List<String> features, NumoccurX x, NumoccurY y) {
-		if(x.quantities.size() == 1) {
-			addFeature("OneQuantityPresent", y, features);
-		}
+	public IFeatureVector getGlobalFeatureVector(NumoccurX x, NumoccurY y) {
+		List<String> features = getGlobalFeatures(x, y);
+		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
-
-	private static void addOneOrTwoFeatures(List<String> features, NumoccurX x, NumoccurY y) {
-		Double val= Tools.getValue(x.quantities.get(x.quantIndex));
-		if(Tools.safeEquals(val, 1.0))
-		{
-			addFeature("One", y, features);
+	
+	public IFeatureVector getIndividualFeatureVector(NumoccurX x, int quantIndex, int numOccur) {
+		List<String> features = getIndividualFeatures(x, quantIndex, numOccur);
+		return FeatGen.getFeatureVectorFromList(features, lm);
+	}
+	
+	public static List<String> getGlobalFeatures(NumoccurX x, NumoccurY y) {
+		List<String> features = new ArrayList<>();
+		for(int i=0; i<x.ta.size(); ++i) {
+			features.add(y+"_Unigram_"+x.ta.getToken(i).toLowerCase());
 		}
-		if(Tools.safeEquals(val, 2.0))
-		{
-			addFeature("Two", y, features);
-			QuantSpan qs = x.quantities.get(x.quantIndex);
+		if(x.quantities.size() == 1) {
+			features.add("OneQuantityPresent");
+		}
+		return features;
+	}
+	
+	public static List<String> getIndividualFeatures(NumoccurX x, int quantIndex, int numOccur) {
+		List<String> features = new ArrayList<>();
+		features.addAll(getLexfeatures(x, quantIndex, numOccur));
+		features.addAll(getPOSfeatures(x, quantIndex, numOccur));
+		features.addAll(getQuantPhraseFeatures(x, quantIndex, numOccur));
+		features.addAll(getOneOrTwoFeatures(x, quantIndex, numOccur));
+		return features;
+	}
+	
+
+	public static List<String> getOneOrTwoFeatures(NumoccurX x, int quantIndex, int numOccur) {
+		List<String> features = new ArrayList<>();
+		Double val= Tools.getValue(x.quantities.get(quantIndex));
+		if(Tools.safeEquals(val, 1.0)) {
+			features.add(numOccur+"_One");
+		}
+		if(Tools.safeEquals(val, 2.0)) {
+			features.add(numOccur+"_Two");
+			QuantSpan qs = x.quantities.get(quantIndex);
 			String quantPhrase = x.ta.getText().substring(qs.start, qs.end);
 			if(quantPhrase.contains("twice") || quantPhrase.contains("Twice") || 
 					quantPhrase.contains("times")) {
-				addFeature("TwicePresent", y, features);
+				features.add(numOccur+"_TwicePresent");
 			}
 		}
-		
+		return features;
 	}
 	
-	private static void addQuantPhraseFeatures(List<String> features, NumoccurX x, NumoccurY y) {
-		QuantSpan qs = x.quantities.get(x.quantIndex);
+	public static List<String> getQuantPhraseFeatures(NumoccurX x, int quantIndex, int numOccur) {
+		List<String> features = new ArrayList<>();
+		QuantSpan qs = x.quantities.get(quantIndex);
 		String quantPhrase = x.ta.getText().substring(qs.start, qs.end);
 		String quantTokens[] = quantPhrase.split(" ");
 		for(String str : quantTokens) {
-			addFeature("QuantUnigram_"+str, y, features);
+			features.add(numOccur+"_QuantUnigram_"+str);
 		}
 		for(int i=0; i<quantTokens.length-1; ++i) {
-			addFeature("QuantBigram_"+quantTokens[i]+"_"+quantTokens[i+1], y, features);
+			features.add(numOccur+"_QuantBigram_"+quantTokens[i]+"_"+quantTokens[i+1]);
 		}
-		if(quantPhrase.contains("-")) addFeature("HyphenWord", y, features);
+		if(quantPhrase.contains("-")) features.add(numOccur+"_HyphenWord");
+		return features;
 	}
 
-	private static void addUnitfeatures(List<String> features, NumoccurX x, NumoccurY y) {
-		String unit = Tools.getUnit(x.quantities.get(x.quantIndex));
-		if(unit.length()!=0)
-		{
-			addFeature("UNIT_"+unit, y, features);
-			if(unit.trim().equals("per"))
-			{
-				addFeature("UNIT_PER_1", y, features);
-			}
-			if(!StringUtils.isAlphanumeric(unit))
-			{
-				addFeature("UNIT_SYMBOL_1", y, features);
-			}
-		}
-	}
-
-	private static void addLexfeatures(List<String> features, NumoccurX x, NumoccurY y) {
-		QuantSpan quant = x.quantities.get(x.quantIndex);
+	public static List<String> getLexfeatures(NumoccurX x, int quantIndex, int numOccur) {
+		List<String> features = new ArrayList<>();
+		QuantSpan quant = x.quantities.get(quantIndex);
 		int tok_index=x.ta.getTokenIdFromCharacterOffset(quant.start);
-		
 		String[] tokens = x.ta.getTokens();
-		int window = lexWindow;
+		int window = 2;
 		int before = Math.max(0, tok_index - window);
 		int after = Math.min(tokens.length- 1, tok_index + window);
 		String __id;
 		String __value;
-
 		String[] forms = new String[before + after + 1];
 		int i = 0;
 		for (int j = before; j <= after; j++) {
 			forms[i++] = tokens[j];
 		}
-
 		for (int j = 0; j < window; j++) {
 			for (i = 0; i < forms.length; i++) {
 				StringBuilder f = new StringBuilder();
@@ -129,30 +134,27 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 				}
 				__id = ("LEX_"+i + "_" + j);
 				__value = "_" + (f.toString());
-				addFeature(__id + __value,y,features);
+				features.add(numOccur+__id + __value);
 			}
 		}
+		return features;
 	}
 
-	private static void addPOSfeatures(List<String> features, NumoccurX x, NumoccurY y) {
-		
-		QuantSpan quant = x.quantities.get(x.quantIndex);
+	public static List<String> getPOSfeatures(NumoccurX x, int quantIndex, int numOccur) {
+		List<String> features = new ArrayList<>();
+		QuantSpan quant = x.quantities.get(quantIndex);
 		int tok_index=x.ta.getTokenIdFromCharacterOffset(quant.start);
-		
-		int window = posWindow;
+		int window = 2;
 		int before = Math.max(0, tok_index - window);
 		int after = Math.min(x.posTags.size() - 1, tok_index + window);
 		int i;
 		String __id;
 		String __value;
-
 		String[] tags = new String[before + after + 1];
 		i = 0;
-
 		for (int j = before; j <= after; j++) {
 			tags[i++] = x.posTags.get(j).getLabel();
 		}
-
 		for (int j = 0; j < window; j++) {
 			for (i = 0; i < tags.length; i++) {
 				StringBuilder f = new StringBuilder();
@@ -164,14 +166,9 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 				}
 				__id = ("POS_"+i + "_" + j);
 				__value = "_" + (f.toString());
-				addFeature(__id + __value,y,features);
-
+				features.add(numOccur+__id + __value);
 			}
-		}		
-	}
-
-	private static void addFeature(String string,
-			NumoccurY y, List<String> features) {
-		features.add(string+"_L"+y.numOccur);
+		}	
+		return features;	
 	}
 }

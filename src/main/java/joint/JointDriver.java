@@ -1,7 +1,6 @@
-package struct.numoccur;
+package joint;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,8 +15,9 @@ import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
+import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
-public class NumoccurDriver {
+public class JointDriver {
 	
 	public static void crossVal() throws Exception {
 		double acc = 0.0;
@@ -42,8 +42,8 @@ public class NumoccurDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/numoccurStruct"+testFold+".save", train, testFold);
-		return testModel("models/numoccurStruct"+testFold+".save", test);
+		trainModel("models/tree"+testFold+".save", train, testFold);
+		return testModel("models/tree"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
@@ -54,8 +54,8 @@ public class NumoccurDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			NumoccurX x = new NumoccurX(simulProb);
-			NumoccurY y = new NumoccurY(simulProb);
+			JointX x = new JointX(simulProb);
+			JointY y = new JointY(simulProb);
 			problem.addExample(x, y);
 		}
 		return problem;
@@ -68,9 +68,9 @@ public class NumoccurDriver {
 		Set<Integer> total = new HashSet<>();
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			NumoccurX prob = (NumoccurX) sp.instanceList.get(i);
-			NumoccurY gold = (NumoccurY) sp.goldStructureList.get(i);
-			NumoccurY pred = (NumoccurY) model.infSolver.getBestStructure(
+			JointX prob = (JointX) sp.instanceList.get(i);
+			JointY gold = (JointY) sp.goldStructureList.get(i);
+			JointY pred = (JointY) model.infSolver.getBestStructure(
 					model.wv, prob);
 			total.add(prob.problemIndex);
 			double goldWt = model.wv.dotProduct(
@@ -80,7 +80,7 @@ public class NumoccurDriver {
 			if(goldWt > predWt) {
 				System.out.println("PROBLEM HERE");
 			}
-			if(NumoccurY.getLoss(gold, pred) < 0.0001) {
+			if(JointY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else {
 				incorrect.add(prob.problemIndex);
@@ -92,15 +92,12 @@ public class NumoccurDriver {
 				System.out.println("Pred : \n"+pred);
 				System.out.println("Pred weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, pred)));
-				System.out.println("Loss : "+NumoccurY.getLoss(gold, pred));
+				System.out.println("Loss : "+JointY.getLoss(gold, pred));
 			}
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
-		System.out.println("Strict Accuracy : ="+ (1-1.0*incorrect.size()/total.size()) + 
-				" incorrect "+ incorrect.size() + " out of "+total.size());
-		System.out.println("Mistakes : "+Arrays.asList(incorrect));
-		return (1-1.0*incorrect.size()/total.size());
+		return (acc/sp.instanceList.size());
 	}
 	
 	public static void trainModel(String modelPath, SLProblem train, int testFold) 
@@ -109,19 +106,41 @@ public class NumoccurDriver {
 		Lexiconer lm = new Lexiconer();
 		lm.setAllowNewFeatures(true);
 		model.lm = lm;
-		NumoccurFeatGen fg = new NumoccurFeatGen(lm);
+		JointFeatGen fg = new JointFeatGen(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new NumoccurInfSolver(fg);
+		model.infSolver = new JointInfSolver(fg);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
-		model.wv = learner.train(train);
+		model.wv = latentSVMLearner(learner, train, 
+				(JointInfSolver) model.infSolver, 3);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}
 
+	public static WeightVector latentSVMLearner(
+			Learner learner, SLProblem sp, JointInfSolver infSolver, 
+			int maxIter) throws Exception {
+		WeightVector wv = new WeightVector(7000);
+		wv.setExtendable(true);
+		for(int i=0; i<maxIter; ++i) {
+			System.err.println("Latent SSVM : Iteration "+i);
+			SLProblem newProb = new SLProblem();
+			for(int j=0; j<sp.goldStructureList.size(); ++j) {
+				JointX prob = (JointX) sp.instanceList.get(j);
+				JointY gold = (JointY) sp.goldStructureList.get(j);
+				JointY bestLatent = infSolver.getLatentBestStructure(prob, gold, wv);
+				newProb.addExample(prob, bestLatent);
+			}
+			System.err.println("Learning SSVM");
+			wv = learner.train(newProb, wv);
+			System.err.println("Done");
+		}
+		return wv;
+	}
+	
 	public static void main(String args[]) throws Exception {
-		NumoccurDriver.crossVal();
+		JointDriver.crossVal();
 		Tools.pipeline.closeCache();
 	}
 }

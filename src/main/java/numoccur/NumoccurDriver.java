@@ -1,7 +1,6 @@
 package numoccur;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -54,11 +53,9 @@ public class NumoccurDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			for(int i=0; i<simulProb.quantities.size(); ++i) {
-				NumoccurX x = new NumoccurX(simulProb, i);
-				NumoccurY y = new NumoccurY(simulProb, i);
-				problem.addExample(x, y);
-			}
+			NumoccurX x = new NumoccurX(simulProb);
+			NumoccurY y = new NumoccurY(simulProb);
+			problem.addExample(x, y);
 		}
 		return problem;
 	}
@@ -88,8 +85,6 @@ public class NumoccurDriver {
 				incorrect.add(prob.problemIndex);
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
-				System.out.println("Quant of Interest: "+prob.quantities.get(prob.quantIndex));
-				System.out.println("Units: "+Tools.getUnit(prob.quantities.get(prob.quantIndex)));
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
@@ -103,7 +98,6 @@ public class NumoccurDriver {
 				+ " = " + (acc/sp.instanceList.size()));
 		System.out.println("Strict Accuracy : ="+ (1-1.0*incorrect.size()/total.size()) + 
 				" incorrect "+ incorrect.size() + " out of "+total.size());
-		System.out.println("Mistakes : "+Arrays.asList(incorrect));
 		return (1-1.0*incorrect.size()/total.size());
 	}
 	
@@ -127,5 +121,6 @@ public class NumoccurDriver {
 	public static void main(String args[]) throws Exception {
 		NumoccurDriver.crossVal();
 		Tools.pipeline.closeCache();
+		System.exit(0);
 	}
 }

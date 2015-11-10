@@ -1,6 +1,8 @@
 package utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import structure.Node;
 import edu.illinois.cs.cogcomp.annotation.AnnotatorService;
 import edu.illinois.cs.cogcomp.annotation.handler.IllinoisChunkerHandler;
 import edu.illinois.cs.cogcomp.annotation.handler.IllinoisPOSHandler;
@@ -275,6 +278,25 @@ public class Tools {
 	public static double getJaccardScore(IntPair ip1, IntPair ip2) {
 		return 1.0*(Math.min(ip1.getSecond(), ip2.getSecond()) - Math.max(ip1.getFirst(), ip2.getFirst()))
 				/ (Math.max(ip1.getSecond(), ip2.getSecond()) - Math.min(ip1.getFirst(), ip2.getFirst()));		
+	}
+	
+	public static void populateAndSortByCharIndex(List<Node> nodes, TextAnnotation ta, 
+			List<QuantSpan> quantities, List<IntPair> candidateVars) {
+		for(Node node : nodes) {
+			if(node.label.equals("NUM")) node.charIndex = 
+					(quantities.get(node.index).start+quantities.get(node.index).end)/2;
+			if(node.label.equals("VAR")) {
+				int start = ta.getTokenCharacterOffset(candidateVars.get(node.index).getFirst()).getFirst();
+				int end = ta.getTokenCharacterOffset(candidateVars.get(node.index).getSecond()-1).getSecond()-1;
+				node.charIndex = (start+end)/2;
+			}
+		}
+		Collections.sort(nodes, new Comparator<Node>() {
+			@Override
+			public int compare(Node o1, Node o2) {
+				return Integer.compare(o1.charIndex, o2.charIndex);
+			}
+		});
 	}
 	
 }

@@ -1,18 +1,18 @@
-package inference;
+package pipeline;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import joint.JointX;
+import joint.JointY;
 import reader.DocReader;
 import structure.SimulProb;
-import tree.TreeX;
-import tree.TreeY;
 import utils.Params;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 
-public class ConsDriver {
+public class PipelineDriver {
 	
 	public static boolean useSPforNumoccur = true, useSPforLCA = false;
 	
@@ -58,8 +58,8 @@ public class ConsDriver {
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			TreeX x = new TreeX(simulProb);
-			TreeY y = new TreeY(simulProb);
+			JointX x = new JointX(simulProb);
+			JointY y = new JointY(simulProb);
 			problem.addExample(x, y);
 		}
 		return problem;
@@ -69,17 +69,17 @@ public class ConsDriver {
 			SLModel lcaModel, SLProblem sp, boolean printMistakes) throws Exception {
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			TreeX prob = (TreeX) sp.instanceList.get(i);
-			TreeY gold = (TreeY) sp.goldStructureList.get(i);
-			TreeY pred = ConsInfSolver.getBestStructure(prob, numOccurModel, varModel, lcaModel, gold);
-			if(TreeY.getLoss(gold, pred) < 0.0001) {
+			JointX prob = (JointX) sp.instanceList.get(i);
+			JointY gold = (JointY) sp.goldStructureList.get(i);
+			JointY pred = PipelineInfSolver.getBestStructure(prob, numOccurModel, varModel, lcaModel, gold);
+			if(JointY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else if(printMistakes) {
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Pred : \n"+pred);
-				System.out.println("Loss : "+TreeY.getLoss(gold, pred));				
+				System.out.println("Loss : "+JointY.getLoss(gold, pred));				
 			}
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
@@ -89,16 +89,16 @@ public class ConsDriver {
 	
 	public static void main(String args[]) throws Exception {
 		if(args[0].equals("SP")) {
-			ConsDriver.useSPforNumoccur = true; 
+			PipelineDriver.useSPforNumoccur = true; 
 		} else {
-			ConsDriver.useSPforNumoccur = false;
+			PipelineDriver.useSPforNumoccur = false;
 		}
 		if(args[1].equals("SP")) {
-			ConsDriver.useSPforLCA = true; 
+			PipelineDriver.useSPforLCA = true; 
 		} else {
-			ConsDriver.useSPforLCA = false;
+			PipelineDriver.useSPforLCA = false;
 		}
-		ConsDriver.crossVal();
+		PipelineDriver.crossVal();
 		Tools.pipeline.closeCache();
 	}
 }

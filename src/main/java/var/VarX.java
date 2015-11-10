@@ -2,8 +2,8 @@ package var;
 
 import java.util.List;
 
+import joint.JointX;
 import structure.SimulProb;
-import tree.TreeX;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
@@ -28,7 +28,7 @@ public class VarX implements IInstance {
 		candidateVars = simulProb.candidateVars;
 	}
 	
-	public VarX(TreeX simulProb) {
+	public VarX(JointX simulProb) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.problemIndex;
 		ta = simulProb.ta;

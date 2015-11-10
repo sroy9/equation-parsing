@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import joint.JointY;
 import structure.SimulProb;
-import tree.TreeY;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
 public class VarY implements IStructure, Serializable {
@@ -33,7 +33,7 @@ public class VarY implements IStructure, Serializable {
 		coref = prob.coref;
 	}
 	
-	public VarY(TreeY prob) {
+	public VarY(JointY prob) {
 		varTokens = new HashMap<String, List<Integer>>();
 		varTokens.putAll(prob.varTokens);
 		coref = prob.coref;

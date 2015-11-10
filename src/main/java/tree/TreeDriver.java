@@ -1,11 +1,15 @@
 package tree;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import reader.DocReader;
+import structure.Node;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
@@ -15,7 +19,6 @@ import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 import edu.illinois.cs.cogcomp.sl.learner.Learner;
 import edu.illinois.cs.cogcomp.sl.learner.LearnerFactory;
 import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
-import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
 public class TreeDriver {
 	
@@ -49,18 +52,41 @@ public class TreeDriver {
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
 			throws Exception {
 		if(simulProbList == null) {
-			simulProbList = 
-					DocReader.readSimulProbFromBratDir(Params.annotationDir);
+			simulProbList = DocReader.readSimulProbFromBratDir(Params.annotationDir);
 		}
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
-			TreeX x = new TreeX(simulProb);
-			TreeY y = new TreeY(simulProb);
-			problem.addExample(x, y);
+			for(Map<String, List<Integer>> varTokens : 
+					enumerateVarTokens(simulProb.varTokens)) {
+				List<Node> nodes = new ArrayList<Node>();
+				for(int i=0; i<simulProb.quantities.size(); ++i) {
+					for(Node leaf : simulProb.equation.root.getLeaves()) {
+						if(leaf.label.equals("NUM") && Tools.safeEquals(Tools.getValue(
+								simulProb.quantities.get(i)), leaf.value)) {
+							Node node = new Node(leaf);
+							node.index = i;
+							nodes.add(node);
+						}
+					}
+				}
+				for(Node leaf : simulProb.equation.root.getLeaves()) {
+					if(leaf.label.equals("VAR") && varTokens.containsKey(leaf.varId) &&
+							varTokens.get(leaf.varId).size()>0) {
+						Node node = new Node(leaf);
+						node.index = varTokens.get(node.varId).get(0);
+						nodes.add(node);
+					}
+				}
+				Tools.populateAndSortByCharIndex(nodes, simulProb.ta, 
+						simulProb.quantities, simulProb.candidateVars);
+				TreeX x = new TreeX(simulProb, varTokens, nodes);
+				TreeY y = new TreeY(simulProb);
+				problem.addExample(x, y);
+			}
 		}
 		return problem;
 	}
-
+	
 	public static double testModel(String modelPath, SLProblem sp)
 			throws Exception {
 		SLModel model = SLModel.loadModel(modelPath);
@@ -112,35 +138,38 @@ public class TreeDriver {
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
-		model.wv = latentSVMLearner(learner, train, 
-				(TreeInfSolver) model.infSolver, 3);
+		model.wv = learner.train(train);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}
-
-	public static WeightVector latentSVMLearner(
-			Learner learner, SLProblem sp, TreeInfSolver infSolver, 
-			int maxIter) throws Exception {
-		WeightVector wv = new WeightVector(7000);
-		wv.setExtendable(true);
-		for(int i=0; i<maxIter; ++i) {
-			System.err.println("Latent SSVM : Iteration "+i);
-			SLProblem newProb = new SLProblem();
-			for(int j=0; j<sp.goldStructureList.size(); ++j) {
-				TreeX prob = (TreeX) sp.instanceList.get(j);
-				TreeY gold = (TreeY) sp.goldStructureList.get(j);
-				TreeY bestLatent = infSolver.getLatentBestStructure(prob, gold, wv);
-				newProb.addExample(prob, bestLatent);
-			}
-			System.err.println("Learning SSVM");
-			wv = learner.train(newProb, wv);
-			System.err.println("Done");
-		}
-		return wv;
-	}
 	
+	public static List<Map<String, List<Integer>>> enumerateVarTokens(
+			Map<String, List<Integer>> seed) {
+		List<Map<String, List<Integer>>> mapList = new ArrayList<>();
+		List<Integer> v1 = seed.get("V1");
+		List<Integer> v2 = seed.get("V2");
+		if(v1 != null && v1.size() > 0 && (v2 == null || v2.size() == 0)) {
+			for(Integer i : v1) {
+				Map<String, List<Integer>> map = new HashMap<String, List<Integer>>();
+				map.put("V1", Arrays.asList(i));
+				mapList.add(map);
+			}
+		}
+		if(v1 != null && v1.size() > 0 && v2 != null && v2.size() > 0) {
+			for(Integer i : v1) {
+				for(Integer j : v2) {
+					Map<String, List<Integer>> map = new HashMap<String, List<Integer>>();
+					map.put("V1", Arrays.asList(i));
+					map.put("V2", Arrays.asList(j));
+					mapList.add(map);
+				}
+			}
+		}
+		return mapList;
+	}
 	public static void main(String args[]) throws Exception {
 		TreeDriver.crossVal();
 		Tools.pipeline.closeCache();
+		System.exit(0);
 	}
 }
