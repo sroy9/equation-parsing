@@ -63,11 +63,9 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements
 		VarX varX = new VarX(x);
 		VarY varY = new VarY(y);
 		features.addAll(VarFeatGen.getFeatures(varX, varY));
-		if(Grammar.mergeByRule(x, y) == null) {
-			struct.lca.LcaX lcaX = new struct.lca.LcaX(x, y.varTokens, y.nodes);
-			struct.lca.LcaY lcaY = new struct.lca.LcaY(y);
-			features.addAll(struct.lca.LcaFeatGen.getFeatures(lcaX, lcaY));
-		}
+		struct.lca.LcaX lcaX = new struct.lca.LcaX(x, y.varTokens, y.nodes);
+		struct.lca.LcaY lcaY = new struct.lca.LcaY(y);
+		features.addAll(struct.lca.LcaFeatGen.getFeatures(lcaX, lcaY));
 		return features;
 	}
 	

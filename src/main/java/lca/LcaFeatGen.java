@@ -2,8 +2,10 @@ package lca;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import structure.Node;
 import utils.FeatGen;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
@@ -32,6 +34,16 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements
 	}
 		
 	public static List<String> getFeatures(LcaX x, LcaY y) {
+		List<String> features = new ArrayList<String>();
+//		features.addAll(getRuleFeatures(x, y));
+//		System.out.println("Text : "+x.ta.getText());
+//		System.out.println("Rules : "+Arrays.asList(features));
+		if(features.size() == 0) 
+		features.addAll(getLexicalFeatures(x, y));
+		return features;
+	}
+	
+	public static List<String> getLexicalFeatures(LcaX x, LcaY y) {
 		List<String> features = new ArrayList<>();
 		IntPair ip1, ip2;
 		String prefix = "";
@@ -56,10 +68,10 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements
 		if(ip1.getFirst() > ip2.getFirst()) prefix += "REV";
 		if(ip1.getFirst() == ip2.getFirst() && ip1.getSecond() > ip2.getSecond()) prefix += "REV";
 		
-		int min = Math.min(ip1.getSecond(), ip2.getSecond());
-		int max = Math.max(ip1.getFirst(), ip2.getFirst());
-		int left = Math.min(ip1.getFirst(), ip2.getFirst());
-		int right = Math.max(ip1.getSecond(), ip2.getSecond());
+		int min = x.ta.getTokenIdFromCharacterOffset(x.leaf1.charIndex)+1;
+		int max = x.ta.getTokenIdFromCharacterOffset(x.leaf2.charIndex)-1;
+		int left = x.ta.getTokenIdFromCharacterOffset(x.leaf1.charIndex)-1;
+		int right = x.ta.getTokenIdFromCharacterOffset(x.leaf2.charIndex)+1;
 		for(int i=min; i<max; ++i) {
 			addFeature(prefix+"_MidUnigram_"+x.ta.getToken(i).toLowerCase(), y, features);
 		}
@@ -97,6 +109,51 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements
 			} else {
 				addFeature(prefix+"_Asc", y, features);
 			}
+		}
+		return features;
+	}
+	
+	public static List<String> getRuleFeatures(LcaX x, LcaY y) {
+		List<String> features = new ArrayList<>();
+		String prePhrase = x.prePhrase;
+		String midPhrase = x.midPhrase;
+		String leftToken = "";
+		if(x.leaf1.label.equals("NUM")) {
+			QuantSpan qs = x.quantities.get(x.leaf1.index);
+			leftToken = x.ta.getText().toLowerCase().substring(qs.start, qs.end);
+		}
+		if((leftToken.contains("twice") || leftToken.contains("thrice") ||
+				leftToken.contains("half")) && midPhrase.contains("as many")) {
+			features.add(y.operation+"_DIVREV_RULE");
+			return features;
+		}
+		if(leftToken.contains("thrice") || leftToken.contains("triple") ||
+				leftToken.contains("double") || leftToken.contains("twice") ||
+				leftToken.contains("half")) {
+			features.add(y.operation+"_MUL_RULE");
+			return features;
+		}
+		if(prePhrase.contains("sum of") || midPhrase.contains("added to") || 
+				midPhrase.contains("plus") || midPhrase.contains("more than") || 
+				midPhrase.contains("taller than") || midPhrase.contains("greater than")) {
+			features.add(y.operation+"_ADD_RULE");
+		}
+		if(prePhrase.contains("difference of") || midPhrase.contains("exceeds") || 
+				midPhrase.contains("minus")) {
+			features.add(y.operation+"_SUB_RULE");
+		}
+		if(midPhrase.contains("subtracted") || midPhrase.contains("less than")) {
+			features.add(y.operation+"_SUBREV_RULE");
+		}
+		if(prePhrase.contains("product of") || midPhrase.contains("times") || 
+				midPhrase.contains("multiplied by") || midPhrase.contains("per")) {
+			features.add(y.operation+"_MUL_RULE");
+		}
+		if(prePhrase.contains("ratio of")) {
+			features.add(y.operation+"_DIV_RULE");
+		}
+		if(midPhrase.contains("as many")) {
+			features.add(y.operation+"_DIVREV_RULE");
 		}
 		return features;
 	}

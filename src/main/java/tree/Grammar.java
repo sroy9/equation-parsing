@@ -15,10 +15,8 @@ import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 
 public class Grammar {
 
-	public static Equation mergeByRule(TextAnnotation ta, List<Constituent> posTags, 
-			List<QuantSpan> quantities, List<IntPair> candidateVars, List<Node> leaves) {
-		List<Node> nodes = new ArrayList<>();
-		nodes.addAll(leaves);
+	public static void populateAndSortByCharIndex(List<Node> nodes, TextAnnotation ta, 
+			List<QuantSpan> quantities, List<IntPair> candidateVars) {
 		for(Node node : nodes) {
 			if(node.label.equals("NUM")) node.charIndex = 
 					(quantities.get(node.index).start+quantities.get(node.index).end)/2;
@@ -28,13 +26,19 @@ public class Grammar {
 				node.charIndex = (start+end)/2;
 			}
 		}
-		// Sort the nodes based on charIndex
 		Collections.sort(nodes, new Comparator<Node>() {
 			@Override
 			public int compare(Node o1, Node o2) {
 				return Integer.compare(o1.charIndex, o2.charIndex);
 			}
 		});
+	}
+	
+	public static Equation mergeByRule(TextAnnotation ta, List<Constituent> posTags, 
+			List<QuantSpan> quantities, List<IntPair> candidateVars, List<Node> leaves) {
+		List<Node> nodes = new ArrayList<>();
+		nodes.addAll(leaves);
+		populateAndSortByCharIndex(nodes, ta, quantities, candidateVars);
 		List<Node> nodeList = parse(ta, posTags, quantities, candidateVars, nodes);
 		for(Node node : nodeList) {
 			if(node.label.equals("EQ")) {

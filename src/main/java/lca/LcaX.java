@@ -19,8 +19,10 @@ public class LcaX implements IInstance {
 	public List<QuantSpan> quantities;
 	public List<IntPair> candidateVars;
 	public Node leaf1, leaf2;
+	String midPhrase, prePhrase, leftToken;
 	
-	public LcaX(SimulProb simulProb, Node leaf1, Node leaf2) {
+	public LcaX(SimulProb simulProb, Node leaf1, Node leaf2, 
+			String prePhrase, String midPhrase) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;
@@ -28,9 +30,12 @@ public class LcaX implements IInstance {
 		candidateVars = simulProb.candidateVars;
 		this.leaf1 = leaf1;
 		this.leaf2 = leaf2;
+		this.prePhrase = prePhrase;
+		this.midPhrase = midPhrase;
 	}
 	
-	public LcaX(TreeX simulProb, Node leaf1, Node leaf2) {
+	public LcaX(TreeX simulProb, Node leaf1, Node leaf2, 
+			String prePhrase, String midPhrase) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.problemIndex;
 		ta = simulProb.ta;
@@ -38,9 +43,12 @@ public class LcaX implements IInstance {
 		candidateVars = simulProb.candidateVars;
 		this.leaf1 = leaf1;
 		this.leaf2 = leaf2;
+		this.prePhrase = prePhrase;
+		this.midPhrase = midPhrase;
 	}
 	
-	public LcaX(struct.lca.LcaX simulProb, Node leaf1, Node leaf2) {
+	public LcaX(struct.lca.LcaX simulProb, Node leaf1, Node leaf2,
+			String prePhrase, String midPhrase) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.problemIndex;
 		ta = simulProb.ta;
@@ -48,6 +56,8 @@ public class LcaX implements IInstance {
 		candidateVars = simulProb.candidateVars;
 		this.leaf1 = leaf1;
 		this.leaf2 = leaf2;
+		this.prePhrase = prePhrase;
+		this.midPhrase = midPhrase;
 	}
 	
 	

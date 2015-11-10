@@ -6,8 +6,6 @@ import java.util.List;
 
 import structure.Node;
 import utils.FeatGen;
-import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -49,104 +47,41 @@ public class LcaFeatGen extends AbstractFeatureGenerator implements Serializable
 	public static List<String> getPairFeatures(LcaX x, Node node) {
 		List<String> features = new ArrayList<String>();
 		if(node.children.size() == 2) {
-			IntPair ip1, ip2, ip;
 			for(Node leaf1 : node.children.get(0).getLeaves()) {
-				if(leaf1.label.equals("VAR")) {
-					ip1 = x.candidateVars.get(leaf1.index);
-				} else {
-					QuantSpan qs = x.quantities.get(leaf1.index);
-					ip1 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
-							x.ta.getTokenIdFromCharacterOffset(qs.end));
-				}
 				for(Node leaf2 : node.children.get(1).getLeaves()) {
-					if(leaf2.label.equals("VAR")) {
-						ip2 = x.candidateVars.get(leaf2.index);
-					} else {
-						QuantSpan qs = x.quantities.get(leaf2.index);
-						ip2 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
-								x.ta.getTokenIdFromCharacterOffset(qs.end));
-					}
 					boolean allow = true;
-					for(Node leaf : node.getLeaves()) {
-						if(leaf.label.equals("VAR")) {
-							ip = x.candidateVars.get(leaf.index);
-						} else {
-							QuantSpan qs = x.quantities.get(leaf.index);
-							ip = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
-									x.ta.getTokenIdFromCharacterOffset(qs.end));
+					int preIndex = 0;
+					for(Node leaf : x.nodes) {
+						if(leaf.charIndex < Math.min(leaf1.charIndex, leaf2.charIndex)) {
+							preIndex = leaf.charIndex;
 						}
-						if((ip1.getSecond()<=ip.getFirst() && ip.getSecond()<=ip2.getFirst()) || 
-								(ip2.getSecond()<=ip.getFirst() && ip.getSecond()<=ip1.getFirst())) {
+						if((leaf1.charIndex<leaf.charIndex && leaf.charIndex<leaf2.charIndex) || 
+								(leaf2.charIndex<leaf.charIndex && leaf.charIndex<leaf1.charIndex)) {
 							allow = false;
 						}
 					}
-//					if(!allow) continue;
-					lca.LcaX lcaX = new lca.LcaX(x, leaf1, leaf2);
-					lca.LcaY lcaY = new lca.LcaY(node.label);
-					features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));
-					String label = node.label;
-					if(label.equals("SUB") || label.equals("DIV")) label += "_REV";
-					lcaX = new lca.LcaX(x, leaf2, leaf1);
-					lcaY = new lca.LcaY(label);
-					features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));
+					if(!allow) continue;
+					String prePhrase = x.ta.getText().toLowerCase().substring(
+							preIndex, Math.min(leaf1.charIndex, leaf2.charIndex));
+					String midPhrase = x.ta.getText().toLowerCase().substring(
+							Math.min(leaf1.charIndex, leaf2.charIndex), 
+							Math.max(leaf1.charIndex, leaf2.charIndex));
+					if(leaf1.charIndex <= leaf2.charIndex) {
+						lca.LcaX lcaX = new lca.LcaX(x, leaf1, leaf2, prePhrase, midPhrase);
+						lca.LcaY lcaY = new lca.LcaY(node.label);
+						features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));
+					}
+					if(leaf2.charIndex < leaf1.charIndex) {
+						String label = node.label;
+						if(label.equals("SUB") || label.equals("DIV")) label += "_REV";
+						lca.LcaX lcaX = new lca.LcaX(x, leaf2, leaf1, prePhrase, midPhrase);
+						lca.LcaY lcaY = new lca.LcaY(label);
+						features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));
+					}
 				}
 			}
 		}
-		List<String> newFeats = new ArrayList<String>();
-		for(String feat : features) {
-			newFeats.add(feat+"_"+node.getSignature());
-		}
-//		return features;
-		return newFeats;
+		return features;
 	}
-	
-//	public static List<String> getPairFeaturesWithoutGlobalPrefix(LcaX x, Node node) {
-//		List<String> features = new ArrayList<String>();
-//		if(node.children.size() == 2) {
-//			IntPair ip1, ip2, ip;
-//			for(Node leaf1 : node.children.get(0).getLeaves()) {
-//				if(leaf1.label.equals("VAR")) {
-//					ip1 = x.candidateVars.get(leaf1.index);
-//				} else {
-//					QuantSpan qs = x.quantities.get(leaf1.index);
-//					ip1 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
-//							x.ta.getTokenIdFromCharacterOffset(qs.end));
-//				}
-//				for(Node leaf2 : node.children.get(1).getLeaves()) {
-//					if(leaf2.label.equals("VAR")) {
-//						ip2 = x.candidateVars.get(leaf2.index);
-//					} else {
-//						QuantSpan qs = x.quantities.get(leaf2.index);
-//						ip2 = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
-//								x.ta.getTokenIdFromCharacterOffset(qs.end));
-//					}
-//					boolean allow = true;
-//					for(Node leaf : node.getLeaves()) {
-//						if(leaf.label.equals("VAR")) {
-//							ip = x.candidateVars.get(leaf.index);
-//						} else {
-//							QuantSpan qs = x.quantities.get(leaf.index);
-//							ip = new IntPair(x.ta.getTokenIdFromCharacterOffset(qs.start), 
-//									x.ta.getTokenIdFromCharacterOffset(qs.end));
-//						}
-//						if((ip1.getSecond()<=ip.getFirst() && ip.getSecond()<=ip2.getFirst()) || 
-//								(ip2.getSecond()<=ip.getFirst() && ip.getSecond()<=ip1.getFirst())) {
-//							allow = false;
-//						}
-//					}
-//					if(!allow) continue;
-//					lca.LcaX lcaX = new lca.LcaX(x, leaf1, leaf2);
-//					lca.LcaY lcaY = new lca.LcaY(node.label);
-//					features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));
-//					String label = node.label;
-//					if(label.equals("SUB") || label.equals("DIV")) label += "_REV";
-//					lcaX = new lca.LcaX(x, leaf2, leaf1);
-//					lcaY = new lca.LcaY(label);
-//					features.addAll(lca.LcaFeatGen.getFeatures(lcaX, lcaY));
-//				}
-//			}
-//		}
-//		return features;
-//	}
 	
 }

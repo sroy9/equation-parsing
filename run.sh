@@ -77,5 +77,5 @@ fi
 if [ "$1" == "Joint" ]
 then
     echo "Running Joint"
-    java -cp target/classes/:target/dependency/* tree.TreeDriver 1>log/Joint.out 2>log/Joint.err &
+    java -cp target/classes/:target/dependency/* tree.TreeDriver
 fi
