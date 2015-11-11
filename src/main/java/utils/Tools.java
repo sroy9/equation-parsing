@@ -74,10 +74,10 @@ public class Tools {
 	}
 	
 	public static boolean doesIntersect(IntPair ip1, IntPair ip2) {
-		if(ip1.getFirst() <= ip2.getFirst() && ip2.getFirst() < ip1.getSecond()) {
+		if(ip1.getFirst() <= ip2.getFirst() && ip2.getFirst() <= ip1.getSecond()) {
 			return true;
 		}
-		if(ip2.getFirst() <= ip1.getFirst() && ip1.getFirst() < ip2.getSecond()) {
+		if(ip2.getFirst() <= ip1.getFirst() && ip1.getFirst() <= ip2.getSecond()) {
 			return true;
 		}
 		return false;
@@ -282,7 +282,6 @@ public class Tools {
 	
 	public static void populateAndSortByCharIndex(List<Node> nodes, TextAnnotation ta, 
 			List<QuantSpan> quantities, List<IntPair> candidateVars, boolean coref) {
-		int index=0;
 		for(Node node : nodes) {
 			if(node.label.equals("NUM")) node.charIndex = 
 					(quantities.get(node.index).start+quantities.get(node.index).end)/2;
@@ -291,9 +290,7 @@ public class Tools {
 				int end = ta.getTokenCharacterOffset(candidateVars.get(node.index).getSecond()-1).getSecond()-1;
 				node.charIndex = (start+end)/2;
 			}
-			node.nodeListIndex = index;
 			node.projection = true;
-			index++;
 		}
 		for(int i=0; i<nodes.size(); ++i) {
 			for(int j=0; j<nodes.size(); ++j) {
@@ -317,6 +314,11 @@ public class Tools {
 				return Integer.compare(o1.charIndex, o2.charIndex);
 			}
 		});
+		int index=0;
+		for(Node node : nodes) {
+			node.nodeListIndex = index;
+			++index;
+		}
 	}
 	
 }

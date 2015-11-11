@@ -59,28 +59,32 @@ public class TreeDriver {
 			for(Map<String, List<Integer>> varTokens : 
 					enumerateVarTokens(simulProb.varTokens)) {
 				List<Node> nodes = new ArrayList<Node>();
+				TreeY y = new TreeY(simulProb);
 				for(int i=0; i<simulProb.quantities.size(); ++i) {
-					for(Node leaf : simulProb.equation.root.getLeaves()) {
+					for(Node leaf : y.equation.root.getLeaves()) {
 						if(leaf.label.equals("NUM") && Tools.safeEquals(Tools.getValue(
 								simulProb.quantities.get(i)), leaf.value)) {
 							Node node = new Node(leaf);
 							node.index = i;
+							leaf.index = i;
 							nodes.add(node);
 						}
 					}
 				}
-				for(Node leaf : simulProb.equation.root.getLeaves()) {
+				for(Node leaf : y.equation.root.getLeaves()) {
 					if(leaf.label.equals("VAR") && varTokens.containsKey(leaf.varId) &&
 							varTokens.get(leaf.varId).size()>0) {
 						Node node = new Node(leaf);
 						node.index = varTokens.get(node.varId).get(0);
+						leaf.index = varTokens.get(node.varId).get(0);
 						nodes.add(node);
 					}
 				}
 				Tools.populateAndSortByCharIndex(nodes, simulProb.ta, 
 						simulProb.quantities, simulProb.candidateVars, simulProb.coref);
+				Tools.populateAndSortByCharIndex(y.equation.root.getLeaves(), simulProb.ta, 
+						simulProb.quantities, simulProb.candidateVars, simulProb.coref);
 				TreeX x = new TreeX(simulProb, varTokens, nodes);
-				TreeY y = new TreeY(simulProb);
 				problem.addExample(x, y);
 			}
 		}
@@ -168,7 +172,7 @@ public class TreeDriver {
 		return mapList;
 	}
 	public static void main(String args[]) throws Exception {
-		TreeDriver.crossVal();
+		TreeDriver.doTrainTest(0);
 		Tools.pipeline.closeCache();
 		System.exit(0);
 	}

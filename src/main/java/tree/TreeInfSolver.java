@@ -9,6 +9,7 @@ import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Node;
 import structure.PairComparator;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
@@ -88,7 +89,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 			Node node = new Node("EQ", -1, Arrays.asList(
 					state.getFirst().get(0), state.getFirst().get(1)));
 			beam2.add(new Pair<List<Node>, Double>(Arrays.asList(node), 
-					state.getSecond()+ getLcaScore(node, wv, x)));
+					state.getSecond()+ getMergeScore(node, wv, x)));
 		}
 		List<Pair<TreeY, Double>> results = new ArrayList<Pair<TreeY,Double>>();
 		for(Pair<List<Node>, Double> b : beam2) {
@@ -113,6 +114,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		double initScore = state.getSecond();
 		for(int i=0; i<nodeList.size(); ++i) {
 			for(int j=i+1; j<nodeList.size(); ++j) {
+				if(!allowMerge(nodeList.get(i), nodeList.get(j))) continue;
 				List<Node> tmpNodeList = new ArrayList<Node>();
 				tmpNodeList.addAll(nodeList);
 				tmpNodeList.remove(i);
@@ -140,18 +142,32 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 			if(label.endsWith("REV")) {
 				label = label.substring(0,3);
 				Node node = new Node(label, -1, Arrays.asList(node2, node1));
-				mergeScore = getLcaScore(node, wv, x);
+				mergeScore = getMergeScore(node, wv, x);
 				nextStates.add(new Pair<Node, Double>(node, mergeScore));
 			} else {
 				Node node = new Node(label, -1, Arrays.asList(node1, node2));
-				mergeScore = getLcaScore(node, wv, x);
+				mergeScore = getMergeScore(node, wv, x);
 				nextStates.add(new Pair<Node, Double>(node, mergeScore));
 			}
 		}
 		return nextStates;
 	}
 
-	public double getLcaScore(Node node, WeightVector wv, TreeX x) {
+	public double getMergeScore(Node node, WeightVector wv, TreeX x) {
 		return wv.dotProduct(featGen.getPairFeatureVector(x, node));
-	}	
+	}
+	
+	public boolean allowMerge(Node node1, Node node2) {
+		IntPair ip1 = node1.getNodeListSpan();
+		IntPair ip2 = node2.getNodeListSpan();
+		if(ip1.getSecond()+1==ip2.getFirst() || ip2.getSecond()+1==ip1.getFirst()) {
+			return true;
+		}
+		if(node1.children.size()==0 && node2.children.size()==0 && 
+				(!node1.projection || !node2.projection)) {
+			return true;
+		}
+		return false;
+	}
+	
 }
