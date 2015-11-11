@@ -281,7 +281,8 @@ public class Tools {
 	}
 	
 	public static void populateAndSortByCharIndex(List<Node> nodes, TextAnnotation ta, 
-			List<QuantSpan> quantities, List<IntPair> candidateVars) {
+			List<QuantSpan> quantities, List<IntPair> candidateVars, boolean coref) {
+		int index=0;
 		for(Node node : nodes) {
 			if(node.label.equals("NUM")) node.charIndex = 
 					(quantities.get(node.index).start+quantities.get(node.index).end)/2;
@@ -289,6 +290,25 @@ public class Tools {
 				int start = ta.getTokenCharacterOffset(candidateVars.get(node.index).getFirst()).getFirst();
 				int end = ta.getTokenCharacterOffset(candidateVars.get(node.index).getSecond()-1).getSecond()-1;
 				node.charIndex = (start+end)/2;
+			}
+			node.nodeListIndex = index;
+			node.projection = true;
+			index++;
+		}
+		for(int i=0; i<nodes.size(); ++i) {
+			for(int j=0; j<nodes.size(); ++j) {
+				if(i!=j) {
+					Node node1 = nodes.get(i);
+					Node node2 = nodes.get(j);
+					if(node1.label.equals(node2.label) && node1.index == node2.index) {
+						if(node1.label.equals("VAR") && coref) {
+							node1.projection = false;
+						}
+						if(node1.label.equals("NUM")) {
+							node1.projection = false;
+						}
+					}
+				}
 			}
 		}
 		Collections.sort(nodes, new Comparator<Node>() {

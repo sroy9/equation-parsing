@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import reader.DocReader;
 import utils.Tools;
 
@@ -19,8 +20,13 @@ public class Node implements Serializable {
 	// For quantities : index of quantities list
 	// For variables : index of candidate variables list
 	public int index;
+	// CharIndex Location
 	public int charIndex;
-	
+	// Location in NodeList
+	public int nodeListIndex;
+	// Projection (one to one) indicator
+	public boolean projection;
+
 	public Node() {
 		children = new ArrayList<>();
 	}
@@ -236,5 +242,31 @@ public class Node implements Serializable {
 		if(children.size() == 0) return label;
 		return "("+children.get(0).getSignature() + " " + label + "_" +
 				children.get(1).getSignature()+")";
+	}
+	
+	public IntPair getCharSpan() {
+		if(label.equals("VAR") || label.equals("NUM")) {
+			if(!projection) return new IntPair(-1, -1);
+			return new IntPair(charIndex, charIndex);
+		}
+		IntPair ip1 = children.get(0).getCharSpan();
+		IntPair ip2 = children.get(1).getCharSpan();
+		if(ip1.getFirst() == -1) return ip2;
+		if(ip2.getFirst() == -1) return ip1;
+		return new IntPair(Math.min(ip1.getFirst(), ip2.getFirst()), 
+				Math.max(ip1.getSecond(), ip2.getSecond()));
+	}
+	
+	public IntPair getNodeListSpan() {
+		if(label.equals("VAR") || label.equals("NUM")) {
+			if(!projection) return new IntPair(-1, -1);
+			return new IntPair(nodeListIndex, nodeListIndex);
+		}
+		IntPair ip1 = children.get(0).getNodeListSpan();
+		IntPair ip2 = children.get(1).getNodeListSpan();
+		if(ip1.getFirst() == -1) return ip2;
+		if(ip2.getFirst() == -1) return ip1;
+		return new IntPair(Math.min(ip1.getFirst(), ip2.getFirst()), 
+				Math.max(ip1.getSecond(), ip2.getSecond()));
 	}
 }

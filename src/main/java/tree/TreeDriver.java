@@ -78,7 +78,7 @@ public class TreeDriver {
 					}
 				}
 				Tools.populateAndSortByCharIndex(nodes, simulProb.ta, 
-						simulProb.quantities, simulProb.candidateVars);
+						simulProb.quantities, simulProb.candidateVars, simulProb.coref);
 				TreeX x = new TreeX(simulProb, varTokens, nodes);
 				TreeY y = new TreeY(simulProb);
 				problem.addExample(x, y);

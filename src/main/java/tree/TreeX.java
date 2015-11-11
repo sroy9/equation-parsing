@@ -22,6 +22,7 @@ public class TreeX implements IInstance {
 	public List<QuantSpan> quantities;
 	public List<IntPair> candidateVars;
 	public Map<String, List<Integer>> varTokens;
+	public boolean coref;
 	public List<Node> nodes;
 	
 	// Constructors assume nodes to be sorted based on charIndex
@@ -34,6 +35,7 @@ public class TreeX implements IInstance {
 		posTags = simulProb.posTags;
 		candidateVars = simulProb.candidateVars;
 		this.varTokens = varTokens;
+		this.coref = simulProb.coref;
 		this.nodes = nodes;
 		for(int i=0; i<nodes.size()-1; ++i) {
 			if(nodes.get(i).charIndex > nodes.get(i+1).charIndex) {
