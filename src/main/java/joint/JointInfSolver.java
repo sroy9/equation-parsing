@@ -13,7 +13,9 @@ import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Node;
 import structure.PairComparator;
+import tree.TreeFeatGen;
 import tree.TreeInfSolver;
+import tree.TreeX;
 import utils.FeatGen;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
@@ -83,6 +85,8 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 			NumoccurY numY = new NumoccurY(prob, pair.getFirst().nodes);
 			beam2.add(new Pair<JointY, Double>(pair.getFirst(), pair.getSecond() + 
 					wv.dotProduct(featGen.getGlobalFeatureVector(numX, numY))));
+			pair.getFirst().numOccurScore = pair.getSecond() + 
+					wv.dotProduct(featGen.getGlobalFeatureVector(numX, numY));
 		}
 		beam1.clear();
 		beam1.addAll(beam2);
@@ -97,6 +101,8 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 				y.varTokens.put("V1", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
 				y.coref = false;
+				y.varScore = pair.getSecond()+
+						wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 				beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
 						wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 				for(int j=i; j<prob.candidateVars.size(); ++j) {
@@ -112,6 +118,8 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					y.coref = false;
+					y.varScore = pair.getSecond()+
+							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 					beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
 							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 					y = new JointY(pair.getFirst());
@@ -126,6 +134,8 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					y.coref = true;
+					y.varScore = pair.getSecond()+
+							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 					beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
 							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 				}
@@ -140,15 +150,15 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					prob.quantities, prob.candidateVars, pair.getFirst().coref);
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
-		System.out.println("Pred Score InfSolver : "+beam2.element().getSecond());
+		System.out.println("Pred Score InfSolver : "+beam2.element().getFirst().numOccurScore+" "
+				+beam2.element().getFirst().varScore+" "+beam2.element().getSecond());
 		return beam2.element().getFirst();
 	}
 	
 	public List<Pair<JointY, Double>> getBottomUpBestParse(
 			JointX x, Pair<JointY, Double> pair, WeightVector wv) {
 		JointY y = pair.getFirst();
-		PairComparator<List<Node>> nodePairComparator = 
-				new PairComparator<List<Node>>() {};
+		PairComparator<List<Node>> nodePairComparator = new PairComparator<List<Node>>() {};
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
 				.maximumSize(5).create();
@@ -161,15 +171,17 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		beam1.add(new Pair<List<Node>, Double>(init, pair.getSecond()));
 		for(int i=1; i<=n-2; ++i) {
 			for(Pair<List<Node>, Double> state : beam1) {
-				beam2.addAll(enumerateSingleMerge(state, wv, x, 
-						pair.getFirst().varTokens, pair.getFirst().nodes));
+				beam2.addAll(enumerateSingleMerge(state, wv, x, pair.getFirst().varTokens, y.nodes));
 			}
 			beam1.clear();
 			beam1.addAll(beam2);
 			beam2.clear();
 		}
 		for(Pair<List<Node>, Double> state : beam1) {
-			if(state.getFirst().size() != 2) continue;
+			if(state.getFirst().size() != 2) {
+				System.err.println("Penultimate list should have 2 nodes, found "+state.getFirst().size());
+				continue;
+			}
 			Node node = new Node("EQ", -1, Arrays.asList(
 					state.getFirst().get(0), state.getFirst().get(1)));
 			beam2.add(new Pair<List<Node>, Double>(Arrays.asList(node), 
@@ -179,7 +191,9 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		List<Pair<JointY, Double>> results = new ArrayList<Pair<JointY,Double>>();
 		for(Pair<List<Node>, Double> b : beam2) {
 			JointY t = new JointY(y);
-			assert b.getFirst().size() == 1;
+			if(b.getFirst().size() != 1){
+				System.err.println("Final list should have only 1 node, found "+b.getFirst().size());
+			}
 			t.equation.root = b.getFirst().get(0);
 			results.add(new Pair<JointY, Double>(t, b.getSecond()));
 		}
@@ -192,6 +206,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		List<Pair<List<Node>, Double>> nextStates = new ArrayList<>();
 		List<Node> nodeList = state.getFirst();
 		if(nodeList.size() == 1) {
+			System.err.println("List should not have size 1 here");
 			List<Pair<List<Node>, Double>> tmpNodeList = 
 					new ArrayList<Pair<List<Node>, Double>>();
 			tmpNodeList.add(state);
@@ -242,10 +257,10 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 	
 	public double getMergeScore(Node node, WeightVector wv, JointX x, 
 			Map<String, List<Integer>> varTokens, List<Node> nodes) {
-		List<String> features = new ArrayList<String>();
-		tree.TreeX lcaX = new tree.TreeX(x, varTokens, nodes);
-		features.addAll(tree.TreeFeatGen.getNodeFeatures(lcaX, node));
-		return wv.dotProduct(FeatGen.getFeatureVectorFromList(features, featGen.lm));
+		TreeX treeX = new TreeX(x, varTokens, nodes);
+		node.feats = new ArrayList<String>();
+		node.feats.addAll(TreeFeatGen.getNodeFeatures(treeX, node));
+		return wv.dotProduct(featGen.getNodeFeatureVector(treeX, node));
 	}
 	
 	public JointY getLatentBestStructure(
@@ -310,12 +325,9 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 			}
 		}
 		if(best == null) return gold;
+		best.nodes = best.equation.root.getLeaves();
 		best.coref = gold.coref;
+		Tools.populateAndSortByCharIndex(best.nodes, x.ta, x.quantities, x.candidateVars, best.coref);
 		return best;
-	}
-	
-	@Override
-	public Object clone() {
-		return new JointInfSolver(featGen);
 	}
 }

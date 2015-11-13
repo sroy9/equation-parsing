@@ -26,6 +26,7 @@ public class Node implements Serializable {
 	public int nodeListIndex;
 	// Projection (one to one) indicator
 	public boolean projection;
+	public List<String> feats;
 
 	public Node() {
 		children = new ArrayList<>();

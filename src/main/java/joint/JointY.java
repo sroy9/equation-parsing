@@ -19,11 +19,12 @@ public class JointY implements IStructure, Serializable {
 	public Map<String, List<Integer>> varTokens;
 	public List<Node> nodes;
 	public boolean coref;
+	public double numOccurScore, varScore, treeScore;
 	
 	public JointY() {
 		equation = new Equation();
 		varTokens = new HashMap<String, List<Integer>>();
-		nodes = new ArrayList<>();  
+		nodes = new ArrayList<>();
 	}
 	
 	public JointY(JointY other) {
@@ -33,6 +34,9 @@ public class JointY implements IStructure, Serializable {
 		nodes = new ArrayList<>();
 		nodes.addAll(other.nodes);
 		coref = other.coref;
+		numOccurScore = other.numOccurScore;
+		varScore = other.varScore;
+		treeScore = other.treeScore;
 	}
 	
 	public JointY(SimulProb prob) {
