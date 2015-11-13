@@ -157,7 +157,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		return wv.dotProduct(featGen.getPairFeatureVector(x, node));
 	}
 	
-	public boolean allowMerge(Node node1, Node node2) {
+	public static boolean allowMerge(Node node1, Node node2) {
 		IntPair ip1 = node1.getNodeListSpan();
 		IntPair ip2 = node2.getNodeListSpan();
 		if(ip1.getSecond()+1==ip2.getFirst() || ip2.getSecond()+1==ip1.getFirst()) {

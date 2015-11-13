@@ -32,7 +32,7 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 	}
 
 	public IFeatureVector getPairFeatureVector(TreeX x, Node node) {
-		List<String> features = getPairFeatures(x, node);
+		List<String> features = getNodeFeatures(x, node);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
@@ -45,13 +45,13 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		List<String> features = new ArrayList<String>();
 		for(Node node : y.equation.root.getAllSubNodes()) {
 			if(node.children.size() == 2) {
-				features.addAll(getPairFeatures(x, node));
+				features.addAll(getNodeFeatures(x, node));
 			}
 		}
 		return features;
 	}
 	
-	public static List<String> getPairFeatures(TreeX x, Node node) {
+	public static List<String> getNodeFeatures(TreeX x, Node node) {
 		List<String> features = new ArrayList<String>();
 		if(node.children.size() == 0) {
 			System.err.println("Pair Features called with a leaf : expected non-leaf");
@@ -61,7 +61,8 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		Node node2 = node.children.get(1);
 		IntPair ip1 = node1.getNodeListSpan();
 		IntPair ip2 = node2.getNodeListSpan();
-		if(node1.children.size()==0 && node2.children.size()==0 && (!node1.projection || !node2.projection)) {
+		if(node1.children.size()==0 && node2.children.size()==0 && 
+				(!node1.projection || !node2.projection)) {
 //			System.out.println("Chosen non-projective");
 			features.addAll(getNonProjectiveFeatures(x, node));
 		} else if(ip1.getFirst()!=-1 && ip2.getFirst()!=-1 && 
@@ -225,11 +226,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		if(midPhrase.contains("as many")) {
 			features.add(operation+"_DIVREV_RULE");
 		}
-//		if(features.size() == 0) {
-//			String strArr[] = midPhrase.split(" ");
-//		}
-		
-		
 		return features;
 	}
 	

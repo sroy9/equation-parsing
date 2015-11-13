@@ -35,20 +35,12 @@ public class PipelineDriver {
 				testProbs.add(simulProb);
 			}
 		}
-		SLModel numOccurModel = null, lcaModel = null;
+		
+		SLModel	numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
 		SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
-		if(useSPforNumoccur) {
-			numOccurModel = SLModel.loadModel("models/numoccurStruct"+testFold+".save");
-		} else {
-			numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
-		}
-		if(useSPforLCA) {
-			lcaModel = SLModel.loadModel("models/lcaStruct"+testFold+".save");
-		} else {
-			lcaModel = SLModel.loadModel("models/lca"+testFold+".save");
-		}
+		SLModel treeModel = SLModel.loadModel("models/tree"+testFold+".save");
 		SLProblem test = getSP(testProbs);
-		return testModel(numOccurModel, varModel, lcaModel, test, true);
+		return testModel(numOccurModel, varModel, treeModel, test, true);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
@@ -71,7 +63,8 @@ public class PipelineDriver {
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			JointX prob = (JointX) sp.instanceList.get(i);
 			JointY gold = (JointY) sp.goldStructureList.get(i);
-			JointY pred = PipelineInfSolver.getBestStructure(prob, numOccurModel, varModel, lcaModel, gold);
+			JointY pred = PipelineInfSolver.getBestStructure(
+					prob, numOccurModel, varModel, lcaModel, gold);
 			if(JointY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else if(printMistakes) {
@@ -88,16 +81,6 @@ public class PipelineDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		if(args[0].equals("SP")) {
-			PipelineDriver.useSPforNumoccur = true; 
-		} else {
-			PipelineDriver.useSPforNumoccur = false;
-		}
-		if(args[1].equals("SP")) {
-			PipelineDriver.useSPforLCA = true; 
-		} else {
-			PipelineDriver.useSPforLCA = false;
-		}
 		PipelineDriver.crossVal();
 		Tools.pipeline.closeCache();
 	}

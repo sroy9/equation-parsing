@@ -58,6 +58,20 @@ public class NumoccurY implements IStructure, Serializable {
 		}
 	}
 	
+	public NumoccurY(JointX x, List<Node> leaves) {
+		numOccurList = new ArrayList<Integer>();
+		for(int i=0; i<x.quantities.size(); ++i) {
+			int numOccur = 0;
+			for(Node leaf : leaves) {
+				if(leaf.label.equals("NUM") && Tools.safeEquals(
+						leaf.value, Tools.getValue(x.quantities.get(i)))) {
+					numOccur++;
+				}
+			}
+			numOccurList.add(numOccur);
+		}
+	}
+	
 	public static float getLoss(NumoccurY gold, NumoccurY pred) {
 		float loss = 0.0f;
 		if(gold.numOccurList.size() != pred.numOccurList.size()) return 10.0f;

@@ -6,10 +6,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import numoccur.NumoccurX;
+import numoccur.NumoccurY;
+
 import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Node;
 import structure.PairComparator;
+import tree.TreeInfSolver;
 import utils.FeatGen;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
@@ -57,13 +61,11 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		beam1.add(new Pair<JointY, Double>(seed, 0.0));
 		
 		// Predict number of occurrences of each quantity
+		NumoccurX numX = new NumoccurX(prob);
 		for(int i=0; i<prob.quantities.size(); ++i) {
 			for(Pair<JointY, Double> pair : beam1) {
 				for(int j=0; j<3; ++j) {
-					numoccur.NumoccurX numX = new numoccur.NumoccurX(prob, i);
-					numoccur.NumoccurY numY = new numoccur.NumoccurY(j);
-					double score = wv.dotProduct(
-							featGen.getIndividualFeatureVector(numX, numY));
+					double score = wv.dotProduct(featGen.getIndividualFeatureVector(numX, i, j));
 					JointY y = new JointY(pair.getFirst());
 					for(int k=0; k<j; ++k) {
 						Node node = new Node("NUM", i, new ArrayList<Node>());
@@ -78,16 +80,13 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 			beam2.clear();
 		}
 		for(Pair<JointY, Double> pair : beam1) {
-			numoccur.NumoccurX numX = new numoccur.NumoccurX(prob);
-			numoccur.NumoccurY numY = new numoccur.NumoccurY(
-					prob, pair.getFirst().nodes);
+			NumoccurY numY = new NumoccurY(prob, pair.getFirst().nodes);
 			beam2.add(new Pair<JointY, Double>(pair.getFirst(), pair.getSecond() + 
 					wv.dotProduct(featGen.getGlobalFeatureVector(numX, numY))));
 		}
 		beam1.clear();
 		beam1.addAll(beam2);
 		beam2.clear();
-		
 		// Grounding of variables
 		for(Pair<JointY, Double> pair : beam1) {
 			for(int i=0; i<prob.candidateVars.size(); ++i) {
@@ -135,11 +134,10 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		beam1.clear();
 		beam1.addAll(beam2);
 		beam2.clear();
-		
 		// Equation generation
 		for(Pair<JointY, Double> pair : beam1) {
-			Grammar.populateAndSortByCharIndex(pair.getFirst().nodes, prob.ta, 
-					prob.quantities, prob.candidateVars);
+			Tools.populateAndSortByCharIndex(pair.getFirst().nodes, prob.ta, 
+					prob.quantities, prob.candidateVars, pair.getFirst().coref);
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
 		return beam2.element().getFirst();
@@ -175,7 +173,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					state.getFirst().get(0), state.getFirst().get(1)));
 			beam2.add(new Pair<List<Node>, Double>(Arrays.asList(node), 
 					state.getSecond()+ 
-					getLcaScore(node, wv, x, pair.getFirst().varTokens, pair.getFirst().nodes)));
+					getMergeScore(node, wv, x, pair.getFirst().varTokens, pair.getFirst().nodes)));
 		}
 		List<Pair<JointY, Double>> results = new ArrayList<Pair<JointY,Double>>();
 		for(Pair<List<Node>, Double> b : beam2) {
@@ -201,6 +199,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		double initScore = state.getSecond();
 		for(int i=0; i<nodeList.size(); ++i) {
 			for(int j=i+1; j<nodeList.size(); ++j) {
+				if(!TreeInfSolver.allowMerge(nodeList.get(i), nodeList.get(j))) continue;
 				List<Node> tmpNodeList = new ArrayList<Node>();
 				tmpNodeList.addAll(nodeList);
 				tmpNodeList.remove(i);
@@ -229,22 +228,22 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 			if(label.endsWith("REV")) {
 				label = label.substring(0,3);
 				Node node = new Node(label, -1, Arrays.asList(node2, node1));
-				mergeScore = getLcaScore(node, wv, x, varTokens, nodes);
+				mergeScore = getMergeScore(node, wv, x, varTokens, nodes);
 				nextStates.add(new Pair<Node, Double>(node, mergeScore));
 			} else {
 				Node node = new Node(label, -1, Arrays.asList(node1, node2));
-				mergeScore = getLcaScore(node, wv, x, varTokens, nodes);
+				mergeScore = getMergeScore(node, wv, x, varTokens, nodes);
 				nextStates.add(new Pair<Node, Double>(node, mergeScore));
 			}
 		}
 		return nextStates;
 	}
 	
-	public double getLcaScore(Node node, WeightVector wv, JointX x, 
+	public double getMergeScore(Node node, WeightVector wv, JointX x, 
 			Map<String, List<Integer>> varTokens, List<Node> nodes) {
 		List<String> features = new ArrayList<String>();
 		tree.TreeX lcaX = new tree.TreeX(x, varTokens, nodes);
-		features.addAll(tree.TreeFeatGen.getPairFeatures(lcaX, node));
+		features.addAll(tree.TreeFeatGen.getNodeFeatures(lcaX, node));
 		return wv.dotProduct(FeatGen.getFeatureVectorFromList(features, featGen.lm));
 	}
 	
@@ -301,7 +300,6 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 								}
 							}
 						}
-						
 					}
 					double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
 					if(score > bestScore) {
