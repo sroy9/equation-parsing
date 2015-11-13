@@ -42,7 +42,8 @@ public class JointDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-//		trainModel("models/tree"+testFold+".save", train);
+		trainModel("models/tree"+testFold+".save", train);
+		testModel("models/tree"+testFold+".save", train);
 		return testModel("models/tree"+testFold+".save", test);
 	}
 	
@@ -113,7 +114,7 @@ public class JointDriver {
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
 		lm.setAllowNewFeatures(true);
 		model.wv = latentSVMLearner(learner, train, 
-				(JointInfSolver) model.infSolver, 3, null);
+				(JointInfSolver) model.infSolver, 5, null);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}
@@ -145,5 +146,6 @@ public class JointDriver {
 	public static void main(String args[]) throws Exception {
 		JointDriver.doTrainTest(0);
 		Tools.pipeline.closeCache();
+		System.exit(0);
 	}
 }

@@ -64,13 +64,14 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		if(node1.children.size()==0 && node2.children.size()==0 && 
 				(!node1.projection || !node2.projection)) {
 //			System.out.println("Chosen non-projective");
-			features.addAll(getNonProjectiveFeatures(x, node));
+//			features.addAll(getNonProjectiveFeatures(x, node));
+			features.add(node.getSignature()+"_NON-PROJECTIVE");
 		} else if(ip1.getFirst()!=-1 && ip2.getFirst()!=-1 && 
 				(ip1.getSecond()+1==ip2.getFirst() || ip2.getSecond()+1==ip1.getFirst())) {
 //			System.out.println("Chosen projective");
 			features.addAll(getProjectiveFeatures(x, node));
 		} else {
-			features.add("NOT_ALLOWED_STUFF");
+			features.add(node.getSignature()+"_NOT_ALLOWED_STUFF");
 		}
 		return features;
 	}
@@ -142,6 +143,17 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		}
 		List<String> features = new ArrayList<>();
 		String prefix = "";
+		if(leaf1.label.equals("VAR")) {
+			prefix+="VAR";
+		} else {
+			prefix+="NUM";
+		}
+		if(leaf2.label.equals("VAR")) {
+			prefix+="VAR";
+		} else {
+			prefix+="NUM";
+		}
+		
 		int min = x.ta.getTokenIdFromCharacterOffset(Math.min(leaf1.charIndex, leaf2.charIndex))+1;
 		int max = x.ta.getTokenIdFromCharacterOffset(Math.max(leaf1.charIndex, leaf2.charIndex))-1;
 		int left = x.ta.getTokenIdFromCharacterOffset(Math.min(leaf1.charIndex, leaf2.charIndex))-1;

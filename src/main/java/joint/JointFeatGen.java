@@ -42,6 +42,7 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 			features.addAll(NumoccurFeatGen.getIndividualFeatures(
 					numX, i, numY.numOccurList.get(i)));
 		}
+		features.addAll(NumoccurFeatGen.getGlobalFeatures(numX, numY));
 		VarX varX = new VarX(x);
 		VarY varY = new VarY(y);
 		features.addAll(VarFeatGen.getFeatures(varX, varY));
