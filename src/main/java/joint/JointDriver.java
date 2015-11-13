@@ -42,7 +42,7 @@ public class JointDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/tree"+testFold+".save", train, testFold);
+//		trainModel("models/tree"+testFold+".save", train);
 		return testModel("models/tree"+testFold+".save", test);
 	}
 	
@@ -100,11 +100,10 @@ public class JointDriver {
 		return (acc/sp.instanceList.size());
 	}
 	
-	public static void trainModel(String modelPath, SLProblem train, int testFold) 
+	public static void trainModel(String modelPath, SLProblem train) 
 			throws Exception {
 		SLModel model = new SLModel();
 		Lexiconer lm = new Lexiconer();
-		lm.setAllowNewFeatures(true);
 		model.lm = lm;
 		JointFeatGen fg = new JointFeatGen(lm);
 		model.featureGenerator = fg;
@@ -112,18 +111,22 @@ public class JointDriver {
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
+		lm.setAllowNewFeatures(true);
 		model.wv = latentSVMLearner(learner, train, 
-				(JointInfSolver) model.infSolver, 3);
+				(JointInfSolver) model.infSolver, 3, null);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}
 
 	public static WeightVector latentSVMLearner(
 			Learner learner, SLProblem sp, JointInfSolver infSolver, 
-			int maxIter) throws Exception {
-		WeightVector wv = new WeightVector(7000);
-		wv.setExtendable(true);
-		for(int i=0; i<maxIter; ++i) {
+			int numIter, WeightVector initialWv) throws Exception {
+		WeightVector wv = initialWv;
+		if(wv == null) {
+			wv = new WeightVector(7000);
+			wv.setExtendable(true);
+		}
+		for(int i=0; i<numIter; ++i) {
 			System.err.println("Latent SSVM : Iteration "+i);
 			SLProblem newProb = new SLProblem();
 			for(int j=0; j<sp.goldStructureList.size(); ++j) {
@@ -140,7 +143,7 @@ public class JointDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		JointDriver.crossVal();
+		JointDriver.doTrainTest(0);
 		Tools.pipeline.closeCache();
 	}
 }
