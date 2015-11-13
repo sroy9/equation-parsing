@@ -140,7 +140,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		}
 		List<String> features = new ArrayList<>();
 		String prefix = "";
-		
 		int min = x.ta.getTokenIdFromCharacterOffset(Math.min(leaf1.charIndex, leaf2.charIndex))+1;
 		int max = x.ta.getTokenIdFromCharacterOffset(Math.max(leaf1.charIndex, leaf2.charIndex))-1;
 		int left = x.ta.getTokenIdFromCharacterOffset(Math.min(leaf1.charIndex, leaf2.charIndex))-1;
@@ -160,33 +159,33 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 //			features.add(prefix+"_MidPosLexBigram_"+x.posTags.get(i).getLabel()+"_"+
 //					x.ta.getToken(i+1).toLowerCase()+"_"+op);
 //		}
-//		for(int i=Math.max(0, left-2); i<left; ++i) {
-//			features.add(prefix+"_LeftUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-//			features.add(prefix+"_LeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
-//		}
-//		for(int i=min; i<Math.min(x.ta.size()-1, min+2); ++i) {
-//			features.add(prefix+"_LeftRightUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-//			features.add(prefix+"_LeftRightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
-//		}
-//		for(int i=right; i<Math.min(x.ta.size()-1, right+2); ++i) {
-//			features.add(prefix+"_RightUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-//			features.add(prefix+"_RightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
-//		}
-//		for(int i=Math.max(0, max-2); i<max; ++i) {
-//			features.add(prefix+"_RightLeftUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-//			features.add(prefix+"_RightLeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
-//		}
-//		if(prefix.contains("NUMNUM")) {
-//			if(leaf1.value > leaf2.value) {
-//				features.add(prefix+"_Desc"+"_"+op);
-//			} else {
-//				features.add(prefix+"_Asc"+"_"+op);
-//			}
-//		}
+		for(int i=Math.max(0, left-2); i<left; ++i) {
+			features.add(prefix+"_LeftUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
+			features.add(prefix+"_LeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.ta.getToken(i+1).toLowerCase()+"_"+op);
+		}
+		for(int i=min; i<Math.min(x.ta.size()-1, min+2); ++i) {
+			features.add(prefix+"_LeftRightUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
+			features.add(prefix+"_LeftRightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.ta.getToken(i+1).toLowerCase()+"_"+op);
+		}
+		for(int i=right; i<Math.min(x.ta.size()-1, right+2); ++i) {
+			features.add(prefix+"_RightUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
+			features.add(prefix+"_RightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.ta.getToken(i+1).toLowerCase()+"_"+op);
+		}
+		for(int i=Math.max(0, max-2); i<max; ++i) {
+			features.add(prefix+"_RightLeftUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
+			features.add(prefix+"_RightLeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.ta.getToken(i+1).toLowerCase()+"_"+op);
+		}
+		if(prefix.contains("NUMNUM")) {
+			if(leaf1.value > leaf2.value) {
+				features.add(prefix+"_Desc"+"_"+op);
+			} else {
+				features.add(prefix+"_Asc"+"_"+op);
+			}
+		}
 		return features;
 	}
 	
