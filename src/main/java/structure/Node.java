@@ -47,6 +47,7 @@ public class Node implements Serializable {
 		for(Node child : other.children) {
 			this.children.add(new Node(child));			
 		}
+		this.projection = other.projection;
 	}
 	
 	public String getLambdaExpression() {

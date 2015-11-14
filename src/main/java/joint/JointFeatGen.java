@@ -13,7 +13,6 @@ import tree.TreeFeatGen;
 import tree.TreeX;
 import tree.TreeY;
 import utils.FeatGen;
-import utils.Tools;
 import var.VarFeatGen;
 import var.VarX;
 import var.VarY;
@@ -50,13 +49,14 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 		features.addAll(VarFeatGen.getFeatures(varX, varY));
 		System.out.println("VarScore : "+model.wv.dotProduct(
 				FeatGen.getFeatureVectorFromList(features, lm)));
-//		Tools.populateAndSortByCharIndex(y.nodes, x.ta, x.quantities, x.candidateVars, y.coref);
 		TreeX treeX = new TreeX(x, y.varTokens, y.nodes);
 		TreeY treeY = new TreeY(y);
 		for(Node node : treeY.equation.root.getAllSubNodes()) {
 			if(node.children.size()==2) {
 				features.addAll(TreeFeatGen.getNodeFeatures(treeX, node));
-				System.out.println(node+" "+Arrays.asList(TreeFeatGen.getNodeFeatures(treeX, node)));
+				System.out.println(node+" "+Arrays.asList(TreeFeatGen.getNodeFeatures(treeX, node))
+						+" "+node.children.get(0).children.size()+" "+node.children.get(1).children.size()
+						+" "+node.children.get(0).projection+" "+node.children.get(1).projection);
 			}
 		}
 		System.out.println("TreeScore : "+model.wv.dotProduct(

@@ -14,9 +14,7 @@ import com.google.common.collect.MinMaxPriorityQueue;
 import structure.Node;
 import structure.PairComparator;
 import tree.TreeFeatGen;
-import tree.TreeInfSolver;
 import tree.TreeX;
-import utils.FeatGen;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
@@ -150,8 +148,8 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					prob.quantities, prob.candidateVars, pair.getFirst().coref);
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
-		System.out.println("Pred Score InfSolver : "+beam2.element().getFirst().numOccurScore+" "
-				+beam2.element().getFirst().varScore+" "+beam2.element().getSecond());
+//		System.out.println("Pred Score InfSolver : "+beam2.element().getFirst().numOccurScore+" "
+//				+beam2.element().getFirst().varScore+" "+beam2.element().getSecond());
 		return beam2.element().getFirst();
 	}
 	
@@ -179,7 +177,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		}
 		for(Pair<List<Node>, Double> state : beam1) {
 			if(state.getFirst().size() != 2) {
-				System.err.println("Penultimate list should have 2 nodes, found "+state.getFirst().size());
+//				System.err.println("Penultimate list should have 2 nodes, found "+state.getFirst().size());
 				continue;
 			}
 			Node node = new Node("EQ", -1, Arrays.asList(
@@ -192,7 +190,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		for(Pair<List<Node>, Double> b : beam2) {
 			JointY t = new JointY(y);
 			if(b.getFirst().size() != 1){
-				System.err.println("Final list should have only 1 node, found "+b.getFirst().size());
+//				System.err.println("Final list should have only 1 node, found "+b.getFirst().size());
 			}
 			t.equation.root = b.getFirst().get(0);
 			results.add(new Pair<JointY, Double>(t, b.getSecond()));
@@ -206,7 +204,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		List<Pair<List<Node>, Double>> nextStates = new ArrayList<>();
 		List<Node> nodeList = state.getFirst();
 		if(nodeList.size() == 1) {
-			System.err.println("List should not have size 1 here");
+//			System.err.println("List should not have size 1 here");
 			List<Pair<List<Node>, Double>> tmpNodeList = 
 					new ArrayList<Pair<List<Node>, Double>>();
 			tmpNodeList.add(state);

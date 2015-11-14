@@ -1,13 +1,11 @@
 package joint;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import reader.DocReader;
-import structure.Node;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
@@ -44,7 +42,7 @@ public class JointDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-//		trainModel("models/tree"+testFold+".save", train);
+		trainModel("models/tree"+testFold+".save", train);
 		testModel("models/tree"+testFold+".save", train);
 		return testModel("models/tree"+testFold+".save", test);
 	}
@@ -76,11 +74,13 @@ public class JointDriver {
 			JointY gold = (JointY) sp.goldStructureList.get(i);
 			JointY pred = (JointY) model.infSolver.getBestStructure(
 					model.wv, prob);
-			for(Node node : pred.equation.root.getAllSubNodes()) {
-				if(node.children.size() == 2) {
-					System.out.println(node+" "+Arrays.asList(node.feats));
-				}
-			}
+//			for(Node node : pred.equation.root.getAllSubNodes()) {
+//				if(node.children.size() == 2) {
+//					System.out.println(node+" "+Arrays.asList(node.feats)
+//							+" "+node.children.get(0).children.size()+" "+node.children.get(1).children.size()
+//							+" "+node.children.get(0).projection+" "+node.children.get(1).projection);
+//				}
+//			}
 			total.add(prob.problemIndex);
 			double goldWt = model.wv.dotProduct(
 					model.featureGenerator.getFeatureVector(prob, gold));
@@ -99,8 +99,6 @@ public class JointDriver {
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
 				System.out.println("Pred : \n"+pred);
-				System.out.println("Pred weight : "+model.wv.dotProduct(
-						((JointFeatGen)model.featureGenerator).getFeatureVector(prob, pred, model)));
 				System.out.println("Pred weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, pred)));
 				System.out.println("Loss : "+JointY.getLoss(gold, pred));
