@@ -14,6 +14,7 @@ import com.google.common.collect.MinMaxPriorityQueue;
 import structure.Node;
 import structure.PairComparator;
 import tree.TreeFeatGen;
+import tree.TreeInfSolver;
 import tree.TreeX;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
@@ -216,7 +217,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		double initScore = state.getSecond();
 		for(int i=0; i<nodeList.size(); ++i) {
 			for(int j=i+1; j<nodeList.size(); ++j) {
-//				if(!TreeInfSolver.allowMerge(nodeList.get(i), nodeList.get(j))) continue;
+				if(!TreeInfSolver.allowMerge(nodeList.get(i), nodeList.get(j))) continue;
 				List<Node> tmpNodeList = new ArrayList<Node>();
 				tmpNodeList.addAll(nodeList);
 				tmpNodeList.remove(i);

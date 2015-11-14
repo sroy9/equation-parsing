@@ -116,14 +116,14 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		for(int i=min; i<=max; ++i) {
 			features.add("MidUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
 		}
-		for(int i=min; i<=max-1; ++i) {
-			features.add("MidBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-					x.ta.getToken(i+1).toLowerCase()+"_"+op);
-			features.add("MidLexPosBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-					x.posTags.get(i+1).getLabel()+"_"+op);
-			features.add("MidPosLexBigram_"+x.posTags.get(i).getLabel()+"_"+
-					x.ta.getToken(i+1).toLowerCase()+"_"+op);
-		}
+//		for(int i=min; i<=max-1; ++i) {
+//			features.add("MidBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
+//			features.add("MidLexPosBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+//					x.posTags.get(i+1).getLabel()+"_"+op);
+//			features.add("MidPosLexBigram_"+x.posTags.get(i).getLabel()+"_"+
+//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
+//		}
 		return features;
 	}
 	
