@@ -65,6 +65,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		for(int i=0; i<prob.quantities.size(); ++i) {
 			for(Pair<JointY, Double> pair : beam1) {
 				for(int j=0; j<3; ++j) {
+					if(j==0 && pair.getFirst().nodes.size()==0) continue;
 					double score = wv.dotProduct(featGen.getIndividualFeatureVector(numX, i, j));
 					JointY y = new JointY(pair.getFirst());
 					for(int k=0; k<j; ++k) {
@@ -101,8 +102,10 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 				y.coref = false;
 				y.varScore = pair.getSecond()+
 						wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
-				beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
-						wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+				if(y.nodes.size() > 2) {
+					beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
+							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+				}
 				for(int j=i; j<prob.candidateVars.size(); ++j) {
 					y = new JointY(pair.getFirst());
 					node = new Node("VAR", i, new ArrayList<Node>());

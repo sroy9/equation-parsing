@@ -77,8 +77,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		if(Math.min(ip1.getSecond(), ip2.getSecond()) > Math.max(ip1.getFirst(), ip2.getFirst())) {
 			return features;
 		}
-//		System.out.println("NodeListSpan "+node.children.get(0)+" "+ip1);
-//		System.out.println("NodeListSpan "+node.children.get(1)+" "+ip2);
 		String prePhrase = "";
 		if(Math.min(ip1.getFirst(), ip2.getFirst())==0)  {
 			prePhrase = x.ta.getText().toLowerCase().substring(
@@ -106,14 +104,15 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		}
 //		System.out.println("PrePhrase : "+prePhrase+" MidPhrase : "+midPhrase+" LeftToken : "+leftToken);
 		features.addAll(getRuleFeatures(prePhrase, midPhrase, leftToken, op));
-		
-
 		IntPair span1 = node.children.get(0).getCharSpan();
 		IntPair span2 = node.children.get(1).getCharSpan();
 		int min = x.ta.getTokenIdFromCharacterOffset(Math.min(span1.getFirst(), span2.getFirst()))+1;
 		int max = x.ta.getTokenIdFromCharacterOffset(Math.max(span1.getSecond(), span2.getSecond()))-1;
 		int left = x.ta.getTokenIdFromCharacterOffset(Math.min(span1.getSecond(), span2.getSecond()))-1;
 		int right = x.ta.getTokenIdFromCharacterOffset(Math.max(span1.getFirst(), span2.getFirst()))+1;
+		if(Math.abs(min-max)<=1) {
+			features.add("MidUnigram_NonExistent_"+op);
+		}
 		for(int i=min; i<=max; ++i) {
 			features.add("MidUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
 		}
