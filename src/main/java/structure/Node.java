@@ -48,6 +48,8 @@ public class Node implements Serializable {
 			this.children.add(new Node(child));			
 		}
 		this.projection = other.projection;
+		this.charIndex = other.charIndex;
+		this.nodeListIndex = other.nodeListIndex;
 	}
 	
 	public String getLambdaExpression() {
@@ -72,7 +74,7 @@ public class Node implements Serializable {
 	@Override
 	public String toString() {
 		if(children.size() == 0) return label + "_" + 
-				(label.equals("NUM") ? value : varId);
+				(label.equals("NUM") ? value : varId) + "_" +nodeListIndex;
 		return "("+children.get(0).toString() + " " + label + " " + 
 				children.get(1).toString()+")";
 	}

@@ -56,7 +56,8 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 				features.addAll(TreeFeatGen.getNodeFeatures(treeX, node));
 				System.out.println(node+" "+Arrays.asList(TreeFeatGen.getNodeFeatures(treeX, node))
 						+" "+node.children.get(0).children.size()+" "+node.children.get(1).children.size()
-						+" "+node.children.get(0).projection+" "+node.children.get(1).projection);
+						+" "+node.children.get(0).projection+" "+node.children.get(1).projection
+						+" "+node.children.get(0).getNodeListSpan()+" "+node.children.get(1).getNodeListSpan());
 			}
 		}
 		System.out.println("TreeScore : "+model.wv.dotProduct(

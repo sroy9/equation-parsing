@@ -1,12 +1,15 @@
 package joint;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import reader.DocReader;
+import structure.Node;
 import structure.SimulProb;
+import tree.TreeFeatGen;
 import utils.Params;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
@@ -74,13 +77,14 @@ public class JointDriver {
 			JointY gold = (JointY) sp.goldStructureList.get(i);
 			JointY pred = (JointY) model.infSolver.getBestStructure(
 					model.wv, prob);
-//			for(Node node : pred.equation.root.getAllSubNodes()) {
-//				if(node.children.size() == 2) {
-//					System.out.println(node+" "+Arrays.asList(node.feats)
-//							+" "+node.children.get(0).children.size()+" "+node.children.get(1).children.size()
-//							+" "+node.children.get(0).projection+" "+node.children.get(1).projection);
-//				}
-//			}
+			for(Node node : pred.equation.root.getAllSubNodes()) {
+				if(node.children.size() == 2) {
+					System.out.println(node+" "+Arrays.asList(node.feats)
+							+" "+node.children.get(0).children.size()+" "+node.children.get(1).children.size()
+							+" "+node.children.get(0).projection+" "+node.children.get(1).projection
+							+" "+node.children.get(0).getNodeListSpan()+" "+node.children.get(1).getNodeListSpan());
+				}
+			}
 			total.add(prob.problemIndex);
 			double goldWt = model.wv.dotProduct(
 					model.featureGenerator.getFeatureVector(prob, gold));
@@ -99,6 +103,8 @@ public class JointDriver {
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
 				System.out.println("Pred : \n"+pred);
+				System.out.println("Pred weight : "+model.wv.dotProduct(
+						((JointFeatGen)model.featureGenerator).getFeatureVector(prob, pred, model)));
 				System.out.println("Pred weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, pred)));
 				System.out.println("Loss : "+JointY.getLoss(gold, pred));
@@ -123,7 +129,7 @@ public class JointDriver {
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
 		lm.setAllowNewFeatures(true);
 		model.wv = latentSVMLearner(learner, train, 
-				(JointInfSolver) model.infSolver, 3, null);
+				(JointInfSolver) model.infSolver, 1, null);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}

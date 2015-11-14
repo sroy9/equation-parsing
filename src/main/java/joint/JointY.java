@@ -32,7 +32,9 @@ public class JointY implements IStructure, Serializable {
 		varTokens = new HashMap<String, List<Integer>>();
 		varTokens.putAll(other.varTokens);
 		nodes = new ArrayList<>();
-		nodes.addAll(other.nodes);
+		for(Node node : other.nodes) {
+			nodes.add(new Node(node));
+		}
 		coref = other.coref;
 		numOccurScore = other.numOccurScore;
 		varScore = other.varScore;

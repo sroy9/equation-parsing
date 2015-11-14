@@ -148,8 +148,8 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					prob.quantities, prob.candidateVars, pair.getFirst().coref);
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
-//		System.out.println("Pred Score InfSolver : "+beam2.element().getFirst().numOccurScore+" "
-//				+beam2.element().getFirst().varScore+" "+beam2.element().getSecond());
+		System.out.println("Pred Score InfSolver : "+beam2.element().getFirst().numOccurScore+" "
+				+beam2.element().getFirst().varScore+" "+beam2.element().getSecond());
 		return beam2.element().getFirst();
 	}
 	

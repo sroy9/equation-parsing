@@ -319,6 +319,11 @@ public class Tools {
 			node.nodeListIndex = index;
 			++index;
 		}
+//		System.out.println("Nodelist : ");
+//		for(Node node : nodes) {
+//			System.out.print(node+" ");
+//		}
+//		System.out.println();
 	}
 	
 }

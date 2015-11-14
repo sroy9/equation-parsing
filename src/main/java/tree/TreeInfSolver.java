@@ -154,7 +154,7 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 	}
 
 	public double getMergeScore(Node node, WeightVector wv, TreeX x) {
-		return wv.dotProduct(featGen.getPairFeatureVector(x, node));
+		return wv.dotProduct(featGen.getNodeFeatureVector(x, node));
 	}
 	
 	public static boolean allowMerge(Node node1, Node node2) {

@@ -31,17 +31,12 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 
-	public IFeatureVector getPairFeatureVector(TreeX x, Node node) {
+	public IFeatureVector getNodeFeatureVector(TreeX x, Node node) {
 		List<String> features = getNodeFeatures(x, node);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
 	public static List<String> getFeatures(TreeX x, TreeY y) {
-//		System.out.println("Text : "+x.ta.getText());
-//		System.out.println("NodeList");
-//		for(Node node : y.equation.root.getLeaves()) {
-//			System.out.println(node+" "+node.getNodeListSpan()+" "+node.getCharSpan());
-//		}
 		List<String> features = new ArrayList<String>();
 		for(Node node : y.equation.root.getAllSubNodes()) {
 			if(node.children.size() == 2) {
@@ -63,9 +58,11 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		IntPair ip2 = node2.getNodeListSpan();
 		if(node1.children.size()==0 && node2.children.size()==0 && 
 				(!node1.projection || !node2.projection)) {
-			features.addAll(getNonProjectiveFeatures(x, node));
+//			features.addAll(getNonProjectiveFeatures(x, node));
+			features.add("NON_PROJECTIVE");
 		} else if(ip1.getFirst()!=-1 && ip2.getFirst()!=-1 && 
-				((ip1.getSecond()+1)==ip2.getFirst() || (ip2.getSecond()+1)==ip1.getFirst())) {
+				(((ip1.getSecond()+1)==ip2.getFirst()) || ((ip2.getSecond()+1)==ip1.getFirst()))) {
+			features.add("PROJECTIVE");
 			features.addAll(getProjectiveFeatures(x, node));
 		} else {
 			features.add("NOT_ALLOWED_STUFF");
