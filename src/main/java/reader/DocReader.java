@@ -275,8 +275,8 @@ public class DocReader {
 		}
 //		DocReader.createLambdaExpForSPF();
 //		DocReader.createGizaProbTable();
-		System.out.println("Done");
 		Tools.pipeline.closeCache();
+		System.exit(0);
 		
 	}
 }

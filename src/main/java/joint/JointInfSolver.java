@@ -54,10 +54,10 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<JointY>() {};
 		MinMaxPriorityQueue<Pair<JointY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(20).create();
+				maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<JointY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(20).create();
+				maximumSize(200).create();
 		JointY seed = new JointY();
 		beam1.add(new Pair<JointY, Double>(seed, 0.0));
 		
@@ -108,6 +108,10 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 				}
 				for(int j=i; j<prob.candidateVars.size(); ++j) {
+					if(Tools.doesContainNotEqual(prob.candidateVars.get(i), prob.candidateVars.get(j)) ||
+							Tools.doesContainNotEqual(prob.candidateVars.get(j), prob.candidateVars.get(i))) {
+						continue;
+					}
 					y = new JointY(pair.getFirst());
 					node = new Node("VAR", i, new ArrayList<Node>());
 					node.varId = "V1";
@@ -163,10 +167,10 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		PairComparator<List<Node>> nodePairComparator = new PairComparator<List<Node>>() {};
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(5).create();
+				.maximumSize(50).create();
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(5).create();
+				.maximumSize(50).create();
 		int n = y.nodes.size();
 		List<Node> init = new ArrayList<>();
 		init.addAll(y.nodes);
@@ -242,7 +246,9 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		List<String> labels = Arrays.asList(
 				"ADD", "SUB", "SUB_REV","MUL", "DIV", "DIV_REV");
 		double mergeScore;
+		String ruleOp = TreeFeatGen.getRuleOperation(node1, node2, x.ta, x.quantities, nodes);
 		for(String label : labels) {
+			if(ruleOp != null && !ruleOp.equals(label)) continue;
 			if(label.endsWith("REV")) {
 				label = label.substring(0,3);
 				Node node = new Node(label, -1, Arrays.asList(node2, node1));
@@ -267,6 +273,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 	
 	public JointY getLatentBestStructure(
 			JointX x, JointY gold, WeightVector wv) {
+		System.out.println(gold.probId+" : "+Arrays.asList(gold.varTokens));
 		JointY best = null;
 		double bestScore = -Double.MAX_VALUE;
 		if(gold.varTokens.keySet().size() == 1) {
@@ -329,6 +336,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		if(best == null) return gold;
 		best.nodes = best.equation.root.getLeaves();
 		best.coref = gold.coref;
+		System.out.println(gold.probId+" : "+Arrays.asList(gold.varTokens));
 		Tools.populateAndSortByCharIndex(best.nodes, x.ta, x.quantities, x.candidateVars, best.coref);
 		return best;
 	}

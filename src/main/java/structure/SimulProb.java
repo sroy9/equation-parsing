@@ -70,7 +70,8 @@ public class SimulProb {
 		List<String> lines = FileUtils.readLines(new File(fileName));
 		text = lines.get(0);
 		equation = new Equation(lines.get(2));
-	}	
+	}
+	
 	
 	public QuantSpan getRelevantQuantSpans(IntPair ip) {
 		for(QuantSpan qs : quantities) {

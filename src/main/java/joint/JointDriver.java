@@ -75,16 +75,16 @@ public class JointDriver {
 			System.out.println("---------------------------------------------------");
 			JointX prob = (JointX) sp.instanceList.get(i);
 			JointY gold = (JointY) sp.goldStructureList.get(i);
-			JointY pred = (JointY) model.infSolver.getBestStructure(
-					model.wv, prob);
-			for(Node node : pred.equation.root.getAllSubNodes()) {
-				if(node.children.size() == 2) {
-					System.out.println(node+" "+Arrays.asList(node.feats)
-							+" "+node.children.get(0).children.size()+" "+node.children.get(1).children.size()
-							+" "+node.children.get(0).projection+" "+node.children.get(1).projection
-							+" "+node.children.get(0).getNodeListSpan()+" "+node.children.get(1).getNodeListSpan());
-				}
-			}
+			System.out.println(Arrays.asList(gold.varTokens));
+			JointY pred = (JointY) model.infSolver.getBestStructure(model.wv, prob);
+//			for(Node node : pred.equation.root.getAllSubNodes()) {
+//				if(node.children.size() == 2) {
+//					System.out.println(node+" "+Arrays.asList(node.feats)
+//							+" "+node.children.get(0).children.size()+" "+node.children.get(1).children.size()
+//							+" "+node.children.get(0).projection+" "+node.children.get(1).projection
+//							+" "+node.children.get(0).getNodeListSpan()+" "+node.children.get(1).getNodeListSpan());
+//				}
+//			}
 			total.add(prob.problemIndex);
 			double goldWt = model.wv.dotProduct(
 					model.featureGenerator.getFeatureVector(prob, gold));

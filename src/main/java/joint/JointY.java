@@ -20,6 +20,7 @@ public class JointY implements IStructure, Serializable {
 	public List<Node> nodes;
 	public boolean coref;
 	public double numOccurScore, varScore, treeScore;
+	public int probId;
 	
 	public JointY() {
 		equation = new Equation();
@@ -30,7 +31,10 @@ public class JointY implements IStructure, Serializable {
 	public JointY(JointY other) {
 		equation = new Equation(other.equation);
 		varTokens = new HashMap<String, List<Integer>>();
-		varTokens.putAll(other.varTokens);
+		for(String key : other.varTokens.keySet()) {
+			varTokens.put(key, new ArrayList<Integer>());
+			varTokens.get(key).addAll(other.varTokens.get(key));
+		}
 		nodes = new ArrayList<>();
 		for(Node node : other.nodes) {
 			nodes.add(new Node(node));
@@ -39,6 +43,7 @@ public class JointY implements IStructure, Serializable {
 		numOccurScore = other.numOccurScore;
 		varScore = other.varScore;
 		treeScore = other.treeScore;
+		probId = other.probId;
 	}
 	
 	public JointY(SimulProb prob) {
@@ -47,6 +52,7 @@ public class JointY implements IStructure, Serializable {
 		varTokens.putAll(prob.varTokens);
 		nodes = new ArrayList<Node>();
 		coref = prob.coref;
+		probId = prob.index;
 	}
 	
 	public static float getLoss(JointY gold, JointY pred) {

@@ -55,9 +55,6 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 	
 	public static List<String> getGlobalFeatures(NumoccurX x, NumoccurY y) {
 		List<String> features = new ArrayList<>();
-		for(int i=0; i<x.ta.size(); ++i) {
-			features.add(y+"_Unigram_"+x.ta.getToken(i).toLowerCase());
-		}
 		if(x.quantities.size() == 1) {
 			features.add("OneQuantityPresent");
 		}
@@ -96,13 +93,6 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 		List<String> features = new ArrayList<>();
 		QuantSpan qs = x.quantities.get(quantIndex);
 		String quantPhrase = x.ta.getText().substring(qs.start, qs.end);
-		String quantTokens[] = quantPhrase.split(" ");
-		for(String str : quantTokens) {
-			features.add(numOccur+"_QuantUnigram_"+str);
-		}
-		for(int i=0; i<quantTokens.length-1; ++i) {
-			features.add(numOccur+"_QuantBigram_"+quantTokens[i]+"_"+quantTokens[i+1]);
-		}
 		if(quantPhrase.contains("-")) features.add(numOccur+"_HyphenWord");
 		return features;
 	}

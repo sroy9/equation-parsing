@@ -1,6 +1,7 @@
 package utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -324,6 +325,34 @@ public class Tools {
 //			System.out.print(node+" ");
 //		}
 //		System.out.println();
+	}
+	
+	public static List<String> getPreMidPhraseAndLeftTokenFromNodePair(Node node1, Node node2, 
+			TextAnnotation ta, List<QuantSpan> quantities, List<Node> leaves) {
+		IntPair ip1 = node1.getNodeListSpan();
+		IntPair ip2 = node2.getNodeListSpan();
+		String prePhrase = "";
+		if(Math.min(ip1.getFirst(), ip2.getFirst())==0)  {
+			prePhrase = ta.getText().toLowerCase().substring(
+					0, leaves.get(Math.min(ip1.getFirst(), ip2.getFirst())).charIndex);
+		} else {
+			prePhrase = ta.getText().toLowerCase().substring(
+					leaves.get(Math.min(ip1.getFirst(), ip2.getFirst())-1).charIndex, 
+					leaves.get(Math.min(ip1.getFirst(), ip2.getFirst())).charIndex);
+		}
+		String midPhrase = ta.getText().toLowerCase().substring(
+				leaves.get(Math.min(ip1.getSecond(), ip2.getSecond())).charIndex, 
+				leaves.get(Math.max(ip1.getFirst(), ip2.getFirst())).charIndex);
+		String leftToken = "";
+		if(ip1.getFirst() <= ip2.getFirst() && node1.label.equals("NUM")) {
+			QuantSpan qs = quantities.get(node1.index);
+			leftToken = ta.getText().toLowerCase().substring(qs.start, qs.end);
+		}
+		if(ip2.getFirst() <= ip1.getFirst() && node2.label.equals("NUM")) {
+			QuantSpan qs = quantities.get(node2.index);
+			leftToken = ta.getText().toLowerCase().substring(qs.start, qs.end);
+		}
+		return Arrays.asList(prePhrase, midPhrase, leftToken);
 	}
 	
 }
