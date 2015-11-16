@@ -8,6 +8,7 @@ import java.util.Set;
 import reader.DocReader;
 import structure.SimulProb;
 import utils.Params;
+import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLParameters;
@@ -86,11 +87,11 @@ public class VarDriver {
 				incorrect.add(prob.problemIndex);
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
-				System.out.println("Gold :");
+				System.out.println("Gold : "+gold);
 				print(prob, gold);
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
-				System.out.println("Pred :");
+				System.out.println("Pred : "+pred);
 				print(prob, pred);
 				System.out.println("Pred weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, pred)));
@@ -113,6 +114,7 @@ public class VarDriver {
 		model.infSolver = new VarInfSolver(fg);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
+		para.MAX_NUM_ITER = 5;
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
 //		model.wv = learner.train(train);
 		model.wv = latentSVMLearner(learner, train, 
@@ -151,7 +153,9 @@ public class VarDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		VarDriver.crossVal();
+		VarDriver.doTrainTest(0);
+		Tools.pipeline.closeCache();
+		System.exit(0);;
 	}
 	
 	public static void print(VarX x, VarY y) {

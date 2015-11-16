@@ -17,7 +17,7 @@ import edu.illinois.cs.cogcomp.sl.core.SLModel;
 public class PipelineInfSolver {
 	
 	public static JointY getBestStructure(JointX prob, SLModel numOccurModel, 
-			SLModel varModel, SLModel treeModel, JointY gold) throws Exception {
+			SLModel varModel, SLModel treeModel) throws Exception {
 		JointY y = new JointY();
 		// Predict number of occurrences of each quantity
 		NumoccurX numX = new NumoccurX(prob);

@@ -54,6 +54,8 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				MinMaxPriorityQueue.orderedBy(pairComparator).
 				maximumSize(200).create();
 		TreeY seed = new TreeY();
+		seed.varTokens = prob.varTokens;
+		seed.coref = prob.coref;
 		beam1.add(new Pair<TreeY, Double>(seed, 0.0));
 		for(Pair<TreeY, Double> pair : beam1) {
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
@@ -68,10 +70,10 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<List<Node>>() {};
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(50).create();
+				.maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(50).create();
+				.maximumSize(200).create();
 		int n = x.nodes.size();
 		List<Node> init = new ArrayList<>();
 		init.addAll(x.nodes);
@@ -138,7 +140,9 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		List<String> labels = Arrays.asList(
 				"ADD", "SUB", "SUB_REV","MUL", "DIV", "DIV_REV");
 		double mergeScore;
+		String ruleOp = TreeFeatGen.getRuleOperation(node1, node2, x.ta, x.quantities, x.nodes);
 		for(String label : labels) {
+			if(ruleOp != null && !ruleOp.equals(label)) continue;
 			if(label.endsWith("REV")) {
 				label = label.substring(0,3);
 				Node node = new Node(label, -1, Arrays.asList(node2, node1));

@@ -7,6 +7,7 @@ import java.util.List;
 import utils.FeatGen;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -34,27 +35,56 @@ public class VarFeatGen extends AbstractFeatureGenerator implements
 	public static List<String> getFeatures(VarX x, VarY y) {
 		List<String> features = new ArrayList<>();
 		List<IntPair> candidates = new ArrayList<IntPair>();
+		String prefix = y.coref+"";
 		for(String key : y.varTokens.keySet()) {
 			assert y.varTokens.get(key).size() < 2;
 			if(y.varTokens.get(key).size() == 0) continue;
 			candidates.add(x.candidateVars.get(y.varTokens.get(key).get(0)));
 		}
+		if(candidates.size() == 2) {
+			prefix+="TwoVariables";
+			if(candidates.get(0) == candidates.get(1)) {
+				prefix+="SameSpan";
+			} else if(Tools.doesContainNotEqual(candidates.get(0), candidates.get(1)) || 
+					Tools.doesContainNotEqual(candidates.get(1), candidates.get(0))) {
+				prefix+="Subset";
+			}
+		}
 		for(IntPair candidate : candidates) {
 			for(int i=candidate.getFirst(); i<candidate.getSecond(); ++i) {
-				features.add("VarUnigram_"+x.ta.getToken(i).toLowerCase());
+				features.add(prefix+"_VarUnigram_"+x.ta.getToken(i).toLowerCase());
+				features.add(prefix+"_VarPOSUnigram_"+x.posTags.get(i).getLabel());
 			}
 			for(int i=candidate.getFirst(); i<candidate.getSecond()-1; ++i) {
-				features.add("VarBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+				features.add(prefix+"_VarBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+						x.ta.getToken(i+1).toLowerCase());
+				features.add(prefix+"_VarLexPOSBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+						x.posTags.get(i+1).getLabel());
+				features.add(prefix+"_VarPOSLexBigram_"+x.posTags.get(i).getLabel()+"_"+
 						x.ta.getToken(i+1).toLowerCase());
 			}
-			if(candidate.getSecond() - candidate.getFirst() > 5) {
-				features.add("Span>5");
-			}
+		}
+		// Global features
+		for(int i=0; i<x.ta.size(); ++i) {
+			features.add(prefix+"_"+x.ta.getToken(i));
+		}
+		for(int i=0; i<x.ta.size()-1; ++i) {
+			features.add(prefix+"_"+x.ta.getToken(i)+"_"+x.ta.getToken(i+1));
 		}
 		if(candidates.size() == 2) {
-			if(candidates.get(0) == candidates.get(1)) features.add("SameSpan");
-			features.add("Coref_"+y.coref);
+			String secondPhrase = getString(x.ta, candidates.get(1));
+			if(secondPhrase.contains("the number") || secondPhrase.contains("same")) {
+				features.add(prefix+"_COREF");
+			}
 		}
 		return features;
+	}
+	
+	public static String getString(TextAnnotation ta, IntPair ip) {
+		String str = "";
+		for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
+			str += ta.getToken(i).toLowerCase()+" ";
+		}
+		return str.trim();
 	}
 }

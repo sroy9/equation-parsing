@@ -100,6 +100,11 @@ public class SimulProb {
 	}
 	
 	public void extractVarTokens() throws IOException {
+		System.out.println(index+" : "+text);
+		System.out.println("Parse : ");
+		for(Constituent cons : parse) {
+			System.out.println(cons.getLabel()+" : "+cons.getSurfaceForm());
+		}
 		String annFile = Params.annotationDir+"/"+index+".ann";
 		List<String> lines = FileUtils.readLines(new File(annFile));
 		for(String line : lines) {
@@ -120,11 +125,6 @@ public class SimulProb {
 				}
 			}
 			if(bestIp < 0) {
-				System.out.println("Problem : "+text);
-				System.out.println("Parse : ");
-				for(Constituent cons : parse) {
-					System.out.println(cons.getLabel()+" : "+cons.getSurfaceForm());
-				}
 				System.out.println("NP not found for "+line.split("\t")[2]);
 			} else {
 				if(!varTokens.containsKey(label)) {

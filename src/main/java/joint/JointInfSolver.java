@@ -54,10 +54,10 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<JointY>() {};
 		MinMaxPriorityQueue<Pair<JointY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(200).create();
+				maximumSize(20).create();
 		MinMaxPriorityQueue<Pair<JointY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(200).create();
+				maximumSize(20).create();
 		JointY seed = new JointY();
 		beam1.add(new Pair<JointY, Double>(seed, 0.0));
 		
@@ -167,10 +167,10 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		PairComparator<List<Node>> nodePairComparator = new PairComparator<List<Node>>() {};
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(50).create();
+				.maximumSize(5).create();
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(50).create();
+				.maximumSize(5).create();
 		int n = y.nodes.size();
 		List<Node> init = new ArrayList<>();
 		init.addAll(y.nodes);

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.PairComparator;
+import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
@@ -51,6 +52,10 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 			beam.add(new Pair<VarY, Double>(y, 
 					1.0*wv.dotProduct(featGen.getFeatureVector(prob, y))));
 			for(int j=i; j<prob.candidateVars.size(); ++j) {
+				if(Tools.doesContainNotEqual(prob.candidateVars.get(i), prob.candidateVars.get(j)) ||
+						Tools.doesContainNotEqual(prob.candidateVars.get(j), prob.candidateVars.get(i))) {
+					continue;
+				}
 				y = new VarY();
 				y.varTokens.put("V1", new ArrayList<Integer>());
 				y.varTokens.put("V2", new ArrayList<Integer>());

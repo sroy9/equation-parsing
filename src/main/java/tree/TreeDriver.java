@@ -46,6 +46,7 @@ public class TreeDriver {
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
 		trainModel("models/tree"+testFold+".save", train, testFold);
+		testModel("models/tree"+testFold+".save", train);
 		return testModel("models/tree"+testFold+".save", test);
 	}
 	
@@ -60,6 +61,7 @@ public class TreeDriver {
 					enumerateVarTokens(simulProb.varTokens)) {
 				List<Node> nodes = new ArrayList<Node>();
 				TreeY y = new TreeY(simulProb);
+				y.varTokens = simulProb.varTokens;
 				for(int i=0; i<simulProb.quantities.size(); ++i) {
 					for(Node leaf : y.equation.root.getLeaves()) {
 						if(leaf.label.equals("NUM") && Tools.safeEquals(Tools.getValue(

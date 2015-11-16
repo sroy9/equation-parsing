@@ -35,7 +35,6 @@ public class PipelineDriver {
 				testProbs.add(simulProb);
 			}
 		}
-		
 		SLModel	numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
 		SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
 		SLModel treeModel = SLModel.loadModel("models/tree"+testFold+".save");
@@ -58,13 +57,13 @@ public class PipelineDriver {
 	}
 
 	public static double testModel(SLModel numOccurModel, SLModel varModel, 
-			SLModel lcaModel, SLProblem sp, boolean printMistakes) throws Exception {
+			SLModel treeModel, SLProblem sp, boolean printMistakes) throws Exception {
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			JointX prob = (JointX) sp.instanceList.get(i);
 			JointY gold = (JointY) sp.goldStructureList.get(i);
 			JointY pred = PipelineInfSolver.getBestStructure(
-					prob, numOccurModel, varModel, lcaModel, gold);
+					prob, numOccurModel, varModel, treeModel);
 			if(JointY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else if(printMistakes) {
@@ -81,7 +80,8 @@ public class PipelineDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		PipelineDriver.crossVal();
+		PipelineDriver.doTest(0);
 		Tools.pipeline.closeCache();
+		System.exit(0);
 	}
 }
