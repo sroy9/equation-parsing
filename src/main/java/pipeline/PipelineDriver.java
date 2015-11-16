@@ -6,6 +6,7 @@ import java.util.List;
 import joint.JointX;
 import joint.JointY;
 import reader.DocReader;
+import structure.Equation;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
@@ -64,6 +65,8 @@ public class PipelineDriver {
 			JointY gold = (JointY) sp.goldStructureList.get(i);
 			JointY pred = PipelineInfSolver.getBestStructure(
 					prob, numOccurModel, varModel, treeModel);
+//			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.0001 || 
+//					Equation.getLoss(gold.equation, pred.equation, false) < 0.0001) {
 			if(JointY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else if(printMistakes) {

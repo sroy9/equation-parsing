@@ -277,8 +277,10 @@ public class Tools {
 	}
 	
 	public static double getJaccardScore(IntPair ip1, IntPair ip2) {
-		return 1.0*(Math.min(ip1.getSecond(), ip2.getSecond()) - Math.max(ip1.getFirst(), ip2.getFirst()))
-				/ (Math.max(ip1.getSecond(), ip2.getSecond()) - Math.min(ip1.getFirst(), ip2.getFirst()));		
+		Double penalty = 0.0;
+		int intersect = Math.min(ip1.getSecond(), ip2.getSecond()) - Math.max(ip1.getFirst(), ip2.getFirst());
+		int union = Math.max(ip1.getSecond(), ip2.getSecond()) - Math.min(ip1.getFirst(), ip2.getFirst());
+		return penalty + 1.0/(union-intersect+1);
 	}
 	
 	public static void populateAndSortByCharIndex(List<Node> nodes, TextAnnotation ta, 

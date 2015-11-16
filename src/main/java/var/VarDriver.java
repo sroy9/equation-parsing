@@ -160,13 +160,15 @@ public class VarDriver {
 	
 	public static void print(VarX x, VarY y) {
 		for(String key : y.varTokens.keySet()) {
-			IntPair span = x.candidateVars.get(y.varTokens.get(key).get(0));
-			String str = "";
-			for(int i=span.getFirst(); i<span.getSecond(); ++i) {
-				str += x.ta.getToken(i)+" ";
+			String str = key +" : ";
+			for(Integer index : y.varTokens.get(key)) {
+				IntPair span = x.candidateVars.get(index);
+				for(int i=span.getFirst(); i<span.getSecond(); ++i) {
+					str += x.ta.getToken(i)+" ";
+				}
+				str += " ||| ";
 			}
-			System.out.print(key+" : "+str+" ");
+			System.out.println(str);
 		}
-		System.out.println();
 	}
 }
