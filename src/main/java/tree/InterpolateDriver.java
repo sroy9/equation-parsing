@@ -1,11 +1,8 @@
-package pipeline;
+package tree;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import joint.JointDriver;
-import joint.JointX;
-import joint.JointY;
 import reader.DocReader;
 import structure.SimulProb;
 import utils.Params;
@@ -13,7 +10,7 @@ import utils.Tools;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 
-public class PipelineDriver {
+public class InterpolateDriver {
 	
 	public static double crossVal() throws Exception {
 		double acc = 0.0;
@@ -34,30 +31,29 @@ public class PipelineDriver {
 				testProbs.add(simulProb);
 			}
 		}
-		SLModel	numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
-		SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
-		SLModel treeModel = SLModel.loadModel("models/tree"+testFold+".save");
-		SLProblem test = JointDriver.getSP(testProbs);
-		return testModel(numOccurModel, varModel, treeModel, test, true);
+		SLModel	composeModel = SLModel.loadModel("models/compose"+testFold+".save");
+		SLModel nonComposeModel = SLModel.loadModel("models/nonCompose"+testFold+".save");
+		SLProblem test = TreeDriver.getSP(testProbs);
+		return testModel(composeModel, nonComposeModel, test, true);
 	}
 
-	public static double testModel(SLModel numOccurModel, SLModel varModel, 
-			SLModel treeModel, SLProblem sp, boolean printMistakes) throws Exception {
+	public static double testModel(SLModel composeModel, SLModel nonComposeModel, 
+			SLProblem sp, boolean printMistakes) throws Exception {
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			JointX prob = (JointX) sp.instanceList.get(i);
-			JointY gold = (JointY) sp.goldStructureList.get(i);
-			JointY pred = PipelineInfSolver.getBestStructure(
-					prob, numOccurModel, varModel, treeModel);
+			TreeX prob = (TreeX) sp.instanceList.get(i);
+			TreeY gold = (TreeY) sp.goldStructureList.get(i);
+			TreeY pred = InterpolateInfSolver.getBestTree(
+					prob, composeModel, nonComposeModel);
 //			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.0001 || 
 //					Equation.getLoss(gold.equation, pred.equation, false) < 0.0001) {
-			if(JointY.getLoss(gold, pred) < 0.0001) {
+			if(TreeY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Pred : \n"+pred);
-				System.out.println("Loss : "+JointY.getLoss(gold, pred));
+				System.out.println("Loss : "+TreeY.getLoss(gold, pred));
 			} else if(printMistakes) {
 //				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 //				System.out.println("Quantities : "+prob.quantities);
@@ -72,7 +68,7 @@ public class PipelineDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		PipelineDriver.crossVal();
+		InterpolateDriver.doTest(0);
 		Tools.pipeline.closeCache();
 		System.exit(0);
 	}

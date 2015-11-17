@@ -22,6 +22,8 @@ import edu.illinois.cs.cogcomp.sl.util.Lexiconer;
 
 public class TreeDriver {
 	
+	public static String prefix = "models/tree";
+	
 	public static void crossVal() throws Exception {
 		double acc = 0.0;
 		for(int i=0;i<5;i++) {
@@ -45,9 +47,9 @@ public class TreeDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/tree"+testFold+".save", train, testFold);
-		testModel("models/tree"+testFold+".save", train);
-		return testModel("models/tree"+testFold+".save", test);
+		trainModel(prefix+testFold+".save", train, testFold);
+		testModel(prefix+testFold+".save", train);
+		return testModel(prefix+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
@@ -103,16 +105,7 @@ public class TreeDriver {
 			System.out.println("---------------------------------------------------");
 			TreeX prob = (TreeX) sp.instanceList.get(i);
 			TreeY gold = (TreeY) sp.goldStructureList.get(i);
-			TreeY pred = (TreeY) model.infSolver.getBestStructure(
-					model.wv, prob);
-//			for(Node node : pred.equation.root.getAllSubNodes()) {
-//				if(node.children.size() == 2) {
-//					System.out.println(node+" "+Arrays.asList(node.feats)
-//							+" "+node.children.get(0).children.size()+" "+node.children.get(1).children.size()
-//							+" "+node.children.get(0).projection+" "+node.children.get(1).projection
-//							+" "+node.children.get(0).getNodeListSpan()+" "+node.children.get(1).getNodeListSpan());
-//				}
-//			}
+			TreeY pred = (TreeY) model.infSolver.getBestStructure(model.wv, prob);
 			total.add(prob.problemIndex);
 			double goldWt = model.wv.dotProduct(
 					model.featureGenerator.getFeatureVector(prob, gold));
@@ -148,9 +141,9 @@ public class TreeDriver {
 		Lexiconer lm = new Lexiconer();
 		lm.setAllowNewFeatures(true);
 		model.lm = lm;
-		TreeFeatGen fg = new TreeFeatGen(lm);
+		CompFeatGen fg = new CompFeatGen(lm);
 		model.featureGenerator = fg;
-		model.infSolver = new TreeInfSolver(fg);
+		model.infSolver = new CompInfSolver(fg);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
@@ -184,7 +177,7 @@ public class TreeDriver {
 		return mapList;
 	}
 	public static void main(String args[]) throws Exception {
-		TreeDriver.crossVal();
+		TreeDriver.doTrainTest(0);
 		Tools.pipeline.closeCache();
 		System.exit(0);
 	}

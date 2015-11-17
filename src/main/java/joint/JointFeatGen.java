@@ -9,7 +9,7 @@ import numoccur.NumoccurFeatGen;
 import numoccur.NumoccurX;
 import numoccur.NumoccurY;
 import structure.Node;
-import tree.TreeFeatGen;
+import tree.NoncompFeatGen;
 import tree.TreeX;
 import tree.TreeY;
 import utils.FeatGen;
@@ -53,8 +53,8 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 		TreeY treeY = new TreeY(y);
 		for(Node node : treeY.equation.root.getAllSubNodes()) {
 			if(node.children.size()==2) {
-				features.addAll(TreeFeatGen.getNodeFeatures(treeX, node));
-				System.out.println(node+" "+Arrays.asList(TreeFeatGen.getNodeFeatures(treeX, node))
+				features.addAll(NoncompFeatGen.getNodeFeatures(treeX, node));
+				System.out.println(node+" "+Arrays.asList(NoncompFeatGen.getNodeFeatures(treeX, node))
 						+" "+node.children.get(0).children.size()+" "+node.children.get(1).children.size()
 						+" "+node.children.get(0).projection+" "+node.children.get(1).projection
 						+" "+node.children.get(0).getNodeListSpan()+" "+node.children.get(1).getNodeListSpan());
@@ -84,7 +84,7 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 		TreeY treeY = new TreeY(y);
 		for(Node node : treeY.equation.root.getAllSubNodes()) {
 			if(node.children.size()==2) {
-				features.addAll(TreeFeatGen.getNodeFeatures(treeX, node));
+				features.addAll(NoncompFeatGen.getNodeFeatures(treeX, node));
 			}
 		}
 		return FeatGen.getFeatureVectorFromList(features, lm);
@@ -110,7 +110,7 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 	
 	public IFeatureVector getNodeFeatureVector(TreeX x, Node node) {
 //		List<String> features = new ArrayList<String>();
-		List<String> features = TreeFeatGen.getNodeFeatures(x, node);
+		List<String> features = NoncompFeatGen.getNodeFeatures(x, node);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	

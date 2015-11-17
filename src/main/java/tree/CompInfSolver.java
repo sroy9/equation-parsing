@@ -16,14 +16,13 @@ import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
-public class TreeInfSolver extends AbstractInferenceSolver implements
+public class CompInfSolver extends AbstractInferenceSolver implements
 		Serializable {
 
 	private static final long serialVersionUID = 5253748728743334706L;
-	public TreeFeatGen featGen;
+	public CompFeatGen featGen;
 
-	public TreeInfSolver(TreeFeatGen featGen) 
-			throws Exception {
+	public CompInfSolver(CompFeatGen featGen) throws Exception {
 		this.featGen = featGen;
 	}
 

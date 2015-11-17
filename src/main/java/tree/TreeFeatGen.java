@@ -64,7 +64,7 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		} else if(ip1.getFirst()!=-1 && ip2.getFirst()!=-1 && 
 				(((ip1.getSecond()+1)==ip2.getFirst()) || ((ip2.getSecond()+1)==ip1.getFirst()))) {
 //			features.add("PROJECTIVE");
-			features.addAll(getProjectiveFeatures(x, node));
+			features.addAll(getNonProjectiveFeatures(x, node));
 		} else {
 			features.add("NOT_ALLOWED_STUFF");
 		}
