@@ -68,6 +68,8 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		} else {
 			features.add("NOT_ALLOWED_STUFF");
 		}
+//		node.feats = new ArrayList<String>();
+//		node.feats.addAll(features);
 		return features;
 	}
 	
@@ -101,8 +103,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 				features.add("MidUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
 			}
 			for(int i=min; i<=max-1; ++i) {
-//				features.add("MidBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//						x.ta.getToken(i+1).toLowerCase()+"_"+op);
 				features.add("MidLexPosBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
 						x.posTags.get(i+1).getLabel()+"_"+op);
 				features.add("MidPosLexBigram_"+x.posTags.get(i).getLabel()+"_"+
@@ -111,8 +111,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 			String prefix = "";
 			for(int i=Math.max(0, left-2); i<left; ++i) {
 				features.add(prefix+"_LeftUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-//			features.add(prefix+"_LeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
 				features.add(prefix+"_LeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
 						x.posTags.get(i+1).getLabel()+"_"+op);
 				features.add(prefix+"_LeftBigram_"+x.posTags.get(i).getLabel()+"_"+
@@ -120,8 +118,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 			}
 			for(int i=min; i<Math.min(x.ta.size()-1, min+2); ++i) {
 				features.add(prefix+"_LeftRightUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-//			features.add(prefix+"_LeftRightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
 				features.add(prefix+"_LeftRightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
 						x.posTags.get(i+1).getLabel()+"_"+op);
 				features.add(prefix+"_LeftRightBigram_"+x.posTags.get(i).getLabel()+"_"+
@@ -129,8 +125,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 			}
 			for(int i=right; i<Math.min(x.ta.size()-1, right+2); ++i) {
 				features.add(prefix+"_RightUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-//			features.add(prefix+"_RightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
 				features.add(prefix+"_RightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
 						x.posTags.get(i+1).getLabel()+"_"+op);
 				features.add(prefix+"_RightBigram_"+x.posTags.get(i).getLabel()+"_"+
@@ -138,8 +132,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 			}
 			for(int i=Math.max(0, max-2); i<=max; ++i) {
 				features.add(prefix+"_RightLeftUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-//			features.add(prefix+"_RightLeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
 				features.add(prefix+"_RightLeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
 						x.posTags.get(i+1).getLabel()+"_"+op);
 				features.add(prefix+"_RightLeftBigram_"+x.posTags.get(i).getLabel()+"_"+
@@ -160,9 +152,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 	public static List<String> getNonProjectiveFeatures(TreeX x, Node node) {
 		Node leaf1 = node.children.get(0);
 		Node leaf2 = node.children.get(1);
-		if(leaf1.children.size() > 0 && leaf2.children.size() > 0) {
-			System.err.println("Non Projective Features called with a non-leaf : expected leaf");
-		}
 		List<String> features = new ArrayList<>();
 		String prefix = "";
 		if(leaf1.label.equals("VAR")) {
@@ -175,6 +164,7 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		} else {
 			prefix+="NUM";
 		}
+		if(prefix.equals("NUMVAR")) prefix = "VARNUM";
 		int min = x.ta.getTokenIdFromCharacterOffset(Math.min(leaf1.charIndex, leaf2.charIndex))+1;
 		int max = x.ta.getTokenIdFromCharacterOffset(Math.max(leaf1.charIndex, leaf2.charIndex))-1;
 		int left = x.ta.getTokenIdFromCharacterOffset(Math.min(leaf1.charIndex, leaf2.charIndex))-1;
@@ -183,21 +173,8 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		if(leaf1.charIndex > leaf2.charIndex && (node.label.equals("SUB") || node.label.equals("DIV"))) {
 			op += "_REV";
 		}
-//		for(int i=min; i<max; ++i) {
-//			features.add(prefix+"_MidUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-//		}
-//		for(int i=min; i<max-1; ++i) {
-//			features.add(prefix+"_MidBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
-//			features.add(prefix+"_MidLexPosBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//					x.posTags.get(i+1).getLabel()+"_"+op);
-//			features.add(prefix+"_MidPosLexBigram_"+x.posTags.get(i).getLabel()+"_"+
-//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
-//		}
 		for(int i=Math.max(0, left-2); i<left; ++i) {
 			features.add(prefix+"_LeftUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-//			features.add(prefix+"_LeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
 			features.add(prefix+"_LeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
 					x.posTags.get(i+1).getLabel()+"_"+op);
 			features.add(prefix+"_LeftBigram_"+x.posTags.get(i).getLabel()+"_"+
@@ -205,8 +182,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		}
 		for(int i=min; i<Math.min(x.ta.size()-1, min+2); ++i) {
 			features.add(prefix+"_LeftRightUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-//			features.add(prefix+"_LeftRightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
 			features.add(prefix+"_LeftRightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
 			x.posTags.get(i+1).getLabel()+"_"+op);
 			features.add(prefix+"_LeftRightBigram_"+x.posTags.get(i).getLabel()+"_"+
@@ -214,8 +189,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		}
 		for(int i=right; i<Math.min(x.ta.size()-1, right+2); ++i) {
 			features.add(prefix+"_RightUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-//			features.add(prefix+"_RightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
 			features.add(prefix+"_RightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
 					x.posTags.get(i+1).getLabel()+"_"+op);
 			features.add(prefix+"_RightBigram_"+x.posTags.get(i).getLabel()+"_"+
@@ -223,8 +196,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 		}
 		for(int i=Math.max(0, max-2); i<=max; ++i) {
 			features.add(prefix+"_RightLeftUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-//			features.add(prefix+"_RightLeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//					x.ta.getToken(i+1).toLowerCase()+"_"+op);
 			features.add(prefix+"_RightLeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
 			x.posTags.get(i+1).getLabel()+"_"+op);
 			features.add(prefix+"_RightLeftBigram_"+x.posTags.get(i).getLabel()+"_"+

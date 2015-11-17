@@ -58,6 +58,9 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 		if(x.quantities.size() == 1) {
 			features.add("OneQuantityPresent");
 		}
+		for(String token : x.ta.getTokens()) {
+			features.add(y+"_Unigram_"+token);
+		}
 		return features;
 	}
 	

@@ -43,6 +43,13 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 	@Override
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
+		MinMaxPriorityQueue<Pair<TreeY, Double>> beam = 
+				getLossAugmentedBestKStructure(wv, x, goldStructure);
+		return beam.element().getFirst();
+	}
+	
+	public MinMaxPriorityQueue<Pair<TreeY, Double>> getLossAugmentedBestKStructure(
+			WeightVector wv, IInstance x, IStructure goldStructure) throws Exception {
 		TreeX prob = (TreeX) x;
 		assert prob.nodes.size() > 2;
 		PairComparator<TreeY> pairComparator = 
@@ -60,7 +67,8 @@ public class TreeInfSolver extends AbstractInferenceSolver implements
 		for(Pair<TreeY, Double> pair : beam1) {
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
-		return beam2.element().getFirst();
+		System.out.println("Pred Score InfSolver : "+beam2.element().getSecond());
+		return beam2;
 	}
 	
 	public List<Pair<TreeY, Double>> getBottomUpBestParse(

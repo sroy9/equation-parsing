@@ -100,10 +100,19 @@ public class TreeDriver {
 		Set<Integer> total = new HashSet<>();
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
+			System.out.println("---------------------------------------------------");
 			TreeX prob = (TreeX) sp.instanceList.get(i);
 			TreeY gold = (TreeY) sp.goldStructureList.get(i);
 			TreeY pred = (TreeY) model.infSolver.getBestStructure(
 					model.wv, prob);
+//			for(Node node : pred.equation.root.getAllSubNodes()) {
+//				if(node.children.size() == 2) {
+//					System.out.println(node+" "+Arrays.asList(node.feats)
+//							+" "+node.children.get(0).children.size()+" "+node.children.get(1).children.size()
+//							+" "+node.children.get(0).projection+" "+node.children.get(1).projection
+//							+" "+node.children.get(0).getNodeListSpan()+" "+node.children.get(1).getNodeListSpan());
+//				}
+//			}
 			total.add(prob.problemIndex);
 			double goldWt = model.wv.dotProduct(
 					model.featureGenerator.getFeatureVector(prob, gold));
@@ -126,6 +135,7 @@ public class TreeDriver {
 						model.featureGenerator.getFeatureVector(prob, pred)));
 				System.out.println("Loss : "+TreeY.getLoss(gold, pred));
 			}
+			System.out.println("---------------------------------------------------");
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
@@ -174,7 +184,7 @@ public class TreeDriver {
 		return mapList;
 	}
 	public static void main(String args[]) throws Exception {
-		TreeDriver.doTrainTest(0);
+		TreeDriver.crossVal();
 		Tools.pipeline.closeCache();
 		System.exit(0);
 	}

@@ -1,15 +1,12 @@
 package joint;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import reader.DocReader;
-import structure.Node;
 import structure.SimulProb;
-import tree.TreeFeatGen;
 import utils.Params;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
@@ -45,9 +42,9 @@ public class JointDriver {
 		}
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
-		trainModel("models/tree"+testFold+".save", train);
-		testModel("models/tree"+testFold+".save", train);
-		return testModel("models/tree"+testFold+".save", test);
+		trainModel("models/joint"+testFold+".save", train);
+		testModel("models/joint"+testFold+".save", train);
+		return testModel("models/joint"+testFold+".save", test);
 	}
 	
 	public static SLProblem getSP(List<SimulProb> simulProbList) 
@@ -75,7 +72,6 @@ public class JointDriver {
 			System.out.println("---------------------------------------------------");
 			JointX prob = (JointX) sp.instanceList.get(i);
 			JointY gold = (JointY) sp.goldStructureList.get(i);
-			System.out.println(Arrays.asList(gold.varTokens));
 			JointY pred = (JointY) model.infSolver.getBestStructure(model.wv, prob);
 //			for(Node node : pred.equation.root.getAllSubNodes()) {
 //				if(node.children.size() == 2) {
@@ -126,6 +122,7 @@ public class JointDriver {
 		model.infSolver = new JointInfSolver(fg);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
+		para.MAX_NUM_ITER = 5;
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
 		lm.setAllowNewFeatures(true);
 		model.wv = latentSVMLearner(learner, train, 

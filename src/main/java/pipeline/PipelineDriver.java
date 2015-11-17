@@ -6,7 +6,6 @@ import java.util.List;
 import joint.JointX;
 import joint.JointY;
 import reader.DocReader;
-import structure.Equation;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
@@ -14,8 +13,6 @@ import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 
 public class PipelineDriver {
-	
-	public static boolean useSPforNumoccur = true, useSPforLCA = false;
 	
 	public static double crossVal() throws Exception {
 		double acc = 0.0;
@@ -69,12 +66,17 @@ public class PipelineDriver {
 //					Equation.getLoss(gold.equation, pred.equation, false) < 0.0001) {
 			if(JointY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
-			} else if(printMistakes) {
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Pred : \n"+pred);
-				System.out.println("Loss : "+JointY.getLoss(gold, pred));				
+				System.out.println("Loss : "+JointY.getLoss(gold, pred));
+			} else if(printMistakes) {
+//				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
+//				System.out.println("Quantities : "+prob.quantities);
+//				System.out.println("Gold : \n"+gold);
+//				System.out.println("Pred : \n"+pred);
+//				System.out.println("Loss : "+JointY.getLoss(gold, pred));				
 			}
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
@@ -83,7 +85,7 @@ public class PipelineDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		PipelineDriver.doTest(0);
+		PipelineDriver.crossVal();
 		Tools.pipeline.closeCache();
 		System.exit(0);
 	}

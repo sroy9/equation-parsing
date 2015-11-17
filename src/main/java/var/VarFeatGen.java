@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import utils.FeatGen;
-import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.sl.core.AbstractFeatureGenerator;
@@ -45,9 +44,6 @@ public class VarFeatGen extends AbstractFeatureGenerator implements
 			prefix+="TwoVariables";
 			if(candidates.get(0) == candidates.get(1)) {
 				prefix+="SameSpan";
-			} else if(Tools.doesContainNotEqual(candidates.get(0), candidates.get(1)) || 
-					Tools.doesContainNotEqual(candidates.get(1), candidates.get(0))) {
-				prefix+="Subset";
 			}
 		}
 		for(IntPair candidate : candidates) {
@@ -63,13 +59,18 @@ public class VarFeatGen extends AbstractFeatureGenerator implements
 				features.add(prefix+"_VarPOSLexBigram_"+x.posTags.get(i).getLabel()+"_"+
 						x.ta.getToken(i+1).toLowerCase());
 			}
+			if(candidate.getFirst() == 0) {
+				features.add(prefix+"_StartOfSentence");
+			}
 		}
 		// Global features
 		for(int i=0; i<x.ta.size(); ++i) {
-			features.add(prefix+"_"+x.ta.getToken(i));
+			features.add(prefix+"_"+x.ta.getToken(i).toLowerCase());
 		}
 		for(int i=0; i<x.ta.size()-1; ++i) {
-			features.add(prefix+"_"+x.ta.getToken(i)+"_"+x.ta.getToken(i+1));
+			features.add(prefix+"_"+x.ta.getToken(i).toLowerCase()+"_"+x.ta.getToken(i+1).toLowerCase());
+			features.add(prefix+"_"+x.ta.getToken(i).toLowerCase()+"_"+x.posTags.get(i+1).getLabel());
+			features.add(prefix+"_"+x.posTags.get(i).getLabel()+"_"+x.ta.getToken(i+1).toLowerCase());
 		}
 		if(candidates.size() == 2) {
 			String secondPhrase = getString(x.ta, candidates.get(1));
