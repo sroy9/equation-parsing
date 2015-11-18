@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import joint.JointX;
+import lasttwo.LasttwoX;
 import structure.Node;
 import structure.SimulProb;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
@@ -45,6 +46,22 @@ public class TreeX implements IInstance {
 	}
 	
 	public TreeX(JointX simulProb, Map<String, List<Integer>> varTokens,
+			List<Node> nodes) {
+		quantities = simulProb.quantities;
+		problemIndex = simulProb.problemIndex;
+		ta = simulProb.ta;
+		posTags = simulProb.posTags;
+		candidateVars = simulProb.candidateVars;
+		this.varTokens = varTokens;
+		this.nodes = nodes;
+		for(int i=0; i<nodes.size()-1; ++i) {
+			if(nodes.get(i).charIndex > nodes.get(i+1).charIndex) {
+				System.err.println("Problem Here : Nodelist not sorted, sorted expected");
+			}
+		}
+	}
+	
+	public TreeX(LasttwoX simulProb, Map<String, List<Integer>> varTokens,
 			List<Node> nodes) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.problemIndex;

@@ -1,4 +1,4 @@
-package joint;
+package lasttwo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -6,16 +6,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import numoccur.NumoccurX;
-import numoccur.NumoccurY;
-
 import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Node;
 import structure.PairComparator;
 import tree.CompInfSolver;
 import tree.TreeFeatGen;
-import tree.TreeX;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
@@ -23,13 +19,13 @@ import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 import edu.illinois.cs.cogcomp.sl.util.WeightVector;
 
-public class JointInfSolver extends AbstractInferenceSolver implements
+public class LasttwoInfSolver extends AbstractInferenceSolver implements
 		Serializable {
 
 	private static final long serialVersionUID = 5253748728743334706L;
-	public JointFeatGen featGen;
+	public LasttwoFeatGen featGen;
 
-	public JointInfSolver(JointFeatGen featGen) {
+	public LasttwoInfSolver(LasttwoFeatGen featGen) throws Exception {
 		this.featGen = featGen;
 	}
 
@@ -41,70 +37,38 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		
 	@Override
 	public float getLoss(IInstance arg0, IStructure arg1, IStructure arg2) {
-		JointY r1 = (JointY) arg1;
-		JointY r2 = (JointY) arg2;
-		return JointY.getLoss(r1, r2);
+		LasttwoY r1 = (LasttwoY) arg1;
+		LasttwoY r2 = (LasttwoY) arg2;
+		return LasttwoY.getLoss(r1, r2);
 	}
 
 	@Override
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
-		JointX prob = (JointX) x;
-		PairComparator<JointY> pairComparator = 
-				new PairComparator<JointY>() {};
-		MinMaxPriorityQueue<Pair<JointY, Double>> beam1 = 
+		LasttwoX prob = (LasttwoX) x;
+		PairComparator<LasttwoY> pairComparator = 
+				new PairComparator<LasttwoY>() {};
+		MinMaxPriorityQueue<Pair<LasttwoY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(20).create();
-		MinMaxPriorityQueue<Pair<JointY, Double>> beam2 = 
+				maximumSize(200).create();
+		MinMaxPriorityQueue<Pair<LasttwoY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(20).create();
-		JointY seed = new JointY();
-		beam1.add(new Pair<JointY, Double>(seed, 0.0));
-		
-		// Predict number of occurrences of each quantity
-		NumoccurX numX = new NumoccurX(prob);
-		for(int i=0; i<prob.quantities.size(); ++i) {
-			for(Pair<JointY, Double> pair : beam1) {
-				for(int j=0; j<3; ++j) {
-					if(j==0 && pair.getFirst().nodes.size()==0) continue;
-					double score = wv.dotProduct(featGen.getIndividualFeatureVector(numX, i, j));
-					JointY y = new JointY(pair.getFirst());
-					for(int k=0; k<j; ++k) {
-						Node node = new Node("NUM", i, new ArrayList<Node>());
-						node.value = Tools.getValue(prob.quantities.get(i));
-						y.nodes.add(node);
-					}
-					beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+score));
-				}
-			}
-			beam1.clear();
-			beam1.addAll(beam2);
-			beam2.clear();
-		}
-		for(Pair<JointY, Double> pair : beam1) {
-			NumoccurY numY = new NumoccurY(prob, pair.getFirst().nodes);
-			beam2.add(new Pair<JointY, Double>(pair.getFirst(), pair.getSecond() + 
-					wv.dotProduct(featGen.getGlobalFeatureVector(numX, numY))));
-			pair.getFirst().numOccurScore = pair.getSecond() + 
-					wv.dotProduct(featGen.getGlobalFeatureVector(numX, numY));
-		}
-		beam1.clear();
-		beam1.addAll(beam2);
-		beam2.clear();
+				maximumSize(200).create();
+		LasttwoY seed = new LasttwoY();
+		seed.nodes.addAll(prob.nodes);
+		beam1.add(new Pair<LasttwoY, Double>(seed, 0.0));
 		// Grounding of variables
-		for(Pair<JointY, Double> pair : beam1) {
+		for(Pair<LasttwoY, Double> pair : beam1) {
 			for(int i=0; i<prob.candidateVars.size(); ++i) {
-				JointY y = new JointY(pair.getFirst());
+				LasttwoY y = new LasttwoY(pair.getFirst());
 				Node node = new Node("VAR", i, new ArrayList<Node>());
 				node.varId = "V1";
 				y.nodes.add(node);
 				y.varTokens.put("V1", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
 				y.coref = false;
-				y.varScore = pair.getSecond()+
-						wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 				if(y.nodes.size() > 2) {
-					beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
+					beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
 							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 				}
 				for(int j=i; j<prob.candidateVars.size(); ++j) {
@@ -112,7 +76,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 							Tools.doesContainNotEqual(prob.candidateVars.get(j), prob.candidateVars.get(i))) {
 						continue;
 					}
-					y = new JointY(pair.getFirst());
+					y = new LasttwoY(pair.getFirst());
 					node = new Node("VAR", i, new ArrayList<Node>());
 					node.varId = "V1";
 					y.nodes.add(node);
@@ -124,11 +88,11 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					y.coref = false;
-					y.varScore = pair.getSecond()+
-							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
-					beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
-							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
-					y = new JointY(pair.getFirst());
+					if(y.nodes.size()>2) {
+						beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
+								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+					}
+					y = new LasttwoY(pair.getFirst());
 					node = new Node("VAR", i, new ArrayList<Node>());
 					node.varId = "V1";
 					y.nodes.add(node);
@@ -140,9 +104,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					y.coref = true;
-					y.varScore = pair.getSecond()+
-							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
-					beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
+					beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
 							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 				}
 			}
@@ -151,19 +113,18 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		beam1.addAll(beam2);
 		beam2.clear();
 		// Equation generation
-		for(Pair<JointY, Double> pair : beam1) {
+		for(Pair<LasttwoY, Double> pair : beam1) {
 			Tools.populateAndSortByCharIndex(pair.getFirst().nodes, prob.ta, 
 					prob.quantities, prob.candidateVars, pair.getFirst().coref);
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
-		System.out.println("Pred Score InfSolver : "+beam2.element().getFirst().numOccurScore+" "
-				+beam2.element().getFirst().varScore+" "+beam2.element().getSecond());
+		System.out.println("PredSolver : "+beam2.element().getSecond());
 		return beam2.element().getFirst();
 	}
 	
-	public List<Pair<JointY, Double>> getBottomUpBestParse(
-			JointX x, Pair<JointY, Double> pair, WeightVector wv) {
-		JointY y = pair.getFirst();
+	public List<Pair<LasttwoY, Double>> getBottomUpBestParse(
+			LasttwoX x, Pair<LasttwoY, Double> pair, WeightVector wv) {
+		LasttwoY y = pair.getFirst();
 		PairComparator<List<Node>> nodePairComparator = new PairComparator<List<Node>>() {};
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
@@ -194,20 +155,20 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					state.getSecond()+ 
 					getMergeScore(node, wv, x, pair.getFirst().varTokens, pair.getFirst().nodes)));
 		}
-		List<Pair<JointY, Double>> results = new ArrayList<Pair<JointY,Double>>();
+		List<Pair<LasttwoY, Double>> results = new ArrayList<Pair<LasttwoY,Double>>();
 		for(Pair<List<Node>, Double> b : beam2) {
-			JointY t = new JointY(y);
+			LasttwoY t = new LasttwoY(y);
 			if(b.getFirst().size() != 1){
 //				System.err.println("Final list should have only 1 node, found "+b.getFirst().size());
 			}
 			t.equation.root = b.getFirst().get(0);
-			results.add(new Pair<JointY, Double>(t, b.getSecond()));
+			results.add(new Pair<LasttwoY, Double>(t, b.getSecond()));
 		}
 		return results;
 	}
 	
 	public List<Pair<List<Node>, Double>> enumerateSingleMerge(
-			Pair<List<Node>, Double> state, WeightVector wv, JointX x,
+			Pair<List<Node>, Double> state, WeightVector wv, LasttwoX x,
 			Map<String, List<Integer>> varTokens, List<Node> nodes) {
 		List<Pair<List<Node>, Double>> nextStates = new ArrayList<>();
 		List<Node> nodeList = state.getFirst();
@@ -240,7 +201,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 	}
 	
 	public List<Pair<Node, Double>> enumerateMerge(
-			Node node1, Node node2, WeightVector wv, JointX x, 
+			Node node1, Node node2, WeightVector wv, LasttwoX x, 
 			Map<String, List<Integer>> varTokens, List<Node> nodes) {
 		List<Pair<Node, Double>> nextStates = new ArrayList<>();
 		List<String> labels = Arrays.asList(
@@ -263,20 +224,18 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		return nextStates;
 	}
 	
-	public double getMergeScore(Node node, WeightVector wv, JointX x, 
-			Map<String, List<Integer>> varTokens, List<Node> nodes) {
-		TreeX treeX = new TreeX(x, varTokens, nodes);
-		return wv.dotProduct(featGen.getNodeFeatureVector(treeX, node));
+	public double getMergeScore(Node node, WeightVector wv, LasttwoX x, 
+			Map<String, List<Integer>> varTokens, List<Node> leaves) {
+		return wv.dotProduct(featGen.getNodeFeatureVector(x, varTokens, leaves, node));
 	}
 	
-	public JointY getLatentBestStructure(
-			JointX x, JointY gold, WeightVector wv) {
-		System.out.println(gold.probId+" : "+Arrays.asList(gold.varTokens));
-		JointY best = null;
+	public LasttwoY getLatentBestStructure(
+			LasttwoX x, LasttwoY gold, WeightVector wv) {
+		LasttwoY best = null;
 		double bestScore = -Double.MAX_VALUE;
 		if(gold.varTokens.keySet().size() == 1) {
 			for(Integer tokenIndex : gold.varTokens.get("V1")) {
-				JointY yNew = new JointY(gold);
+				LasttwoY yNew = new LasttwoY(gold);
 				yNew.varTokens.get("V1").clear();
 				yNew.varTokens.get("V1").add(tokenIndex);
 				for(Node node : yNew.equation.root.getLeaves()) {
@@ -302,7 +261,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		if(gold.varTokens.keySet().size() == 2) {
 			for(Integer tokenIndex1 : gold.varTokens.get("V1")) {
 				for(Integer tokenIndex2 : gold.varTokens.get("V2")) {
-					JointY yNew = new JointY(gold);
+					LasttwoY yNew = new LasttwoY(gold);
 					yNew.varTokens.get("V1").clear();
 					yNew.varTokens.get("V1").add(tokenIndex1);
 					yNew.varTokens.get("V2").clear();
@@ -334,8 +293,8 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		if(best == null) return gold;
 		best.nodes = best.equation.root.getLeaves();
 		best.coref = gold.coref;
-		System.out.println(gold.probId+" : "+Arrays.asList(gold.varTokens));
 		Tools.populateAndSortByCharIndex(best.nodes, x.ta, x.quantities, x.candidateVars, best.coref);
 		return best;
 	}
+	
 }

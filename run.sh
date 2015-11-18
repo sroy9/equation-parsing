@@ -27,6 +27,12 @@ then
     java -cp target/classes/:target/dependency/* tree.TreeDriver 1>log/Tree.out 
 fi
 
+## LastTwo Prediction model
+if [ "$1" = "Lasttwo" ]
+then
+    echo "Running Lasttwo model"
+    java -cp target/classes/:target/dependency/* lasttwo.LasttwoDriver 1>log/Lasttwo.out 
+fi
 
 ## Pipeline
 if [ "$1" = "Pipeline" ]

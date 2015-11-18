@@ -1,53 +1,60 @@
-package tree;
+package lasttwo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import joint.JointY;
-import lasttwo.LasttwoY;
 import structure.Equation;
+import structure.Node;
 import structure.SimulProb;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
-public class TreeY implements IStructure, Serializable {
+public class LasttwoY implements IStructure, Serializable {
 	
 	private static final long serialVersionUID = 2399969922362221136L;
 	public Equation equation;
 	public Map<String, List<Integer>> varTokens;
 	public boolean coref;
+	public List<Node> nodes;
 	
-	public TreeY() {
+	public LasttwoY() {
 		equation = new Equation();
 		varTokens = new HashMap<String, List<Integer>>();
+		nodes = new ArrayList<Node>();
 	}
 	
-	public TreeY(TreeY other) {
+	public LasttwoY(LasttwoY other) {
 		equation = new Equation(other.equation);
 		varTokens = other.varTokens;
 		coref = other.coref;
+		nodes = new ArrayList<Node>();
+		for(Node node : other.nodes) {
+			nodes.add(new Node(node));
+		}
 	}
 	
-	public TreeY(SimulProb prob) {
+	public LasttwoY(SimulProb prob) {
 		equation = new Equation(prob.equation);
 		varTokens = prob.varTokens;
 		coref = prob.coref;
+		nodes = new ArrayList<Node>();
 	}
 	
-	public TreeY(JointY prob) {
+	public LasttwoY(JointY prob) {
 		equation = new Equation(prob.equation);
 		varTokens = prob.varTokens;
 		coref = prob.coref;
+		nodes = new ArrayList<Node>();
+		for(Node node : prob.nodes) {
+			nodes.add(new Node(node));
+		}
 	}
 	
-	public TreeY(LasttwoY prob) {
-		equation = new Equation(prob.equation);
-		varTokens = prob.varTokens;
-		coref = prob.coref;
-	}
-	
-	public static float getLoss(TreeY gold, TreeY pred) {
+	public static float getLoss(LasttwoY gold, LasttwoY pred) {
 		if(pred.varTokens.get("V1").size() > 1 || 
 				(pred.varTokens.containsKey("V2") && pred.varTokens.get("V2").size() > 1)) {
 			System.err.println("Error in TreeY getLoss() function");
@@ -65,6 +72,6 @@ public class TreeY implements IStructure, Serializable {
 	
 	@Override
 	public String toString() {
-		return "Equation : "+equation;
+		return "VarTokens : "+Arrays.asList(varTokens)+" Equation : "+equation;
 	}
 }
