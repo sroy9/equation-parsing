@@ -17,7 +17,6 @@ import tree.CompInfSolver;
 import tree.TreeFeatGen;
 import tree.TreeX;
 import utils.Tools;
-import var.VarInfSolver;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
@@ -102,8 +101,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 				y.varTokens.put("V1", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
 				y.coref = false;
-				if(y.nodes.size() > 2 && VarInfSolver.allowVar(
-						prob.ta, prob.candidateVars, prob.quantities, y.varTokens)) {
+				if(y.nodes.size() > 2) {
 					y.varScore = pair.getSecond()+
 							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 					beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
@@ -126,8 +124,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					y.coref = false;
-					if(y.nodes.size() > 2 && VarInfSolver.allowVar(
-							prob.ta, prob.candidateVars, prob.quantities, y.varTokens)) {
+					if(y.nodes.size() > 2) {
 						y.varScore = pair.getSecond()+
 								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 						beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
@@ -145,8 +142,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					y.coref = true;
-					if(y.nodes.size() > 2 && VarInfSolver.allowVar(
-							prob.ta, prob.candidateVars, prob.quantities, y.varTokens)) {
+					if(y.nodes.size() > 2) {
 						y.varScore = pair.getSecond()+
 								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 						beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+

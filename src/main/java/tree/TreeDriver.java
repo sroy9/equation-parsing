@@ -177,7 +177,7 @@ public class TreeDriver {
 		return mapList;
 	}
 	public static void main(String args[]) throws Exception {
-		TreeDriver.doTrainTest(0);
+		TreeDriver.crossVal();
 		Tools.pipeline.closeCache();
 		System.exit(0);
 	}

@@ -3,6 +3,7 @@ package lasttwo;
 import java.util.ArrayList;
 import java.util.List;
 
+import joint.JointX;
 import structure.Node;
 import structure.SimulProb;
 import utils.Tools;
@@ -40,6 +41,15 @@ public class LasttwoX implements IInstance {
 				}
 			}
 		}
+	}
+	
+	public LasttwoX(JointX simulProb, List<Node> leavesFromNum) {
+		quantities = simulProb.quantities;
+		ta = simulProb.ta;
+		posTags = simulProb.posTags;
+		candidateVars = simulProb.candidateVars;
+		nodes = new ArrayList<Node>();
+		nodes.addAll(leavesFromNum);
 	}
 	
 }

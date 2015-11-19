@@ -2,6 +2,7 @@ package numoccur;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.common.collect.MinMaxPriorityQueue;
 
@@ -53,6 +54,7 @@ public class NumoccurInfSolver extends AbstractInferenceSolver implements
 		for(int i=0; i<prob.quantities.size(); ++i) {
 			for(Pair<NumoccurY, Double> pair : beam1) {
 				for(int j=0; j<3; ++j) {
+					if(i==(prob.quantities.size()-1) && sum(pair.getFirst().numOccurList)==0 && j==0) continue;
 					double score = wv.dotProduct(featGen.getIndividualFeatureVector(prob, i, j));
 					NumoccurY y = new NumoccurY(pair.getFirst());
 					y.numOccurList.add(j);
@@ -68,6 +70,14 @@ public class NumoccurInfSolver extends AbstractInferenceSolver implements
 					wv.dotProduct(featGen.getGlobalFeatureVector(prob, pair.getFirst()))));
 		}
 		return beam2.element().getFirst();
+	}
+	
+	public int sum(List<Integer> list) {
+		int sum = 0;
+		for(int i : list) {
+			sum += i;
+		}
+		return sum;
 	}
 	
 }

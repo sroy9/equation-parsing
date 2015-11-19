@@ -77,10 +77,10 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<List<Node>>() {};
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(200).create();
+				.maximumSize(50).create();
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(200).create();
+				.maximumSize(50).create();
 		int n = x.nodes.size();
 		List<Node> init = new ArrayList<>();
 		init.addAll(x.nodes);

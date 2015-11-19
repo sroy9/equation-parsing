@@ -13,7 +13,6 @@ import structure.PairComparator;
 import tree.CompInfSolver;
 import tree.TreeFeatGen;
 import utils.Tools;
-import var.VarInfSolver;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
@@ -51,10 +50,10 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<LasttwoY>() {};
 		MinMaxPriorityQueue<Pair<LasttwoY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(200).create();
+				maximumSize(20).create();
 		MinMaxPriorityQueue<Pair<LasttwoY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(200).create();
+				maximumSize(20).create();
 		LasttwoY seed = new LasttwoY();
 		seed.nodes.addAll(prob.nodes);
 		beam1.add(new Pair<LasttwoY, Double>(seed, 0.0));
@@ -68,8 +67,8 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 				y.varTokens.put("V1", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
 				y.coref = false;
-				if(y.nodes.size() > 2 && VarInfSolver.allowVar(
-						prob.ta, prob.candidateVars, prob.quantities, y.varTokens)) {
+				if(y.nodes.size() > 2 /*&& VarInfSolver.allowVar(
+						prob.ta, prob.candidateVars, prob.quantities, y.varTokens)*/) {
 					y.varScore = pair.getSecond()+
 							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 					beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
@@ -92,8 +91,8 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					y.coref = false;
-					if(y.nodes.size()>2 && VarInfSolver.allowVar(
-							prob.ta, prob.candidateVars, prob.quantities, y.varTokens)) {
+					if(y.nodes.size()>2 /*&& VarInfSolver.allowVar(
+							prob.ta, prob.candidateVars, prob.quantities, y.varTokens)*/) {
 						y.varScore = pair.getSecond()+
 								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 						beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
@@ -111,8 +110,8 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					y.coref = true;
-					if(y.nodes.size()>2 && VarInfSolver.allowVar(
-							prob.ta, prob.candidateVars, prob.quantities, y.varTokens)) {
+					if(y.nodes.size()>2 /*&& VarInfSolver.allowVar(
+							prob.ta, prob.candidateVars, prob.quantities, y.varTokens)*/) {
 						y.varScore = pair.getSecond()+
 								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 						beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+

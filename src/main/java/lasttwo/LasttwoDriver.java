@@ -178,7 +178,7 @@ public class LasttwoDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		LasttwoDriver.doTrainTest(0);
+		LasttwoDriver.crossVal();
 		Tools.pipeline.closeCache();
 		System.exit(0);
 	}

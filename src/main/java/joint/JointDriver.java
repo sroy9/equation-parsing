@@ -43,7 +43,7 @@ public class JointDriver {
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
 		trainModel("models/joint"+testFold+".save", train);
-		testModel("models/joint"+testFold+".save", train);
+//		testModel("models/joint"+testFold+".save", train);
 		return testModel("models/joint"+testFold+".save", test);
 	}
 	
@@ -99,8 +99,6 @@ public class JointDriver {
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
 				System.out.println("Pred : \n"+pred);
-				System.out.println("Pred weight : "+model.wv.dotProduct(
-						((JointFeatGen)model.featureGenerator).getFeatureVector(prob, pred, model)));
 				System.out.println("Pred weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, pred)));
 				System.out.println("Loss : "+JointY.getLoss(gold, pred));

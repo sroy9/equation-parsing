@@ -15,6 +15,8 @@ import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 
 public class PipelineDriver {
 	
+	public static String mode = "";
+	
 	public static double crossVal() throws Exception {
 		double acc = 0.0;
 		for(int i=0;i<5;i++) {
@@ -34,11 +36,16 @@ public class PipelineDriver {
 				testProbs.add(simulProb);
 			}
 		}
-		SLModel	numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
-		SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
-		SLModel treeModel = SLModel.loadModel("models/tree"+testFold+".save");
 		SLProblem test = JointDriver.getSP(testProbs);
-		return testModel(numOccurModel, varModel, treeModel, test, true);
+		SLModel	numOccurModel = SLModel.loadModel("models/numoccur"+testFold+".save");
+		if(mode.equals("A")) {
+			SLModel varModel = SLModel.loadModel("models/var"+testFold+".save");
+			SLModel treeModel = SLModel.loadModel("models/tree"+testFold+".save");
+			return testModel(numOccurModel, varModel, treeModel, test, true);
+		} else {
+			SLModel lasttwoModel = SLModel.loadModel("models/lasttwo"+testFold+".save");
+			return testModel(numOccurModel, lasttwoModel, test, true);
+		}
 	}
 
 	public static double testModel(SLModel numOccurModel, SLModel varModel, 
@@ -71,7 +78,44 @@ public class PipelineDriver {
 		return (acc/sp.instanceList.size());
 	}
 	
+	public static double testModel(SLModel numOccurModel, SLModel lasttwoModel, 
+			SLProblem sp, boolean printMistakes) throws Exception {
+		double acc = 0.0;
+		for (int i = 0; i < sp.instanceList.size(); i++) {
+			JointX prob = (JointX) sp.instanceList.get(i);
+			JointY gold = (JointY) sp.goldStructureList.get(i);
+			JointY pred = PipelineInfSolver.getBestLasttwoStructure(
+					prob, numOccurModel, lasttwoModel);
+			System.out.println(pred);
+//			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.0001 || 
+//					Equation.getLoss(gold.equation, pred.equation, false) < 0.0001) {
+			if(JointY.getLoss(gold, pred) < 0.0001) {
+				acc += 1;
+				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
+				System.out.println("Quantities : "+prob.quantities);
+				System.out.println("Gold : \n"+gold);
+				System.out.println("Pred : \n"+pred);
+				System.out.println("Loss : "+JointY.getLoss(gold, pred));
+			} else if(printMistakes) {
+//				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
+//				System.out.println("Quantities : "+prob.quantities);
+//				System.out.println("Gold : \n"+gold);
+//				System.out.println("Pred : \n"+pred);
+//				System.out.println("Loss : "+JointY.getLoss(gold, pred));				
+			}
+		}
+		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
+				+ " = " + (acc/sp.instanceList.size()));
+		return (acc/sp.instanceList.size());
+	}
+	
 	public static void main(String args[]) throws Exception {
+		if(args.length >= 1) {
+			mode = args[0];
+			if(!mode.equals("A") && !mode.equals("B")) {
+				System.exit(0);
+			}
+		}
 		PipelineDriver.crossVal();
 		Tools.pipeline.closeCache();
 		System.exit(0);

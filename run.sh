@@ -37,8 +37,16 @@ fi
 ## Pipeline
 if [ "$1" = "Pipeline" ]
 then
-    echo "Running Pipeline"
-    java -cp target/classes/:target/dependency/* pipeline.PipelineDriver 1>log/Pipeline.out
+    if [ "$2" = "A" ]
+    then	
+	echo "Running PipelineA"
+	java -cp target/classes/:target/dependency/* pipeline.PipelineDriver A 1>log/PipelineA.out
+    fi
+    if [ "$2" = "B" ]
+    then	
+	echo "Running PipelineB"
+	java -cp target/classes/:target/dependency/* pipeline.PipelineDriver B 1>log/PipelineB.out
+    fi	
 fi
 
 
