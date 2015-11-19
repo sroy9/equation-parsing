@@ -1,6 +1,7 @@
 package var;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,10 @@ public class VarY implements IStructure, Serializable {
 	
 	public VarY(VarY other) {
 		varTokens = new HashMap<String, List<Integer>>();
-		varTokens.putAll(other.varTokens);
+		for(String key : other.varTokens.keySet()) {
+			varTokens.put(key, new ArrayList<Integer>());
+			varTokens.get(key).addAll(other.varTokens.get(key));
+		}
 		coref = other.coref;
 	}
 	

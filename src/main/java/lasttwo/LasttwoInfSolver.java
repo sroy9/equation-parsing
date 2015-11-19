@@ -50,10 +50,10 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<LasttwoY>() {};
 		MinMaxPriorityQueue<Pair<LasttwoY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(200).create();
+				maximumSize(1).create();
 		MinMaxPriorityQueue<Pair<LasttwoY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(200).create();
+				maximumSize(1).create();
 		LasttwoY seed = new LasttwoY();
 		seed.nodes.addAll(prob.nodes);
 		beam1.add(new Pair<LasttwoY, Double>(seed, 0.0));
@@ -68,6 +68,8 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 				y.varTokens.get("V1").add(i);
 				y.coref = false;
 				if(y.nodes.size() > 2) {
+					y.varScore = pair.getSecond()+
+							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 					beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
 							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 				}
@@ -89,6 +91,8 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V2").add(j);
 					y.coref = false;
 					if(y.nodes.size()>2) {
+						y.varScore = pair.getSecond()+
+								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 						beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
 								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 					}
@@ -104,8 +108,12 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					y.coref = true;
-					beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
-							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+					if(y.nodes.size()>2) {
+						y.varScore = pair.getSecond()+
+								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
+						beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
+								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+					}
 				}
 			}
 		}

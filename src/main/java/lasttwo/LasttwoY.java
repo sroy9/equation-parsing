@@ -20,6 +20,7 @@ public class LasttwoY implements IStructure, Serializable {
 	public Map<String, List<Integer>> varTokens;
 	public boolean coref;
 	public List<Node> nodes;
+	public double varScore;
 	
 	public LasttwoY() {
 		equation = new Equation();
@@ -29,12 +30,17 @@ public class LasttwoY implements IStructure, Serializable {
 	
 	public LasttwoY(LasttwoY other) {
 		equation = new Equation(other.equation);
-		varTokens = other.varTokens;
+		varTokens = new HashMap<String, List<Integer>>();
+		for(String key : other.varTokens.keySet()) {
+			varTokens.put(key, new ArrayList<Integer>());
+			varTokens.get(key).addAll(other.varTokens.get(key));
+		}
 		coref = other.coref;
 		nodes = new ArrayList<Node>();
 		for(Node node : other.nodes) {
 			nodes.add(new Node(node));
 		}
+		varScore = other.varScore;
 	}
 	
 	public LasttwoY(SimulProb prob) {
@@ -46,7 +52,11 @@ public class LasttwoY implements IStructure, Serializable {
 	
 	public LasttwoY(JointY prob) {
 		equation = new Equation(prob.equation);
-		varTokens = prob.varTokens;
+		varTokens = new HashMap<String, List<Integer>>();
+		for(String key : prob.varTokens.keySet()) {
+			varTokens.put(key, new ArrayList<Integer>());
+			varTokens.get(key).addAll(prob.varTokens.get(key));
+		}
 		coref = prob.coref;
 		nodes = new ArrayList<Node>();
 		for(Node node : prob.nodes) {

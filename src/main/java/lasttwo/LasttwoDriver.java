@@ -48,7 +48,7 @@ public class LasttwoDriver {
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
 		trainModel(prefix+testFold+".save", train, testFold);
-		testModel(prefix+testFold+".save", train);
+//		testModel(prefix+testFold+".save", train);
 		return testModel(prefix+testFold+".save", test);
 	}
 	
@@ -77,6 +77,7 @@ public class LasttwoDriver {
 			LasttwoX prob = (LasttwoX) sp.instanceList.get(i);
 			LasttwoY gold = (LasttwoY) sp.goldStructureList.get(i);
 			LasttwoY pred = (LasttwoY) model.infSolver.getBestStructure(model.wv, prob);
+			System.out.println("VarScore : "+pred.varScore);
 			total.add(prob.problemIndex);
 			double goldWt = model.wv.dotProduct(
 					model.featureGenerator.getFeatureVector(prob, gold));
@@ -97,6 +98,8 @@ public class LasttwoDriver {
 				System.out.println("Pred : \n"+pred);
 				System.out.println("Pred weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, pred)));
+				System.out.println("VarScore : "+model.wv.dotProduct(
+						((LasttwoFeatGen)model.featureGenerator).getVarTokenFeatureVector(prob, pred)));
 				System.out.println("Loss : "+LasttwoY.getLoss(gold, pred));
 			}
 			System.out.println("---------------------------------------------------");
@@ -117,10 +120,10 @@ public class LasttwoDriver {
 		model.infSolver = new LasttwoInfSolver(fg);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
-		para.MAX_NUM_ITER = 1;
+		para.MAX_NUM_ITER = 5;
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
 		model.wv = latentSVMLearner(learner, train, 
-				(LasttwoInfSolver) model.infSolver, 1, null);
+				(LasttwoInfSolver) model.infSolver, 5, null);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}

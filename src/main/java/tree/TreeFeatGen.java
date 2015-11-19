@@ -252,7 +252,20 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 			QuantSpan qs = quantities.get(node1.index);
 			rightToken = ta.getText().toLowerCase().substring(qs.start, qs.end);
 		}
+		String op = getRuleOperation(prePhrase, leftToken, midPhrase, rightToken, postPhrase);
+		if(op!=null && ip1.getFirst() > ip2.getFirst() && 
+				(op.equals("SUB") || op.equals("DIV"))) {
+			op += "_REV";
+		} else if(op!=null && ip1.getFirst() > ip2.getFirst() && 
+				(op.equals("SUB_REV") || op.equals("DIV_REV"))) {
+			op = op.substring(0,3);
+		}
+		return op;
 		
+	}
+	
+	public static String getRuleOperation(String prePhrase, String leftToken,
+			String midPhrase, String rightToken, String postPhrase) {
 		// Applying rules, priority last to first
 		if(rightToken.contains("thrice") || rightToken.contains("triple") || 
 				rightToken.contains("twice") || rightToken.contains("double") || 
@@ -307,13 +320,6 @@ public class TreeFeatGen extends AbstractFeatureGenerator implements Serializabl
 				leftToken.contains("half") || midPhrase.contains("times")) && 
 				postPhrase.contains(" as ") && midPhrase.contains(" as ")) {
 			op = "DIV_REV";
-		}
-		if(op!=null && ip1.getFirst() > ip2.getFirst() && 
-				(op.equals("SUB") || op.equals("DIV"))) {
-			op += "_REV";
-		} else if(op!=null && ip1.getFirst() > ip2.getFirst() && 
-				(op.equals("SUB_REV") || op.equals("DIV_REV"))) {
-			op = op.substring(0,3);
 		}
 		return op;
 	}
