@@ -123,7 +123,7 @@ public class LasttwoDriver {
 		para.MAX_NUM_ITER = 5;
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
 		model.wv = latentSVMLearner(learner, train, 
-				(LasttwoInfSolver) model.infSolver, 5, null);
+				(LasttwoInfSolver) model.infSolver, 3, null);
 		lm.setAllowNewFeatures(false);
 		model.saveModel(modelPath);
 	}

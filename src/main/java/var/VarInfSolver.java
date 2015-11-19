@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.MinMaxPriorityQueue;
 
@@ -12,6 +13,7 @@ import structure.PairComparator;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.quant.driver.QuantSpan;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
@@ -118,19 +120,24 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 	}
 	
 	public static boolean allowVar(VarX x, VarY y) {
+		return allowVar(x.ta, x.candidateVars, x.quantities, y.varTokens);
+	}
+	
+	public static boolean allowVar(TextAnnotation ta, List<IntPair> candidateVars, 
+			List<QuantSpan> quantities, Map<String, List<Integer>> varTokens) {
 		List<Integer> charIndices = new ArrayList<>();
 		List<Integer> varIndices = new ArrayList<>();
-		for(String key : y.varTokens.keySet()) {
-			IntPair span = x.candidateVars.get(y.varTokens.get(key).get(0));
-			varIndices.add((x.ta.getTokenCharacterOffset(span.getFirst()).getFirst()+
-					x.ta.getTokenCharacterOffset(span.getSecond()-1).getSecond())/2);
+		for(String key : varTokens.keySet()) {
+			IntPair span = candidateVars.get(varTokens.get(key).get(0));
+			varIndices.add((ta.getTokenCharacterOffset(span.getFirst()).getFirst()+
+					ta.getTokenCharacterOffset(span.getSecond()-1).getSecond())/2);
 		}
 		charIndices.addAll(varIndices);
-		for(QuantSpan qs : x.quantities) {
+		for(QuantSpan qs : quantities) {
 			charIndices.add((qs.start+qs.end)/2);
 		}
 		Collections.sort(charIndices);
-		String str = x.ta.getText().toLowerCase();
+		String str = ta.getText().toLowerCase();
 //		System.out.println(str);
 //		System.out.println(Arrays.asList(charIndices));
 //		for(Integer i : charIndices) {

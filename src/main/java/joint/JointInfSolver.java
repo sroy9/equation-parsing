@@ -17,6 +17,7 @@ import tree.CompInfSolver;
 import tree.TreeFeatGen;
 import tree.TreeX;
 import utils.Tools;
+import var.VarInfSolver;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
@@ -101,9 +102,10 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 				y.varTokens.put("V1", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
 				y.coref = false;
-				y.varScore = pair.getSecond()+
-						wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
-				if(y.nodes.size() > 2) {
+				if(y.nodes.size() > 2 && VarInfSolver.allowVar(
+						prob.ta, prob.candidateVars, prob.quantities, y.varTokens)) {
+					y.varScore = pair.getSecond()+
+							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 					beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
 							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 				}
@@ -124,10 +126,13 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					y.coref = false;
-					y.varScore = pair.getSecond()+
-							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
-					beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
-							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+					if(y.nodes.size() > 2 && VarInfSolver.allowVar(
+							prob.ta, prob.candidateVars, prob.quantities, y.varTokens)) {
+						y.varScore = pair.getSecond()+
+								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
+						beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
+								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+					}
 					y = new JointY(pair.getFirst());
 					node = new Node("VAR", i, new ArrayList<Node>());
 					node.varId = "V1";
@@ -140,10 +145,13 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
 					y.coref = true;
-					y.varScore = pair.getSecond()+
-							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
-					beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
-							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+					if(y.nodes.size() > 2 && VarInfSolver.allowVar(
+							prob.ta, prob.candidateVars, prob.quantities, y.varTokens)) {
+						y.varScore = pair.getSecond()+
+								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
+						beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
+								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+					}
 				}
 			}
 		}
