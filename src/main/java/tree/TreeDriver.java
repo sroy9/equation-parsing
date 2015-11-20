@@ -45,7 +45,7 @@ public class TreeDriver {
 				trainProbs.add(simulProb);
 			}
 		}
-		SLProblem train = getSP(trainProbs);
+		SLProblem train = getSP(DocReader.getProjectiveProblems(trainProbs));
 		SLProblem test = getSP(testProbs);
 		trainModel(prefix+testFold+".save", train, testFold);
 		testModel(prefix+testFold+".save", train);
@@ -107,14 +107,14 @@ public class TreeDriver {
 			TreeY gold = (TreeY) sp.goldStructureList.get(i);
 			TreeY pred = (TreeY) model.infSolver.getBestStructure(model.wv, prob);
 			total.add(prob.problemIndex);
-			double goldWt = model.wv.dotProduct(
-					model.featureGenerator.getFeatureVector(prob, gold));
-			double predWt = model.wv.dotProduct(
-					model.featureGenerator.getFeatureVector(prob, pred));
-			if(goldWt > predWt) {
-				System.out.println("PROBLEM HERE");
-			}
-			if(TreeY.getLoss(gold, pred) < 0.0001) {
+//			double goldWt = model.wv.dotProduct(
+//					model.featureGenerator.getFeatureVector(prob, gold));
+//			double predWt = model.wv.dotProduct(
+//					model.featureGenerator.getFeatureVector(prob, pred));
+//			if(goldWt > predWt) {
+//				System.out.println("PROBLEM HERE");
+//			}
+			if(pred != null && TreeY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else {
 				incorrect.add(prob.problemIndex);
@@ -124,9 +124,11 @@ public class TreeDriver {
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
 				System.out.println("Pred : \n"+pred);
-				System.out.println("Pred weight : "+model.wv.dotProduct(
-						model.featureGenerator.getFeatureVector(prob, pred)));
-				System.out.println("Loss : "+TreeY.getLoss(gold, pred));
+				if(pred != null) {
+					System.out.println("Pred weight : "+model.wv.dotProduct(
+							model.featureGenerator.getFeatureVector(prob, pred)));
+					System.out.println("Loss : "+TreeY.getLoss(gold, pred));
+				}
 			}
 			System.out.println("---------------------------------------------------");
 		}

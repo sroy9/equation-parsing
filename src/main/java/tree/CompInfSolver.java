@@ -44,7 +44,8 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 			IInstance x, IStructure goldStructure) throws Exception {
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam = 
 				getLossAugmentedBestKStructure(wv, x, goldStructure);
-		return beam.element().getFirst();
+		if(beam.size() == 0) return null;
+		return beam.peek().getFirst();
 	}
 	
 	public MinMaxPriorityQueue<Pair<TreeY, Double>> getLossAugmentedBestKStructure(
@@ -66,7 +67,6 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 		for(Pair<TreeY, Double> pair : beam1) {
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
-		System.out.println("Pred Score InfSolver : "+beam2.element().getSecond());
 		return beam2;
 	}
 	
@@ -174,10 +174,10 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 		if(ip1.getSecond()+1==ip2.getFirst() || ip2.getSecond()+1==ip1.getFirst()) {
 			return true;
 		}
-		if(node1.children.size()==0 && node2.children.size()==0 && 
-				(!node1.projection || !node2.projection)) {
-			return true;
-		}
+//		if(node1.children.size()==0 && node2.children.size()==0 && 
+//				(!node1.projection || !node2.projection)) {
+//			return true;
+//		}
 		return false;
 	}
 	

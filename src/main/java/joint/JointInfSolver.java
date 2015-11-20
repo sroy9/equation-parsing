@@ -54,10 +54,10 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<JointY>() {};
 		MinMaxPriorityQueue<Pair<JointY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(20).create();
+				maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<JointY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(20).create();
+				maximumSize(200).create();
 		JointY seed = new JointY();
 		beam1.add(new Pair<JointY, Double>(seed, 0.0));
 		
@@ -65,8 +65,8 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		NumoccurX numX = new NumoccurX(prob);
 		for(int i=0; i<prob.quantities.size(); ++i) {
 			for(Pair<JointY, Double> pair : beam1) {
-				for(int j=0; j<3; ++j) {
-					if(j==0 && pair.getFirst().nodes.size()==0) continue;
+				for(int j=0; j<2; ++j) {
+					if(j==0 && pair.getFirst().nodes.size()==0 && i==(prob.quantities.size()-1)) continue;
 					double score = wv.dotProduct(featGen.getIndividualFeatureVector(numX, i, j));
 					JointY y = new JointY(pair.getFirst());
 					for(int k=0; k<j; ++k) {
@@ -91,6 +91,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		beam1.clear();
 		beam1.addAll(beam2);
 		beam2.clear();
+//		System.out.println(beam1.size());
 		// Grounding of variables
 		for(Pair<JointY, Double> pair : beam1) {
 			for(int i=0; i<prob.candidateVars.size(); ++i) {
@@ -130,38 +131,43 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 						beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
 								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 					}
-					y = new JointY(pair.getFirst());
-					node = new Node("VAR", i, new ArrayList<Node>());
-					node.varId = "V1";
-					y.nodes.add(node);
-					node = new Node("VAR", j, new ArrayList<Node>());
-					node.varId = "V2";
-					y.nodes.add(node);
-					y.varTokens.put("V1", new ArrayList<Integer>());
-					y.varTokens.put("V2", new ArrayList<Integer>());
-					y.varTokens.get("V1").add(i);
-					y.varTokens.get("V2").add(j);
-					y.coref = true;
-					if(y.nodes.size() > 2) {
-						y.varScore = pair.getSecond()+
-								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
-						beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
-								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
-					}
+//					y = new JointY(pair.getFirst());
+//					node = new Node("VAR", i, new ArrayList<Node>());
+//					node.varId = "V1";
+//					y.nodes.add(node);
+//					node = new Node("VAR", j, new ArrayList<Node>());
+//					node.varId = "V2";
+//					y.nodes.add(node);
+//					y.varTokens.put("V1", new ArrayList<Integer>());
+//					y.varTokens.put("V2", new ArrayList<Integer>());
+//					y.varTokens.get("V1").add(i);
+//					y.varTokens.get("V2").add(j);
+//					y.coref = true;
+//					if(y.nodes.size() > 2) {
+//						y.varScore = pair.getSecond()+
+//								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
+//						beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
+//								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+//					}
 				}
 			}
 		}
 		beam1.clear();
 		beam1.addAll(beam2);
 		beam2.clear();
+//		System.out.println(beam1.element().getFirst());
 		// Equation generation
 		for(Pair<JointY, Double> pair : beam1) {
 			Tools.populateAndSortByCharIndex(pair.getFirst().nodes, prob.ta, 
 					prob.quantities, prob.candidateVars, pair.getFirst().coref);
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
-		System.out.println("Pred Score InfSolver : "+beam2.element().getFirst().numOccurScore+" "
-				+beam2.element().getFirst().varScore+" "+beam2.element().getSecond());
+//		System.out.println("Pred Score InfSolver : "+beam2.element().getFirst().numOccurScore+" "
+//				+beam2.element().getFirst().varScore+" "+beam2.element().getSecond());
+		if(beam2.size() == 0) {
+			System.out.println(prob.ta.getText());
+			return null;
+		}
 		return beam2.element().getFirst();
 	}
 	

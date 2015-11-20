@@ -50,10 +50,10 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<LasttwoY>() {};
 		MinMaxPriorityQueue<Pair<LasttwoY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(20).create();
+				maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<LasttwoY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(20).create();
+				maximumSize(200).create();
 		LasttwoY seed = new LasttwoY();
 		seed.nodes.addAll(prob.nodes);
 		beam1.add(new Pair<LasttwoY, Double>(seed, 0.0));
@@ -98,25 +98,25 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 						beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
 								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 					}
-					y = new LasttwoY(pair.getFirst());
-					node = new Node("VAR", i, new ArrayList<Node>());
-					node.varId = "V1";
-					y.nodes.add(node);
-					node = new Node("VAR", j, new ArrayList<Node>());
-					node.varId = "V2";
-					y.nodes.add(node);
-					y.varTokens.put("V1", new ArrayList<Integer>());
-					y.varTokens.put("V2", new ArrayList<Integer>());
-					y.varTokens.get("V1").add(i);
-					y.varTokens.get("V2").add(j);
-					y.coref = true;
-					if(y.nodes.size()>2 /*&& VarInfSolver.allowVar(
-							prob.ta, prob.candidateVars, prob.quantities, y.varTokens)*/) {
-						y.varScore = pair.getSecond()+
-								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
-						beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
-								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
-					}
+//					y = new LasttwoY(pair.getFirst());
+//					node = new Node("VAR", i, new ArrayList<Node>());
+//					node.varId = "V1";
+//					y.nodes.add(node);
+//					node = new Node("VAR", j, new ArrayList<Node>());
+//					node.varId = "V2";
+//					y.nodes.add(node);
+//					y.varTokens.put("V1", new ArrayList<Integer>());
+//					y.varTokens.put("V2", new ArrayList<Integer>());
+//					y.varTokens.get("V1").add(i);
+//					y.varTokens.get("V2").add(j);
+//					y.coref = true;
+//					if(y.nodes.size()>2 /*&& VarInfSolver.allowVar(
+//							prob.ta, prob.candidateVars, prob.quantities, y.varTokens)*/) {
+//						y.varScore = pair.getSecond()+
+//								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
+//						beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
+//								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
+//					}
 				}
 			}
 		}
@@ -129,7 +129,9 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 					prob.quantities, prob.candidateVars, pair.getFirst().coref);
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
-		System.out.println("PredSolver : "+beam2.element().getSecond());
+		if(beam2.size() == 0) {
+			return null;
+		}
 		return beam2.element().getFirst();
 	}
 	

@@ -229,6 +229,27 @@ public class DocReader {
 		bw.write(")\n");
 		bw.close();
 	}
+	
+	public static List<SimulProb> getProjectiveProblems(List<SimulProb> probs) {
+		List<SimulProb> projective = new ArrayList<>();
+		for(SimulProb prob : probs) {
+			if(prob.coref) continue;
+			boolean multipleNumber = false;
+			List<Node> leaves = prob.equation.root.getLeaves();
+			for(int i=0; i<leaves.size(); ++i) {
+				for(int j=i+1; j<leaves.size(); ++j) {
+					if(leaves.get(i).label.equals("NUM") && leaves.get(j).label.equals("NUM") && 
+							Tools.safeEquals(leaves.get(i).value, leaves.get(j).value)) {
+						multipleNumber = true;
+						break;
+					}
+				}
+			}
+			if(multipleNumber) continue;
+			projective.add(prob);
+		}
+		return projective;
+	}
 
 	public static void createGizaProbTable() throws Exception {
 		for(int i=0; i<1; ++i) {
@@ -269,10 +290,16 @@ public class DocReader {
 	
 	public static void main(String args[]) throws Exception {
 		List<SimulProb> simulProbList = 
-				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
+				getProjectiveProblems(DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0));
 		for(SimulProb prob : simulProbList) {
-			print(prob);
+//			if(prob.varTokens.containsKey("V1") && prob.varTokens.get("V1").size()>1) {
+//				print(prob);
+//			}
+//			if(prob.varTokens.containsKey("V2") && prob.varTokens.get("V2").size()>1) {
+				print(prob);
+//			}
 		}
+		System.out.println(simulProbList.size());
 //		DocReader.createLambdaExpForSPF();
 //		DocReader.createGizaProbTable();
 		Tools.pipeline.closeCache();

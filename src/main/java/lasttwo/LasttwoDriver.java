@@ -45,7 +45,7 @@ public class LasttwoDriver {
 				trainProbs.add(simulProb);
 			}
 		}
-		SLProblem train = getSP(trainProbs);
+		SLProblem train = getSP(DocReader.getProjectiveProblems(trainProbs));
 		SLProblem test = getSP(testProbs);
 		trainModel(prefix+testFold+".save", train, testFold);
 //		testModel(prefix+testFold+".save", train);
@@ -77,16 +77,15 @@ public class LasttwoDriver {
 			LasttwoX prob = (LasttwoX) sp.instanceList.get(i);
 			LasttwoY gold = (LasttwoY) sp.goldStructureList.get(i);
 			LasttwoY pred = (LasttwoY) model.infSolver.getBestStructure(model.wv, prob);
-			System.out.println("VarScore : "+pred.varScore);
 			total.add(prob.problemIndex);
-			double goldWt = model.wv.dotProduct(
-					model.featureGenerator.getFeatureVector(prob, gold));
-			double predWt = model.wv.dotProduct(
-					model.featureGenerator.getFeatureVector(prob, pred));
-			if(goldWt > predWt) {
-				System.out.println("PROBLEM HERE");
-			}
-			if(LasttwoY.getLoss(gold, pred) < 0.0001) {
+//			double goldWt = model.wv.dotProduct(
+//					model.featureGenerator.getFeatureVector(prob, gold));
+//			double predWt = model.wv.dotProduct(
+//					model.featureGenerator.getFeatureVector(prob, pred));
+//			if(goldWt > predWt) {
+//				System.out.println("PROBLEM HERE");
+//			}
+			if(pred!=null && LasttwoY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else {
 				incorrect.add(prob.problemIndex);
@@ -96,13 +95,12 @@ public class LasttwoDriver {
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));
 				System.out.println("Pred : \n"+pred);
-				System.out.println("Pred weight : "+model.wv.dotProduct(
-						model.featureGenerator.getFeatureVector(prob, pred)));
-				System.out.println("VarScore : "+model.wv.dotProduct(
-						((LasttwoFeatGen)model.featureGenerator).getVarTokenFeatureVector(prob, pred)));
-				System.out.println("Loss : "+LasttwoY.getLoss(gold, pred));
+				if(pred != null) {
+					System.out.println("Pred weight : "+model.wv.dotProduct(
+							model.featureGenerator.getFeatureVector(prob, pred)));
+					System.out.println("Loss : "+LasttwoY.getLoss(gold, pred));
+				}
 			}
-			System.out.println("---------------------------------------------------");
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));

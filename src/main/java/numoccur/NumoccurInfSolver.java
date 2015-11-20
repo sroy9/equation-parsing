@@ -53,7 +53,7 @@ public class NumoccurInfSolver extends AbstractInferenceSolver implements
 		// Predict number of occurrences of each quantity
 		for(int i=0; i<prob.quantities.size(); ++i) {
 			for(Pair<NumoccurY, Double> pair : beam1) {
-				for(int j=0; j<3; ++j) {
+				for(int j=0; j<2; ++j) {
 					if(i==(prob.quantities.size()-1) && sum(pair.getFirst().numOccurList)==0 && j==0) continue;
 					double score = wv.dotProduct(featGen.getIndividualFeatureVector(prob, i, j));
 					NumoccurY y = new NumoccurY(pair.getFirst());

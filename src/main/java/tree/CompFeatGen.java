@@ -56,7 +56,8 @@ public class CompFeatGen extends AbstractFeatureGenerator implements Serializabl
 		IntPair ip2 = node2.getNodeListSpan();
 		if(node1.children.size()==0 && node2.children.size()==0 && 
 				(!node1.projection || !node2.projection)) {
-			features.addAll(TreeFeatGen.getNonProjectiveFeatures(x, node));
+			features.add("NOT_ALLOWED_STUFF");
+//			features.addAll(TreeFeatGen.getNonProjectiveFeatures(x, node));
 		} else if(ip1.getFirst()!=-1 && ip2.getFirst()!=-1 && 
 				(((ip1.getSecond()+1)==ip2.getFirst()) || ((ip2.getSecond()+1)==ip1.getFirst()))) {
 			features.addAll(TreeFeatGen.getProjectiveFeatures(x, node));

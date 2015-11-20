@@ -39,7 +39,7 @@ public class NumoccurDriver {
 				trainProbs.add(simulProb);
 			}
 		}
-		SLProblem train = getSP(trainProbs);
+		SLProblem train = getSP(DocReader.getProjectiveProblems(trainProbs));
 		SLProblem test = getSP(testProbs);
 		trainModel("models/numoccur"+testFold+".save", train, testFold);
 		return testModel("models/numoccur"+testFold+".save", test);
