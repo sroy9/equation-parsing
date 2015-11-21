@@ -134,17 +134,9 @@ public class VarDriver {
 			for(int j=0; j<sp.goldStructureList.size(); ++j) {
 				VarX prob = (VarX) sp.instanceList.get(j);
 				VarY gold = (VarY) sp.goldStructureList.get(j);
-//				System.out.println("GetLatent : "+prob.problemIndex+" : "+gold);
 				VarY bestLatent = infSolver.getLatentBestStructure(prob, gold, wv);
-//				System.out.println("BestLatent : "+bestLatent);
 				newProb.addExample(prob, bestLatent);
 			}
-//			System.out.println("Got all latent stuff");
-//			for(int j=0; j<newProb.size(); ++j) {
-//				TreeX prob = (TreeX) newProb.instanceList.get(j);
-//				TreeY gold = (TreeY) newProb.goldStructureList.get(j);
-//				System.out.println("X:"+prob.problemIndex+" Y:"+gold);
-//			}
 			System.err.println("Learning SSVM");
 			wv = learner.train(newProb, wv);
 			System.err.println("Done");
@@ -153,8 +145,8 @@ public class VarDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-//		VarDriver.crossVal();
-		VarDriver.doTrainTest(0);
+		VarDriver.crossVal();
+//		VarDriver.doTrainTest(0);
 		Tools.pipeline.closeCache();
 		System.exit(0);;
 	}

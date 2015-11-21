@@ -146,6 +146,7 @@ public class JointDriver {
 	
 	public static void main(String args[]) throws Exception {
 		JointDriver.doTrainTest(0);
+		JointDriver.crossVal();
 		Tools.pipeline.closeCache();
 		System.exit(0);
 	}
