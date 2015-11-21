@@ -27,7 +27,7 @@ public class DocReader {
 	// Reads list of files from brat folder
 	public static List<SimulProb> readSimulProbFromBratDir(String bratDir) 
 			throws Exception {
-		return readSimulProbFromBratDir(bratDir, 0.0, 1.0);
+		return getProjectiveProblems(readSimulProbFromBratDir(bratDir, 0.0, 1.0));
 	}
 	
 	// Reads list of files from brat folder
@@ -220,9 +220,7 @@ public class DocReader {
 		for(SimulProb prob : probs) {
 			List<Map<String, List<Integer>>> varTokens = Tools.enumerateProjectiveVarTokens(
 					prob.varTokens, prob.equation, prob.ta, prob.quantities, prob.candidateVars);
-			if(varTokens.size() == 0) {
-				print(prob);
-			} else {
+			if(varTokens.size() > 0) {
 				projective.add(prob);
 			}
 		}

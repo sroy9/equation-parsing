@@ -124,22 +124,6 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 						beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
 								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 					}
-					y = new JointY(pair.getFirst());
-					node = new Node("VAR", i, new ArrayList<Node>());
-					node.varId = "V1";
-					y.nodes.add(node);
-					node = new Node("VAR", j, new ArrayList<Node>());
-					node.varId = "V2";
-					y.nodes.add(node);
-					y.varTokens.put("V1", new ArrayList<Integer>());
-					y.varTokens.put("V2", new ArrayList<Integer>());
-					y.varTokens.get("V1").add(i);
-					y.varTokens.get("V2").add(j);
-					y.coref = true;
-					if(y.nodes.size() > 2) {
-						beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
-								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
-					}
 				}
 			}
 		}
@@ -268,7 +252,8 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		System.out.println(gold.probId+" : "+Arrays.asList(gold.varTokens));
 		JointY best = null;
 		double bestScore = -Double.MAX_VALUE;
-		for(Map<String, List<Integer>> varTokens : Tools.enumerateVarTokens(gold.varTokens)) {
+		for(Map<String, List<Integer>> varTokens : Tools.enumerateProjectiveVarTokens(
+				gold.varTokens, gold.equation, x.ta, x.quantities, x.candidateVars)) {
 			JointY yNew = new JointY(gold);
 			Tools.populateNodesWithVarTokensInPlace(yNew.equation.root.getLeaves(), 
 					varTokens, x.quantities);

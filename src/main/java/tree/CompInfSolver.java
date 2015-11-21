@@ -65,7 +65,7 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 		for(Pair<TreeY, Double> pair : beam1) {
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
-		System.out.println("Pred Score InfSolver : "+beam2.element().getSecond());
+//		System.out.println("Pred Score InfSolver : "+beam2.element().getSecond());
 		return beam2;
 	}
 	
@@ -170,7 +170,7 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 	public static boolean allowMerge(Node node1, Node node2) {
 		IntPair ip1 = node1.getNodeListSpan();
 		IntPair ip2 = node2.getNodeListSpan();
-		if(ip1.getSecond()+1==ip2.getFirst() || ip2.getSecond()+1==ip1.getFirst()) {
+		if((ip1.getSecond()+1)==ip2.getFirst() || (ip2.getSecond()+1)==ip1.getFirst()) {
 			return true;
 		}
 		return false;

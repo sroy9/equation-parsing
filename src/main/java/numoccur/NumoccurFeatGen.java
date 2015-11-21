@@ -56,10 +56,10 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 	public static List<String> getGlobalFeatures(NumoccurX x, NumoccurY y) {
 		List<String> features = new ArrayList<>();
 		if(x.quantities.size() == 1) {
-			features.add("OneQuantityPresent");
+			features.add(y+"_OneQuantityPresent");
 		}
 		for(String token : x.ta.getTokens()) {
-			features.add(y+"_Unigram_"+token);
+			features.add(y+"_"+token.toLowerCase());
 		}
 		return features;
 	}
@@ -76,16 +76,19 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 
 	public static List<String> getOneOrTwoFeatures(NumoccurX x, int quantIndex, int numOccur) {
 		List<String> features = new ArrayList<>();
-		Double val= Tools.getValue(x.quantities.get(quantIndex));
+		QuantSpan qs = x.quantities.get(quantIndex);
+//		System.out.println(qs+" "+x.ta.getText().length());
+		String quantPhrase = x.ta.getText().toLowerCase().substring(qs.start, qs.end);
+		Double val= Tools.getValue(qs);
 		if(Tools.safeEquals(val, 1.0)) {
 			features.add(numOccur+"_One");
+			if(quantPhrase.contains(" one") || quantPhrase.contains("one ")) {
+				features.add(numOccur+"_OneInWords");
+			}
 		}
 		if(Tools.safeEquals(val, 2.0)) {
 			features.add(numOccur+"_Two");
-			QuantSpan qs = x.quantities.get(quantIndex);
-			String quantPhrase = x.ta.getText().substring(qs.start, qs.end);
-			if(quantPhrase.contains("twice") || quantPhrase.contains("Twice") || 
-					quantPhrase.contains("times")) {
+			if(quantPhrase.contains("twice") || quantPhrase.contains("times")) {
 				features.add(numOccur+"_TwicePresent");
 			}
 		}

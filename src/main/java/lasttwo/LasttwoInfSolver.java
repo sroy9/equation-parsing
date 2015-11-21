@@ -90,21 +90,6 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 						beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
 								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 					}
-					y = new LasttwoY(pair.getFirst());
-					node = new Node("VAR", i, new ArrayList<Node>());
-					node.varId = "V1";
-					y.nodes.add(node);
-					node = new Node("VAR", j, new ArrayList<Node>());
-					node.varId = "V2";
-					y.nodes.add(node);
-					y.varTokens.put("V1", new ArrayList<Integer>());
-					y.varTokens.put("V2", new ArrayList<Integer>());
-					y.varTokens.get("V1").add(i);
-					y.varTokens.get("V2").add(j);
-					if(y.nodes.size()>2) {
-						beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
-								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
-					}
 				}
 			}
 		}
@@ -232,7 +217,8 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 			LasttwoX x, LasttwoY gold, WeightVector wv) {
 		LasttwoY best = null;
 		double bestScore = -Double.MAX_VALUE;
-		for(Map<String, List<Integer>> varTokens : Tools.enumerateVarTokens(gold.varTokens)) {
+		for(Map<String, List<Integer>> varTokens : Tools.enumerateProjectiveVarTokens(
+				gold.varTokens, gold.equation, x.ta, x.quantities, x.candidateVars)) {
 			LasttwoY yNew = new LasttwoY(gold);
 			Tools.populateNodesWithVarTokensInPlace(yNew.equation.root.getLeaves(), 
 					varTokens, x.quantities);

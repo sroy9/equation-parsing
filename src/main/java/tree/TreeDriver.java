@@ -46,7 +46,6 @@ public class TreeDriver {
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
 		trainModel(prefix+testFold+".save", train, testFold);
-		testModel(prefix+testFold+".save", train);
 		return testModel(prefix+testFold+".save", test);
 	}
 	
@@ -58,12 +57,16 @@ public class TreeDriver {
 		SLProblem problem = new SLProblem();
 		for (SimulProb simulProb : simulProbList) {
 			for(Map<String, List<Integer>> varTokens : 
-				Tools.enumerateVarTokens(simulProb.varTokens)) {
+				Tools.enumerateProjectiveVarTokens(simulProb.varTokens, simulProb.equation, 
+						simulProb.ta, simulProb.quantities, simulProb.candidateVars)) {
 				TreeY y = new TreeY(simulProb);
-				y.varTokens = simulProb.varTokens;
 				List<Node> nodes = Tools.populateNodesWithVarTokens(y.equation.root.getLeaves(), 
 						y.varTokens, simulProb.quantities);
+				Tools.populateNodesWithVarTokensInPlace(y.equation.root.getLeaves(), 
+						y.varTokens, simulProb.quantities);
 				Tools.populateAndSortByCharIndex(nodes, simulProb.ta, 
+						simulProb.quantities, simulProb.candidateVars);
+				Tools.populateAndSortByCharIndex(y.equation.root.getLeaves(), simulProb.ta, 
 						simulProb.quantities, simulProb.candidateVars);
 				TreeX x = new TreeX(simulProb, varTokens, nodes);
 				problem.addExample(x, y);
@@ -79,7 +82,6 @@ public class TreeDriver {
 		Set<Integer> total = new HashSet<>();
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			System.out.println("---------------------------------------------------");
 			TreeX prob = (TreeX) sp.instanceList.get(i);
 			TreeY gold = (TreeY) sp.goldStructureList.get(i);
 			TreeY pred = (TreeY) model.infSolver.getBestStructure(model.wv, prob);
@@ -94,6 +96,7 @@ public class TreeDriver {
 			if(TreeY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else {
+				System.out.println("---------------------------------------------------");
 				incorrect.add(prob.problemIndex);
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);

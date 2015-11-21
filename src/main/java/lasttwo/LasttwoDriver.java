@@ -69,7 +69,6 @@ public class LasttwoDriver {
 		Set<Integer> total = new HashSet<>();
 		double acc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
-			System.out.println("---------------------------------------------------");
 			LasttwoX prob = (LasttwoX) sp.instanceList.get(i);
 			LasttwoY gold = (LasttwoY) sp.goldStructureList.get(i);
 			LasttwoY pred = (LasttwoY) model.infSolver.getBestStructure(model.wv, prob);
@@ -84,6 +83,7 @@ public class LasttwoDriver {
 			if(LasttwoY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else {
+				System.out.println("---------------------------------------------------");
 				incorrect.add(prob.problemIndex);
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
