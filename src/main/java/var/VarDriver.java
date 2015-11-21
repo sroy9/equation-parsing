@@ -153,8 +153,8 @@ public class VarDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		VarDriver.crossVal();
-//		VarDriver.doTrainTest(0);
+//		VarDriver.crossVal();
+		VarDriver.doTrainTest(0);
 		Tools.pipeline.closeCache();
 		System.exit(0);;
 	}

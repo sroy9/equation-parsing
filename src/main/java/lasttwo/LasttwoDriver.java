@@ -1,11 +1,8 @@
 package lasttwo;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import reader.DocReader;
@@ -48,7 +45,6 @@ public class LasttwoDriver {
 		SLProblem train = getSP(trainProbs);
 		SLProblem test = getSP(testProbs);
 		trainModel(prefix+testFold+".save", train, testFold);
-//		testModel(prefix+testFold+".save", train);
 		return testModel(prefix+testFold+".save", test);
 	}
 	
@@ -77,7 +73,6 @@ public class LasttwoDriver {
 			LasttwoX prob = (LasttwoX) sp.instanceList.get(i);
 			LasttwoY gold = (LasttwoY) sp.goldStructureList.get(i);
 			LasttwoY pred = (LasttwoY) model.infSolver.getBestStructure(model.wv, prob);
-			System.out.println("VarScore : "+pred.varScore);
 			total.add(prob.problemIndex);
 			double goldWt = model.wv.dotProduct(
 					model.featureGenerator.getFeatureVector(prob, gold));
@@ -98,8 +93,6 @@ public class LasttwoDriver {
 				System.out.println("Pred : \n"+pred);
 				System.out.println("Pred weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, pred)));
-				System.out.println("VarScore : "+model.wv.dotProduct(
-						((LasttwoFeatGen)model.featureGenerator).getVarTokenFeatureVector(prob, pred)));
 				System.out.println("Loss : "+LasttwoY.getLoss(gold, pred));
 			}
 			System.out.println("---------------------------------------------------");
@@ -128,31 +121,6 @@ public class LasttwoDriver {
 		model.saveModel(modelPath);
 	}
 	
-	public static List<Map<String, List<Integer>>> enumerateVarTokens(
-			Map<String, List<Integer>> seed) {
-		List<Map<String, List<Integer>>> mapList = new ArrayList<>();
-		List<Integer> v1 = seed.get("V1");
-		List<Integer> v2 = seed.get("V2");
-		if(v1 != null && v1.size() > 0 && (v2 == null || v2.size() == 0)) {
-			for(Integer i : v1) {
-				Map<String, List<Integer>> map = new HashMap<String, List<Integer>>();
-				map.put("V1", Arrays.asList(i));
-				mapList.add(map);
-			}
-		}
-		if(v1 != null && v1.size() > 0 && v2 != null && v2.size() > 0) {
-			for(Integer i : v1) {
-				for(Integer j : v2) {
-					Map<String, List<Integer>> map = new HashMap<String, List<Integer>>();
-					map.put("V1", Arrays.asList(i));
-					map.put("V2", Arrays.asList(j));
-					mapList.add(map);
-				}
-			}
-		}
-		return mapList;
-	}
-	
 	public static WeightVector latentSVMLearner(
 			Learner learner, SLProblem sp, LasttwoInfSolver infSolver, 
 			int numIter, WeightVector initialWv) throws Exception {
@@ -178,7 +146,8 @@ public class LasttwoDriver {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		LasttwoDriver.crossVal();
+//		LasttwoDriver.crossVal();
+		LasttwoDriver.doTrainTest(0);
 		Tools.pipeline.closeCache();
 		System.exit(0);
 	}

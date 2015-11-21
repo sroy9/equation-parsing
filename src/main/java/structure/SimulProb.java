@@ -151,10 +151,8 @@ public class SimulProb {
 		}
 	}
 	
-	public static float getVarTokenLoss(
-			Map<String, List<Integer>> gold, boolean goldCoref,
-			Map<String, List<Integer>> pred, boolean predCoref,
-			boolean varNameSwap) {
+	public static float getVarTokenLoss(Map<String, List<Integer>> gold, 
+			Map<String, List<Integer>> pred, boolean varNameSwap) {
 		float loss = 0.0f;
 		if(gold.keySet().size() != pred.keySet().size()) return 4.0f;
 		if(gold.keySet().size() == 1) {
@@ -175,6 +173,6 @@ public class SimulProb {
 				loss += 1.0;
 			}
 		}
-		return loss + ((goldCoref == predCoref)?0.0f:1.0f);
+		return loss;
 	}
 }

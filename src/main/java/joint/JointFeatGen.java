@@ -2,7 +2,6 @@ package joint;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import numoccur.NumoccurFeatGen;
@@ -42,26 +41,16 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 					numX, i, numY.numOccurList.get(i)));
 		}
 		features.addAll(NumoccurFeatGen.getGlobalFeatures(numX, numY));
-		System.out.println("NumoccurScore : "+model.wv.dotProduct(
-				FeatGen.getFeatureVectorFromList(features, lm)));
 		VarX varX = new VarX(x);
 		VarY varY = new VarY(y);
 		features.addAll(VarFeatGen.getFeatures(varX, varY));
-		System.out.println("VarScore : "+model.wv.dotProduct(
-				FeatGen.getFeatureVectorFromList(features, lm)));
 		TreeX treeX = new TreeX(x, y.varTokens, y.nodes);
 		TreeY treeY = new TreeY(y);
 		for(Node node : treeY.equation.root.getAllSubNodes()) {
 			if(node.children.size()==2) {
 				features.addAll(CompFeatGen.getNodeFeatures(treeX, node));
-				System.out.println(node+" "+Arrays.asList(CompFeatGen.getNodeFeatures(treeX, node))
-						+" "+node.children.get(0).children.size()+" "+node.children.get(1).children.size()
-						+" "+node.children.get(0).projection+" "+node.children.get(1).projection
-						+" "+node.children.get(0).getNodeListSpan()+" "+node.children.get(1).getNodeListSpan());
 			}
 		}
-		System.out.println("TreeScore : "+model.wv.dotProduct(
-				FeatGen.getFeatureVectorFromList(features, lm)));
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	
@@ -109,7 +98,6 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 	}
 	
 	public IFeatureVector getNodeFeatureVector(TreeX x, Node node) {
-//		List<String> features = new ArrayList<String>();
 		List<String> features = CompFeatGen.getNodeFeatures(x, node);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}

@@ -35,14 +35,12 @@ public class PipelineInfSolver {
  		VarX varX = new VarX(prob);
  		VarY varY = (VarY) varModel.infSolver.getBestStructure(varModel.wv, varX);
 		y.varTokens = varY.varTokens;
-		y.coref = varY.coref;
  		for(String key : y.varTokens.keySet()) {
  			Node node = new Node("VAR", y.varTokens.get(key).get(0), new ArrayList<Node>());
  			node.varId = key;
  			y.nodes.add(node);
  		}
- 		Tools.populateAndSortByCharIndex(y.nodes, prob.ta, prob.quantities, 
- 				prob.candidateVars, y.coref);
+ 		Tools.populateAndSortByCharIndex(y.nodes, prob.ta, prob.quantities, prob.candidateVars);
 		// Equation generation
 		TreeX treeX = new TreeX(prob, y.varTokens, y.nodes);
 		TreeY treeY = (TreeY) treeModel.infSolver.getBestStructure(treeModel.wv, treeX);
@@ -67,7 +65,6 @@ public class PipelineInfSolver {
  		LasttwoX lasttwoX = new LasttwoX(prob, y.nodes);
  		LasttwoY lasttwoY = (LasttwoY) lasttwoModel.infSolver.getBestStructure(lasttwoModel.wv, lasttwoX);
  		y.varTokens = lasttwoY.varTokens;
- 		y.coref = lasttwoY.coref;
 		y.equation = lasttwoY.equation;
 		return y;
 	}

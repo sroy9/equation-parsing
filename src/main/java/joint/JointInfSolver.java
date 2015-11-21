@@ -85,8 +85,6 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 			NumoccurY numY = new NumoccurY(prob, pair.getFirst().nodes);
 			beam2.add(new Pair<JointY, Double>(pair.getFirst(), pair.getSecond() + 
 					wv.dotProduct(featGen.getGlobalFeatureVector(numX, numY))));
-			pair.getFirst().numOccurScore = pair.getSecond() + 
-					wv.dotProduct(featGen.getGlobalFeatureVector(numX, numY));
 		}
 		beam1.clear();
 		beam1.addAll(beam2);
@@ -102,8 +100,6 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 				y.varTokens.get("V1").add(i);
 				y.coref = false;
 				if(y.nodes.size() > 2) {
-					y.varScore = pair.getSecond()+
-							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 					beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
 							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 				}
@@ -125,8 +121,6 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V2").add(j);
 					y.coref = false;
 					if(y.nodes.size() > 2) {
-						y.varScore = pair.getSecond()+
-								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 						beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
 								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 					}
@@ -143,8 +137,6 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.get("V2").add(j);
 					y.coref = true;
 					if(y.nodes.size() > 2) {
-						y.varScore = pair.getSecond()+
-								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
 						beam2.add(new Pair<JointY, Double>(y, pair.getSecond()+
 								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 					}
@@ -157,11 +149,9 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		// Equation generation
 		for(Pair<JointY, Double> pair : beam1) {
 			Tools.populateAndSortByCharIndex(pair.getFirst().nodes, prob.ta, 
-					prob.quantities, prob.candidateVars, pair.getFirst().coref);
+					prob.quantities, prob.candidateVars);
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
-		System.out.println("Pred Score InfSolver : "+beam2.element().getFirst().numOccurScore+" "
-				+beam2.element().getFirst().varScore+" "+beam2.element().getSecond());
 		return beam2.element().getFirst();
 	}
 	
@@ -278,68 +268,17 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		System.out.println(gold.probId+" : "+Arrays.asList(gold.varTokens));
 		JointY best = null;
 		double bestScore = -Double.MAX_VALUE;
-		if(gold.varTokens.keySet().size() == 1) {
-			for(Integer tokenIndex : gold.varTokens.get("V1")) {
-				JointY yNew = new JointY(gold);
-				yNew.varTokens.get("V1").clear();
-				yNew.varTokens.get("V1").add(tokenIndex);
-				for(Node node : yNew.equation.root.getLeaves()) {
-					if(node.label.equals("VAR")) {
-						node.index = tokenIndex;
-					}
-					if(node.label.equals("NUM")) {
-						for(int i=0; i<x.quantities.size(); ++i) {
-							if(Tools.safeEquals(node.value, 
-									Tools.getValue(x.quantities.get(i)))) {
-								node.index = i;
-								break;
-							}
-						}
-					}
-				}
-				double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
-				if(score > bestScore) {
-					best = yNew;
-				}
+		for(Map<String, List<Integer>> varTokens : Tools.enumerateVarTokens(gold.varTokens)) {
+			JointY yNew = new JointY(gold);
+			Tools.populateNodesWithVarTokensInPlace(yNew.equation.root.getLeaves(), 
+					varTokens, x.quantities);
+			double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
+			if(score > bestScore) {
+				best = yNew;
 			}
 		}
-		if(gold.varTokens.keySet().size() == 2) {
-			for(Integer tokenIndex1 : gold.varTokens.get("V1")) {
-				for(Integer tokenIndex2 : gold.varTokens.get("V2")) {
-					JointY yNew = new JointY(gold);
-					yNew.varTokens.get("V1").clear();
-					yNew.varTokens.get("V1").add(tokenIndex1);
-					yNew.varTokens.get("V2").clear();
-					yNew.varTokens.get("V2").add(tokenIndex2);
-					for(Node node : yNew.equation.root.getLeaves()) {
-						if(node.label.equals("VAR") && node.varId.equals("V1")) {
-							node.index = tokenIndex1;
-						}
-						if(node.label.equals("VAR") && node.varId.equals("V2")) {
-							node.index = tokenIndex2;
-						}
-						if(node.label.equals("NUM")) {
-							for(int i=0; i<x.quantities.size(); ++i) {
-								if(Tools.safeEquals(node.value, 
-										Tools.getValue(x.quantities.get(i)))) {
-									node.index = i;
-									break;
-								}
-							}
-						}
-					}
-					double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
-					if(score > bestScore) {
-						best = yNew;
-					}
-				}
-			}
-		}
-		if(best == null) return gold;
 		best.nodes = best.equation.root.getLeaves();
-		best.coref = gold.coref;
-		System.out.println(gold.probId+" : "+Arrays.asList(gold.varTokens));
-		Tools.populateAndSortByCharIndex(best.nodes, x.ta, x.quantities, x.candidateVars, best.coref);
+		Tools.populateAndSortByCharIndex(best.nodes, x.ta, x.quantities, x.candidateVars);
 		return best;
 	}
 }

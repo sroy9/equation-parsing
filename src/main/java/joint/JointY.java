@@ -19,7 +19,6 @@ public class JointY implements IStructure, Serializable {
 	public Map<String, List<Integer>> varTokens;
 	public List<Node> nodes;
 	public boolean coref;
-	public double numOccurScore, varScore, treeScore;
 	public int probId;
 	
 	public JointY() {
@@ -40,9 +39,6 @@ public class JointY implements IStructure, Serializable {
 			nodes.add(new Node(node));
 		}
 		coref = other.coref;
-		numOccurScore = other.numOccurScore;
-		varScore = other.varScore;
-		treeScore = other.treeScore;
 		probId = other.probId;
 	}
 	
@@ -62,12 +58,10 @@ public class JointY implements IStructure, Serializable {
 		}
 		float loss1 = 
 				Equation.getLoss(gold.equation, pred.equation, true) + 
-				SimulProb.getVarTokenLoss(gold.varTokens, gold.coref, 
-						pred.varTokens, pred.coref, true);
+				SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, true);
 		float loss2 = 
 				Equation.getLoss(gold.equation, pred.equation, false) + 
-				SimulProb.getVarTokenLoss(gold.varTokens, gold.coref, 
-						pred.varTokens, pred.coref, false);
+				SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, false);
 		return Math.min(loss1, loss2);
 	}
 	

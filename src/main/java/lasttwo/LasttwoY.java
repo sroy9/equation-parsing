@@ -18,9 +18,7 @@ public class LasttwoY implements IStructure, Serializable {
 	private static final long serialVersionUID = 2399969922362221136L;
 	public Equation equation;
 	public Map<String, List<Integer>> varTokens;
-	public boolean coref;
 	public List<Node> nodes;
-	public double varScore;
 	
 	public LasttwoY() {
 		equation = new Equation();
@@ -35,18 +33,15 @@ public class LasttwoY implements IStructure, Serializable {
 			varTokens.put(key, new ArrayList<Integer>());
 			varTokens.get(key).addAll(other.varTokens.get(key));
 		}
-		coref = other.coref;
 		nodes = new ArrayList<Node>();
 		for(Node node : other.nodes) {
 			nodes.add(new Node(node));
 		}
-		varScore = other.varScore;
 	}
 	
 	public LasttwoY(SimulProb prob) {
 		equation = new Equation(prob.equation);
 		varTokens = prob.varTokens;
-		coref = prob.coref;
 		nodes = new ArrayList<Node>();
 	}
 	
@@ -57,7 +52,6 @@ public class LasttwoY implements IStructure, Serializable {
 			varTokens.put(key, new ArrayList<Integer>());
 			varTokens.get(key).addAll(prob.varTokens.get(key));
 		}
-		coref = prob.coref;
 		nodes = new ArrayList<Node>();
 		for(Node node : prob.nodes) {
 			nodes.add(new Node(node));
@@ -71,12 +65,10 @@ public class LasttwoY implements IStructure, Serializable {
 		}
 		float loss1 = 
 				Equation.getLoss(gold.equation, pred.equation, true) + 
-				SimulProb.getVarTokenLoss(gold.varTokens, gold.coref, 
-						pred.varTokens, pred.coref, true);
+				SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, true);
 		float loss2 = 
 				Equation.getLoss(gold.equation, pred.equation, false) + 
-				SimulProb.getVarTokenLoss(gold.varTokens, gold.coref, 
-						pred.varTokens, pred.coref, false);
+				SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, false);
 		return Math.min(loss1, loss2);
 	}
 	

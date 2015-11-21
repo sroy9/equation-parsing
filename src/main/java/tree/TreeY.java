@@ -16,7 +16,6 @@ public class TreeY implements IStructure, Serializable {
 	private static final long serialVersionUID = 2399969922362221136L;
 	public Equation equation;
 	public Map<String, List<Integer>> varTokens;
-	public boolean coref;
 	
 	public TreeY() {
 		equation = new Equation();
@@ -26,25 +25,21 @@ public class TreeY implements IStructure, Serializable {
 	public TreeY(TreeY other) {
 		equation = new Equation(other.equation);
 		varTokens = other.varTokens;
-		coref = other.coref;
 	}
 	
 	public TreeY(SimulProb prob) {
 		equation = new Equation(prob.equation);
 		varTokens = prob.varTokens;
-		coref = prob.coref;
 	}
 	
 	public TreeY(JointY prob) {
 		equation = new Equation(prob.equation);
 		varTokens = prob.varTokens;
-		coref = prob.coref;
 	}
 	
 	public TreeY(LasttwoY prob) {
 		equation = new Equation(prob.equation);
 		varTokens = prob.varTokens;
-		coref = prob.coref;
 	}
 	
 	public static float getLoss(TreeY gold, TreeY pred) {
@@ -54,12 +49,10 @@ public class TreeY implements IStructure, Serializable {
 		}
 		float loss1 = 
 				Equation.getLoss(gold.equation, pred.equation, true) + 
-				SimulProb.getVarTokenLoss(gold.varTokens, gold.coref, 
-						pred.varTokens, pred.coref, true);
+				SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, true);
 		float loss2 = 
 				Equation.getLoss(gold.equation, pred.equation, false) + 
-				SimulProb.getVarTokenLoss(gold.varTokens, gold.coref, 
-						pred.varTokens, pred.coref, false);
+				SimulProb.getVarTokenLoss(gold.varTokens, pred.varTokens, false);
 		return Math.min(loss1, loss2);
 	}
 	

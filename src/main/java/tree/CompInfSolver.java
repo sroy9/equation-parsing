@@ -61,7 +61,6 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 				maximumSize(200).create();
 		TreeY seed = new TreeY();
 		seed.varTokens = prob.varTokens;
-		seed.coref = prob.coref;
 		beam1.add(new Pair<TreeY, Double>(seed, 0.0));
 		for(Pair<TreeY, Double> pair : beam1) {
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
@@ -172,10 +171,6 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 		IntPair ip1 = node1.getNodeListSpan();
 		IntPair ip2 = node2.getNodeListSpan();
 		if(ip1.getSecond()+1==ip2.getFirst() || ip2.getSecond()+1==ip1.getFirst()) {
-			return true;
-		}
-		if(node1.children.size()==0 && node2.children.size()==0 && 
-				(!node1.projection || !node2.projection)) {
 			return true;
 		}
 		return false;

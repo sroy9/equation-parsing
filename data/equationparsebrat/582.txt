@@ -1,5 +1,0 @@
-In 12 years, the limestone will be three times as old as the marble statue.
-
-V1+12=3*(V2+12)
-
-[In ][12 (years )], [the (limestone )][will be ][three (times )as old ][as ][the (marble )(statue )]. 

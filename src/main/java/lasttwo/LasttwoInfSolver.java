@@ -66,11 +66,7 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 				y.nodes.add(node);
 				y.varTokens.put("V1", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
-				y.coref = false;
-				if(y.nodes.size() > 2 /*&& VarInfSolver.allowVar(
-						prob.ta, prob.candidateVars, prob.quantities, y.varTokens)*/) {
-					y.varScore = pair.getSecond()+
-							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
+				if(y.nodes.size() > 2) {
 					beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
 							wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 				}
@@ -90,11 +86,7 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.put("V2", new ArrayList<Integer>());
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
-					y.coref = false;
-					if(y.nodes.size()>2 /*&& VarInfSolver.allowVar(
-							prob.ta, prob.candidateVars, prob.quantities, y.varTokens)*/) {
-						y.varScore = pair.getSecond()+
-								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
+					if(y.nodes.size()>2) {
 						beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
 								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 					}
@@ -109,11 +101,7 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 					y.varTokens.put("V2", new ArrayList<Integer>());
 					y.varTokens.get("V1").add(i);
 					y.varTokens.get("V2").add(j);
-					y.coref = true;
-					if(y.nodes.size()>2 /*&& VarInfSolver.allowVar(
-							prob.ta, prob.candidateVars, prob.quantities, y.varTokens)*/) {
-						y.varScore = pair.getSecond()+
-								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y));
+					if(y.nodes.size()>2) {
 						beam2.add(new Pair<LasttwoY, Double>(y, pair.getSecond()+
 								wv.dotProduct(featGen.getVarTokenFeatureVector(prob, y))));
 					}
@@ -126,7 +114,7 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 		// Equation generation
 		for(Pair<LasttwoY, Double> pair : beam1) {
 			Tools.populateAndSortByCharIndex(pair.getFirst().nodes, prob.ta, 
-					prob.quantities, prob.candidateVars, pair.getFirst().coref);
+					prob.quantities, prob.candidateVars);
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
 		System.out.println("PredSolver : "+beam2.element().getSecond());
@@ -157,7 +145,7 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 		}
 		for(Pair<List<Node>, Double> state : beam1) {
 			if(state.getFirst().size() != 2) {
-//				System.err.println("Penultimate list should have 2 nodes, found "+state.getFirst().size());
+				System.err.println("Penultimate list should have 2 nodes, found "+state.getFirst().size());
 				continue;
 			}
 			Node node = new Node("EQ", -1, Arrays.asList(
@@ -170,7 +158,7 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 		for(Pair<List<Node>, Double> b : beam2) {
 			LasttwoY t = new LasttwoY(y);
 			if(b.getFirst().size() != 1){
-//				System.err.println("Final list should have only 1 node, found "+b.getFirst().size());
+				System.err.println("Final list should have only 1 node, found "+b.getFirst().size());
 			}
 			t.equation.root = b.getFirst().get(0);
 			results.add(new Pair<LasttwoY, Double>(t, b.getSecond()));
@@ -244,67 +232,17 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 			LasttwoX x, LasttwoY gold, WeightVector wv) {
 		LasttwoY best = null;
 		double bestScore = -Double.MAX_VALUE;
-		if(gold.varTokens.keySet().size() == 1) {
-			for(Integer tokenIndex : gold.varTokens.get("V1")) {
-				LasttwoY yNew = new LasttwoY(gold);
-				yNew.varTokens.get("V1").clear();
-				yNew.varTokens.get("V1").add(tokenIndex);
-				for(Node node : yNew.equation.root.getLeaves()) {
-					if(node.label.equals("VAR")) {
-						node.index = tokenIndex;
-					}
-					if(node.label.equals("NUM")) {
-						for(int i=0; i<x.quantities.size(); ++i) {
-							if(Tools.safeEquals(node.value, 
-									Tools.getValue(x.quantities.get(i)))) {
-								node.index = i;
-								break;
-							}
-						}
-					}
-				}
-				double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
-				if(score > bestScore) {
-					best = yNew;
-				}
+		for(Map<String, List<Integer>> varTokens : Tools.enumerateVarTokens(gold.varTokens)) {
+			LasttwoY yNew = new LasttwoY(gold);
+			Tools.populateNodesWithVarTokensInPlace(yNew.equation.root.getLeaves(), 
+					varTokens, x.quantities);
+			double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
+			if(score > bestScore) {
+				best = yNew;
 			}
 		}
-		if(gold.varTokens.keySet().size() == 2) {
-			for(Integer tokenIndex1 : gold.varTokens.get("V1")) {
-				for(Integer tokenIndex2 : gold.varTokens.get("V2")) {
-					LasttwoY yNew = new LasttwoY(gold);
-					yNew.varTokens.get("V1").clear();
-					yNew.varTokens.get("V1").add(tokenIndex1);
-					yNew.varTokens.get("V2").clear();
-					yNew.varTokens.get("V2").add(tokenIndex2);
-					for(Node node : yNew.equation.root.getLeaves()) {
-						if(node.label.equals("VAR") && node.varId.equals("V1")) {
-							node.index = tokenIndex1;
-						}
-						if(node.label.equals("VAR") && node.varId.equals("V2")) {
-							node.index = tokenIndex2;
-						}
-						if(node.label.equals("NUM")) {
-							for(int i=0; i<x.quantities.size(); ++i) {
-								if(Tools.safeEquals(node.value, 
-										Tools.getValue(x.quantities.get(i)))) {
-									node.index = i;
-									break;
-								}
-							}
-						}
-					}
-					double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
-					if(score > bestScore) {
-						best = yNew;
-					}
-				}
-			}
-		}
-		if(best == null) return gold;
 		best.nodes = best.equation.root.getLeaves();
-		best.coref = gold.coref;
-		Tools.populateAndSortByCharIndex(best.nodes, x.ta, x.quantities, x.candidateVars, best.coref);
+		Tools.populateAndSortByCharIndex(best.nodes, x.ta, x.quantities, x.candidateVars);
 		return best;
 	}
 	

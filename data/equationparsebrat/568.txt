@@ -1,5 +1,0 @@
-In 6 years, Diane will be twice as old as Amy.
-
-V1+6=2*(V2+6)
-
-[In ][6 (years )], [(Diane )][will be ][twice as old ][as ][(Amy )]. 

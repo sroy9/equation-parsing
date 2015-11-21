@@ -5,22 +5,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
+import structure.Equation;
 import structure.Node;
 import edu.illinois.cs.cogcomp.annotation.AnnotatorService;
 import edu.illinois.cs.cogcomp.annotation.handler.IllinoisChunkerHandler;
 import edu.illinois.cs.cogcomp.annotation.handler.IllinoisPOSHandler;
 import edu.illinois.cs.cogcomp.annotation.handler.StanfordParseHandler;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Annotator;
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.core.utilities.ResourceManager;
 import edu.illinois.cs.cogcomp.nlp.tokenizer.IllinoisTokenizer;
@@ -92,7 +89,6 @@ public class Tools {
 		return false;
 	}
 	
-
 	public static boolean doesContainNotEqual(IntPair big, IntPair small) {
 		if(big.getFirst() == small.getFirst() && big.getSecond() == small.getSecond()) {
 			return false;
@@ -141,64 +137,6 @@ public class Tools {
 		}
 		return null;
 	}
-
-	public static int getTokenIndex(QuantSpan qs, TextAnnotation ta) {
-		return ta.getTokenIdFromCharacterOffset(qs.start);
-	}
-	
-	public static List<Double> uniqueNumbers(List<QuantSpan> quantSpans) {
-		List<Double> uniqueNos = new ArrayList<>();
-		for(int i=0; i<quantSpans.size(); i++) {
-			QuantSpan qs = quantSpans.get(i);
-			boolean allow = true;
-			for(int j=0; j<i; j++) {
-				if(Tools.safeEquals(Tools.getValue(qs), Tools.getValue(quantSpans.get(j)))) {
-					allow = false;
-					break;
-				}
-			}
-			if(allow) uniqueNos.add(Tools.getValue(qs));
-		}
-		return uniqueNos;
-	}
-	
-	public static List<QuantSpan> getRelevantQuantSpans(
-			Double d, List<QuantSpan> quantSpans) {
-		List<QuantSpan> relevantSpans = new ArrayList<QuantSpan>();
-		for(QuantSpan qs : quantSpans) {
-			if(Tools.safeEquals(d, Tools.getValue(qs))) {
-				relevantSpans.add(qs);
-			}
-		}
-		return relevantSpans;
-	}
-	
-//	public List<Constituent> getAllConsInPath(
-//			List<Constituent> dependencyCons, int leaf1, int leaf2) {
-//		List<Constituent> cons1 = new ArrayList<Constituent>();
-//		List<Constituent> cons2 = new ArrayList<Constituent>();
-//		Constituent cons = dependencyCons.get(leaf1);
-//		while(cons.getIncomingRelations().size()>0 && )
-//		
-//	}
-	
-	public static String skeletonString(List<Pair<String, IntPair>> skeleton) {
-		String str = "";
-		for(Pair<String, IntPair> pair : skeleton) {
-			str += pair.getFirst()+" ";
-		}
-		return str.trim();
-	}
-	
-	public static int getNONEcount(List<String> relations) {
-		int count = 0;
-		for(String relation : relations) {
-			if(relation.equals("NONE")) {
-				count++;
-			}
-		}
-		return count;
-	}
 	
 	public static boolean contains(List<Double> arr, Double key) {
 		for(Double d : arr) {
@@ -206,31 +144,6 @@ public class Tools {
 				return true;
 			}
 		}
-		return false;
-	}
-	
-	public static boolean equals(List<Double> arr1, List<Double> arr2) {
-		if(arr1 == null || arr2 == null) return false;
-		if(arr1.size() != arr2.size()) return false;
-		for(Double d1 : arr1) {
-			boolean found = false;
-			for(Double d2 : arr2) {
-				if(Tools.safeEquals(d1, d2)) {
-					found = true;
-				}
-			}
-			if(!found) return false;
-		}
-		return true;
-	}
-	
-	public static boolean areAllTokensInSameSentence(
-			TextAnnotation ta, List<Integer> tokenIds) {
-		Set<Integer> sentenceIds = new HashSet<>();
-		for(Integer tokenId : tokenIds) {
-			sentenceIds.add(ta.getSentenceFromToken(tokenId).getSentenceId());
-		}
-		if(sentenceIds.size() == 1) return true;
 		return false;
 	}
 	
@@ -254,27 +167,6 @@ public class Tools {
 		return min;
 	}
 	
-	public static boolean isSkeletonIndex(
-			List<Pair<String, IntPair>> skeleton, int index) {
-		for(Pair<String, IntPair> pair : skeleton) {
-			if(pair.getSecond().getFirst() == index || 
-					pair.getSecond().getSecond() == index) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public static boolean isConstituentIndex(
-			List<Constituent> cons, int index) {
-		for(Constituent con : cons) {
-			if(con.getStartSpan() == index || 
-					con.getEndSpan() == index) {
-				return true;
-			}
-		}
-		return false;
-	}
 	
 	public static double getJaccardScore(IntPair ip1, IntPair ip2) {
 		Double penalty = 0.0;
@@ -284,7 +176,7 @@ public class Tools {
 	}
 	
 	public static void populateAndSortByCharIndex(List<Node> nodes, TextAnnotation ta, 
-			List<QuantSpan> quantities, List<IntPair> candidateVars, boolean coref) {
+			List<QuantSpan> quantities, List<IntPair> candidateVars) {
 		for(Node node : nodes) {
 			if(node.label.equals("NUM")) node.charIndex = 
 					(quantities.get(node.index).start+quantities.get(node.index).end)/2;
@@ -292,23 +184,6 @@ public class Tools {
 				int start = ta.getTokenCharacterOffset(candidateVars.get(node.index).getFirst()).getFirst();
 				int end = ta.getTokenCharacterOffset(candidateVars.get(node.index).getSecond()-1).getSecond()-1;
 				node.charIndex = (start+end)/2;
-			}
-			node.projection = true;
-		}
-		for(int i=0; i<nodes.size(); ++i) {
-			for(int j=0; j<nodes.size(); ++j) {
-				if(i!=j) {
-					Node node1 = nodes.get(i);
-					Node node2 = nodes.get(j);
-					if(node1.label.equals(node2.label) && node1.index == node2.index) {
-						if(node1.label.equals("VAR") && coref) {
-							node1.projection = false;
-						}
-						if(node1.label.equals("NUM")) {
-							node1.projection = false;
-						}
-					}
-				}
 			}
 		}
 		Collections.sort(nodes, new Comparator<Node>() {
@@ -322,39 +197,101 @@ public class Tools {
 			node.nodeListIndex = index;
 			++index;
 		}
-//		System.out.println("Nodelist : ");
-//		for(Node node : nodes) {
-//			System.out.print(node+" ");
-//		}
-//		System.out.println();
 	}
 	
-	public static List<String> getPreMidPhraseAndLeftTokenFromNodePair(Node node1, Node node2, 
-			TextAnnotation ta, List<QuantSpan> quantities, List<Node> leaves) {
-		IntPair ip1 = node1.getNodeListSpan();
-		IntPair ip2 = node2.getNodeListSpan();
-		String prePhrase = "";
-		if(Math.min(ip1.getFirst(), ip2.getFirst())==0)  {
-			prePhrase = ta.getText().toLowerCase().substring(
-					0, leaves.get(Math.min(ip1.getFirst(), ip2.getFirst())).charIndex);
-		} else {
-			prePhrase = ta.getText().toLowerCase().substring(
-					leaves.get(Math.min(ip1.getFirst(), ip2.getFirst())-1).charIndex, 
-					leaves.get(Math.min(ip1.getFirst(), ip2.getFirst())).charIndex);
+	public static List<Map<String, List<Integer>>> enumerateVarTokens(
+			Map<String, List<Integer>> seed) {
+		List<Map<String, List<Integer>>> mapList = new ArrayList<>();
+		List<Integer> v1 = seed.get("V1");
+		List<Integer> v2 = seed.get("V2");
+		if(v1 != null && v1.size() > 0 && (v2 == null || v2.size() == 0)) {
+			for(Integer i : v1) {
+				Map<String, List<Integer>> map = new HashMap<String, List<Integer>>();
+				map.put("V1", Arrays.asList(i));
+				mapList.add(map);
+			}
 		}
-		String midPhrase = ta.getText().toLowerCase().substring(
-				leaves.get(Math.min(ip1.getSecond(), ip2.getSecond())).charIndex, 
-				leaves.get(Math.max(ip1.getFirst(), ip2.getFirst())).charIndex);
-		String leftToken = "";
-		if(ip1.getFirst() <= ip2.getFirst() && node1.label.equals("NUM")) {
-			QuantSpan qs = quantities.get(node1.index);
-			leftToken = ta.getText().toLowerCase().substring(qs.start, qs.end);
+		if(v1 != null && v1.size() > 0 && v2 != null && v2.size() > 0) {
+			for(Integer i : v1) {
+				for(Integer j : v2) {
+					Map<String, List<Integer>> map = new HashMap<String, List<Integer>>();
+					map.put("V1", Arrays.asList(i));
+					map.put("V2", Arrays.asList(j));
+					mapList.add(map);
+				}
+			}
 		}
-		if(ip2.getFirst() <= ip1.getFirst() && node2.label.equals("NUM")) {
-			QuantSpan qs = quantities.get(node2.index);
-			leftToken = ta.getText().toLowerCase().substring(qs.start, qs.end);
+		return mapList;
+	}
+	
+	public static List<Node> populateNodesWithVarTokens(List<Node> leaves,
+			Map<String, List<Integer>> varTokens, List<QuantSpan> quantities) {
+		List<Node> nodes = new ArrayList<>();
+		for(int i=0; i<quantities.size(); ++i) {
+			for(Node leaf : leaves) {
+				if(leaf.label.equals("NUM") && Tools.safeEquals(Tools.getValue(
+						quantities.get(i)), leaf.value)) {
+					Node node = new Node(leaf);
+					node.index = i;
+					nodes.add(node);
+				}
+			}
 		}
-		return Arrays.asList(prePhrase, midPhrase, leftToken);
+		for(Node leaf : leaves) {
+			if(leaf.label.equals("VAR") && varTokens.containsKey(leaf.varId) &&
+					varTokens.get(leaf.varId).size()>0) {
+				Node node = new Node(leaf);
+				node.index = varTokens.get(leaf.varId).get(0);
+				nodes.add(node);
+			}
+		}
+		return nodes;
+	}
+	
+	public static void populateNodesWithVarTokensInPlace(List<Node> leaves,
+			Map<String, List<Integer>> varTokens, List<QuantSpan> quantities) {
+		for(int i=0; i<quantities.size(); ++i) {
+			for(Node leaf : leaves) {
+				if(leaf.label.equals("NUM") && Tools.safeEquals(Tools.getValue(
+						quantities.get(i)), leaf.value)) {
+					leaf.index = i;
+				}
+			}
+		}
+		for(Node leaf : leaves) {
+			if(leaf.label.equals("VAR") && varTokens.containsKey(leaf.varId) &&
+					varTokens.get(leaf.varId).size()>0) {
+				leaf.index = varTokens.get(leaf.varId).get(0);
+				
+			}
+		}
+	}
+	
+	public static List<Map<String, List<Integer>>> enumerateProjectiveVarTokens(
+			Map<String, List<Integer>> seed, Equation seedEq, TextAnnotation ta,
+			List<QuantSpan> quantities, List<IntPair> candidateVars) {
+		List<Map<String, List<Integer>>> projective = new ArrayList<>();
+		for(Map<String, List<Integer>> varTokens : Tools.enumerateVarTokens(seed)) {
+			boolean proj = true;
+			Equation eq = new Equation(seedEq);
+			Tools.populateNodesWithVarTokensInPlace(eq.root.getLeaves(), varTokens, quantities);
+			Tools.populateAndSortByCharIndex(eq.root.getLeaves(), ta, quantities, candidateVars);
+			for(Node node : eq.root.getAllSubNodes()) {
+				if(node.children.size() == 2) {
+					IntPair ip1 = node.children.get(0).getNodeListSpan();
+					IntPair ip2 = node.children.get(1).getNodeListSpan();
+					if(!(ip2.getSecond()==(ip1.getFirst()-1)  || 
+							ip1.getSecond()==(ip2.getFirst()-1))) {
+						proj = false;
+						break;
+					}
+				}
+			}
+			if(proj) {
+				projective.add(varTokens);
+			} 
+		}
+		return projective;
 	}
 	
 }

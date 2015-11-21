@@ -2,12 +2,16 @@ package var;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.PairComparator;
 import utils.Tools;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -48,8 +52,6 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 			VarY y = new VarY();
 			y.varTokens.put("V1", new ArrayList<Integer>());
 			y.varTokens.get("V1").add(i);
-			y.coref = false;
-			//if(allowVar(prob, y)) 
 			beam.add(new Pair<VarY, Double>(y, 
 					1.0*wv.dotProduct(featGen.getFeatureVector(prob, y))));
 			for(int j=i; j<prob.candidateVars.size(); ++j) {
@@ -62,17 +64,6 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 				y.varTokens.put("V2", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
 				y.varTokens.get("V2").add(j);
-				y.coref = false;
-				//if(allowVar(prob, y)) 
-				beam.add(new Pair<VarY, Double>(y, 
-						1.0*wv.dotProduct(featGen.getFeatureVector(prob, y))));
-				y = new VarY();
-				y.varTokens.put("V1", new ArrayList<Integer>());
-				y.varTokens.put("V2", new ArrayList<Integer>());
-				y.varTokens.get("V1").add(i);
-				y.varTokens.get("V2").add(j);
-				y.coref = true;
-				//if(allowVar(prob, y)) 
 				beam.add(new Pair<VarY, Double>(y, 
 						1.0*wv.dotProduct(featGen.getFeatureVector(prob, y))));
 			}
@@ -83,138 +74,26 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 	public VarY getLatentBestStructure(VarX x, VarY gold, WeightVector wv) {
 		VarY best = null;
 		double bestScore = -Double.MAX_VALUE;
-		if(gold.varTokens.keySet().size() == 1) {
-			for(Integer tokenIndex : gold.varTokens.get("V1")) {
-				VarY yNew = new VarY(gold);
-				yNew.varTokens.get("V1").clear();
-				yNew.varTokens.get("V1").add(tokenIndex);
-				double score = wv.dotProduct(
-						featGen.getFeatureVector(x, yNew));
-				if(score > bestScore) {
-					best = yNew;
-				}
+		for(Map<String, List<Integer>> varTokens : Tools.enumerateVarTokens(gold.varTokens)) {
+			VarY yNew = new VarY();
+			yNew.varTokens = varTokens;
+			double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
+			if(score > bestScore) {
+				best = yNew;
 			}
 		}
-		if(gold.varTokens.keySet().size() == 2) {
-			for(Integer tokenIndex1 : gold.varTokens.get("V1")) {
-				for(Integer tokenIndex2 : gold.varTokens.get("V2")) {
-					VarY yNew = new VarY(gold);
-					yNew.varTokens.get("V1").clear();
-					yNew.varTokens.get("V1").add(tokenIndex1);
-					yNew.varTokens.get("V2").clear();
-					yNew.varTokens.get("V2").add(tokenIndex2);
-					double score = wv.dotProduct(featGen.getFeatureVector(x, yNew));
-					if(score > bestScore) {
-						best = yNew;
-					}
-				}
-			}
-		}
-		if(best == null) return gold;
-		best.coref = gold.coref;
 		return best;
 	}
 	
-//	public static boolean allowVar(VarX x, VarY y) {
-//		return allowVar(x.ta, x.candidateVars, x.quantities, y.varTokens);
-//	}
-//	
-//	public static boolean allowVar(TextAnnotation ta, List<IntPair> candidateVars, 
-//			List<QuantSpan> quantities, Map<String, List<Integer>> varTokens) {
-//		List<Integer> charIndices = new ArrayList<>();
-//		List<Integer> varIndices = new ArrayList<>();
-//		for(String key : varTokens.keySet()) {
-//			IntPair span = candidateVars.get(varTokens.get(key).get(0));
-//			varIndices.add((ta.getTokenCharacterOffset(span.getFirst()).getFirst()+
-//					ta.getTokenCharacterOffset(span.getSecond()-1).getSecond())/2);
-//		}
-//		charIndices.addAll(varIndices);
-//		for(QuantSpan qs : quantities) {
-//			charIndices.add((qs.start+qs.end)/2);
-//		}
-//		Collections.sort(charIndices);
-//		String str = ta.getText().toLowerCase();
-////		System.out.println(str);
-////		System.out.println(Arrays.asList(charIndices));
-////		for(Integer i : charIndices) {
-////			System.out.print(str.substring(i, Math.min(i+5, str.length()))+" ");
-////		}
-////		System.out.println();
-//		// 2 to the right
-//		int index = str.indexOf("ratio of");
-//		if(index>-1 && index>charIndices.get(charIndices.size()-2)) {
-//			return false;
-//		}
-//		index = str.indexOf("sum of");
-//		if(index>-1 && index>charIndices.get(charIndices.size()-2)) {
-//			return false;
-//		}
-//		index = str.indexOf("difference");
-//		if(index>-1 && index>charIndices.get(charIndices.size()-2)) {
-//			return false; 
-//		}
-//		index = str.indexOf("product of");
-//		if(index>-1 && index>charIndices.get(charIndices.size()-2)) {
-//			return false;
-//		}
-//		// 1 on each side
-//		index = str.indexOf(" plus ");
-//		if(index>-1 && (index>charIndices.get(charIndices.size()-1)
-//				|| index<charIndices.get(0))) {
-//			return false;
-//		}
-//		index = str.indexOf(" minus ");
-//		if(index>-1 && (index>charIndices.get(charIndices.size()-1)
-//				|| index<charIndices.get(0))) {
-//			return false;
-//		}
-//		index = str.indexOf(" exceed ");
-//		if(index>-1 && (index>charIndices.get(charIndices.size()-1)
-//				|| index<charIndices.get(0))) {
-//			return false;
-//		}
-//		index = str.indexOf(" added to");
-//		if(index>-1 && (index>charIndices.get(charIndices.size()-1)
-//				|| index<charIndices.get(0))) {
-//			return false;
-//		}
-//		index = str.indexOf(" subtracted from ");
-//		if(index>-1 && (index>charIndices.get(charIndices.size()-1)
-//				|| index<charIndices.get(0))) {
-//			return false;
-//		}
-//		index = str.indexOf(" than ");
-//		if(index>-1 && (index>charIndices.get(charIndices.size()-1)
-//				|| index<charIndices.get(0))) {
-//			return false;
-//		}
-//		index = str.indexOf(" times ");
-//		if(index>-1 && (index>charIndices.get(charIndices.size()-1)
-//				|| index<charIndices.get(0))) {
-//			return false;
-//		}
-//		// 1 to the right
-//		index = str.indexOf(" thrice ");
-//		if(index>-1 && index>charIndices.get(charIndices.size()-1)) {
-//			return false;
-//		}
-//		index = str.indexOf(" twice ");
-//		if(index>-1 && index>charIndices.get(charIndices.size()-1)) {
-//			return false;
-//		}
-//		index = str.indexOf(" double ");
-//		if(index>-1 && index>charIndices.get(charIndices.size()-1)) {
-//			return false;
-//		}
-//		index = str.indexOf(" half ");
-//		if(index>-1 && index>charIndices.get(charIndices.size()-1)) {
-//			return false;
-//		}
-//		index = str.indexOf(" triple ");
-//		if(index>-1 && index>charIndices.get(charIndices.size()-1)) {
-//			return false;
-//		}
-//		return true;
-//	}
+	public static boolean corefRule(TextAnnotation ta, IntPair ip1, IntPair ip2) {
+		String str1 = VarFeatGen.getString(ta, ip1);
+		String str2 = VarFeatGen.getString(ta, ip2);
+		if(str1.contains("a number") && str2.contains("the number")) {
+			return true;
+		}
+		if(str2.contains("same number")) return true;
+		if(str1.equals(str2) && !str1.contains("two") && !str1.contains("2 ")) return true;
+		return false;
+	}
 	
 }

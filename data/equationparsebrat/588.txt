@@ -1,5 +1,0 @@
-In four years, Wendy will be three times as old as Clyde.
-
-V1+4=3*(V2+4)
-
-[In ][four (years )], [(Wendy )][will be ][three (times )as old ][as ][(Clyde )]. 
