@@ -50,10 +50,10 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<LasttwoY>() {};
 		MinMaxPriorityQueue<Pair<LasttwoY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(20).create();
+				maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<LasttwoY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(20).create();
+				maximumSize(200).create();
 		LasttwoY seed = new LasttwoY();
 		seed.nodes.addAll(prob.nodes);
 		beam1.add(new Pair<LasttwoY, Double>(seed, 0.0));
@@ -102,7 +102,6 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 					prob.quantities, prob.candidateVars);
 			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
 		}
-		System.out.println("PredSolver : "+beam2.element().getSecond());
 		return beam2.element().getFirst();
 	}
 	
@@ -112,10 +111,10 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 		PairComparator<List<Node>> nodePairComparator = new PairComparator<List<Node>>() {};
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(5).create();
+				.maximumSize(50).create();
 		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(5).create();
+				.maximumSize(50).create();
 		int n = y.nodes.size();
 		List<Node> init = new ArrayList<>();
 		init.addAll(y.nodes);

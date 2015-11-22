@@ -55,61 +55,41 @@ public class VarFeatGen extends AbstractFeatureGenerator implements
 				features.add(prefix+"_VarPOSUnigram_"+x.posTags.get(i).getLabel());
 			}
 			for(int i=candidate.getFirst(); i<candidate.getSecond()-1; ++i) {
-				features.add(prefix+"_VarBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-						x.ta.getToken(i+1).toLowerCase());
 				features.add(prefix+"_VarLexPOSBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
 						x.posTags.get(i+1).getLabel());
 				features.add(prefix+"_VarPOSLexBigram_"+x.posTags.get(i).getLabel()+"_"+
 						x.ta.getToken(i+1).toLowerCase());
 			}
-			if(candidate.getFirst() == 0) {
-				features.add(prefix+"_StartOfSentence");
+			int left = candidate.getFirst();
+			int right = candidate.getSecond();
+			for(int i=Math.max(0, left-2); i<left; ++i) {
+				features.add(prefix+"_LeftUnigram_"+x.ta.getToken(i).toLowerCase());
+				features.add(prefix+"_LeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+						x.posTags.get(i+1).getLabel());
+				features.add(prefix+"_LeftBigram_"+x.posTags.get(i).getLabel()+"_"+
+						x.ta.getToken(i+1).toLowerCase());
 			}
-//			int left = candidate.getFirst();
-//			int right = candidate.getSecond();
-//			for(int i=Math.max(0, left-2); i<left; ++i) {
-//				features.add(prefix+"_LeftUnigram_"+x.ta.getToken(i).toLowerCase());
-//				features.add(prefix+"_LeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//						x.posTags.get(i+1).getLabel());
-//				features.add(prefix+"_LeftBigram_"+x.posTags.get(i).getLabel()+"_"+
-//						x.ta.getToken(i+1).toLowerCase());
-//			}
-//			for(int i=right; i<Math.min(x.ta.size()-1, right+2); ++i) {
-//				features.add(prefix+"_RightUnigram_"+x.ta.getToken(i).toLowerCase());
-//				features.add(prefix+"_RightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-//						x.posTags.get(i+1).getLabel());
-//				features.add(prefix+"_RightBigram_"+x.posTags.get(i).getLabel()+"_"+
-//						x.ta.getToken(i+1).toLowerCase());
-//			}
+			for(int i=right; i<Math.min(x.ta.size()-1, right+2); ++i) {
+				features.add(prefix+"_RightUnigram_"+x.ta.getToken(i).toLowerCase());
+				features.add(prefix+"_RightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+						x.posTags.get(i+1).getLabel());
+				features.add(prefix+"_RightBigram_"+x.posTags.get(i).getLabel()+"_"+
+						x.ta.getToken(i+1).toLowerCase());
+			}
 		}
-		// Global features
-//		for(int i=0; i<x.ta.size()-1; ++i) {
-//			features.add(prefix+"_"+x.ta.getToken(i).toLowerCase()+"_"+x.posTags.get(i+1).getLabel());
-//			features.add(prefix+"_"+x.posTags.get(i).getLabel()+"_"+x.ta.getToken(i+1).toLowerCase());
-//		}
-//		if(candidates.size() == 2) {
-//			String secondPhrase = getString(x.ta, candidates.get(1));
-//			if(secondPhrase.contains("the number") || secondPhrase.contains("same")) {
-//				features.add(prefix+"_COREF");
-//			}
-//		}
 		if(candidates.size() == 2) {
 			int left = Math.min(candidates.get(0).getSecond(), candidates.get(1).getSecond());
 			int right = Math.max(candidates.get(0).getFirst(), candidates.get(1).getFirst());
 			for(int i=left; i<right; ++i) {
 				features.add(prefix+"_MidUnigram_"+x.ta.getToken(i).toLowerCase());
-				features.add(prefix+"_MidPOS_"+x.posTags.get(i).getLabel());
 			}
 			for(int i=left; i<right; ++i) {
-				features.add(prefix+"_MidBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-						x.ta.getToken(i+1).toLowerCase());
 				features.add(prefix+"_MidLexPOSBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
 						x.posTags.get(i+1).getLabel());
 				features.add(prefix+"_MidPOSLexBigram_"+x.posTags.get(i).getLabel()+"_"+
 						x.ta.getToken(i+1).toLowerCase());
 			}
 		}
-		
 		return features;
 	}
 	

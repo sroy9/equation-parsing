@@ -70,7 +70,7 @@ public class Node implements Serializable {
 	@Override
 	public String toString() {
 		if(children.size() == 0) return label + "_" + 
-				(label.equals("NUM") ? value : varId) + "_" +nodeListIndex+ "_" +charIndex;
+				(label.equals("NUM") ? value : varId);// + "_" +nodeListIndex+ "_" +charIndex;
 		return "("+children.get(0).toString() + " " + label + " " + 
 				children.get(1).toString()+")";
 	}

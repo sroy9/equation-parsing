@@ -7,9 +7,12 @@ import joint.JointDriver;
 import joint.JointX;
 import joint.JointY;
 import reader.DocReader;
+import structure.Equation;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
+import var.VarFeatGen;
+import var.VarInfSolver;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 
@@ -60,17 +63,33 @@ public class PipelineDriver {
 //					Equation.getLoss(gold.equation, pred.equation, false) < 0.0001) {
 			if(JointY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
-				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
-				System.out.println("Quantities : "+prob.quantities);
-				System.out.println("Gold : \n"+gold);
-				System.out.println("Pred : \n"+pred);
-				System.out.println("Loss : "+JointY.getLoss(gold, pred));
-			} else if(printMistakes) {
 //				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 //				System.out.println("Quantities : "+prob.quantities);
 //				System.out.println("Gold : \n"+gold);
 //				System.out.println("Pred : \n"+pred);
-//				System.out.println("Loss : "+JointY.getLoss(gold, pred));				
+//				System.out.println("Loss : "+JointY.getLoss(gold, pred));
+			} else if(printMistakes) {
+				System.out.println("----------------------------------------------------------");
+				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
+//				System.out.println("Quantities : "+prob.quantities);
+				System.out.println("\nGold : \nEquation : "+gold.equation+"\nVaraiable : ");
+				for(String key : gold.varTokens.keySet()) {
+					System.out.print(key + "= {");
+					for(Integer index : gold.varTokens.get(key)) {
+						System.out.print(VarFeatGen.getString(prob.ta, prob.candidateVars.get(index))+" , ");
+					}
+					System.out.print(" } ");
+				}
+				System.out.println("\n\nPred : : \nEquation : "+pred.equation+"\nVaraiable : ");
+				for(String key : pred.varTokens.keySet()) {
+					System.out.print(key + "= {");
+					for(Integer index : pred.varTokens.get(key)) {
+						System.out.print(VarFeatGen.getString(prob.ta, prob.candidateVars.get(index))+" , ");
+					}
+					System.out.print(" } ");
+				}
+				System.out.println("\n\nLoss : "+JointY.getLoss(gold, pred));	
+				System.out.println("----------------------------------------------------------");			
 			}
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
@@ -91,17 +110,32 @@ public class PipelineDriver {
 //					Equation.getLoss(gold.equation, pred.equation, false) < 0.0001) {
 			if(JointY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
-				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
-				System.out.println("Quantities : "+prob.quantities);
-				System.out.println("Gold : \n"+gold);
-				System.out.println("Pred : \n"+pred);
-				System.out.println("Loss : "+JointY.getLoss(gold, pred));
-			} else if(printMistakes) {
 //				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 //				System.out.println("Quantities : "+prob.quantities);
 //				System.out.println("Gold : \n"+gold);
 //				System.out.println("Pred : \n"+pred);
-//				System.out.println("Loss : "+JointY.getLoss(gold, pred));				
+//				System.out.println("Loss : "+JointY.getLoss(gold, pred));
+			} else if(printMistakes) {
+				System.out.println("----------------------------------------------------------");
+				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
+//				System.out.println("Quantities : "+prob.quantities);
+				System.out.println("\nGold : \nEquation : "+gold.equation+"\nVaraiable : ");
+				for(String key : gold.varTokens.keySet()) {
+					System.out.print(key + "= |||");
+					for(Integer index : gold.varTokens.get(key)) {
+						System.out.print(VarFeatGen.getString(prob.ta, prob.candidateVars.get(index))+" ||| ");
+					}
+				}
+				System.out.println("\n\nPred : : \nEquation : "+pred.equation+"\nVaraiable : ");
+				for(String key : pred.varTokens.keySet()) {
+					System.out.print(key + "= {");
+					for(Integer index : pred.varTokens.get(key)) {
+						System.out.print(VarFeatGen.getString(prob.ta, prob.candidateVars.get(index))+" , ");
+					}
+					System.out.print(key + "} ");
+				}
+				System.out.println("\n\nLoss : "+JointY.getLoss(gold, pred));	
+				System.out.println("----------------------------------------------------------");
 			}
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 

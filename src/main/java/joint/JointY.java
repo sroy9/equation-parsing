@@ -67,6 +67,6 @@ public class JointY implements IStructure, Serializable {
 	
 	@Override
 	public String toString() {
-		return "Equation : "+equation+" VarTokens : "+Arrays.asList(varTokens)+" Coref : "+coref;
+		return "Equation : "+equation+" VarTokens : "+Arrays.asList(varTokens);
 	}
 }
