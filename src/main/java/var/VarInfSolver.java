@@ -43,6 +43,13 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 	@Override
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
+		MinMaxPriorityQueue<Pair<VarY, Double>> beam = 
+				getLossAugmentedBestStructureTopK(wv, x, goldStructure);
+		return beam.element().getFirst();
+	}	
+		
+	public MinMaxPriorityQueue<Pair<VarY, Double>> getLossAugmentedBestStructureTopK(WeightVector wv,
+			IInstance x, IStructure goldStructure) throws Exception {
 		VarX prob = (VarX) x;
 		PairComparator<VarY> pairComparator = new PairComparator<VarY>() {};
 		MinMaxPriorityQueue<Pair<VarY, Double>> beam = 
@@ -68,7 +75,7 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 						1.0*wv.dotProduct(featGen.getFeatureVector(prob, y))));
 			}
 		}
-		return beam.element().getFirst();
+		return beam;
 	}
 		
 	public VarY getLatentBestStructure(VarX x, VarY gold, WeightVector wv) {

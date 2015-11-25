@@ -40,6 +40,13 @@ public class NumoccurInfSolver extends AbstractInferenceSolver implements
 	@Override
 	public IStructure getLossAugmentedBestStructure(WeightVector wv,
 			IInstance x, IStructure goldStructure) throws Exception {
+		MinMaxPriorityQueue<Pair<NumoccurY, Double>> beam = 
+				getLossAugmentedBestStructureTopK(wv, x, goldStructure);
+		return beam.element().getFirst();
+	}
+	
+	public MinMaxPriorityQueue<Pair<NumoccurY, Double>> getLossAugmentedBestStructureTopK(
+			WeightVector wv, IInstance x, IStructure goldStructure) throws Exception {
 		PairComparator<NumoccurY> pairComparator = 
 				new PairComparator<NumoccurY>() {};
 		MinMaxPriorityQueue<Pair<NumoccurY, Double>> beam1 = 
@@ -69,7 +76,7 @@ public class NumoccurInfSolver extends AbstractInferenceSolver implements
 			beam2.add(new Pair<NumoccurY, Double>(pair.getFirst(), pair.getSecond() + 
 					wv.dotProduct(featGen.getGlobalFeatureVector(prob, pair.getFirst()))));
 		}
-		return beam2.element().getFirst();
+		return beam2;
 	}
 	
 	public int sum(List<Integer> list) {
