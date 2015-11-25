@@ -134,55 +134,68 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		for(Pair<JointY, Double> pair : beam1) {
 			Tools.populateAndSortByCharIndex(pair.getFirst().nodes, prob.ta, 
 					prob.quantities, prob.candidateVars);
-			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
+			beam2.addAll(getBottomUpBestCkyParse(prob, pair, wv));
 		}
 		return beam2.element().getFirst();
 	}
 	
-	public List<Pair<JointY, Double>> getBottomUpBestParse(
+	public List<Pair<JointY, Double>> getBottomUpBestCkyParse(
 			JointX x, Pair<JointY, Double> pair, WeightVector wv) {
 		JointY y = pair.getFirst();
-		PairComparator<List<Node>> nodePairComparator = new PairComparator<List<Node>>() {};
-		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
-				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(5).create();
-		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
-				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(5).create();
-		int n = y.nodes.size();
-		List<Node> init = new ArrayList<>();
-		init.addAll(y.nodes);
-		beam1.add(new Pair<List<Node>, Double>(init, pair.getSecond()));
-		for(int i=1; i<=n-2; ++i) {
-			for(Pair<List<Node>, Double> state : beam1) {
-				beam2.addAll(enumerateSingleMerge(state, wv, x, pair.getFirst().varTokens, y.nodes));
-			}
-			beam1.clear();
-			beam1.addAll(beam2);
-			beam2.clear();
-		}
-		for(Pair<List<Node>, Double> state : beam1) {
-			if(state.getFirst().size() != 2) {
-//				System.err.println("Penultimate list should have 2 nodes, found "+state.getFirst().size());
-				continue;
-			}
-			Node node = new Node("EQ", -1, Arrays.asList(
-					state.getFirst().get(0), state.getFirst().get(1)));
-			beam2.add(new Pair<List<Node>, Double>(Arrays.asList(node), 
-					state.getSecond()+ 
-					getMergeScore(node, wv, x, pair.getFirst().varTokens, pair.getFirst().nodes)));
-		}
 		List<Pair<JointY, Double>> results = new ArrayList<Pair<JointY,Double>>();
-		for(Pair<List<Node>, Double> b : beam2) {
+		for(Pair<Node, Double> b : getCkyBest(y.nodes, y.varTokens, wv, x)) {
 			JointY t = new JointY(y);
-			if(b.getFirst().size() != 1){
-//				System.err.println("Final list should have only 1 node, found "+b.getFirst().size());
-			}
-			t.equation.root = b.getFirst().get(0);
-			results.add(new Pair<JointY, Double>(t, b.getSecond()));
+			t.equation.root = b.getFirst();
+			results.add(new Pair<JointY, Double>(t, pair.getSecond() + b.getSecond()));
 		}
 		return results;
 	}
+	
+//	
+//	public List<Pair<JointY, Double>> getBottomUpBestParse(
+//			JointX x, Pair<JointY, Double> pair, WeightVector wv) {
+//		JointY y = pair.getFirst();
+//		PairComparator<List<Node>> nodePairComparator = new PairComparator<List<Node>>() {};
+//		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
+//				MinMaxPriorityQueue.orderedBy(nodePairComparator)
+//				.maximumSize(5).create();
+//		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
+//				MinMaxPriorityQueue.orderedBy(nodePairComparator)
+//				.maximumSize(5).create();
+//		int n = y.nodes.size();
+//		List<Node> init = new ArrayList<>();
+//		init.addAll(y.nodes);
+//		beam1.add(new Pair<List<Node>, Double>(init, pair.getSecond()));
+//		for(int i=1; i<=n-2; ++i) {
+//			for(Pair<List<Node>, Double> state : beam1) {
+//				beam2.addAll(enumerateSingleMerge(state, wv, x, pair.getFirst().varTokens, y.nodes));
+//			}
+//			beam1.clear();
+//			beam1.addAll(beam2);
+//			beam2.clear();
+//		}
+//		for(Pair<List<Node>, Double> state : beam1) {
+//			if(state.getFirst().size() != 2) {
+////				System.err.println("Penultimate list should have 2 nodes, found "+state.getFirst().size());
+//				continue;
+//			}
+//			Node node = new Node("EQ", -1, Arrays.asList(
+//					state.getFirst().get(0), state.getFirst().get(1)));
+//			beam2.add(new Pair<List<Node>, Double>(Arrays.asList(node), 
+//					state.getSecond()+ 
+//					getMergeScore(node, wv, x, pair.getFirst().varTokens, pair.getFirst().nodes)));
+//		}
+//		List<Pair<JointY, Double>> results = new ArrayList<Pair<JointY,Double>>();
+//		for(Pair<List<Node>, Double> b : beam2) {
+//			JointY t = new JointY(y);
+//			if(b.getFirst().size() != 1){
+////				System.err.println("Final list should have only 1 node, found "+b.getFirst().size());
+//			}
+//			t.equation.root = b.getFirst().get(0);
+//			results.add(new Pair<JointY, Double>(t, b.getSecond()));
+//		}
+//		return results;
+//	}
 	
 	public List<Pair<List<Node>, Double>> enumerateSingleMerge(
 			Pair<List<Node>, Double> state, WeightVector wv, JointX x,
@@ -245,6 +258,49 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 			Map<String, List<Integer>> varTokens, List<Node> nodes) {
 		TreeX treeX = new TreeX(x, varTokens, nodes);
 		return wv.dotProduct(featGen.getNodeFeatureVector(treeX, node));
+	}
+	
+	public MinMaxPriorityQueue<Pair<Node, Double>> getCkyBest(
+			List<Node> leaves, Map<String, List<Integer>> varTokens, WeightVector wv, JointX x) {
+		PairComparator<Node> nodeComparator = new PairComparator<Node>() {};
+		int n = leaves.size();
+		List<List<MinMaxPriorityQueue<Pair<Node, Double>>>> cky = 
+				new ArrayList<List<MinMaxPriorityQueue<Pair<Node,Double>>>>();
+		for(int i=0; i<=n; ++i) {
+			cky.add(new ArrayList<MinMaxPriorityQueue<Pair<Node,Double>>>());
+			for(int j=0; j<=n; ++j) {
+				cky.get(i).add(MinMaxPriorityQueue.orderedBy(nodeComparator).
+						maximumSize(1).create());
+				if(i==(j-1)) {
+					cky.get(i).get(j).add(new Pair<Node, Double>(leaves.get(i), 0.0));
+				}
+			}
+		}
+		for(int j=2; j<=n; ++j) {
+			for(int i=j-2; i>=0; --i) {
+				for(int k=i+1; k<j; ++k) {
+					for(Pair<Node, Double> pair1 : cky.get(i).get(k)) {
+						for(Pair<Node, Double> pair2 : cky.get(k).get(j)) {
+							if(i==0 && j==n) {
+								Node node = new Node("EQ", -1, Arrays.asList(
+										pair1.getFirst(), pair2.getFirst()));
+								cky.get(i).get(j).add(new Pair<Node, Double>(node, 
+										pair1.getSecond()+pair2.getSecond()+
+										getMergeScore(node, wv, x, varTokens, leaves)));
+								continue;
+							}
+							for(Pair<Node, Double> combinedPair : 
+								enumerateMerge(pair1.getFirst(), pair2.getFirst(), wv, x, varTokens, leaves)) {
+								cky.get(i).get(j).add(new Pair<Node, Double>(
+										combinedPair.getFirst(), 
+										combinedPair.getSecond()+pair1.getSecond()+pair2.getSecond()));	
+							}
+						}
+					}
+				}
+			}
+		}
+		return cky.get(0).get(n);
 	}
 	
 	public JointY getLatentBestStructure(

@@ -63,47 +63,18 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 		seed.varTokens = prob.varTokens;
 		beam1.add(new Pair<TreeY, Double>(seed, 0.0));
 		for(Pair<TreeY, Double> pair : beam1) {
-			beam2.addAll(getBottomUpBestParse(prob, pair, wv));
+			beam2.addAll(getBottomUpBestCkyParse(prob, pair, wv));
 		}
-//		System.out.println("Pred Score InfSolver : "+beam2.element().getSecond());
 		return beam2;
 	}
 	
-	public List<Pair<TreeY, Double>> getBottomUpBestParse(
+	public List<Pair<TreeY, Double>> getBottomUpBestCkyParse(
 			TreeX x, Pair<TreeY, Double> pair, WeightVector wv) {
 		TreeY y = pair.getFirst();
-		PairComparator<List<Node>> nodePairComparator = 
-				new PairComparator<List<Node>>() {};
-		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
-				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(50).create();
-		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
-				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(50).create();
-		int n = x.nodes.size();
-		List<Node> init = new ArrayList<>();
-		init.addAll(x.nodes);
-		beam1.add(new Pair<List<Node>, Double>(init, pair.getSecond()));
-		for(int i=1; i<=n-2; ++i) {
-			for(Pair<List<Node>, Double> state : beam1) {
-				beam2.addAll(enumerateSingleMerge(state, wv, x));
-			}
-			beam1.clear();
-			beam1.addAll(beam2);
-			beam2.clear();
-		}
-		for(Pair<List<Node>, Double> state : beam1) {
-			if(state.getFirst().size() != 2) continue;
-			Node node = new Node("EQ", -1, Arrays.asList(
-					state.getFirst().get(0), state.getFirst().get(1)));
-			beam2.add(new Pair<List<Node>, Double>(Arrays.asList(node), 
-					state.getSecond()+ getMergeScore(node, wv, x)));
-		}
 		List<Pair<TreeY, Double>> results = new ArrayList<Pair<TreeY,Double>>();
-		for(Pair<List<Node>, Double> b : beam2) {
+		for(Pair<Node, Double> b : getCkyBest(x.nodes, wv, x)) {
 			TreeY t = new TreeY(y);
-			assert b.getFirst().size() == 1;
-			t.equation.root = b.getFirst().get(0);
+			t.equation.root = b.getFirst();
 			results.add(new Pair<TreeY, Double>(t, b.getSecond()));
 		}
 		return results;
@@ -167,6 +138,7 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 		return wv.dotProduct(featGen.getNodeFeatureVector(x, node));
 	}
 	
+	
 	public static boolean allowMerge(Node node1, Node node2) {
 		IntPair ip1 = node1.getNodeListSpan();
 		IntPair ip2 = node2.getNodeListSpan();
@@ -174,6 +146,48 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 			return true;
 		}
 		return false;
+	}
+	
+	public MinMaxPriorityQueue<Pair<Node, Double>> getCkyBest(
+			List<Node> leaves, WeightVector wv, TreeX x) {
+		PairComparator<Node> nodeComparator = new PairComparator<Node>() {};
+		int n = leaves.size();
+		List<List<MinMaxPriorityQueue<Pair<Node, Double>>>> cky = 
+				new ArrayList<List<MinMaxPriorityQueue<Pair<Node,Double>>>>();
+		for(int i=0; i<=n; ++i) {
+			cky.add(new ArrayList<MinMaxPriorityQueue<Pair<Node,Double>>>());
+			for(int j=0; j<=n; ++j) {
+				cky.get(i).add(MinMaxPriorityQueue.orderedBy(nodeComparator).
+						maximumSize(5).create());
+				if(i==(j-1)) {
+					cky.get(i).get(j).add(new Pair<Node, Double>(leaves.get(i), 0.0));
+				}
+			}
+		}
+		for(int j=2; j<=n; ++j) {
+			for(int i=j-2; i>=0; --i) {
+				for(int k=i+1; k<j; ++k) {
+					for(Pair<Node, Double> pair1 : cky.get(i).get(k)) {
+						for(Pair<Node, Double> pair2 : cky.get(k).get(j)) {
+							if(i==0 && j==n) {
+								Node node = new Node("EQ", -1, Arrays.asList(
+										pair1.getFirst(), pair2.getFirst()));
+								cky.get(i).get(j).add(new Pair<Node, Double>(node, 
+										pair1.getSecond()+pair2.getSecond()+getMergeScore(node, wv, x)));
+								continue;
+							}
+							for(Pair<Node, Double> combinedPair : 
+								enumerateMerge(pair1.getFirst(), pair2.getFirst(), wv, x)) {
+								cky.get(i).get(j).add(new Pair<Node, Double>(
+										combinedPair.getFirst(), 
+										combinedPair.getSecond()+pair1.getSecond()+pair2.getSecond()));	
+							}
+						}
+					}
+				}
+			}
+		}
+		return cky.get(0).get(n);
 	}
 	
 }
