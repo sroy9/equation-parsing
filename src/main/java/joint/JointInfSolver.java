@@ -54,10 +54,10 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 				new PairComparator<JointY>() {};
 		MinMaxPriorityQueue<Pair<JointY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(20).create();
+				maximumSize(200).create();
 		MinMaxPriorityQueue<Pair<JointY, Double>> beam2 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
-				maximumSize(20).create();
+				maximumSize(200).create();
 		JointY seed = new JointY();
 		beam1.add(new Pair<JointY, Double>(seed, 0.0));
 		
@@ -65,7 +65,7 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 		NumoccurX numX = new NumoccurX(prob);
 		for(int i=0; i<prob.quantities.size(); ++i) {
 			for(Pair<JointY, Double> pair : beam1) {
-				for(int j=0; j<3; ++j) {
+				for(int j=0; j<2; ++j) {
 					if(j==0 && pair.getFirst().nodes.size()==0) continue;
 					double score = wv.dotProduct(featGen.getIndividualFeatureVector(numX, i, j));
 					JointY y = new JointY(pair.getFirst());
