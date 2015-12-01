@@ -16,70 +16,62 @@ public class TreeFeatGen {
 		Node leaf2 = node.children.get(1);
 		IntPair ip1 = leaf1.getNodeListSpan();
 		IntPair ip2 = leaf2.getNodeListSpan();
-		String ruleOp = getRuleOperation(node.children.get(0), node.children.get(1), x.ta, x.quantities, x.nodes);
-		if(ruleOp != null) {
-			features.add("RULE_TRIGGERED");
-			if(node.children.get(0).children.size() == 0 && node.children.get(1).children.size() == 0) {
-				features.add("LEAVES_MERGED_"+ruleOp);
-			}
-		} else {
-			String op = node.label;
-			if(ip1.getFirst() > ip2.getFirst() && (node.label.equals("SUB") || node.label.equals("DIV"))) {
-				op += "_REV";
-			}
-			IntPair span1 = leaf1.getCharSpan();
-			IntPair span2 = leaf2.getCharSpan();
-			int min = x.ta.getTokenIdFromCharacterOffset(Math.min(span1.getFirst(), span2.getFirst()))+1;
-			int max = x.ta.getTokenIdFromCharacterOffset(Math.max(span1.getSecond(), span2.getSecond()))-1;
-			int left = x.ta.getTokenIdFromCharacterOffset(Math.min(leaf1.charIndex, leaf2.charIndex))-1;
-			int right = x.ta.getTokenIdFromCharacterOffset(Math.max(leaf1.charIndex, leaf2.charIndex))+1;
-			if(Math.abs(min-max)<=1) {
-				features.add("MidUnigram_NonExistent_"+op);
-			}
-			for(int i=min; i<=max; ++i) {
-				features.add("MidUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-			}
-			for(int i=min; i<=max-1; ++i) {
-				features.add("MidLexPosBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-						x.posTags.get(i+1).getLabel()+"_"+op);
-				features.add("MidPosLexBigram_"+x.posTags.get(i).getLabel()+"_"+
-						x.ta.getToken(i+1).toLowerCase()+"_"+op);
-			}
-			String prefix = "";
-			for(int i=Math.max(0, left-2); i<left; ++i) {
-				features.add(prefix+"_LeftUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-				features.add(prefix+"_LeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-						x.posTags.get(i+1).getLabel()+"_"+op);
-				features.add(prefix+"_LeftBigram_"+x.posTags.get(i).getLabel()+"_"+
-						x.ta.getToken(i+1).toLowerCase()+"_"+op);
-			}
-			for(int i=min; i<Math.min(x.ta.size()-1, min+2); ++i) {
-				features.add(prefix+"_LeftRightUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-				features.add(prefix+"_LeftRightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-						x.posTags.get(i+1).getLabel()+"_"+op);
-				features.add(prefix+"_LeftRightBigram_"+x.posTags.get(i).getLabel()+"_"+
-						x.ta.getToken(i+1).toLowerCase()+"_"+op);
-			}
-			for(int i=right; i<Math.min(x.ta.size()-1, right+2); ++i) {
-				features.add(prefix+"_RightUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-				features.add(prefix+"_RightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-						x.posTags.get(i+1).getLabel()+"_"+op);
-				features.add(prefix+"_RightBigram_"+x.posTags.get(i).getLabel()+"_"+
-						x.ta.getToken(i+1).toLowerCase()+"_"+op);
-			}
-			for(int i=Math.max(0, max-2); i<=max; ++i) {
-				features.add(prefix+"_RightLeftUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
-				features.add(prefix+"_RightLeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
-						x.posTags.get(i+1).getLabel()+"_"+op);
-				features.add(prefix+"_RightLeftBigram_"+x.posTags.get(i).getLabel()+"_"+
-						x.ta.getToken(i+1).toLowerCase()+"_"+op);
-			}
-			if(leaf1.label.equals("NUM") && leaf2.label.equals("NUM")) {
-				if(leaf1.value > leaf2.value) {
-					features.add(prefix+"_Desc"+"_"+op);
-				} else {
-					features.add(prefix+"_Asc"+"_"+op);
-				}
+		String op = node.label;
+		if(ip1.getFirst() > ip2.getFirst() && (node.label.equals("SUB") || node.label.equals("DIV"))) {
+			op += "_REV";
+		}
+		IntPair span1 = leaf1.getCharSpan();
+		IntPair span2 = leaf2.getCharSpan();
+		int min = x.ta.getTokenIdFromCharacterOffset(Math.min(span1.getFirst(), span2.getFirst()))+1;
+		int max = x.ta.getTokenIdFromCharacterOffset(Math.max(span1.getSecond(), span2.getSecond()))-1;
+		int left = x.ta.getTokenIdFromCharacterOffset(Math.min(leaf1.charIndex, leaf2.charIndex))-1;
+		int right = x.ta.getTokenIdFromCharacterOffset(Math.max(leaf1.charIndex, leaf2.charIndex))+1;
+		if(Math.abs(min-max)<=1) {
+			features.add("MidUnigram_NonExistent_"+op);
+		}
+		for(int i=min; i<=max; ++i) {
+			features.add("MidUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
+		}
+		for(int i=min; i<=max-1; ++i) {
+			features.add("MidLexPosBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.posTags.get(i+1).getLabel()+"_"+op);
+			features.add("MidPosLexBigram_"+x.posTags.get(i).getLabel()+"_"+
+					x.ta.getToken(i+1).toLowerCase()+"_"+op);
+		}
+		String prefix = "";
+		for(int i=Math.max(0, left-2); i<left; ++i) {
+			features.add(prefix+"_LeftUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
+			features.add(prefix+"_LeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.posTags.get(i+1).getLabel()+"_"+op);
+			features.add(prefix+"_LeftBigram_"+x.posTags.get(i).getLabel()+"_"+
+					x.ta.getToken(i+1).toLowerCase()+"_"+op);
+		}
+		for(int i=min; i<Math.min(x.ta.size()-1, min+2); ++i) {
+			features.add(prefix+"_LeftRightUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
+			features.add(prefix+"_LeftRightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.posTags.get(i+1).getLabel()+"_"+op);
+			features.add(prefix+"_LeftRightBigram_"+x.posTags.get(i).getLabel()+"_"+
+					x.ta.getToken(i+1).toLowerCase()+"_"+op);
+		}
+		for(int i=right; i<Math.min(x.ta.size()-1, right+2); ++i) {
+			features.add(prefix+"_RightUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
+			features.add(prefix+"_RightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.posTags.get(i+1).getLabel()+"_"+op);
+			features.add(prefix+"_RightBigram_"+x.posTags.get(i).getLabel()+"_"+
+					x.ta.getToken(i+1).toLowerCase()+"_"+op);
+		}
+		for(int i=Math.max(0, max-2); i<=max; ++i) {
+			features.add(prefix+"_RightLeftUnigram_"+x.ta.getToken(i).toLowerCase()+"_"+op);
+			features.add(prefix+"_RightLeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+					x.posTags.get(i+1).getLabel()+"_"+op);
+			features.add(prefix+"_RightLeftBigram_"+x.posTags.get(i).getLabel()+"_"+
+					x.ta.getToken(i+1).toLowerCase()+"_"+op);
+		}
+		if(leaf1.label.equals("NUM") && leaf2.label.equals("NUM")) {
+			if(leaf1.value > leaf2.value) {
+				features.add(prefix+"_Desc"+"_"+op);
+			} else {
+				features.add(prefix+"_Asc"+"_"+op);
 			}
 		}
 		return features;

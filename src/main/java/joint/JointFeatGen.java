@@ -40,7 +40,6 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 			features.addAll(NumoccurFeatGen.getIndividualFeatures(
 					numX, i, numY.numOccurList.get(i)));
 		}
-		features.addAll(NumoccurFeatGen.getGlobalFeatures(numX, numY));
 		VarX varX = new VarX(x);
 		VarY varY = new VarY(y);
 		features.addAll(VarFeatGen.getFeatures(varX, varY));
@@ -65,7 +64,6 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 			features.addAll(NumoccurFeatGen.getIndividualFeatures(
 					numX, i, numY.numOccurList.get(i)));
 		}
-		features.addAll(NumoccurFeatGen.getGlobalFeatures(numX, numY));
 		VarX varX = new VarX(x);
 		VarY varY = new VarY(y);
 		features.addAll(VarFeatGen.getFeatures(varX, varY));
@@ -76,11 +74,6 @@ public class JointFeatGen extends AbstractFeatureGenerator implements
 				features.addAll(CompFeatGen.getNodeFeatures(treeX, node));
 			}
 		}
-		return FeatGen.getFeatureVectorFromList(features, lm);
-	}
-	
-	public IFeatureVector getGlobalFeatureVector(NumoccurX x, NumoccurY y) {
-		List<String> features = NumoccurFeatGen.getGlobalFeatures(x, y);
 		return FeatGen.getFeatureVectorFromList(features, lm);
 	}
 	

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import numoccur.NumoccurX;
-import numoccur.NumoccurY;
 
 import com.google.common.collect.MinMaxPriorityQueue;
 
@@ -81,14 +80,6 @@ public class JointInfSolver extends AbstractInferenceSolver implements
 			beam1.addAll(beam2);
 			beam2.clear();
 		}
-		for(Pair<JointY, Double> pair : beam1) {
-			NumoccurY numY = new NumoccurY(prob, pair.getFirst().nodes);
-			beam2.add(new Pair<JointY, Double>(pair.getFirst(), pair.getSecond() + 
-					wv.dotProduct(featGen.getGlobalFeatureVector(numX, numY))));
-		}
-		beam1.clear();
-		beam1.addAll(beam2);
-		beam2.clear();
 		// Grounding of variables
 		for(Pair<JointY, Double> pair : beam1) {
 			for(int i=0; i<prob.candidateVars.size(); ++i) {

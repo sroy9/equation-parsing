@@ -72,11 +72,7 @@ public class NumoccurInfSolver extends AbstractInferenceSolver implements
 			beam1.addAll(beam2);
 			beam2.clear();
 		}
-		for(Pair<NumoccurY, Double> pair : beam1) {
-			beam2.add(new Pair<NumoccurY, Double>(pair.getFirst(), pair.getSecond() + 
-					wv.dotProduct(featGen.getGlobalFeatureVector(prob, pair.getFirst()))));
-		}
-		return beam2;
+		return beam1;
 	}
 	
 	public int sum(List<Integer> list) {

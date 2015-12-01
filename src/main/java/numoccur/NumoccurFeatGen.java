@@ -36,32 +36,15 @@ public class NumoccurFeatGen extends AbstractFeatureGenerator implements
 	
 	public static List<String> getFeatures(NumoccurX x, NumoccurY y) {
 		List<String> features = new ArrayList<>();
-		features.addAll(getGlobalFeatures(x, y));
 		for(int i=0; i<x.quantities.size(); ++i) {
 			features.addAll(getIndividualFeatures(x, i, y.numOccurList.get(i)));
 		}
 		return features;
 	}
 	
-	public IFeatureVector getGlobalFeatureVector(NumoccurX x, NumoccurY y) {
-		List<String> features = getGlobalFeatures(x, y);
-		return FeatGen.getFeatureVectorFromList(features, lm);
-	}
-	
 	public IFeatureVector getIndividualFeatureVector(NumoccurX x, int quantIndex, int numOccur) {
 		List<String> features = getIndividualFeatures(x, quantIndex, numOccur);
 		return FeatGen.getFeatureVectorFromList(features, lm);
-	}
-	
-	public static List<String> getGlobalFeatures(NumoccurX x, NumoccurY y) {
-		List<String> features = new ArrayList<>();
-		if(x.quantities.size() == 1) {
-			features.add(y+"_OneQuantityPresent");
-		}
-		for(String token : x.ta.getTokens()) {
-			features.add(y+"_"+token.toLowerCase());
-		}
-		return features;
 	}
 	
 	public static List<String> getIndividualFeatures(NumoccurX x, int quantIndex, int numOccur) {
