@@ -70,7 +70,7 @@ public class Baselines {
 								prob.quantities.get(j).start);
 						npList.write(prob.ta.getToken(tokenId).toLowerCase()+
 								" :- "+getCCGcategory(ccgParse, j)+" : "+
-								Tools.getValue(prob.quantities.get(i))+":n\n");		
+								Tools.getValue(prob.quantities.get(j))+":n\n");		
 					}
 					System.out.println("Done");
 				}
