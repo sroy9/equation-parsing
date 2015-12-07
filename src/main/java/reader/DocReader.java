@@ -1,13 +1,8 @@
 package reader;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -116,103 +111,6 @@ public class DocReader {
 			folds.add(fold);
 		}
 		return folds;
-	}
-	
-	public static void createLambdaExpForSPF() throws Exception {
-		List<SimulProb> simulProbList = 
-				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
-		List<List<Integer>> folds = extractFolds();
-		int count = 0;
-		for(List<Integer> fold : folds) {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(
-					new File("fold"+(count)+".ccg")));
-			BufferedWriter npList = new BufferedWriter(new FileWriter(
-					new File("nplist"+(count++)+".ont")));
-			for(SimulProb prob : simulProbList) {
-				// All numbers and NPs should always be available
-				for(int i=0; i<prob.quantities.size(); ++i) {
-					int tokenId = prob.ta.getTokenIdFromCharacterOffset(
-							prob.quantities.get(i).start);
-					npList.write(prob.ta.getToken(tokenId).toLowerCase()+
-							" :- NP : "+Tools.getValue(prob.quantities.get(i))+":n\n");		
-				}
-//				for(IntPair ip : prob.candidateVars) {
-//					for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
-//						npList.write(prob.ta.getToken(i).toLowerCase()+" ");
-//					}
-//					npList.write(":- NP : V1:n\n");
-//					for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
-//						npList.write(prob.ta.getToken(i).toLowerCase()+" ");
-//					}
-//					npList.write(":- NP : V2:n\n");
-//				}
-//				for(String label : prob.varTokens.keySet()) {
-//					for(Integer j : prob.varTokens.get(label)) {
-//						IntPair ip = prob.candidateVars.get(j);
-//						for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
-//							npList.write(prob.ta.getToken(i).toLowerCase()+" ");
-//						}
-//						npList.write(":- NP : "+label+":n\n");
-//						break;
-//					}
-//				}
-				if(fold.contains(prob.index)) {
-					// Add the questions of the fold
-					for(String token : prob.ta.getTokens()) {
-						bw.write(token.toLowerCase()+" ");
-					}
-					bw.write("\n");
-					bw.write(prob.equation.getLambdaExpression()+"\n\n");
-				}
-			}
-			bw.close();
-			npList.close();
-		}
-		BufferedWriter bw = new BufferedWriter(new FileWriter(
-				new File("geo.consts.ont")));
-		bw.write("(\n");
-		for(String cons : DocReader.preds) {
-			bw.write(cons.trim()+"\n");
-		}
-		bw.write(")\n");
-		bw.close();
-	}
-
-	public static void createGizaProbTable() throws Exception {
-		for(int i=0; i<1; ++i) {
-			Map<Integer, String> srcVcb = new HashMap<>();
-			Map<Integer, String> targetVcb = new HashMap<>();
-			String str;
-			BufferedReader br = new BufferedReader(new FileReader(
-					"../../Desktop/parallel/A"+i+".vcb"));
-			while((str=br.readLine())!=null) {
-				String strArr[] = str.split(" ");
-				srcVcb.put(Integer.parseInt(strArr[0].trim()), 
-						strArr[1].replace("(", "").replace(")", "").trim());
-			}
-			br.close();
-			br = new BufferedReader(new FileReader(
-					"../../Desktop/parallel/B"+i+".vcb"));
-			while((str=br.readLine())!=null) {
-				String strArr[] = str.split(" ");
-				targetVcb.put(Integer.parseInt(strArr[0].trim()), 
-						strArr[1].replace("(", "").replace(")", "").trim());
-			}
-			br.close();
-			br = new BufferedReader(new FileReader(
-					"../../Desktop/parallel/A"+i+"_B"+i+"_prob"));
-			BufferedWriter bw = new BufferedWriter(new FileWriter(
-					"../../Desktop/parallel/A"+i+"_B"+i+"_wordprob"));
-			while((str=br.readLine())!=null) {
-				String strArr[] = str.split(" ");
-				bw.write(targetVcb.get(Integer.parseInt(strArr[1].trim()))+"  ::  "+
-						srcVcb.get(Integer.parseInt(strArr[0].trim()))+"  ::  "+
-						strArr[2].trim()+"\n");
-				
-			}
-			br.close();
-			bw.close();
-		}
 	}
 	
 	public static List<SimulProb> getProjectiveProblems(List<SimulProb> probs) {

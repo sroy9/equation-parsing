@@ -15,6 +15,7 @@ bin/
 log/
 models/
 *.log
-paper/ccg.bib
-paper/cited.bib
 *cache*
+easyccg*
+giza*
+parallel*
