@@ -64,13 +64,19 @@ public class Baselines {
 					tokenizedSentence+="\n";
 					bw.write(tokenizedSentence);
 					bw.write(prob.equation.getLambdaExpression()+"\n\n");
-					String ccgParse = getCCGParse(tokenizedSentence.trim());
+//					String ccgParse = getCCGParse(tokenizedSentence.trim());
 					for(int j=0; j<prob.quantities.size(); ++j) {
 						int tokenId = prob.ta.getTokenIdFromCharacterOffset(
 								prob.quantities.get(j).start);
 						npList.write(prob.ta.getToken(tokenId).toLowerCase()+
-								" :- "+getCCGcategory(ccgParse, j)+" : "+
-								Tools.getValue(prob.quantities.get(j))+":n\n");		
+								" :- "+"N"+" : "+
+								Tools.getValue(prob.quantities.get(j))+":n\n");
+//						npList.write(prob.ta.getToken(tokenId).toLowerCase()+
+//								" :- "+"N/N"+" : "+
+//								Tools.getValue(prob.quantities.get(j))+":n\n");	
+//						npList.write(prob.ta.getToken(tokenId).toLowerCase()+
+//								" :- "+"NP/N"+" : "+
+//								Tools.getValue(prob.quantities.get(j))+":n\n");
 					}
 					System.out.println("Done");
 				}
@@ -127,5 +133,6 @@ public class Baselines {
 	
 	public static void main(String args[]) throws Exception {
 		createLambdaExpForSPF();
+//		createGizaProbTable();
 	}
 }
