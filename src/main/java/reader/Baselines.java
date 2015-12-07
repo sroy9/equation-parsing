@@ -5,8 +5,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,26 +17,39 @@ import utils.Tools;
 
 public class Baselines {
 
-	public static void executeCommand(String command) {
-		Process p;
-		try {
-			System.out.println("Executing : "+command);
-			p = Runtime.getRuntime().exec(command);
-			p.waitFor();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public static void executeCommand(String command[]) throws Exception {
+		ProcessBuilder pb = new ProcessBuilder();
+		pb.redirectInput(new File("in"));
+		pb.redirectOutput(new File("out"));
+		pb.command(command);
+		pb.start().waitFor();
 	}
 
-	public static String getCCGcategory(String tokenizedSentence, int tokenId) throws IOException {
+	public static String getCCGParse(String tokenizedSentence) throws Exception {
 		FileUtils.write(new File("in"), tokenizedSentence);
-		executeCommand("java -jar easyccg-0.2/easyccg.jar --model easyccg-model < in > out");
+		String command[] = {"java", "-jar", "easyccg-0.2/easyccg.jar", "--model", "easyccg-model"};
+		executeCommand(command);
 		return FileUtils.readFileToString(new File("out"));
+	}
+	
+	public static String getCCGcategory(String ccgParse, int tokenId) throws Exception {
+		int startIndex=-1;
+		int index = -1;
+		while(true) {
+			startIndex = ccgParse.indexOf("<L", startIndex+1);
+			index++;
+			if(index == tokenId) break;
+		}
+		int endIndex = ccgParse.indexOf(">", startIndex);
+		String category = ccgParse.substring(startIndex, endIndex).split(" ")[1];
+		return category.replaceAll("\\[.+?\\]", "").trim();
 	}
 	
 	public static void createLambdaExpForSPF() throws Exception {
 		List<SimulProb> simulProbList = 
 				DocReader.readSimulProbFromBratDir(Params.annotationDir, 0, 1.0);
+		BufferedWriter npList = new BufferedWriter(new FileWriter(
+				new File("nplist.ont")));
 		List<List<Integer>> folds = DocReader.extractFolds();
 		for(int i=0; i<folds.size(); ++i) {
 			List<Integer> fold = folds.get(i);
@@ -46,25 +57,25 @@ public class Baselines {
 					new File("fold"+i+".ccg")));
 			for(SimulProb prob : simulProbList) {
 				if(fold.contains(prob.index)) {
-					// Add the questions of the fold
+					String tokenizedSentence = "";
 					for(String token : prob.ta.getTokens()) {
-						bw.write(token.toLowerCase()+" ");
+						tokenizedSentence+=token.toLowerCase()+" ";
 					}
-					bw.write("\n");
+					tokenizedSentence+="\n";
+					bw.write(tokenizedSentence);
 					bw.write(prob.equation.getLambdaExpression()+"\n\n");
+					String ccgParse = getCCGParse(tokenizedSentence.trim());
+					for(int j=0; j<prob.quantities.size(); ++j) {
+						int tokenId = prob.ta.getTokenIdFromCharacterOffset(
+								prob.quantities.get(j).start);
+						npList.write(prob.ta.getToken(tokenId).toLowerCase()+
+								" :- "+getCCGcategory(ccgParse, j)+" : "+
+								Tools.getValue(prob.quantities.get(i))+":n\n");		
+					}
+					System.out.println("Done");
 				}
 			}
 			bw.close();
-		}
-		BufferedWriter npList = new BufferedWriter(new FileWriter(
-				new File("nplist.ont")));
-		for(SimulProb prob : simulProbList) {
-			for(int i=0; i<prob.quantities.size(); ++i) {
-				int tokenId = prob.ta.getTokenIdFromCharacterOffset(
-						prob.quantities.get(i).start);
-				npList.write(prob.ta.getToken(tokenId).toLowerCase()+
-						" :- NP : "+Tools.getValue(prob.quantities.get(i))+":n\n");		
-			}
 		}
 		npList.close();
 		BufferedWriter bw = new BufferedWriter(new FileWriter(
@@ -115,6 +126,6 @@ public class Baselines {
 	}
 	
 	public static void main(String args[]) throws Exception {
-		System.out.println(getCCGcategory("I have to go to school .", 9));
+		createLambdaExpForSPF();
 	}
 }
