@@ -68,6 +68,46 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 		return beam2;
 	}
 	
+	public List<Pair<TreeY, Double>> getBottomUpBestParse(
+			TreeX x, Pair<TreeY, Double> pair, WeightVector wv) {
+		TreeY y = pair.getFirst();
+		PairComparator<List<Node>> nodePairComparator = 
+				new PairComparator<List<Node>>() {};
+		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
+				MinMaxPriorityQueue.orderedBy(nodePairComparator)
+				.maximumSize(50).create();
+		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
+				MinMaxPriorityQueue.orderedBy(nodePairComparator)
+				.maximumSize(50).create();
+		int n = x.nodes.size();
+		List<Node> init = new ArrayList<>();
+		init.addAll(x.nodes);
+		beam1.add(new Pair<List<Node>, Double>(init, pair.getSecond()));
+		for(int i=1; i<=n-2; ++i) {
+			for(Pair<List<Node>, Double> state : beam1) {
+				beam2.addAll(enumerateSingleMerge(state, wv, x));
+			}
+			beam1.clear();
+			beam1.addAll(beam2);
+			beam2.clear();
+		}
+		for(Pair<List<Node>, Double> state : beam1) {
+			if(state.getFirst().size() != 2) continue;
+			Node node = new Node("EQ", -1, Arrays.asList(
+					state.getFirst().get(0), state.getFirst().get(1)));
+			beam2.add(new Pair<List<Node>, Double>(Arrays.asList(node), 
+					state.getSecond()+ getMergeScore(node, wv, x)));
+		}
+		List<Pair<TreeY, Double>> results = new ArrayList<Pair<TreeY,Double>>();
+		for(Pair<List<Node>, Double> b : beam2) {
+			TreeY t = new TreeY(y);
+			assert b.getFirst().size() == 1;
+			t.equation.root = b.getFirst().get(0);
+			results.add(new Pair<TreeY, Double>(t, b.getSecond()));
+		}
+		return results;
+	}
+	
 	public List<Pair<TreeY, Double>> getBottomUpBestCkyParse(
 			TreeX x, Pair<TreeY, Double> pair, WeightVector wv) {
 		TreeY y = pair.getFirst();
@@ -142,6 +182,7 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 	public static boolean allowMerge(Node node1, Node node2) {
 		IntPair ip1 = node1.getNodeListSpan();
 		IntPair ip2 = node2.getNodeListSpan();
+//		return true;
 		if((ip1.getSecond()+1)==ip2.getFirst() || (ip2.getSecond()+1)==ip1.getFirst()) {
 			return true;
 		}

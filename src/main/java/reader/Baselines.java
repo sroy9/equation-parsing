@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
@@ -68,15 +69,23 @@ public class Baselines {
 					for(int j=0; j<prob.quantities.size(); ++j) {
 						int tokenId = prob.ta.getTokenIdFromCharacterOffset(
 								prob.quantities.get(j).start);
-						npList.write(prob.ta.getToken(tokenId).toLowerCase()+
-								" :- "+"N"+" : "+
-								Tools.getValue(prob.quantities.get(j))+":n\n");
+//						npList.write(prob.ta.getToken(tokenId).toLowerCase()+
+//								" :- "+getCCGcategory(ccgParse, j)+" : "+
+//								Tools.getValue(prob.quantities.get(j))+":n\n");
 //						npList.write(prob.ta.getToken(tokenId).toLowerCase()+
 //								" :- "+"N/N"+" : "+
 //								Tools.getValue(prob.quantities.get(j))+":n\n");	
-//						npList.write(prob.ta.getToken(tokenId).toLowerCase()+
-//								" :- "+"NP/N"+" : "+
-//								Tools.getValue(prob.quantities.get(j))+":n\n");
+						npList.write(prob.ta.getToken(tokenId).toLowerCase()+
+								" :- "+"NP"+" : "+
+								Tools.getValue(prob.quantities.get(j))+":n\n");
+					}
+					for(String varId : prob.varTokens.keySet()) {
+						String phrase = "";
+						IntPair ip = prob.candidateVars.get(prob.varTokens.get(varId).get(0));
+						for(int j=ip.getFirst(); j<ip.getSecond(); ++j) {
+							phrase+= prob.ta.getToken(j).toLowerCase()+" ";
+						}
+						npList.write(phrase+":- "+"NP"+" : "+varId+":n\n");
 					}
 					System.out.println("Done");
 				}
@@ -134,5 +143,7 @@ public class Baselines {
 	public static void main(String args[]) throws Exception {
 		createLambdaExpForSPF();
 //		createGizaProbTable();
+		Tools.pipeline.closeCache();
+		System.exit(0);
 	}
 }

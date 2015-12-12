@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import reader.DocReader;
+import structure.Equation;
 import structure.SimulProb;
 import utils.Params;
 import utils.Tools;
@@ -66,7 +67,7 @@ public class JointDriver {
 		SLModel model = SLModel.loadModel(modelPath);
 		Set<Integer> incorrect = new HashSet<>();
 		Set<Integer> total = new HashSet<>();
-		double acc = 0.0;
+		double acc = 0.0, eqAcc = 0.0;
 		for (int i = 0; i < sp.instanceList.size(); i++) {
 			System.out.println("---------------------------------------------------");
 			JointX prob = (JointX) sp.instanceList.get(i);
@@ -79,6 +80,10 @@ public class JointDriver {
 					model.featureGenerator.getFeatureVector(prob, pred));
 			if(goldWt > predWt) {
 				System.out.println("PROBLEM HERE");
+			}
+			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.0001 || 
+					Equation.getLoss(gold.equation, pred.equation, false) < 0.0001) {
+				eqAcc += 1;
 			}
 			if(JointY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
@@ -96,6 +101,8 @@ public class JointDriver {
 			}
 			System.out.println("---------------------------------------------------");
 		}
+		System.out.println("Equation Accuracy : = " + eqAcc + " / " + sp.instanceList.size() 
+				+ " = " + (eqAcc/sp.instanceList.size()));
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));
 		return (acc/sp.instanceList.size());
