@@ -154,7 +154,7 @@ public class VarFeatGen extends AbstractFeatureGenerator implements
 	public static String getString(TextAnnotation ta, IntPair ip) {
 		String str = "";
 		for(int i=ip.getFirst(); i<ip.getSecond(); ++i) {
-			str += ta.getToken(i).toLowerCase()+" ";
+			str += ta.getToken(i)+" ";
 		}
 		return str.trim();
 	}

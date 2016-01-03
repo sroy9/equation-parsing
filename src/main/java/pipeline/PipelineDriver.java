@@ -60,9 +60,9 @@ public class PipelineDriver {
 			JointY pred = PipelineInfSolver.getBestStructure(
 					prob, numOccurModel, varModel, treeModel);
 			System.out.println("----------------------------------------------------------");
-			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.0001 || 
-					Equation.getLoss(gold.equation, pred.equation, false) < 0.0001) {
-//			if(JointY.getLoss(gold, pred) < 0.0001) {
+//			if(Equation.getLoss(gold.equation, pred.equation, true) < 0.0001 || 
+//					Equation.getLoss(gold.equation, pred.equation, false) < 0.0001) {
+			if(JointY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);

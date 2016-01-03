@@ -16,9 +16,11 @@ public class VarY implements IStructure, Serializable {
 	
 	private static final long serialVersionUID = 2399969922362221136L;
 	public Map<String, List<Integer>> varTokens;
+	public boolean coref;
 	
 	public VarY() {
 		varTokens = new HashMap<String, List<Integer>>();
+		coref = false;
 	}
 	
 	public VarY(VarY other) {
@@ -27,16 +29,19 @@ public class VarY implements IStructure, Serializable {
 			varTokens.put(key, new ArrayList<Integer>());
 			varTokens.get(key).addAll(other.varTokens.get(key));
 		}
+		coref = other.coref;
 	}
 	
 	public VarY(SimulProb prob) {
 		varTokens = new HashMap<String, List<Integer>>();
 		varTokens.putAll(prob.varTokens);
+		coref = prob.coref;
 	}
 	
 	public VarY(JointY prob) {
 		varTokens = new HashMap<String, List<Integer>>();
 		varTokens.putAll(prob.varTokens);
+		coref = prob.coref;
 	}
 	
 	public VarY(LasttwoY prob) {
@@ -56,6 +61,6 @@ public class VarY implements IStructure, Serializable {
 	
 	@Override
 	public String toString() {
-		return "VarTokens : "+Arrays.asList(varTokens);
+		return "VarTokens : "+Arrays.asList(varTokens)+" Coref : "+coref;
 	}
 }

@@ -1,6 +1,7 @@
 package tree;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +101,8 @@ public class TreeDriver {
 				incorrect.add(prob.problemIndex);
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
+				System.out.println("Nodes : "+Arrays.asList(prob.nodes));
+				System.out.println("VarTokens : "+Arrays.asList(prob.varTokens));
 				System.out.println("Gold : \n"+gold);
 				System.out.println("Gold weight : "+model.wv.dotProduct(
 						model.featureGenerator.getFeatureVector(prob, gold)));

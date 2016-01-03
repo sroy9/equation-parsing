@@ -99,13 +99,13 @@ public class SimulProb {
 		}
 	}
 	
-	public void extractVarTokens() throws IOException {
+	public void extractVarTokens(String annotationDir) throws IOException {
 //		System.out.println(index+" : "+text);
 //		System.out.println("Parse : ");
 //		for(Constituent cons : parse) {
 //			System.out.println(cons.getLabel()+" : "+cons.getSurfaceForm());
 //		}
-		String annFile = Params.annotationDir+"/"+index+".ann";
+		String annFile = annotationDir+"/"+index+".ann";
 		List<String> lines = FileUtils.readLines(new File(annFile));
 		for(String line : lines) {
 			String strArr[] = line.split("\t")[1].split(" ");

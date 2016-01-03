@@ -40,7 +40,7 @@ public class DocReader {
 				simulProb.extractQuantities();
 				simulProb.extractAnnotations();
 				simulProb.createCandidateVars();
-				simulProb.extractVarTokens();
+				simulProb.extractVarTokens(bratDir);
 				simulProbList.add(simulProb);
 			}
 		}
@@ -125,13 +125,48 @@ public class DocReader {
 		return projective;
 	}
 	
+	public static double getAgreementScore(
+			List<SimulProb> probs1, List<SimulProb> probs2) {
+		double total = 0.0, correct = 0.0;
+		for(int i=0; i<probs1.size(); ++i) {
+			SimulProb prob1 = probs1.get(i);
+			SimulProb prob2 = probs2.get(i);
+			if(prob2.varTokens.keySet().size() == 0 || 
+					prob1.varTokens.keySet().size() == 0) {
+				continue;
+			}
+//			total += 1;
+//			if(Tools.isEqual(prob1.varTokens.get("V1"), prob2.varTokens.get("V1")) &&
+//					Tools.isEqual(prob1.varTokens.get("V2"), prob2.varTokens.get("V2"))) {
+//				correct += 1;
+//			}
+			for(String var : prob1.varTokens.keySet()) {
+				if(prob2.varTokens.keySet().contains(var)) {
+					total += 1;
+					if(Tools.isEqual(prob1.varTokens.get(var), prob2.varTokens.get(var))) {
+						correct += 1;
+					}
+				}
+			}
+		}
+		return correct / total;
+	}
+	
+	
+	
 	public static void main(String args[]) throws Exception {
-		List<SimulProb> simulProbList = 
-				getProjectiveProblems(DocReader.readSimulProbFromBratDir(
-						Params.annotationDir, 0, 1.0));
-		System.out.println(simulProbList.size());
+		List<SimulProb> simulProbList1 = DocReader.readSimulProbFromBratDir(
+						Params.annotationDir, 0, 1.0);
+		List<SimulProb> simulProbList2 = DocReader.readSimulProbFromBratDir(
+						"data/shyambrat/", 0, 1.0);
+//		System.out.println(simulProbList.size());
 //		DocReader.createLambdaExpForSPF();
 //		DocReader.createGizaProbTable();
+		System.out.println(getAgreementScore(simulProbList1, simulProbList2));
+//		for(int i=0; i<simulProbList1.size(); ++i) {
+//			print(simulProbList1.get(i));
+//			print(simulProbList2.get(i));
+//		}
 		Tools.pipeline.closeCache();
 		System.exit(0);
 		

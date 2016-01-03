@@ -59,6 +59,7 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 			VarY y = new VarY();
 			y.varTokens.put("V1", new ArrayList<Integer>());
 			y.varTokens.get("V1").add(i);
+			y.coref = false;
 			beam.add(new Pair<VarY, Double>(y, 
 					1.0*wv.dotProduct(featGen.getFeatureVector(prob, y))));
 			for(int j=i; j<prob.candidateVars.size(); ++j) {
@@ -71,6 +72,7 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 				y.varTokens.put("V2", new ArrayList<Integer>());
 				y.varTokens.get("V1").add(i);
 				y.varTokens.get("V2").add(j);
+				y.coref = corefRule(prob.ta, prob.candidateVars.get(i), prob.candidateVars.get(j));
 				beam.add(new Pair<VarY, Double>(y, 
 						1.0*wv.dotProduct(featGen.getFeatureVector(prob, y))));
 			}
@@ -99,7 +101,8 @@ public class VarInfSolver extends AbstractInferenceSolver implements
 			return true;
 		}
 		if(str2.contains("same number")) return true;
-		if(str1.equals(str2) && !str1.contains("two") && !str1.contains("2 ")) return true;
+		if(str1.equals(str2) && !str1.contains("Two") && !str1.contains("two") && 
+				!str1.contains("2 ")) return true;
 		return false;
 	}
 	

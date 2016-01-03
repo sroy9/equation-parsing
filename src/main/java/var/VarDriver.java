@@ -83,6 +83,20 @@ public class VarDriver {
 			}
 			if(VarY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
+//				if(pred.varTokens.keySet().size() == 2 && pred.coref != gold.coref) {
+//					System.out.println("COREF ISSUE");
+//					System.out.println(prob.problemIndex+" : "+prob.ta.getText());
+//					System.out.println("Quantities : "+prob.quantities);
+//					System.out.println("Gold : "+gold);
+//					print(prob, gold);
+//					System.out.println("Gold weight : "+model.wv.dotProduct(
+//							model.featureGenerator.getFeatureVector(prob, gold)));
+//					System.out.println("Pred : "+pred);
+//					print(prob, pred);
+//					System.out.println("Pred weight : "+model.wv.dotProduct(
+//							model.featureGenerator.getFeatureVector(prob, pred)));
+//					System.out.println("Loss : "+VarY.getLoss(gold, pred));
+//				}
 			} else {
 				incorrect.add(prob.problemIndex);
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
