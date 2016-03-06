@@ -9,8 +9,9 @@ import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Node;
 import structure.PairComparator;
-import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
 import edu.illinois.cs.cogcomp.sl.core.IInstance;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -68,51 +69,52 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 		return beam2;
 	}
 	
-	public List<Pair<TreeY, Double>> getBottomUpBestParse(
-			TreeX x, Pair<TreeY, Double> pair, WeightVector wv) {
-		TreeY y = pair.getFirst();
-		PairComparator<List<Node>> nodePairComparator = 
-				new PairComparator<List<Node>>() {};
-		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
-				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(50).create();
-		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
-				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-				.maximumSize(50).create();
-		int n = x.nodes.size();
-		List<Node> init = new ArrayList<>();
-		init.addAll(x.nodes);
-		beam1.add(new Pair<List<Node>, Double>(init, pair.getSecond()));
-		for(int i=1; i<=n-2; ++i) {
-			for(Pair<List<Node>, Double> state : beam1) {
-				beam2.addAll(enumerateSingleMerge(state, wv, x));
-			}
-			beam1.clear();
-			beam1.addAll(beam2);
-			beam2.clear();
-		}
-		for(Pair<List<Node>, Double> state : beam1) {
-			if(state.getFirst().size() != 2) continue;
-			Node node = new Node("EQ", -1, Arrays.asList(
-					state.getFirst().get(0), state.getFirst().get(1)));
-			beam2.add(new Pair<List<Node>, Double>(Arrays.asList(node), 
-					state.getSecond()+ getMergeScore(node, wv, x)));
-		}
-		List<Pair<TreeY, Double>> results = new ArrayList<Pair<TreeY,Double>>();
-		for(Pair<List<Node>, Double> b : beam2) {
-			TreeY t = new TreeY(y);
-			assert b.getFirst().size() == 1;
-			t.equation.root = b.getFirst().get(0);
-			results.add(new Pair<TreeY, Double>(t, b.getSecond()));
-		}
-		return results;
-	}
+//	public List<Pair<TreeY, Double>> getBottomUpBestParse(
+//			TreeX x, Pair<TreeY, Double> pair, WeightVector wv) {
+//		TreeY y = pair.getFirst();
+//		PairComparator<List<Node>> nodePairComparator = 
+//				new PairComparator<List<Node>>() {};
+//		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
+//				MinMaxPriorityQueue.orderedBy(nodePairComparator)
+//				.maximumSize(50).create();
+//		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
+//				MinMaxPriorityQueue.orderedBy(nodePairComparator)
+//				.maximumSize(50).create();
+//		int n = x.nodes.size();
+//		List<Node> init = new ArrayList<>();
+//		init.addAll(x.nodes);
+//		beam1.add(new Pair<List<Node>, Double>(init, pair.getSecond()));
+//		for(int i=1; i<=n-2; ++i) {
+//			for(Pair<List<Node>, Double> state : beam1) {
+//				beam2.addAll(enumerateSingleMerge(state, wv, x));
+//			}
+//			beam1.clear();
+//			beam1.addAll(beam2);
+//			beam2.clear();
+//		}
+//		for(Pair<List<Node>, Double> state : beam1) {
+//			if(state.getFirst().size() != 2) continue;
+//			Node node = new Node("EQ", -1, Arrays.asList(
+//					state.getFirst().get(0), state.getFirst().get(1)));
+//			beam2.add(new Pair<List<Node>, Double>(Arrays.asList(node), 
+//					state.getSecond()+ getMergeScore(node, wv, x)));
+//		}
+//		List<Pair<TreeY, Double>> results = new ArrayList<Pair<TreeY,Double>>();
+//		for(Pair<List<Node>, Double> b : beam2) {
+//			TreeY t = new TreeY(y);
+//			assert b.getFirst().size() == 1;
+//			t.equation.root = b.getFirst().get(0);
+//			results.add(new Pair<TreeY, Double>(t, b.getSecond()));
+//		}
+//		return results;
+//	}
 	
 	public List<Pair<TreeY, Double>> getBottomUpBestCkyParse(
 			TreeX x, Pair<TreeY, Double> pair, WeightVector wv) {
 		TreeY y = pair.getFirst();
 		List<Pair<TreeY, Double>> results = new ArrayList<Pair<TreeY,Double>>();
-		for(Pair<Node, Double> b : getCkyBest(x.nodes, wv, x)) {
+		Tools.visualizeNodeLocWithSynParse(x.ta, x.parse, x.nodes);
+		for(Pair<Node, Double> b : getCkyBest(x.nodes, wv, x, true)) {
 			TreeY t = new TreeY(y);
 			t.equation.root = b.getFirst();
 			results.add(new Pair<TreeY, Double>(t, b.getSecond()));
@@ -120,36 +122,36 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 		return results;
 	}
 	
-	public List<Pair<List<Node>, Double>> enumerateSingleMerge(
-			Pair<List<Node>, Double> state, WeightVector wv, TreeX x) {
-		List<Pair<List<Node>, Double>> nextStates = new ArrayList<>();
-		List<Node> nodeList = state.getFirst();
-		if(nodeList.size() == 1) {
-			List<Pair<List<Node>, Double>> tmpNodeList = 
-					new ArrayList<Pair<List<Node>, Double>>();
-			tmpNodeList.add(state);
-			return tmpNodeList;
-		}
-		double initScore = state.getSecond();
-		for(int i=0; i<nodeList.size(); ++i) {
-			for(int j=i+1; j<nodeList.size(); ++j) {
-				if(!allowMerge(nodeList.get(i), nodeList.get(j))) continue;
-				List<Node> tmpNodeList = new ArrayList<Node>();
-				tmpNodeList.addAll(nodeList);
-				tmpNodeList.remove(i);
-				tmpNodeList.remove(j-1);
-				for(Pair<Node, Double> pair : enumerateMerge(
-						nodeList.get(i), nodeList.get(j), wv, x)) {
-					List<Node> newNodeList = new ArrayList<Node>();
-					newNodeList.addAll(tmpNodeList);
-					newNodeList.add(pair.getFirst());
-					nextStates.add(new Pair<List<Node>, Double>(newNodeList, 
-							initScore + pair.getSecond()));
-				}
-			}
-		}
-		return nextStates;
-	}
+//	public List<Pair<List<Node>, Double>> enumerateSingleMerge(
+//			Pair<List<Node>, Double> state, WeightVector wv, TreeX x) {
+//		List<Pair<List<Node>, Double>> nextStates = new ArrayList<>();
+//		List<Node> nodeList = state.getFirst();
+//		if(nodeList.size() == 1) {
+//			List<Pair<List<Node>, Double>> tmpNodeList = 
+//					new ArrayList<Pair<List<Node>, Double>>();
+//			tmpNodeList.add(state);
+//			return tmpNodeList;
+//		}
+//		double initScore = state.getSecond();
+//		for(int i=0; i<nodeList.size(); ++i) {
+//			for(int j=i+1; j<nodeList.size(); ++j) {
+//				if(!allowMerge(nodeList.get(i), nodeList.get(j))) continue;
+//				List<Node> tmpNodeList = new ArrayList<Node>();
+//				tmpNodeList.addAll(nodeList);
+//				tmpNodeList.remove(i);
+//				tmpNodeList.remove(j-1);
+//				for(Pair<Node, Double> pair : enumerateMerge(
+//						nodeList.get(i), nodeList.get(j), wv, x)) {
+//					List<Node> newNodeList = new ArrayList<Node>();
+//					newNodeList.addAll(tmpNodeList);
+//					newNodeList.add(pair.getFirst());
+//					nextStates.add(new Pair<List<Node>, Double>(newNodeList, 
+//							initScore + pair.getSecond()));
+//				}
+//			}
+//		}
+//		return nextStates;
+//	}
 	
 	public List<Pair<Node, Double>> enumerateMerge(
 			Node node1, Node node2, WeightVector wv, TreeX x) {
@@ -179,18 +181,18 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 	}
 	
 	
-	public static boolean allowMerge(Node node1, Node node2) {
-		IntPair ip1 = node1.getNodeListSpan();
-		IntPair ip2 = node2.getNodeListSpan();
-//		return true;
-		if((ip1.getSecond()+1)==ip2.getFirst() || (ip2.getSecond()+1)==ip1.getFirst()) {
-			return true;
-		}
-		return false;
-	}
+//	public static boolean allowMerge(Node node1, Node node2) {
+//		IntPair ip1 = node1.getNodeListSpan();
+//		IntPair ip2 = node2.getNodeListSpan();
+////		return true;
+//		if((ip1.getSecond()+1)==ip2.getFirst() || (ip2.getSecond()+1)==ip1.getFirst()) {
+//			return true;
+//		}
+//		return false;
+//	}
 	
 	public MinMaxPriorityQueue<Pair<Node, Double>> getCkyBest(
-			List<Node> leaves, WeightVector wv, TreeX x) {
+			List<Node> leaves, WeightVector wv, TreeX x, boolean useSyntacticParse) {
 		PairComparator<Node> nodeComparator = new PairComparator<Node>() {};
 		int n = leaves.size();
 		List<List<MinMaxPriorityQueue<Pair<Node, Double>>>> cky = 
@@ -207,6 +209,57 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 		}
 		for(int j=2; j<=n; ++j) {
 			for(int i=j-2; i>=0; --i) {
+				if(useSyntacticParse && !doesSynParseAllow1(x, leaves, i, j)) continue;
+				for(int k=i+1; k<j; ++k) {
+					for(Pair<Node, Double> pair1 : cky.get(i).get(k)) {
+						for(Pair<Node, Double> pair2 : cky.get(k).get(j)) {
+							if(i==0 && j==n) {
+								Node node = new Node("EQ", -1, Arrays.asList(
+										pair1.getFirst(), pair2.getFirst()));
+								cky.get(i).get(j).add(new Pair<Node, Double>(node, 
+										pair1.getSecond()+pair2.getSecond()+getMergeScore(node, wv, x)));
+								continue;
+							}
+							for(Pair<Node, Double> combinedPair : 
+								enumerateMerge(pair1.getFirst(), pair2.getFirst(), wv, x)) {
+								cky.get(i).get(j).add(new Pair<Node, Double>(
+										combinedPair.getFirst(), 
+										combinedPair.getSecond()+pair1.getSecond()+pair2.getSecond()));	
+							}
+						}
+					}
+				}
+			}
+		}
+		if(cky.get(0).get(n).size() > 0) return cky.get(0).get(n);
+		for(int j=2; j<=n; ++j) {
+			for(int i=j-2; i>=0; --i) {
+				if(useSyntacticParse && !doesSynParseAllow2(x, leaves, i, j)) continue;
+				for(int k=i+1; k<j; ++k) {
+					for(Pair<Node, Double> pair1 : cky.get(i).get(k)) {
+						for(Pair<Node, Double> pair2 : cky.get(k).get(j)) {
+							if(i==0 && j==n) {
+								Node node = new Node("EQ", -1, Arrays.asList(
+										pair1.getFirst(), pair2.getFirst()));
+								cky.get(i).get(j).add(new Pair<Node, Double>(node, 
+										pair1.getSecond()+pair2.getSecond()+getMergeScore(node, wv, x)));
+								continue;
+							}
+							for(Pair<Node, Double> combinedPair : 
+								enumerateMerge(pair1.getFirst(), pair2.getFirst(), wv, x)) {
+								cky.get(i).get(j).add(new Pair<Node, Double>(
+										combinedPair.getFirst(), 
+										combinedPair.getSecond()+pair1.getSecond()+pair2.getSecond()));	
+							}
+						}
+					}
+				}
+			}
+		}
+		if(cky.get(0).get(n).size() > 0) return cky.get(0).get(n);
+		for(int j=2; j<=n; ++j) {
+			for(int i=j-2; i>=0; --i) {
+				if(useSyntacticParse && !doesSynParseAllow3(x, leaves, i, j)) continue;
 				for(int k=i+1; k<j; ++k) {
 					for(Pair<Node, Double> pair1 : cky.get(i).get(k)) {
 						for(Pair<Node, Double> pair2 : cky.get(k).get(j)) {
@@ -229,6 +282,84 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 			}
 		}
 		return cky.get(0).get(n);
+	}
+
+	public boolean doesSynParseAllow1(TreeX x, List<Node> leaves, int i, int j) {
+		for(Constituent cons : x.parse) {
+			boolean found  = true;
+			for(int k=0; k<leaves.size(); ++k) {
+				Node leaf = leaves.get(k);
+				if(k>=i && k<j) { // All leaves in span should be present in cons
+					if(leaf.charIndex < cons.getStartCharOffset() ||
+							leaf.charIndex >= cons.getEndCharOffset()) {
+						found = false;
+						break;
+					}
+				} else { // All leaves not in span should not be in cons
+					if(leaf.charIndex >= cons.getStartCharOffset() && 
+							leaf.charIndex < cons.getEndCharOffset()) {
+						found = false;
+						break;
+					}
+				}
+			}
+			if(found) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean doesSynParseAllow2(TreeX x, List<Node> leaves, int i, int j) {
+		for(Constituent cons : x.parse) {
+			boolean found  = true;
+			int violations = 0;
+			for(int k=0; k<leaves.size(); ++k) {
+				Node leaf = leaves.get(k);
+				if(k>=i && k<j) { // All leaves in span should be present in cons
+					if(leaf.charIndex < cons.getStartCharOffset() ||
+							leaf.charIndex >= cons.getEndCharOffset()) {
+						found = false;
+						break;
+					}
+				} else { // All leaves not in span should not be in cons
+					if(leaf.charIndex >= cons.getStartCharOffset() && 
+							leaf.charIndex < cons.getEndCharOffset()) {
+						violations++;
+					}
+				}
+			}
+			if(found && violations < 2) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean doesSynParseAllow3(TreeX x, List<Node> leaves, int i, int j) {
+		for(Constituent cons : x.parse) {
+			boolean found  = true;
+			int violations = 0;
+			for(int k=0; k<leaves.size(); ++k) {
+				Node leaf = leaves.get(k);
+				if(k>=i && k<j) { // All leaves in span should be present in cons
+					if(leaf.charIndex < cons.getStartCharOffset() ||
+							leaf.charIndex >= cons.getEndCharOffset()) {
+						found = false;
+						break;
+					}
+				} else { // All leaves not in span should not be in cons
+					if(leaf.charIndex >= cons.getStartCharOffset() && 
+							leaf.charIndex < cons.getEndCharOffset()) {
+						violations++;
+					}
+				}
+			}
+			if(found && violations < 3) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

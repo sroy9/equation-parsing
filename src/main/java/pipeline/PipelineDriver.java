@@ -16,6 +16,7 @@ import var.VarInfSolver;
 import edu.illinois.cs.cogcomp.sl.core.SLModel;
 import edu.illinois.cs.cogcomp.sl.core.SLProblem;
 
+@SuppressWarnings("unused")
 public class PipelineDriver {
 	
 	public static String mode = "";

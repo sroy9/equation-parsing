@@ -18,7 +18,6 @@ public class TreeX implements IInstance {
 	public int problemIndex;
 	public TextAnnotation ta;
 	public List<Constituent> posTags;
-	public List<Constituent> lemmas;
 	public List<Constituent> parse;
 	public List<QuantSpan> quantities;
 	public List<IntPair> candidateVars;
@@ -33,6 +32,7 @@ public class TreeX implements IInstance {
 		problemIndex = simulProb.index;
 		ta = simulProb.ta;
 		posTags = simulProb.posTags;
+		parse = simulProb.parse;
 		candidateVars = simulProb.candidateVars;
 		this.varTokens = varTokens;
 		this.nodes = nodes;
@@ -49,6 +49,7 @@ public class TreeX implements IInstance {
 		problemIndex = simulProb.problemIndex;
 		ta = simulProb.ta;
 		posTags = simulProb.posTags;
+		parse = simulProb.parse;
 		candidateVars = simulProb.candidateVars;
 		this.varTokens = varTokens;
 		this.nodes = nodes;

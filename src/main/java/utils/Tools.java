@@ -18,6 +18,7 @@ import edu.illinois.cs.cogcomp.annotation.handler.StanfordParseHandler;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Annotator;
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.core.utilities.ResourceManager;
 import edu.illinois.cs.cogcomp.nlp.tokenizer.IllinoisTokenizer;
@@ -292,7 +293,7 @@ public class Tools {
 				if(node.children.size() == 2) {
 					IntPair ip1 = node.children.get(0).getNodeListSpan();
 					IntPair ip2 = node.children.get(1).getNodeListSpan();
-					if(!(ip2.getSecond()==(ip1.getFirst()-1)  || 
+					if(!(ip2.getSecond()==(ip1.getFirst()-1) || 
 							ip1.getSecond()==(ip2.getFirst()-1))) {
 						proj = false;
 						break;
@@ -306,4 +307,32 @@ public class Tools {
 		return projective;
 	}
 	
+	public static void visualizeNodeLocWithSynParse(TextAnnotation ta, 
+			List<Constituent> parse, List<Node> leaves) {
+		String str = "";
+		for(Constituent cons : parse) {
+			System.out.println(cons.getSurfaceForm() + " : " + cons.getSpan());
+		}
+		for(int i=0; i<ta.size(); ++i) {
+			for(Constituent cons : parse) {
+				if(cons.getEndSpan() - cons.getStartSpan() <= 1) continue;
+				if(cons.getEndSpan() == i) {
+					str += ") ";
+				}
+			}
+			for(Constituent cons : parse) {
+				if(cons.getEndSpan() - cons.getStartSpan() <= 1) continue;
+				if(cons.getStartSpan() == i) {
+					str += "( ";
+				}
+			}
+			for(Node leaf : leaves) {
+				if(ta.getTokenIdFromCharacterOffset(leaf.charIndex) == i) {
+					str += "^^ ";
+				}
+			}
+			str += ta.getToken(i) + " ";
+		}
+		System.out.println(str);
+	}
 }

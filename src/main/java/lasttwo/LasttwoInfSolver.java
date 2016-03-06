@@ -10,7 +10,6 @@ import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Node;
 import structure.PairComparator;
-import tree.CompInfSolver;
 import tree.TreeFeatGen;
 import utils.Tools;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
@@ -115,39 +114,6 @@ public class LasttwoInfSolver extends AbstractInferenceSolver implements
 			results.add(new Pair<LasttwoY, Double>(t, pair.getSecond() + b.getSecond()));
 		}
 		return results;
-	}
-	
-	public List<Pair<List<Node>, Double>> enumerateSingleMerge(
-			Pair<List<Node>, Double> state, WeightVector wv, LasttwoX x,
-			Map<String, List<Integer>> varTokens, List<Node> nodes) {
-		List<Pair<List<Node>, Double>> nextStates = new ArrayList<>();
-		List<Node> nodeList = state.getFirst();
-		if(nodeList.size() == 1) {
-//			System.err.println("List should not have size 1 here");
-			List<Pair<List<Node>, Double>> tmpNodeList = 
-					new ArrayList<Pair<List<Node>, Double>>();
-			tmpNodeList.add(state);
-			return tmpNodeList;
-		}
-		double initScore = state.getSecond();
-		for(int i=0; i<nodeList.size(); ++i) {
-			for(int j=i+1; j<nodeList.size(); ++j) {
-				if(!CompInfSolver.allowMerge(nodeList.get(i), nodeList.get(j))) continue;
-				List<Node> tmpNodeList = new ArrayList<Node>();
-				tmpNodeList.addAll(nodeList);
-				tmpNodeList.remove(i);
-				tmpNodeList.remove(j-1);
-				for(Pair<Node, Double> pair : enumerateMerge(
-						nodeList.get(i), nodeList.get(j), wv, x, varTokens, nodes)) {
-					List<Node> newNodeList = new ArrayList<Node>();
-					newNodeList.addAll(tmpNodeList);
-					newNodeList.add(pair.getFirst());
-					nextStates.add(new Pair<List<Node>, Double>(newNodeList, 
-							initScore + pair.getSecond()));
-				}
-			}
-		}
-		return nextStates;
 	}
 	
 	public List<Pair<Node, Double>> enumerateMerge(
