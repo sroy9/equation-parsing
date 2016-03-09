@@ -143,7 +143,7 @@ public class DocReader {
 			for(String var : prob1.varTokens.keySet()) {
 				if(prob2.varTokens.keySet().contains(var)) {
 					total += 1;
-					if(Tools.isEqual(prob1.varTokens.get(var), prob2.varTokens.get(var))) {
+					if(Tools.isEqual(prob1.varTokens.get(var), prob2.varTokens.get(var), prob1.candidateVars)) {
 						correct += 1;
 					}
 				}
@@ -158,7 +158,7 @@ public class DocReader {
 		List<SimulProb> simulProbList1 = DocReader.readSimulProbFromBratDir(
 						Params.annotationDir, 0, 1.0);
 		List<SimulProb> simulProbList2 = DocReader.readSimulProbFromBratDir(
-						"data/shyambrat/", 0, 1.0);
+						"/shared/bronte/upadhya3/other/brat/data/equationparsebrat/", 0, 1.0);
 //		System.out.println(simulProbList.size());
 //		DocReader.createLambdaExpForSPF();
 //		DocReader.createGizaProbTable();

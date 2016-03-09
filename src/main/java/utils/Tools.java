@@ -72,14 +72,22 @@ public class Tools {
 		return 1.0/(1+Math.pow(Math.E, -x))*2.0-1.0;
 	}
 	
-	public static boolean isEqual(List<Integer> list1, List<Integer> list2) {
+	public static boolean isEqual(List<Integer> list1, List<Integer> list2, 
+			List<IntPair> candidateVars) {
 		if(list1 == null && list2 == null) return true;
 		if(list1 == null || list2 == null) return false;
 		if(list1.size() != list2.size()) return false;
 		for(Integer i : list1) {
-			if(!list2.contains(i)) {
-				return false;
+			boolean found = false;
+			IntPair ip1 = candidateVars.get(i);
+			for(Integer j : list2) {
+				IntPair ip2 = candidateVars.get(j);
+				if(Tools.doesContain(ip1, ip2) || Tools.doesContain(ip2, ip1)) {
+					found = true;
+					break;
+				}
 			}
+			if(!found) return false;
 		}
 		return true;
 	}

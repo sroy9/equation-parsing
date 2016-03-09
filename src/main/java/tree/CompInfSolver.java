@@ -3,13 +3,16 @@ package tree;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.MinMaxPriorityQueue;
 
 import structure.Node;
 import structure.PairComparator;
 import utils.Tools;
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent;
 import edu.illinois.cs.cogcomp.sl.core.AbstractInferenceSolver;
@@ -209,69 +212,20 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 		}
 		for(int j=2; j<=n; ++j) {
 			for(int i=j-2; i>=0; --i) {
-				if(useSyntacticParse && !doesSynParseAllow1(x, leaves, i, j)) continue;
 				for(int k=i+1; k<j; ++k) {
 					for(Pair<Node, Double> pair1 : cky.get(i).get(k)) {
 						for(Pair<Node, Double> pair2 : cky.get(k).get(j)) {
 							if(i==0 && j==n) {
 								Node node = new Node("EQ", -1, Arrays.asList(
 										pair1.getFirst(), pair2.getFirst()));
+								if(useSyntacticParse && !doesSynParseAllow(x, leaves, node)) continue;
 								cky.get(i).get(j).add(new Pair<Node, Double>(node, 
 										pair1.getSecond()+pair2.getSecond()+getMergeScore(node, wv, x)));
 								continue;
 							}
 							for(Pair<Node, Double> combinedPair : 
 								enumerateMerge(pair1.getFirst(), pair2.getFirst(), wv, x)) {
-								cky.get(i).get(j).add(new Pair<Node, Double>(
-										combinedPair.getFirst(), 
-										combinedPair.getSecond()+pair1.getSecond()+pair2.getSecond()));	
-							}
-						}
-					}
-				}
-			}
-		}
-		if(cky.get(0).get(n).size() > 0) return cky.get(0).get(n);
-		for(int j=2; j<=n; ++j) {
-			for(int i=j-2; i>=0; --i) {
-				if(useSyntacticParse && !doesSynParseAllow2(x, leaves, i, j)) continue;
-				for(int k=i+1; k<j; ++k) {
-					for(Pair<Node, Double> pair1 : cky.get(i).get(k)) {
-						for(Pair<Node, Double> pair2 : cky.get(k).get(j)) {
-							if(i==0 && j==n) {
-								Node node = new Node("EQ", -1, Arrays.asList(
-										pair1.getFirst(), pair2.getFirst()));
-								cky.get(i).get(j).add(new Pair<Node, Double>(node, 
-										pair1.getSecond()+pair2.getSecond()+getMergeScore(node, wv, x)));
-								continue;
-							}
-							for(Pair<Node, Double> combinedPair : 
-								enumerateMerge(pair1.getFirst(), pair2.getFirst(), wv, x)) {
-								cky.get(i).get(j).add(new Pair<Node, Double>(
-										combinedPair.getFirst(), 
-										combinedPair.getSecond()+pair1.getSecond()+pair2.getSecond()));	
-							}
-						}
-					}
-				}
-			}
-		}
-		if(cky.get(0).get(n).size() > 0) return cky.get(0).get(n);
-		for(int j=2; j<=n; ++j) {
-			for(int i=j-2; i>=0; --i) {
-				if(useSyntacticParse && !doesSynParseAllow3(x, leaves, i, j)) continue;
-				for(int k=i+1; k<j; ++k) {
-					for(Pair<Node, Double> pair1 : cky.get(i).get(k)) {
-						for(Pair<Node, Double> pair2 : cky.get(k).get(j)) {
-							if(i==0 && j==n) {
-								Node node = new Node("EQ", -1, Arrays.asList(
-										pair1.getFirst(), pair2.getFirst()));
-								cky.get(i).get(j).add(new Pair<Node, Double>(node, 
-										pair1.getSecond()+pair2.getSecond()+getMergeScore(node, wv, x)));
-								continue;
-							}
-							for(Pair<Node, Double> combinedPair : 
-								enumerateMerge(pair1.getFirst(), pair2.getFirst(), wv, x)) {
+								if(useSyntacticParse && !doesSynParseAllow(x, leaves, combinedPair.getFirst())) continue;
 								cky.get(i).get(j).add(new Pair<Node, Double>(
 										combinedPair.getFirst(), 
 										combinedPair.getSecond()+pair1.getSecond()+pair2.getSecond()));	
@@ -284,82 +238,41 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 		return cky.get(0).get(n);
 	}
 
-	public boolean doesSynParseAllow1(TreeX x, List<Node> leaves, int i, int j) {
+	public boolean doesSynParseAllow(TreeX x, List<Node> leaves, Node subTree) {
+		Set<IntPair> spansSynParse = new HashSet<>();
+		Set<IntPair> spansSubTree = new HashSet<>();
 		for(Constituent cons : x.parse) {
-			boolean found  = true;
-			for(int k=0; k<leaves.size(); ++k) {
-				Node leaf = leaves.get(k);
-				if(k>=i && k<j) { // All leaves in span should be present in cons
-					if(leaf.charIndex < cons.getStartCharOffset() ||
-							leaf.charIndex >= cons.getEndCharOffset()) {
-						found = false;
-						break;
-					}
-				} else { // All leaves not in span should not be in cons
-					if(leaf.charIndex >= cons.getStartCharOffset() && 
-							leaf.charIndex < cons.getEndCharOffset()) {
-						found = false;
-						break;
-					}
+			int start = -1, end = -1;
+			for(int i=0; i<leaves.size(); ++i) {
+				Node leaf = leaves.get(i);
+				if(leaf.charIndex >= cons.getStartCharOffset()) {
+					start = i;
+					break;
 				}
 			}
-			if(found) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public boolean doesSynParseAllow2(TreeX x, List<Node> leaves, int i, int j) {
-		for(Constituent cons : x.parse) {
-			boolean found  = true;
-			int violations = 0;
-			for(int k=0; k<leaves.size(); ++k) {
-				Node leaf = leaves.get(k);
-				if(k>=i && k<j) { // All leaves in span should be present in cons
-					if(leaf.charIndex < cons.getStartCharOffset() ||
-							leaf.charIndex >= cons.getEndCharOffset()) {
-						found = false;
-						break;
-					}
-				} else { // All leaves not in span should not be in cons
-					if(leaf.charIndex >= cons.getStartCharOffset() && 
-							leaf.charIndex < cons.getEndCharOffset()) {
-						violations++;
-					}
+			if(start == -1) continue;
+			for(int i=start+1; i<leaves.size(); ++i) {
+				Node leaf = leaves.get(i);
+				if(leaf.charIndex > cons.getEndCharOffset()) {
+					end = i-1;
+					break;
 				}
 			}
-			if(found && violations < 2) {
-				return true;
+			if(end == -1) continue;
+			spansSynParse.add(new IntPair(start, end));
+		}
+		for(Node node : subTree.getAllSubNodes()) {
+			spansSubTree.add(node.getNodeListSpan());
+		}
+		IntPair fullSpan = subTree.getNodeListSpan();
+		for(IntPair span : spansSynParse) {
+			if(fullSpan.getFirst() <= span.getFirst() && 
+					span.getSecond() <= fullSpan.getSecond() &&
+					!spansSubTree.contains(span)) {				
+				return false;
 			}
 		}
-		return false;
-	}
-	
-	public boolean doesSynParseAllow3(TreeX x, List<Node> leaves, int i, int j) {
-		for(Constituent cons : x.parse) {
-			boolean found  = true;
-			int violations = 0;
-			for(int k=0; k<leaves.size(); ++k) {
-				Node leaf = leaves.get(k);
-				if(k>=i && k<j) { // All leaves in span should be present in cons
-					if(leaf.charIndex < cons.getStartCharOffset() ||
-							leaf.charIndex >= cons.getEndCharOffset()) {
-						found = false;
-						break;
-					}
-				} else { // All leaves not in span should not be in cons
-					if(leaf.charIndex >= cons.getStartCharOffset() && 
-							leaf.charIndex < cons.getEndCharOffset()) {
-						violations++;
-					}
-				}
-			}
-			if(found && violations < 3) {
-				return true;
-			}
-		}
-		return false;
+		return true;
 	}
 	
 }
