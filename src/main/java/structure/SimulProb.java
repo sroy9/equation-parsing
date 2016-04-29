@@ -102,6 +102,7 @@ public class SimulProb {
 		candidateVars = new ArrayList<>();
 		for(Constituent cons : parse) {
 			if(cons.getLabel().startsWith("NP") || cons.getLabel().startsWith("NN")) {
+				if(candidateVars.contains(cons.getSpan())) continue;
 				candidateVars.add(cons.getSpan());
 			}
 		}

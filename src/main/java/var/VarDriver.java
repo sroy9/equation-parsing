@@ -128,7 +128,6 @@ public class VarDriver {
 		model.infSolver = new VarInfSolver(fg);
 		SLParameters para = new SLParameters();
 		para.loadConfigFile(Params.spConfigFile);
-		para.MAX_NUM_ITER = 5;
 		Learner learner = LearnerFactory.getLearner(model.infSolver, fg, para);
 //		model.wv = learner.train(train);
 		model.wv = latentSVMLearner(learner, train, 

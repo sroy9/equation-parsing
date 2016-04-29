@@ -53,11 +53,17 @@ public class VarFeatGen extends AbstractFeatureGenerator implements
 			for(int i=candidate.getFirst(); i<candidate.getSecond(); ++i) {
 				features.add(prefix+"_VarUnigram_"+x.ta.getToken(i).toLowerCase());
 				features.add(prefix+"_VarPOSUnigram_"+x.posTags.get(i).getLabel());
+				features.add("_VarUnigram_"+x.ta.getToken(i).toLowerCase());
+				features.add("_VarPOSUnigram_"+x.posTags.get(i).getLabel());
 			}
 			for(int i=candidate.getFirst(); i<candidate.getSecond()-1; ++i) {
 				features.add(prefix+"_VarLexPOSBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
 						x.posTags.get(i+1).getLabel());
 				features.add(prefix+"_VarPOSLexBigram_"+x.posTags.get(i).getLabel()+"_"+
+						x.ta.getToken(i+1).toLowerCase());
+				features.add("_VarLexPOSBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+						x.posTags.get(i+1).getLabel());
+				features.add("_VarPOSLexBigram_"+x.posTags.get(i).getLabel()+"_"+
 						x.ta.getToken(i+1).toLowerCase());
 			}
 			int left = candidate.getFirst();
@@ -68,6 +74,11 @@ public class VarFeatGen extends AbstractFeatureGenerator implements
 						x.posTags.get(i+1).getLabel());
 				features.add(prefix+"_LeftBigram_"+x.posTags.get(i).getLabel()+"_"+
 						x.ta.getToken(i+1).toLowerCase());
+				features.add("_LeftUnigram_"+x.ta.getToken(i).toLowerCase());
+				features.add("_LeftBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+						x.posTags.get(i+1).getLabel());
+				features.add("_LeftBigram_"+x.posTags.get(i).getLabel()+"_"+
+						x.ta.getToken(i+1).toLowerCase());
 			}
 			for(int i=right; i<Math.min(x.ta.size()-1, right+2); ++i) {
 				features.add(prefix+"_RightUnigram_"+x.ta.getToken(i).toLowerCase());
@@ -75,21 +86,31 @@ public class VarFeatGen extends AbstractFeatureGenerator implements
 						x.posTags.get(i+1).getLabel());
 				features.add(prefix+"_RightBigram_"+x.posTags.get(i).getLabel()+"_"+
 						x.ta.getToken(i+1).toLowerCase());
-			}
-		}
-		if(candidates.size() == 2) {
-			int left = Math.min(candidates.get(0).getSecond(), candidates.get(1).getSecond());
-			int right = Math.max(candidates.get(0).getFirst(), candidates.get(1).getFirst());
-			for(int i=left; i<right; ++i) {
-				features.add(prefix+"_MidUnigram_"+x.ta.getToken(i).toLowerCase());
-			}
-			for(int i=left; i<right; ++i) {
-				features.add(prefix+"_MidLexPOSBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+				features.add("_RightUnigram_"+x.ta.getToken(i).toLowerCase());
+				features.add("_RightBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
 						x.posTags.get(i+1).getLabel());
-				features.add(prefix+"_MidPOSLexBigram_"+x.posTags.get(i).getLabel()+"_"+
+				features.add("_RightBigram_"+x.posTags.get(i).getLabel()+"_"+
 						x.ta.getToken(i+1).toLowerCase());
 			}
 		}
+//		if(candidates.size() == 2) {
+//			int left = Math.min(candidates.get(0).getSecond(), candidates.get(1).getSecond());
+//			int right = Math.max(candidates.get(0).getFirst(), candidates.get(1).getFirst());
+//			for(int i=left; i<right; ++i) {
+//				features.add(prefix+"_MidUnigram_"+x.ta.getToken(i).toLowerCase());
+//				features.add("_MidUnigram_"+x.ta.getToken(i).toLowerCase());
+//			}
+//			for(int i=left; i<right; ++i) {
+//				features.add(prefix+"_MidLexPOSBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+//						x.posTags.get(i+1).getLabel());
+//				features.add(prefix+"_MidPOSLexBigram_"+x.posTags.get(i).getLabel()+"_"+
+//						x.ta.getToken(i+1).toLowerCase());
+//				features.add("_MidLexPOSBigram_"+x.ta.getToken(i).toLowerCase()+"_"+
+//						x.posTags.get(i+1).getLabel());
+//				features.add("_MidPOSLexBigram_"+x.posTags.get(i).getLabel()+"_"+
+//						x.ta.getToken(i+1).toLowerCase());
+//			}
+//		}
 		return features;
 	}
 	
