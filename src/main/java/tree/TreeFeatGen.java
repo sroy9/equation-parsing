@@ -20,6 +20,9 @@ public class TreeFeatGen {
 		if(ip1.getFirst() > ip2.getFirst() && (node.label.equals("SUB") || node.label.equals("DIV"))) {
 			op += "_REV";
 		}
+//		if(getRuleOperation(node.children.get(0), node.children.get(1), x.ta, x.quantities, x.nodes) != null) {
+//			features.add("RuleTriggered_"+op);
+//		}
 		IntPair span1 = leaf1.getCharSpan();
 		IntPair span2 = leaf2.getCharSpan();
 		int min = x.ta.getTokenIdFromCharacterOffset(Math.min(span1.getFirst(), span2.getFirst()))+1;

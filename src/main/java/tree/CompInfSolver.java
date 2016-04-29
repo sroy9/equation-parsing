@@ -55,8 +55,7 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 			WeightVector wv, IInstance x, IStructure goldStructure) throws Exception {
 		TreeX prob = (TreeX) x;
 		assert prob.nodes.size() > 2;
-		PairComparator<TreeY> pairComparator = 
-				new PairComparator<TreeY>() {};
+		PairComparator<TreeY> pairComparator = new PairComparator<TreeY>() {};
 		MinMaxPriorityQueue<Pair<TreeY, Double>> beam1 = 
 				MinMaxPriorityQueue.orderedBy(pairComparator).
 				maximumSize(200).create();
@@ -72,46 +71,6 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 		return beam2;
 	}
 	
-//	public List<Pair<TreeY, Double>> getBottomUpBestParse(
-//			TreeX x, Pair<TreeY, Double> pair, WeightVector wv) {
-//		TreeY y = pair.getFirst();
-//		PairComparator<List<Node>> nodePairComparator = 
-//				new PairComparator<List<Node>>() {};
-//		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam1 = 
-//				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-//				.maximumSize(50).create();
-//		MinMaxPriorityQueue<Pair<List<Node>, Double>> beam2 = 
-//				MinMaxPriorityQueue.orderedBy(nodePairComparator)
-//				.maximumSize(50).create();
-//		int n = x.nodes.size();
-//		List<Node> init = new ArrayList<>();
-//		init.addAll(x.nodes);
-//		beam1.add(new Pair<List<Node>, Double>(init, pair.getSecond()));
-//		for(int i=1; i<=n-2; ++i) {
-//			for(Pair<List<Node>, Double> state : beam1) {
-//				beam2.addAll(enumerateSingleMerge(state, wv, x));
-//			}
-//			beam1.clear();
-//			beam1.addAll(beam2);
-//			beam2.clear();
-//		}
-//		for(Pair<List<Node>, Double> state : beam1) {
-//			if(state.getFirst().size() != 2) continue;
-//			Node node = new Node("EQ", -1, Arrays.asList(
-//					state.getFirst().get(0), state.getFirst().get(1)));
-//			beam2.add(new Pair<List<Node>, Double>(Arrays.asList(node), 
-//					state.getSecond()+ getMergeScore(node, wv, x)));
-//		}
-//		List<Pair<TreeY, Double>> results = new ArrayList<Pair<TreeY,Double>>();
-//		for(Pair<List<Node>, Double> b : beam2) {
-//			TreeY t = new TreeY(y);
-//			assert b.getFirst().size() == 1;
-//			t.equation.root = b.getFirst().get(0);
-//			results.add(new Pair<TreeY, Double>(t, b.getSecond()));
-//		}
-//		return results;
-//	}
-	
 	public List<Pair<TreeY, Double>> getBottomUpBestCkyParse(
 			TreeX x, Pair<TreeY, Double> pair, WeightVector wv) {
 		TreeY y = pair.getFirst();
@@ -124,37 +83,6 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 		}
 		return results;
 	}
-	
-//	public List<Pair<List<Node>, Double>> enumerateSingleMerge(
-//			Pair<List<Node>, Double> state, WeightVector wv, TreeX x) {
-//		List<Pair<List<Node>, Double>> nextStates = new ArrayList<>();
-//		List<Node> nodeList = state.getFirst();
-//		if(nodeList.size() == 1) {
-//			List<Pair<List<Node>, Double>> tmpNodeList = 
-//					new ArrayList<Pair<List<Node>, Double>>();
-//			tmpNodeList.add(state);
-//			return tmpNodeList;
-//		}
-//		double initScore = state.getSecond();
-//		for(int i=0; i<nodeList.size(); ++i) {
-//			for(int j=i+1; j<nodeList.size(); ++j) {
-//				if(!allowMerge(nodeList.get(i), nodeList.get(j))) continue;
-//				List<Node> tmpNodeList = new ArrayList<Node>();
-//				tmpNodeList.addAll(nodeList);
-//				tmpNodeList.remove(i);
-//				tmpNodeList.remove(j-1);
-//				for(Pair<Node, Double> pair : enumerateMerge(
-//						nodeList.get(i), nodeList.get(j), wv, x)) {
-//					List<Node> newNodeList = new ArrayList<Node>();
-//					newNodeList.addAll(tmpNodeList);
-//					newNodeList.add(pair.getFirst());
-//					nextStates.add(new Pair<List<Node>, Double>(newNodeList, 
-//							initScore + pair.getSecond()));
-//				}
-//			}
-//		}
-//		return nextStates;
-//	}
 	
 	public List<Pair<Node, Double>> enumerateMerge(
 			Node node1, Node node2, WeightVector wv, TreeX x) {
