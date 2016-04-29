@@ -85,16 +85,17 @@ public class SimulProb {
 	
 	public void extractAnnotations() throws Exception {
 		ta = Tools.pipeline.createAnnotatedTextAnnotation(text, false);
-		TextAnnotation taHackForStanford = Tools.pipeline.createAnnotatedTextAnnotation(
-				text+" I have to go to school.", false);
 		posTags = ta.getView(ViewNames.POS).getConstituents();
 		chunks = ta.getView(ViewNames.SHALLOW_PARSE).getConstituents();
-		parse = new ArrayList<>();
-		for(Constituent cons : taHackForStanford.getView(ViewNames.PARSE_STANFORD).getConstituents()) {
-			if(cons.getSentenceId() == 0) {
-				parse.add(cons);
-			}
-		}
+		parse = ta.getView(ViewNames.PARSE_STANFORD).getConstituents();
+//		parse = new ArrayList<>();
+//		TextAnnotation taHackForStanford = Tools.pipeline.createAnnotatedTextAnnotation(
+//				text+" I have to go to school.", false);
+//		for(Constituent cons : taHackForStanford.getView(ViewNames.PARSE_STANFORD).getConstituents()) {
+//			if(cons.getSentenceId() == 0) {
+//				parse.add(cons);
+//			}
+//		}
 	}
 	
 	public void createCandidateVars() {

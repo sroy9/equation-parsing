@@ -3,7 +3,6 @@ package var;
 import java.util.List;
 
 import joint.JointX;
-import lasttwo.LasttwoX;
 import structure.SimulProb;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent;
@@ -28,14 +27,6 @@ public class VarX implements IInstance {
 	}
 	
 	public VarX(JointX simulProb) {
-		quantities = simulProb.quantities;
-		problemIndex = simulProb.problemIndex;
-		ta = simulProb.ta;
-		posTags = simulProb.posTags;
-		candidateVars = simulProb.candidateVars;
-	}
-	
-	public VarX(LasttwoX simulProb) {
 		quantities = simulProb.quantities;
 		problemIndex = simulProb.problemIndex;
 		ta = simulProb.ta;

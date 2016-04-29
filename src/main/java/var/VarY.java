@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import joint.JointY;
-import lasttwo.LasttwoY;
 import structure.SimulProb;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
 
@@ -42,11 +41,6 @@ public class VarY implements IStructure, Serializable {
 		varTokens = new HashMap<String, List<Integer>>();
 		varTokens.putAll(prob.varTokens);
 		coref = prob.coref;
-	}
-	
-	public VarY(LasttwoY prob) {
-		varTokens = new HashMap<String, List<Integer>>();
-		varTokens.putAll(prob.varTokens);
 	}
 	
 	public static float getLoss(VarY gold, VarY pred) {

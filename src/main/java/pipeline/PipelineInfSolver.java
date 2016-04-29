@@ -7,8 +7,6 @@ import com.google.common.collect.MinMaxPriorityQueue;
 
 import joint.JointX;
 import joint.JointY;
-import lasttwo.LasttwoX;
-import lasttwo.LasttwoY;
 import numoccur.NumoccurInfSolver;
 import numoccur.NumoccurX;
 import numoccur.NumoccurY;
@@ -77,27 +75,6 @@ public class PipelineInfSolver {
  			}
  		}
 		return best;
-	}
-	
-	public static JointY getBestLasttwoStructure(JointX prob, SLModel numOccurModel, SLModel lasttwoModel) 
-			throws Exception {
-		JointY y = new JointY();
-		// Predict number of occurrences of each quantity
-		NumoccurX numX = new NumoccurX(prob);
-		NumoccurY numY = (NumoccurY) numOccurModel.infSolver.getBestStructure(numOccurModel.wv, numX);
- 		for(int i=0; i<prob.quantities.size(); ++i) {
-			for(int k=0; k<numY.numOccurList.get(i); ++k) {
-				Node node = new Node("NUM", i, new ArrayList<Node>());
-				node.value = Tools.getValue(prob.quantities.get(i));
-				y.nodes.add(node);
-			}
-		}
- 		// Grounding of variables
- 		LasttwoX lasttwoX = new LasttwoX(prob, y.nodes);
- 		LasttwoY lasttwoY = (LasttwoY) lasttwoModel.infSolver.getBestStructure(lasttwoModel.wv, lasttwoX);
- 		y.varTokens = lasttwoY.varTokens;
-		y.equation = lasttwoY.equation;
-		return y;
 	}
 	
 }

@@ -16,6 +16,7 @@ fi
 ## Variable Prediction model
 if [ "$1" = "Var" ]
 then
+    echo "Running Var model"
     java -cp target/classes/:target/dependency/* var.VarDriver 1>log/Var.out 
 fi
 
@@ -27,26 +28,12 @@ then
     java -cp target/classes/:target/dependency/* tree.TreeDriver 1>log/Tree.out 
 fi
 
-## LastTwo Prediction model
-if [ "$1" = "Lasttwo" ]
-then
-    echo "Running Lasttwo model"
-    java -cp target/classes/:target/dependency/* lasttwo.LasttwoDriver 1>log/Lasttwo.out 
-fi
 
 ## Pipeline
 if [ "$1" = "Pipeline" ]
 then
-    if [ "$2" = "A" ]
-    then	
-	echo "Running PipelineA"
-	java -cp target/classes/:target/dependency/* pipeline.PipelineDriver A 1>log/PipelineA.out
-    fi
-    if [ "$2" = "B" ]
-    then	
-	echo "Running PipelineB"
-	java -cp target/classes/:target/dependency/* pipeline.PipelineDriver B 1>log/PipelineB.out
-    fi	
+    echo "Running Pipeline"    
+    java -cp target/classes/:target/dependency/* pipeline.PipelineDriver 1>log/Pipeline.out    	
 fi
 
 

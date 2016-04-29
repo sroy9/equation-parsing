@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import joint.JointY;
-import lasttwo.LasttwoY;
 import structure.Equation;
 import structure.SimulProb;
 import edu.illinois.cs.cogcomp.sl.core.IStructure;
@@ -33,11 +32,6 @@ public class TreeY implements IStructure, Serializable {
 	}
 	
 	public TreeY(JointY prob) {
-		equation = new Equation(prob.equation);
-		varTokens = prob.varTokens;
-	}
-	
-	public TreeY(LasttwoY prob) {
 		equation = new Equation(prob.equation);
 		varTokens = prob.varTokens;
 	}
