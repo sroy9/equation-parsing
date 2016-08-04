@@ -1,0 +1,237 @@
+eldora bought 15 boxes of paper clips and 7 packages of index cards for a total cost of 55.40 dollars . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 15.0:n V1:n) (mul:<n,<n,n>> 7.0:n V2:n)) 55.4:n)
+
+the larger number is 2 more than 3 times the smaller number . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> (mul:<n,<n,n>> 3.0:n V2:n) 2.0:n))
+
+after reading several fashion magazines she decides to stock her shelves with 34 more blue dresses than red dresses . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n 34.0:n) V2:n)
+
+sunshine car rentals rents a basic car at a daily rate of 17.99 dollars plus 0.18 per mile . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 17.99:n (mul:<n,<n,n>> 0.18:n V2:n)))
+
+city rentals rents a basic car at 18.95 dollars plus 0.16 per mile . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 18.95:n (mul:<n,<n,n>> 0.16:n V2:n)))
+
+the sum of 38 and twice a number is 124 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> 38.0:n (mul:<n,<n,n>> 2.0:n V1:n)) 124.0:n)
+
+the state market has 27 more apples than oranges . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n 27.0:n) V2:n)
+
+find the number whose double is 45 greater than its half . 
+(eq:<n,<n,t>> (mul:<n,<n,n>> 2.0:n V1:n) (add:<n,<n,n>> 45.0:n (mul:<n,<n,n>> 0.5:n V2:n)))
+
+kevin bought 3 muffins and a bottle of juice that cost 1.45 dollars . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> (mul:<n,<n,n>> 3.0:n V2:n) 1.45:n))
+
+the washer costs 220 dollars more than the dryer . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 220.0:n V2:n))
+
+freeport mcmoran projects that in 2010 the world grain supply will be 1800000 metric tons and the supply will be only 0.75 of the world grain demand . 
+(eq:<n,<n,t>> (mul:<n,<n,n>> 0.75:n V1:n) 1800000.0:n)
+
+the sum of 5 and a number is 20 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> 5.0:n V1:n) 20.0:n)
+
+there are 5 fewer girls than boys . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> V1:n 5.0:n) V2:n)
+
+the difference of 3 times a number and 5 is 40 . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> (mul:<n,<n,n>> 3.0:n V1:n) 5.0:n) 40.0:n)
+
+he bought 4 bags of bagels and 2 packages of cream cheese and paid 14.00 dollars . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 4.0:n V1:n) (mul:<n,<n,n>> 2.0:n V2:n)) 14.0:n)
+
+the greater of two numbers is 8 times the lesser . 
+(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 8.0:n V2:n))
+
+the second number is 3 less than twice the first number . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> (mul:<n,<n,n>> 2.0:n V2:n) 3.0:n))
+
+one is 4 greater than 0.375 of the other . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 4.0:n (mul:<n,<n,n>> 0.375:n V2:n)))
+
+two investments are made totaling 8800 dollars . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 8800.0:n)
+
+0.40 of one part exceeds 0.625 of the other part by 10 . 
+(eq:<n,<n,t>> (mul:<n,<n,n>> 0.4:n V1:n) (add:<n,<n,n>> (mul:<n,<n,n>> 0.625:n V2:n) 10.0:n))
+
+sum of two numbers is 64 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 64.0:n)
+
+phyllis invested 39000 dollars , a portion earning a simple interest rate of 4 % per year and the rest earning a rate of 6 % per year . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 39000.0:n)
+
+24 is divided into two parts . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 24.0:n)
+
+the school took 246 dollars on the second day by selling 12 senior citizen tickets and 10 student tickets . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 12.0:n V1:n) (mul:<n,<n,n>> 10.0:n V2:n)) 246.0:n)
+
+the greater number exceeds twice the smaller number by 5 . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> (mul:<n,<n,n>> 2.0:n V2:n) 5.0:n))
+
+10 less than 0.6667 the number is 0.25 the number . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> (mul:<n,<n,n>> 0.6667:n V1:n) 10.0:n) (mul:<n,<n,n>> 0.25:n V2:n))
+
+a semi truck travels on a paved road for 2 hours at an average speed of 20 miles per hour faster than it travels on a dirt road . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 20.0:n V2:n))
+
+36 more than the product of three and x is the same as 48 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> 36.0:n (mul:<n,<n,n>> 3.0:n V1:n)) 48.0:n)
+
+they won 9 more games than they tied . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 9.0:n V2:n))
+
+for a special event at the tcr spring fest , the cost of 3 adult tickets and 4 student tickets was 84 dollars . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 3.0:n V1:n) (mul:<n,<n,n>> 4.0:n V2:n)) 84.0:n)
+
+the amount donated by class a is 7 dollars short of 0.6667 of the amount donated by class b . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> (mul:<n,<n,n>> 0.6667:n V2:n) 7.0:n))
+
+the second is 7 more than 5 times the first . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 7.0:n (mul:<n,<n,n>> 5.0:n V2:n)))
+
+530 pesos can buy 4 kilograms of fish and 2 kilograms of pork . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 4.0:n V1:n) (mul:<n,<n,n>> 2.0:n V2:n)) 530.0:n)
+
+one number is 3 times the other . 
+(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 3.0:n V2:n))
+
+two numbers are in the ratio 8 to 3 . 
+(eq:<n,<n,t>> (div:<n,<n,n>> V1:n V2:n) (div:<n,<n,n>> 8.0:n 3.0:n))
+
+there were 7 times as many thermometers as hot-water bottles sold . 
+(eq:<n,<n,t>> (div:<n,<n,n>> V1:n 7.0:n) V2:n)
+
+steve has 36 coins consisting of dimes and nickels . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 36.0:n)
+
+the sum of 0.75 of a number and two is eight . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 0.75:n V1:n) 2.0:n) 8.0:n)
+
+the number of boys in eighth grade is 16 less than twice the number of girls . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> (mul:<n,<n,n>> 2.0:n V2:n) 16.0:n))
+
+3 pairs of jeans and 6 shirts costs 104.25 dollars . 
+(eq:<n,<n,t>> (add:<n,<n,n>> (mul:<n,<n,n>> 3.0:n V1:n) (mul:<n,<n,n>> 6.0:n V2:n)) 104.25:n)
+
+john 's photo world charges 2.75 dollars per sheet and a one time sitting fee of 125 dollars . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> (mul:<n,<n,n>> 2.75:n V2:n) 125.0:n))
+
+the number of student tickets sold was two times the number of adult tickets sold . 
+(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 2.0:n V2:n))
+
+the longest piece is twice as long as the shorter piece . 
+(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 2.0:n V2:n))
+
+bob invested 22,000 dollars , part at 18 % and part at 14 % . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 22000.0:n)
+
+the mcdonalds stock was 70 dollars more per share than the ohio art company stock . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 70.0:n V2:n))
+
+the cost includes an overhead of 81,000 dollars , plus production costs of 7,000 dollars per performance . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 81000.0:n (mul:<n,<n,n>> 7000.0:n V2:n)))
+
+one integer is twice another . 
+(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 2.0:n V2:n))
+
+a coin purse contains 18 coins in nickels and dimes . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 18.0:n)
+
+the number of 15-cent stamps is four less than three times the number of 18-cent stamps . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> (mul:<n,<n,n>> 3.0:n V2:n) 4.0:n))
+
+the number of 22-cent stamps is three more than four times the number of 40-cent stamps . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 3.0:n (mul:<n,<n,n>> 4.0:n V2:n)))
+
+if five is subtracted from three times a certain number , the result is 10 . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> (mul:<n,<n,n>> 3.0:n V1:n) 5.0:n) 10.0:n)
+
+when 18 is subtracted from six times a certain number , the result is 42 . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> (mul:<n,<n,n>> 6.0:n V1:n) 18.0:n) 42.0:n)
+
+a certain number added twice to itself equals 96 . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n (mul:<n,<n,n>> 2.0:n V2:n)) 96.0:n)
+
+the measure of the third angle is 40 degrees greater than that of the first angle . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 40.0:n V2:n))
+
+the land cost 4 times as much as the cabin . 
+(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 4.0:n V2:n))
+
+the bicycle cost 5 times as much as the helmet . 
+(eq:<n,<n,t>> V1:n (mul:<n,<n,n>> 5.0:n V2:n))
+
+a boy is 10 years older than his brother . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 10.0:n V2:n))
+
+four years ago , john was twice as old as mary . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> V1:n 4.0:n) (mul:<n,<n,n>> 2.0:n (sub:<n,<n,n>> V2:n 4.0:n)))
+
+the second angle is 6 degrees larger than 2 times the measure of the first angle . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 6.0:n (mul:<n,<n,n>> 2.0:n V2:n)))
+
+0.5 of a number is 2 more than 0.25 of the number . 
+(eq:<n,<n,t>> (mul:<n,<n,n>> 0.5:n V1:n) (add:<n,<n,n>> 2.0:n (mul:<n,<n,n>> 0.25:n V2:n)))
+
+the second of two complementary angles is 57 degrees larger than 3 times the first angle . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 57.0:n (mul:<n,<n,n>> 3.0:n V2:n)))
+
+the length of the rectangle is 28 inches more than twice the width . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 28.0:n (mul:<n,<n,n>> 2.0:n V2:n)))
+
+flying with the wind , a bird was able to make 150 kilometers per hour . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n V2:n) 150.0:n)
+
+your friend has 210 dollars and saves 5 dollars per week . 
+(eq:<n,<n,t>> V1:n (add:<n,<n,n>> 210.0:n (mul:<n,<n,n>> 5.0:n V2:n)))
+
+the difference between two numbers is 3 . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> V1:n V2:n) 3.0:n)
+
+procera networks stock price target raised to $9 from $7.50 at deutsche bank . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 9.0:n 7.5:n))
+
+pharmacyclics stock price target cut to $163 from $233 at credit suisse . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 233.0:n 163.0:n))
+
+walter investment mgmt stock price target cut to $22 from $30 at credit suisse . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 30.0:n 22.0:n))
+
+safe bulkers stock price target cut to $4 from $12 at credit suisse . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 12.0:n 4.0:n))
+
+intelsat stock price target cut to $11 from $21 at credit suisse . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 21.0:n 11.0:n))
+
+japan 's topix down 0.1 % at 1,506.39 in early moves . 
+(eq:<n,<n,t>> (sub:<n,<n,n>> V1:n (mul:<n,<n,n>> 0.001:n V2:n)) 1506.39:n)
+
+colgate-palmolive stock price target raised to $81 from $74 at citigroup . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 81.0:n 74.0:n))
+
+japan 's topix up 0.2 % at 1,498.59 in early moves . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n (mul:<n,<n,n>> 0.002:n V2:n)) 1498.59:n)
+
+coca-cola raises dividend 8 % to 33 cents a share . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n (mul:<n,<n,n>> 0.08:n V2:n)) 0.33:n)
+
+march oil down $1.39 , to settle at $52.14 / bbl . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 52.14:n 1.39:n))
+
+third point reinsurance stock price target raised to $17 from $16 . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 17.0:n 16.0:n))
+
+cisco systems ' stock price target raised to $30 from $28 at raymond james . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 30.0:n 28.0:n))
+
+cisco systems ' stock price target raised to $31 from $28 at sterne agee . 
+(eq:<n,<n,t>> V1:n (sub:<n,<n,n>> 31.0:n 28.0:n))
+
+mobile mini raises quarterly dividend 10 % to 18.7 cents a share . 
+(eq:<n,<n,t>> (add:<n,<n,n>> V1:n (mul:<n,<n,n>> 0.1:n V2:n)) 0.187:n)
+

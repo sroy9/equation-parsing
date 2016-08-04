@@ -1,10 +1,45 @@
-#mvn -q dependency:copy-dependencies
-#mvn -q compile
+## Script to run various configurations of equation parsing framework
+## if [ "$#" -eq 0 ]
+## then echo "Usage : sh run.sh (Numoccur/Var/Tree/Pipeline/Joint) 
+## Pipeline assumes component models to exist"
+##    exit 2
+## fi
 
-CP="./target/classes/:./target/dependency/*:./config/" # use this 
-OPTIONS="-cp $CP"
-#PACKAGE_PREFIX="edu.illinois.cs.cogcomp"
+## Numoccur model
+if [ "$1" = "" -o "$1" = "Numoccur" ]
+then
+    echo "Running Numoccur model"
+    java -cp target/classes/:target/dependency/* numoccur.NumoccurDriver 1>log/Numoccur.out
+fi
 
-MAIN="structure.Blob"
-#MAIN="$PACKAGE_PREFIX.quant.lbj.CTakesTokenReader"
-time nice java $OPTIONS $MAIN $*
+
+## Variable Prediction model
+if [ "$1" = "" -o "$1" = "Var" ]
+then
+    echo "Running Var model"
+    java -cp target/classes/:target/dependency/* var.VarDriver 1>log/Var.out 
+fi
+
+
+## Tree Prediction model
+if [ "$1" = "" -o "$1" = "Tree" ]
+then
+    echo "Running Tree model"
+    java -cp target/classes/:target/dependency/* tree.TreeDriver 1>log/Tree.out 
+fi
+
+
+## Pipeline
+if [ "$1" = "" -o "$1" = "Pipeline" ]
+then
+    echo "Running Pipeline"    
+    java -cp target/classes/:target/dependency/* pipeline.PipelineDriver 1>log/Pipeline.out    	
+fi
+
+
+## Joint
+if [ "$1" == "Joint" ]
+then
+    echo "Running Joint"
+    java -cp target/classes/:target/dependency/* joint.JointDriver 1>log/Joint.out
+fi
