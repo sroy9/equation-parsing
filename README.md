@@ -1,7 +1,7 @@
 Code and data used for the paper
 
 Equation Parsing : Mapping Sentences to Grounded Equations
-Subhro Roy and Dan Roth
+Subhro Roy, Shyam Upadhyay and Dan Roth
 EMNLP 2016
 
 
@@ -28,7 +28,7 @@ Instructions to run the code :
 - Runs the joint model to predict complete equation parse. Output file : log/Joint.out
 
 
-
+Please send any suggestions, comments, issues to sroy9@illinois.edu.
 
 
 
