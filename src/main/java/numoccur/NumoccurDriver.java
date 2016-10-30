@@ -82,6 +82,7 @@ public class NumoccurDriver {
 			if(NumoccurY.getLoss(gold, pred) < 0.0001) {
 				acc += 1;
 			} else {
+				System.out.println("---------------------------------------------------");
 				incorrect.add(prob.problemIndex);
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
@@ -93,6 +94,7 @@ public class NumoccurDriver {
 						model.featureGenerator.getFeatureVector(prob, pred)));
 				System.out.println("Loss : "+NumoccurY.getLoss(gold, pred));
 			}
+			System.out.println("---------------------------------------------------");
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));

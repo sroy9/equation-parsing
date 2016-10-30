@@ -98,6 +98,7 @@ public class VarDriver {
 //					System.out.println("Loss : "+VarY.getLoss(gold, pred));
 //				}
 			} else {
+				System.out.println("---------------------------------------------------");
 				incorrect.add(prob.problemIndex);
 				System.out.println(prob.problemIndex+" : "+prob.ta.getText());
 				System.out.println("Quantities : "+prob.quantities);
@@ -111,6 +112,7 @@ public class VarDriver {
 						model.featureGenerator.getFeatureVector(prob, pred)));
 				System.out.println("Loss : "+VarY.getLoss(gold, pred));
 			}
+			System.out.println("---------------------------------------------------");
 		}
 		System.out.println("Accuracy : = " + acc + " / " + sp.instanceList.size() 
 				+ " = " + (acc/sp.instanceList.size()));

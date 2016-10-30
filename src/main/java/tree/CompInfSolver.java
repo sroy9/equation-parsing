@@ -75,7 +75,7 @@ public class CompInfSolver extends AbstractInferenceSolver implements
 			TreeX x, Pair<TreeY, Double> pair, WeightVector wv) {
 		TreeY y = pair.getFirst();
 		List<Pair<TreeY, Double>> results = new ArrayList<Pair<TreeY,Double>>();
-		Tools.visualizeNodeLocWithSynParse(x.ta, x.parse, x.nodes);
+//		Tools.visualizeNodeLocWithSynParse(x.ta, x.parse, x.nodes);
 		for(Pair<Node, Double> b : getCkyBest(x.nodes, wv, x, false)) {
 			TreeY t = new TreeY(y);
 			t.equation.root = b.getFirst();
