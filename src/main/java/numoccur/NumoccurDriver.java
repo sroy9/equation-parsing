@@ -71,6 +71,11 @@ public class NumoccurDriver {
 			NumoccurY gold = (NumoccurY) sp.goldStructureList.get(i);
 			NumoccurY pred = (NumoccurY) model.infSolver.getBestStructure(
 					model.wv, prob);
+//			List<Integer> allTrue = new ArrayList<>();
+//			for(int j=0; j<prob.quantities.size(); ++j) {
+//				allTrue.add(1);
+//			}
+//			pred = new NumoccurY(allTrue);
 			total.add(prob.problemIndex);
 			double goldWt = model.wv.dotProduct(
 					model.featureGenerator.getFeatureVector(prob, gold));
