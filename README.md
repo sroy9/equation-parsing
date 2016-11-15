@@ -1,7 +1,7 @@
 # Equation Parsing
 
 
-# Publication
+### Publication
 
 Code and data used for the paper
 
@@ -12,12 +12,12 @@ EMNLP 2016.
 If you use the code or data, please cite the above publication.
 
 
-# Data
+### Data
 
 Data can be found in the folder data/equationparsebrat/.
 
 
-# Instructions to run the code :
+### Instructions to run the code :
 
 You will need to have maven installed in your system. To download the 
 dependencies, run
@@ -43,7 +43,7 @@ Finally here are the options:
 6. sh run.sh Joint : Runs the joint model to predict complete equation parse. Output file : log/Joint.out
 
 
-# Other Issues
+### Other Issues
 
 Please send any suggestions, comments, issues to sroy9@illinois.edu.
 
