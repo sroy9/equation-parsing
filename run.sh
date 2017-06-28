@@ -38,7 +38,7 @@ fi
 
 
 ## Joint
-if [ "$1" == "Joint" ]
+if [ "$1" = "Joint" ]
 then
     echo "Running Joint"
     java -cp target/classes/:target/dependency/* joint.JointDriver 1>log/Joint.out
